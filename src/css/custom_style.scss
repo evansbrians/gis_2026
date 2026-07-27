@@ -227,17 +227,129 @@ code {
 /* Parsons drag-and-drop problems (js-parsons, see src/lib/js-parsons/) */
 
 .parsons-problem {
+  /* Single source of truth for the row pitch. Each draggable capsule is
+     one "slot" tall, and the answer box draws one bin per slot, so the
+     capsules drop into the bins like objects into buckets. */
+  --slot-height: 1.9rem;
+  --slot-gap: 0.22rem;
   margin-top: 10px;
-  margin-bottom: 10px;
+  margin-bottom: 1.25em;
 }
 
 .parsons-problem .sortable-code {
   width: 46%;
 }
 
-.parsons-problem-label {
-  font-weight: bold;
-  margin-bottom: 4px;
+/* Column labels above the two boxes (rendered by js-parsons as a <p>
+   at the top of each .sortable-code container) */
+
+.parsons-problem .sortable-code > p {
+  font-weight: 600;
+  font-size: 0.85rem;
+  margin: 0 0 4px 0;
+  color: #333333;
+}
+
+/* The two drop-zone containers (the <ul> that holds the code lines).
+   No vertical padding so the first bin/capsule aligns with the box top. */
+
+.parsons-problem .sortable-code ul {
+  font-family: monospace;
+  list-style: none;
+  background-color: #ffffff;
+  border: 1px dashed #b9b9c9;
+  border-radius: 6px;
+  min-height: var(--slot-height);
+  padding: 0 8px;
+  margin-left: 0;
+}
+
+/* "Build your answer here" column: tint it and draw one bin per expected
+   answer line (--parsons-slots is set in parsons_init.js). The bin pitch
+   equals --slot-height, so bins and dropped capsules line up exactly. */
+
+.parsons-problem .parsons-answer ul {
+  border-color: #7a8bd8;
+  min-height: calc(var(--parsons-slots, 1) * var(--slot-height));
+  background-color: #f4f7ff;
+  background-image: repeating-linear-gradient(
+    to bottom,
+    #eef2fd 0,
+    #eef2fd calc(var(--slot-height) - 1px),
+    #b9c4ec calc(var(--slot-height) - 1px),
+    #b9c4ec var(--slot-height)
+  );
+  background-origin: content-box;
+  background-clip: content-box;
+}
+
+/* Draggable code capsules: one slot tall, centered in their bin, with the
+   text at half the previous size. */
+
+.parsons-problem .sortable-code li {
+  box-sizing: border-box;
+  height: calc(var(--slot-height) - 2 * var(--slot-gap));
+  margin: var(--slot-gap) 0;
+  display: flex;
+  align-items: center;
+  font-size: 0.6rem;
+  line-height: 1.2;
+  background-color: #eaf0ff;
+  border: 1px solid #9db0e6;
+  border-radius: 6px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.12);
+  padding: 0 10px 0 20px;
+  position: relative;
+  white-space: nowrap;
+  cursor: grab;
+}
+
+.parsons-problem .sortable-code li:active {
+  cursor: grabbing;
+}
+
+/* Drag-handle grip so the capsules read as objects to move */
+
+.parsons-problem .sortable-code li::before {
+  content: "\2237\2237";
+  position: absolute;
+  left: 7px;
+  top: 50%;
+  transform: translateY(-50%);
+  letter-spacing: -2px;
+  color: #7a8bd8;
+  font-size: 0.5rem;
+}
+
+/* Check / Shuffle buttons as colored pills */
+
+.parsons-btn {
+  border: none;
+  border-radius: 999px;
+  padding: 6px 16px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  margin: 12px 8px 0 0;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+.parsons-btn-check {
+  background-color: #292093;
+  color: #ffffff;
+}
+
+.parsons-btn-check:hover {
+  background-color: #1c1668;
+}
+
+.parsons-btn-reset {
+  background-color: #e6e9f5;
+  color: #292093;
+}
+
+.parsons-btn-reset:hover {
+  background-color: #d3d8ee;
 }
 
 .parsons-feedback {

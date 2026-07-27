@@ -34,15 +34,43 @@ document.addEventListener("DOMContentLoaded", function () {
       return;
     }
 
+    // Count the lines that belong in the answer (everything that is not a
+    // "#distractor" line) so we can label and size the construction area.
+    var solutionLineCount = config.code
+      .split("\n")
+      .filter(function (ln) {
+        return ln.trim().length > 0 && ln.indexOf("#distractor") === -1;
+      }).length;
+
+    // These exercises are about line ORDER, not indentation, so we grade on
+    // order only: strip any leading whitespace from every line (otherwise the
+    // model solution would carry indent levels the student would also have to
+    // reproduce) and disable indentation dragging. Opt back in per-problem
+    // with canIndent: true if an exercise ever needs indentation graded.
+    var gradeIndent = config.canIndent === true;
+    var problemCode = gradeIndent
+      ? config.code
+      : config.code
+          .split("\n")
+          .map(function (ln) { return ln.replace(/^[ \t]+/, ""); })
+          .join("\n");
+
     var widget = new ParsonsWidget({
       sortableId: config.id + "-sortable",
       trashId: config.id + "-trash",
       max_wrong_lines: config.maxDistractors || 0,
-      can_indent: config.canIndent !== false,
-      feedback_cb: function (errors) {
+      can_indent: gradeIndent,
+      trash_label: "Drag from here",
+      solution_label:
+        "Build your answer here (" + solutionLineCount + " lines)",
+      feedback_cb: function (fb) {
         var fbDiv = document.getElementById(config.id + "-feedback");
         if (!fbDiv) return;
-        if (errors.length === 0) {
+        // js-parsons passes the full grade result object here
+        // ({ errors, log_errors, success }), NOT a bare errors array.
+        var isCorrect = fb && (fb.success === true ||
+          (fb.errors && fb.errors.length === 0));
+        if (isCorrect) {
           fbDiv.textContent = "Correct -- nice work!";
           fbDiv.className = "parsons-feedback parsons-feedback-correct";
         } else {
@@ -53,8 +81,24 @@ document.addEventListener("DOMContentLoaded", function () {
       }
     });
 
-    widget.init(config.code);
+    widget.init(problemCode);
     widget.shuffleLines();
+
+    // Tag the two columns so the stylesheet can distinguish the "source"
+    // box from the "answer" box, and expose the expected answer length so
+    // the answer box can render that many slot guides.
+    var trashDiv = document.getElementById(config.id + "-trash");
+    var sortableDiv = document.getElementById(config.id + "-sortable");
+    if (trashDiv) {
+      trashDiv.classList.add("parsons-source");
+    }
+    if (sortableDiv) {
+      sortableDiv.classList.add("parsons-answer");
+      var answerUl = document.getElementById("ul-" + config.id + "-sortable");
+      if (answerUl) {
+        answerUl.style.setProperty("--parsons-slots", solutionLineCount);
+      }
+    }
 
     var checkBtn = document.getElementById(config.id + "-check");
     if (checkBtn) {

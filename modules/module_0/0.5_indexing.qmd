@@ -183,7 +183,8 @@ Let's create `my_data_frame`:
 my_data_frame <-
   data.frame(
     words =
-      c("hello",
+      c(
+        "hello",
         "hello",
         "world",
         "world"
@@ -435,7 +436,8 @@ We can also change the assigned values with indexing:
 #| autorun: true
 
 my_data_frame[, 1] <-
-  c("hello",
+  c(
+    "hello",
     "world",
     "hello",
     "world"
@@ -450,7 +452,8 @@ my_data_frame
 #| autorun: true
 
 my_data_frame[3:4, 1] <-
-  c("boy",
+  c(
+    "boy",
     "howdy"
   )
 
@@ -501,7 +504,8 @@ We can use indexing notation (e.g., `[i]` or `[i, j]`) to extract values from an
 #| autorun: true
 
 names(my_object) <-
-  c("orange",
+  c(
+    "orange",
     "pear",
     "apple",
     "grape"
@@ -644,8 +648,8 @@ my_data_frame
 <div id="p-0-5-02-trash" class="sortable-code"></div>
 <div id="p-0-5-02-sortable" class="sortable-code"></div>
 <div style="clear: both;"></div>
-<button id="p-0-5-02-check" class="btn btn-outline-dark btn-sm" type="button">Check My Order</button>
-<button id="p-0-5-02-reset" class="btn btn-outline-dark btn-sm" type="button">Shuffle Again</button>
+<button id="p-0-5-02-check" class="parsons-btn parsons-btn-check" type="button">Check My Order</button>
+<button id="p-0-5-02-reset" class="parsons-btn parsons-btn-reset" type="button">Shuffle Again</button>
 <p id="p-0-5-02-feedback" class="parsons-feedback"></p>
 </div>
 
@@ -763,20 +767,20 @@ Because of this behavior, I like to think of `[]` as representing the word "wher
 *Note: There isn't a tidyverse equivalent for this operation -- `filter()`, which we turn to next, is built specifically for data frames. When you need to filter a bare vector like `my_object`, the approach above is still the way to go!*
 
 ::: now_you
-{{< fa user-circle size=2x >}} [True or false: To return the matching values when a logical test is placed inside `[]` (e.g., `my_object[my_object > 1]`), you must wrap the test in `which()`.]{style="padding-left: 0.5em;"}
+{{< fa user-circle size=2x >}} [Test your knowledge!]{style="padding-left: 0.5em;"}
+
+1. True or false: To return the matching values when a logical test is placed inside `[]` (e.g., `my_object[my_object > 1]`), you must wrap the test in `which()`.
 
 `r torf(FALSE)`
-:::
 
-::: now_you
-{{< fa user-circle size=2x >}} [Parsons Problem: Assemble the simplest way to subset `my_object` to values greater than 1. One line is an unneeded extra step that produces the identical result -- leave it in the trash.]{style="padding-left: 0.5em;"}
+2. Parsons Problem: Assemble the simplest way to subset `my_object` to values greater than 1. One line is an unneeded extra step that produces the identical result -- leave it in the trash.
 
 <div class="parsons-problem">
 <div id="p-0-5-03-trash" class="sortable-code"></div>
 <div id="p-0-5-03-sortable" class="sortable-code"></div>
 <div style="clear: both;"></div>
-<button id="p-0-5-03-check" class="btn btn-outline-dark btn-sm" type="button">Check My Order</button>
-<button id="p-0-5-03-reset" class="btn btn-outline-dark btn-sm" type="button">Shuffle Again</button>
+<button id="p-0-5-03-check" class="parsons-btn parsons-btn-check" type="button">Check My Order</button>
+<button id="p-0-5-03-reset" class="parsons-btn parsons-btn-reset" type="button">Shuffle Again</button>
 <p id="p-0-5-03-feedback" class="parsons-feedback"></p>
 </div>
 
@@ -927,14 +931,16 @@ pluck(my_list, 3) |>
 :::
 
 ::: now_you
-{{< fa user-circle size=2x >}} [Parsons Problem: Reorder the lines below to assign `my_data_frame` into `my_list[[3]]`, then pluck it back out and filter it to rows where `words` is `"hello"`. One line doesn't belong -- leave it in the trash.]{style="padding-left: 0.5em;"}
+{{< fa user-circle size=2x >}} [Test your knowledge!]{style="padding-left: 0.5em;"}
+
+1. Parsons Problem: Reorder the lines below to assign `my_data_frame` into `my_list[[3]]`, then pluck it back out and filter it to rows where `words` is `"hello"`. One line doesn't belong -- leave it in the trash.
 
 <div class="parsons-problem">
 <div id="p-0-5-01-trash" class="sortable-code"></div>
 <div id="p-0-5-01-sortable" class="sortable-code"></div>
 <div style="clear: both;"></div>
-<button id="p-0-5-01-check" class="btn btn-outline-dark btn-sm" type="button">Check My Order</button>
-<button id="p-0-5-01-reset" class="btn btn-outline-dark btn-sm" type="button">Shuffle Again</button>
+<button id="p-0-5-01-check" class="parsons-btn parsons-btn-check" type="button">Check My Order</button>
+<button id="p-0-5-01-reset" class="parsons-btn parsons-btn-reset" type="button">Shuffle Again</button>
 <p id="p-0-5-01-feedback" class="parsons-feedback"></p>
 </div>
 
@@ -946,10 +952,8 @@ window.parsonsProblems.push({
   code: "my_list[[3]] &lt;-\n  my_data_frame\npluck(my_list, 3) |&gt;\n  filter(words == \"hello\")\nmy_list |&gt;\n  filter(words == \"hello\") #distractor"
 });
 </script>
-:::
 
-::: now_you
-{{< fa user-circle size=2x >}} [Which of the following is TRUE about recursive data objects?]{style="padding-left: 0.5em;"}
+2. Which of the following is TRUE about recursive data objects?
 
 `r longmcq(c("A matrix is a type of recursive object", answer = "A data frame is a type of recursive object", "Quotation marks must be used when calling names assigned within an object", "The values of recursive objects are stored within the object itself"))`
 :::

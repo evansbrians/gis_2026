@@ -142,7 +142,8 @@ The argument of `names()` is the name of the parent object (which, in this case,
 
 ```{webr}
 names(my_object) <-
-  c("orange",
+  c(
+    "orange",
     "pear",
     "apple",
     "grape"
@@ -155,7 +156,8 @@ Conversely, we can also add names during the creation of an atomic vector using 
 #| autorun: true
 
 my_object <-
-  c(orange = 1,
+  c(
+    orange = 1,
     pear = 1,
     apple = 2,
     grape = 3
@@ -240,7 +242,8 @@ my_object
 ::: panel
 
 ```{r}
-c("vocals",
+c(
+  "vocals",
   "guitar",
   "bass",
   "drums"
@@ -262,7 +265,8 @@ c("vocals",
 ::: panel
 
 ```{r}
-c(roger = "vocals",
+c(
+  roger = "vocals",
   pete = "guitar",
   john = "bass",
   keith = "drums"
@@ -285,7 +289,8 @@ c(roger = "vocals",
 
 ```{r}
 attributes(
-  c(roger = "vocals",
+  c(
+    roger = "vocals",
     pete = "guitar",
     john = "bass",
     keith = "drums"
@@ -373,7 +378,8 @@ When building a matrix, it's super important to have a good sense of the data go
 
 ```{r}
 matrix(
-  c("hello",
+  c(
+    "hello",
     "world",
     "howdy"
   ),
@@ -560,8 +566,8 @@ bunny_matrix
 <div id="p-0-4-01-trash" class="sortable-code"></div>
 <div id="p-0-4-01-sortable" class="sortable-code"></div>
 <div style="clear: both;"></div>
-<button id="p-0-4-01-check" class="btn btn-outline-dark btn-sm" type="button">Check My Order</button>
-<button id="p-0-4-01-reset" class="btn btn-outline-dark btn-sm" type="button">Shuffle Again</button>
+<button id="p-0-4-01-check" class="parsons-btn parsons-btn-check" type="button">Check My Order</button>
+<button id="p-0-4-01-reset" class="parsons-btn parsons-btn-reset" type="button">Shuffle Again</button>
 <p id="p-0-4-01-feedback" class="parsons-feedback"></p>
 </div>
 
@@ -722,8 +728,8 @@ matrix(
 <div id="p-0-4-02-trash" class="sortable-code"></div>
 <div id="p-0-4-02-sortable" class="sortable-code"></div>
 <div style="clear: both;"></div>
-<button id="p-0-4-02-check" class="btn btn-outline-dark btn-sm" type="button">Check My Order</button>
-<button id="p-0-4-02-reset" class="btn btn-outline-dark btn-sm" type="button">Shuffle Again</button>
+<button id="p-0-4-02-check" class="parsons-btn parsons-btn-check" type="button">Check My Order</button>
+<button id="p-0-4-02-reset" class="parsons-btn parsons-btn-reset" type="button">Shuffle Again</button>
 <p id="p-0-4-02-feedback" class="parsons-feedback"></p>
 </div>
 
@@ -790,8 +796,8 @@ attributes(my_matrix)
 <div id="p-0-4-03-trash" class="sortable-code"></div>
 <div id="p-0-4-03-sortable" class="sortable-code"></div>
 <div style="clear: both;"></div>
-<button id="p-0-4-03-check" class="btn btn-outline-dark btn-sm" type="button">Check My Order</button>
-<button id="p-0-4-03-reset" class="btn btn-outline-dark btn-sm" type="button">Shuffle Again</button>
+<button id="p-0-4-03-check" class="parsons-btn parsons-btn-check" type="button">Check My Order</button>
+<button id="p-0-4-03-reset" class="parsons-btn parsons-btn-reset" type="button">Shuffle Again</button>
 <p id="p-0-4-03-feedback" class="parsons-feedback"></p>
 </div>
 
@@ -832,7 +838,8 @@ my_object <-
 attributes(my_object) <-
   list(
     names =
-      c("orange",
+      c(
+        "orange",
         "pear",
         "apple",
         "grape"
@@ -860,7 +867,8 @@ One method for arranging values into data frames is to use the `data.frame()` fu
 
 ```{webr}
 data.frame(
-  c("hello",
+  c(
+    "hello",
     "hello",
     "world",
     "world"
@@ -878,7 +886,8 @@ As we have with the other objects, we can use `attibutes()` to see important met
 ```{webr}
 attributes(
   data.frame(
-    c("hello",
+    c(
+      "hello",
       "hello",
       "world",
       "world"
@@ -901,7 +910,8 @@ We can verify this by looking at how the data are stored:
 ```{webr}
 typeof(
   data.frame(
-    c("hello",
+    c(
+      "hello",
       "hello",
       "world",
       "world"
@@ -916,7 +926,8 @@ We get another clue into the true nature of a data frame as we start digging int
 ```{webr}
 dim(
   data.frame(
-    c("hello",
+    c(
+      "hello",
       "hello",
       "world",
       "world"
@@ -931,7 +942,8 @@ This returned an integer vector and the results are what we may have expected --
 ```{webr}
 length(
   data.frame(
-    c("hello",
+    c(
+      "hello",
       "hello",
       "world",
       "world"
@@ -964,7 +976,8 @@ Finally! We can assign names to the list items that comprise a data frame during
 ```{webr}
 data.frame(
   greetings =
-    c("hello",
+    c(
+      "hello",
       "hello",
       "world",
       "world"
@@ -980,7 +993,8 @@ If a name for our data frame has been assigned to the global environment, we can
 
 my_data_frame <-
   data.frame(
-    c("hello",
+    c(
+      "hello",
       "hello",
       "world",
       "world"
@@ -1040,7 +1054,8 @@ If we have the tidyverse loaded onto our computers, we have access to a special 
 my_tibble <-
   tibble(
     greetings =
-      c("hello",
+      c(
+        "hello",
         "hello",
         "world",
         "world"
@@ -1085,14 +1100,16 @@ Because tibbles are so informative, I almost never use traditional data frames. 
 #| edit: false
 
 musicians <-
-  c("roger",
+  c(
+    "roger",
     "pete",
     "john",
     "keith"
   )
 
 role <-
-  c("vocals",
+  c(
+    "vocals",
     "guitar",
     "bass",
     "drums"

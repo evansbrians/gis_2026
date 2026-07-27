@@ -151,20 +151,20 @@ typeof(
 ```
 
 ::: now_you
-{{< fa user-circle size=2x >}} [Which of the following produces an atomic vector whose type is integer?]{style="padding-left: 0.5em;"}
+{{< fa user-circle size=2x >}} [Test your knowledge!]{style="padding-left: 0.5em;"}
+
+1. Which of the following produces an atomic vector whose type is integer?
 
 `r longmcq(c("c(1, 2, 3)", answer = "1:3", "c(1.0, 2.0, 3.0)", "as.numeric(1:3)"))`
-:::
 
-::: now_you
-{{< fa user-circle size=2x >}} [Parsons Problem: Reorder the lines below into a pipe that combines the values 8, 13, and 21, coerces them to integer, then reports the resulting type. One line doesn't belong -- leave it in the trash.]{style="padding-left: 0.5em;"}
+2. Parsons Problem: Reorder the lines below into a pipe that combines the values 8, 13, and 21, coerces them to integer, then reports the resulting type. One line doesn't belong -- leave it in the trash.
 
 <div class="parsons-problem">
 <div id="p-0-3-01-trash" class="sortable-code"></div>
 <div id="p-0-3-01-sortable" class="sortable-code"></div>
 <div style="clear: both;"></div>
-<button id="p-0-3-01-check" class="btn btn-outline-dark btn-sm" type="button">Check My Order</button>
-<button id="p-0-3-01-reset" class="btn btn-outline-dark btn-sm" type="button">Shuffle Again</button>
+<button id="p-0-3-01-check" class="parsons-btn parsons-btn-check" type="button">Check My Order</button>
+<button id="p-0-3-01-reset" class="parsons-btn parsons-btn-reset" type="button">Shuffle Again</button>
 <p id="p-0-3-01-feedback" class="parsons-feedback"></p>
 </div>
 
@@ -225,7 +225,8 @@ Character values are always enclosed in quotation marks. The code below creates 
 #| autorun: true
 
 months <-
-  c("March",
+  c(
+    "March",
     "February",
     "January",
     "January"
@@ -329,7 +330,8 @@ We create a factor with the `factor` function, supplying a character vector as t
 
 example_factor <-
   factor(
-    c("one",
+    c(
+      "one",
       "one",
       "two",
       "three"
@@ -386,13 +388,8 @@ Given the x-axis labels, this order doesn't make a lot of sense. We can manually
 
 plot(
   factor(
-    c("one",
-      "one",
-      "two",
-      "three"
-    ),
-    levels =
-      c("one", "two", "three")
+    c("one", "one", "two", "three"),
+    levels = c("one", "two", "three")
   )
 )
 ```
@@ -404,8 +401,8 @@ plot(
 <div id="p-0-3-02-trash" class="sortable-code"></div>
 <div id="p-0-3-02-sortable" class="sortable-code"></div>
 <div style="clear: both;"></div>
-<button id="p-0-3-02-check" class="btn btn-outline-dark btn-sm" type="button">Check My Order</button>
-<button id="p-0-3-02-reset" class="btn btn-outline-dark btn-sm" type="button">Shuffle Again</button>
+<button id="p-0-3-02-check" class="parsons-btn parsons-btn-check" type="button">Check My Order</button>
+<button id="p-0-3-02-reset" class="parsons-btn parsons-btn-reset" type="button">Shuffle Again</button>
 <p id="p-0-3-02-feedback" class="parsons-feedback"></p>
 </div>
 
@@ -414,7 +411,7 @@ window.parsonsProblems = window.parsonsProblems || [];
 window.parsonsProblems.push({
   id: "p-0-3-02",
   maxDistractors: 1,
-  code: "plot(\n  factor(\n    c(\"one\", \"one\", \"two\", \"three\"),\n    levels =\n      c(\"one\", \"two\", \"three\")\n  )\n)\n    sort() #distractor"
+  code: "plot(\n  factor(\n    c(\"one\", \"one\", \"two\", \"three\"),\n    levels = c(\"one\", \"two\", \"three\")\n  )\n)\nsort() #distractor"
 });
 </script>
 :::
@@ -424,34 +421,28 @@ We can also relabel the levels (useful for tidier plots) with the `labels` argum
 ```{webr}
 plot(
   factor(
-    c("one",
-      "one",
-      "two",
-      "three"
-    ),
-    levels =
-      c("one", "two", "three"),
-    labels =
-      c("One", "Two", "Three")
+    c("one", "one", "two", "three"),
+    levels = c("one", "two", "three"),
+    labels = c("One", "Two", "Three")
   )
 )
 ```
 
 ::: now_you
-{{< fa user-circle size=2x >}} [True or false: The `labels` argument of `factor()` is applied in the order the `levels` are given, so setting `labels` without also setting `levels` can attach a label to the wrong category.]{style="padding-left: 0.5em;"}
+{{< fa user-circle size=2x >}} [Test your knowledge!]{style="padding-left: 0.5em;"}
+
+1. True or false: The `labels` argument of `factor()` is applied in the order the `levels` are given, so setting `labels` without also setting `levels` can attach a label to the wrong category.
 
 `r torf(TRUE)`
-:::
 
-::: now_you
-{{< fa user-circle size=2x >}} [Parsons Problem: Extend the previous plot by relabeling the levels "One", "Two", "Three". Inside `factor()`, `levels` must come before `labels`. One line doesn't belong -- leave it in the trash.]{style="padding-left: 0.5em;"}
+2. Parsons Problem: Extend the previous plot by relabeling the levels "One", "Two", "Three". Inside `factor()`, `levels` must come before `labels`. One line doesn't belong -- leave it in the trash.
 
 <div class="parsons-problem">
 <div id="p-0-3-03-trash" class="sortable-code"></div>
 <div id="p-0-3-03-sortable" class="sortable-code"></div>
 <div style="clear: both;"></div>
-<button id="p-0-3-03-check" class="btn btn-outline-dark btn-sm" type="button">Check My Order</button>
-<button id="p-0-3-03-reset" class="btn btn-outline-dark btn-sm" type="button">Shuffle Again</button>
+<button id="p-0-3-03-check" class="parsons-btn parsons-btn-check" type="button">Check My Order</button>
+<button id="p-0-3-03-reset" class="parsons-btn parsons-btn-reset" type="button">Shuffle Again</button>
 <p id="p-0-3-03-feedback" class="parsons-feedback"></p>
 </div>
 
@@ -460,7 +451,7 @@ window.parsonsProblems = window.parsonsProblems || [];
 window.parsonsProblems.push({
   id: "p-0-3-03",
   maxDistractors: 1,
-  code: "plot(\n  factor(\n    c(\"one\", \"one\", \"two\", \"three\"),\n    levels =\n      c(\"one\", \"two\", \"three\"),\n    labels =\n      c(\"One\", \"Two\", \"Three\")\n  )\n)\n    labels =\n      c(\"One\", \"Two\", \"Three\"), #distractor"
+  code: "plot(\n  factor(\n    c(\"one\", \"one\", \"two\", \"three\"),\n    levels = c(\"one\", \"two\", \"three\"),\n    labels = c(\"One\", \"Two\", \"Three\")\n  )\n)\nlabels = c(\"One\", \"Two\", \"Three\"), #distractor"
 });
 </script>
 :::
@@ -487,8 +478,7 @@ factor(
 
 factor(
   c("low", "medium", "high"),
-  levels =
-    c("low", "medium", "high")
+  levels = c("low", "medium", "high")
 )
 ```
 :::
@@ -595,14 +585,16 @@ sum(summer %in% spring)
 :::
 
 ::: now_you
-{{< fa user-circle size=2x >}} [Parsons Problem: Reorder the lines below to count how many summer months also occur in spring, wrapping the correct membership test inside `sum()`. One line doesn't belong -- leave it in the trash.]{style="padding-left: 0.5em;"}
+{{< fa user-circle size=2x >}} [Test your knowledge!]{style="padding-left: 0.5em;"}
+
+1. Parsons Problem: Reorder the lines below to count how many summer months also occur in spring, wrapping the correct membership test inside `sum()`. One line doesn't belong -- leave it in the trash.
 
 <div class="parsons-problem">
 <div id="p-0-3-04-trash" class="sortable-code"></div>
 <div id="p-0-3-04-sortable" class="sortable-code"></div>
 <div style="clear: both;"></div>
-<button id="p-0-3-04-check" class="btn btn-outline-dark btn-sm" type="button">Check My Order</button>
-<button id="p-0-3-04-reset" class="btn btn-outline-dark btn-sm" type="button">Shuffle Again</button>
+<button id="p-0-3-04-check" class="parsons-btn parsons-btn-check" type="button">Check My Order</button>
+<button id="p-0-3-04-reset" class="parsons-btn parsons-btn-reset" type="button">Shuffle Again</button>
 <p id="p-0-3-04-feedback" class="parsons-feedback"></p>
 </div>
 
@@ -614,10 +606,8 @@ window.parsonsProblems.push({
   code: "sum(\n  summer %in% spring\n)\nspring %in% summer #distractor"
 });
 </script>
-:::
 
-::: now_you
-{{< fa user-circle size=2x >}} [Which statement best describes how `%in%` behaves?]{style="padding-left: 0.5em;"}
+2. Which statement best describes how `%in%` behaves?
 
 `r longmcq(c("They test equivalence between two sets of values, regardless of position", answer = "They test equivalence between two sets of values, but only ever produce a result the length of the vector on the left-hand-side", "They can only be used to compare character vectors", "They are directionally agnostic, in the same way == is"))`
 :::

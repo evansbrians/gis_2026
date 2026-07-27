@@ -3,7 +3,25 @@ title: "Preliminary Lesson 2: Environment & Functions"
 format: live-html
 ---
 
-{{< include /src/includes/_setup.qmd >}}
+```{r}
+#| include: false
+
+source("src/r/course_functions.R")
+```
+```{r}
+#| label: setup
+#| include: false
+
+library(webexercises)
+
+knitr::opts_chunk$set(
+  echo = TRUE,
+  eval = TRUE,
+  error = TRUE
+)
+```
+
+{{< include ../../_extensions/r-wasm/live/_knitr.qmd >}}
 
 <hr>
 
@@ -138,7 +156,7 @@ Single and double quotation marks can largely be used interchangeably for words 
 
 **Functions** are what data-wrangling guru Hadley Wickham calls the "fundamental building block of R". Functions are a special type of R object that contain instructions for executing a given task. You invoke a function any time you run R code.
 
-For example, you actually used an R function when you ran `1 + 2`. The plus sign is an R function called an **operator**.
+For example, you actually used an R function when you ran `1 + 2`. The plus sign is a special type of R function called an **operator**. An operator is a function that is expressed as a symbol.
 
 ### 2.1 Using a named function
 
@@ -157,7 +175,7 @@ When you download R you have access to thousands of functions. Most functions ha
 :::
 :::
 
-The **name** of a function is a pointer that your computer uses to find the instructions to execute when running the function. **Parentheses** are syntax that enclose a function's arguments and indicate that the function should be called. The **arguments** of a function determine what you want your function to evaluate (usually the data) and often the behavior of the evaluation. If the function you are using contains more than one argument, each argument is separated by a **comma** -- a comma is not a function but is instead a special character used exclusively for separating arguments in a function.
+The **name** of a function is a pointer that your computer uses to find the instructions to execute when running the function. The **parentheses** are an operator that provides an enclosing environment for a function's arguments and instructs R to execute the function. The **arguments** of a function determine what you want your function to evaluate (usually the data) and often the behavior of the evaluation. If the function you are using contains more than one argument, each argument is separated by a **comma** -- a comma is not a function but is instead a special character used exclusively for separating arguments in a function.
 
 ::: now_you
 {{< fa user-circle size=2x >}} [Copy-and-paste the code below into your console panel and run it:]{style="padding-left: 0.5em;"}
@@ -167,12 +185,7 @@ c(1, 1, 2, 3)
 ```
 :::
 
-Let's deconstruct the above:
-
-* `c` is the name of the R function that is used to combine multiple values into a single object
-* The parentheses `(...)` enclose the arguments of `c`, which here are the individual values to combine, and tell R to call the function
-* The commas are syntax which separate the arguments of the function (*Note: commas are not functions*)
-* The arguments of the function are the values that we would like to combine.
+In the above, `c` is the name of the R function used to combine multiple values into a single object. The arguments of this function are the values that we would like to combine. Each argument is separated by a comma. Note that, because the parentheses, `()`, is an operator, there are actually two functions in the above code!
 
 ::: mysecret
 {{< fa user-secret size=2x >}} [Space out your commas!]{style="font-size: 1.25em; padding-left: 0.5em;"}
@@ -189,19 +202,7 @@ my_object <-
   c(1, 1, 2, 3)
 ```
 
-*Note: The code now has two functions, the assignment operator, `<-` and the combine function `c`.*
-
-::: mysecret
-An operator *is* a function that performs a specific operation but is written using a symbol or set of symbols instead of the usual `function_name(...)` syntax. The following are equivalent:
-
-```{webr}
-1 + 2
-
-`+`(1, 2)
-```
-
-The value of using an operator is that it can simplify common tasks.
-:::
+*Note: The code now has three functions, the assignment operator, `<-`, the combine function `c`, and the parentheses operator, `()`.*
 
 Probably the most important function in all of R is the `?` operator. We use `?` to show the help file for a given function in the viewer pane. The documentation includes a description of the function, how it is used, important details on its usage, the type of value returned, and even examples.
 
@@ -274,20 +275,20 @@ mean(
 :::
 
 ::: now_you
-{{< fa user-circle size=2x >}} [What does the `na.rm = TRUE` argument do in `mean(c(5, 8, 13, NA), na.rm = TRUE)`?]{style="padding-left: 0.5em;"}
+{{< fa user-circle size=2x >}} [Test your knowledge!]{style="padding-left: 0.5em;"}
+
+1. What does the `na.rm = TRUE` argument do in `mean(c(5, 8, 13, NA), na.rm = TRUE)`?
 
 `r longmcq(c(answer = "Removes the NA value before computing the mean", "Replaces NA with 0", "Returns NA because a value is missing", "Rounds the result to a whole number"))`
-:::
 
-::: now_you
-{{< fa user-circle size=2x >}} [Parsons Problem: Reorder the lines below into a valid nested function call that calculates the mean of `c(5, 8, 13, NA)`, ignoring the missing value. One line doesn't belong -- leave it in the trash.]{style="padding-left: 0.5em;"}
+2. Parsons Problem: Reorder the lines below into a valid nested function call that calculates the mean of `c(5, 8, 13, NA)`, ignoring the missing value. One line doesn't belong -- leave it in the trash.
 
 <div class="parsons-problem">
 <div id="p-0-2-01-trash" class="sortable-code"></div>
 <div id="p-0-2-01-sortable" class="sortable-code"></div>
 <div style="clear: both;"></div>
-<button id="p-0-2-01-check" class="btn btn-outline-dark btn-sm" type="button">Check My Order</button>
-<button id="p-0-2-01-reset" class="btn btn-outline-dark btn-sm" type="button">Shuffle Again</button>
+<button id="p-0-2-01-check" class="parsons-btn parsons-btn-check" type="button">Check My Order</button>
+<button id="p-0-2-01-reset" class="parsons-btn parsons-btn-reset" type="button">Shuffle Again</button>
 <p id="p-0-2-01-feedback" class="parsons-feedback"></p>
 </div>
 
@@ -384,17 +385,15 @@ Warning! In the early stages of learning R, or even later if you have not spent 
 2. True or false: When loading an installed package with `library()`, the package name must be enclosed in quotation marks, exactly as it is for `install.packages()`.
 
 `r torf(FALSE)`
-:::
 
-::: now_you
-{{< fa user-circle size=2x >}} [Parsons Problem: Reorder the lines below into the correct install, load, use sequence. Two lines don't belong -- leave them in the trash.]{style="padding-left: 0.5em;"}
+3. Parsons Problem: Reorder the lines below into the correct install, load, use sequence. Two lines don't belong -- leave them in the trash.
 
 <div class="parsons-problem">
 <div id="p-0-2-02-trash" class="sortable-code"></div>
 <div id="p-0-2-02-sortable" class="sortable-code"></div>
 <div style="clear: both;"></div>
-<button id="p-0-2-02-check" class="btn btn-outline-dark btn-sm" type="button">Check My Order</button>
-<button id="p-0-2-02-reset" class="btn btn-outline-dark btn-sm" type="button">Shuffle Again</button>
+<button id="p-0-2-02-check" class="parsons-btn parsons-btn-check" type="button">Check My Order</button>
+<button id="p-0-2-02-reset" class="parsons-btn parsons-btn-reset" type="button">Shuffle Again</button>
 <p id="p-0-2-02-feedback" class="parsons-feedback"></p>
 </div>
 
@@ -503,7 +502,8 @@ It's important to assign names that convey meaning about the object. For example
 #| autorun: true
 
 x <-
-  c("vocals",
+  c(
+    "vocals",
     "guitar",
     "bass",
     "drums"
@@ -520,7 +520,8 @@ In our hunt for a more communicative assignment, we might be tempted to start ou
 #| error: true
 
 4instruments <-
-  c("vocals",
+  c(
+    "vocals",
     "guitar",
     "bass",
     "drums"
@@ -533,7 +534,8 @@ We get an error above because assignments cannot start with numbers. They can, h
 #| autorun: true
 
 instruments4 <-
-  c("vocals",
+  c(
+    "vocals",
     "guitar",
     "bass",
     "drums"
@@ -548,7 +550,8 @@ The name we assigned, `instruments4`, is perhaps not a great convention to descr
 #| autorun: true
 
 fourinstruments <-
-  c("vocals",
+  c(
+    "vocals",
     "guitar",
     "bass",
     "drums"
@@ -561,7 +564,8 @@ The name above still takes too much interpretation because it's difficult to see
 #| error: true
 
 four instruments <-
-  c("vocals",
+  c(
+    "vocals",
     "guitar",
     "bass",
     "drums"
@@ -578,7 +582,8 @@ To address our spacing issues, we must search for a different way to define the 
 #| autorun: true
 
 FourInstruments <-
-  c("vocals",
+  c(
+    "vocals",
     "guitar",
     "bass",
     "drums"
@@ -591,7 +596,8 @@ FourInstruments <-
 #| autorun: true
 
 fourInstruments <-
-  c("vocals",
+  c(
+    "vocals",
     "guitar",
     "bass",
     "drums"
@@ -602,7 +608,8 @@ fourInstruments <-
 
 ```{webr}
 four_instruments <-
-  c("vocals",
+  c(
+    "vocals",
     "guitar",
     "bass",
     "drums"
@@ -656,11 +663,12 @@ We can remove names from the global environment using the `rm()` function. Insid
 ```{webr}
 #| autorun: true
 
-rm(fourinstruments,
-   FourInstruments,
-   instruments4,
-   fourInstruments,
-   x
+rm(
+  fourinstruments,
+  FourInstruments,
+  instruments4,
+  fourInstruments,
+  x
 )
 ```
 
@@ -731,8 +739,8 @@ By removing the assignment `hello` above, the data object "hello world" was left
 <div id="p-0-2-03-trash" class="sortable-code"></div>
 <div id="p-0-2-03-sortable" class="sortable-code"></div>
 <div style="clear: both;"></div>
-<button id="p-0-2-03-check" class="btn btn-outline-dark btn-sm" type="button">Check My Order</button>
-<button id="p-0-2-03-reset" class="btn btn-outline-dark btn-sm" type="button">Shuffle Again</button>
+<button id="p-0-2-03-check" class="parsons-btn parsons-btn-check" type="button">Check My Order</button>
+<button id="p-0-2-03-reset" class="parsons-btn parsons-btn-reset" type="button">Shuffle Again</button>
 <p id="p-0-2-03-feedback" class="parsons-feedback"></p>
 </div>
 
