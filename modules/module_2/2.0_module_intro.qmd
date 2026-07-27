@@ -1,0 +1,124 @@
+---
+title: "Module 2: The tidyverse"
+format:
+  html:
+    embed-resouces: true
+    self-contained: true
+    standalone: true
+    toc: false
+    number-sections: false
+    search: true
+    include-in-header: ../../src/includes/header_includes.html
+    include-after-body: ../../src/includes/accordion_script.html
+    theme: 
+      - cosmo
+      - ../../src/css/custom_style.scss
+editor: source
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r, include = FALSE}
+source("src/r/course_functions.R")
+```
+<hr>
+
+<div>
+
+![](../../src/images/hex_complex.png){.intro_image}
+
+Welcome to **Module 2: Introduction to the tidyverse**! In this set of lessons, we will explore the primary tidyverse tools for pre-processing and visualizing ecological data. You will learn:
+
+-   Tools for reshaping data with the core tidyverse packages *dplyr* and *tidyr*;
+-   Tools for adding columns to a data frame;
+-   Tools for subsetting data frames;
+-   Tools for summarizing data frames;
+-   How to visualize data with *ggplot*;
+-   More tools to ensure your success in this course!
+
+Before continuing, please be sure that you have completed all of the preliminary course content (Preliminary lessons 1-4) and all of the content from Module 1.
+
+</div>
+
+## Module overview
+
+This module is divided into the following sections:
+
+-   **2.1 Introduction to tidy data**: At the core of the tidyverse is the principles of tidy data. In this video lesson (runtime: 18:38), you will learn what tidy data is and why it matters!
+-   **2.2 Reshaping data frames**: There are a lot of applications that require reshaping data frames. In this tutorial, we primarily focus on reshaping data frames during what I call "data pre-processing" -- modifying data as we read it into R. 
+-   **2.3 Introduction to data visualization with ggplot**: We will be visualizing data a lot throughout this course. To do so, we will use the tidyverse package, ggplot (a core package). This tutorial includes a video (runtime: 33:24) that introduces you to ggplot, and a written reference that you can use throughout this course.
+-   **2.4 Introduction to mutation**: Mutation is the process of adding columns to a data frame or modifying an existing column. In this tutorial, that includes a video (runtime: 18:01), you will learn the basics of mutation with dplyr functions.
+-   **2.5 Introduction to subsetting**: In this video (runtime: 21:59) and written tutorial, you will learn a variety of dplyr methods for subsetting columns and rows by position, name, and logic.  
+-   **2.6 Introduction to summarizing**: In this video (runtime: 23:46) and written tutorial, we will cover summarize() – an amazing tool for exploring and communicating data! This dplyr function performs mutate(), select(), and distinct() in a single step – we will use summarize() a lot in this course!
+-   **2.7 Course style guide, part 2**: This lesson builds on the set of code formatting rules that I ask you to follow in the course. The provided rules are closely aligned with the [tidyverse style guide](https://style.tidyverse.org/){target="_blank"}.
+## Getting started
+
+Before you begin this week's lessons, please download the attached zip file [module_2_files.zip]{.mono} and:
+
+* Place the following R script files in the [scripts]{.mono} folder:
+    * [2.1_reshaping_data_frames.R]{.mono}
+    * [2.3_tidy_data.R]{.mono}
+    * [summarize_lanternfly.R]{.mono}
+    * [working_with_tidy_data.R]{.mono}
+    
+* Place the following data files in the folder [data/raw]{.mono}:
+    * [angola_undulates.rds]{.mono}
+    * [chickadees.csv]{.mono}
+    * [district_birds.rds]{.mono}
+    * [spotted_lanternfly.rds]{.mono}
+    * [untidy_data.rds]{.mono}
+* Place [weather_tidy.rds]{.mono} in the folder [data/processed]{.mono}
+
+## About this week's data
+
+This week we will use the following data files in our exercises:
+
+**[angola_ungulates.rds]{.mono}**: These data are formatted as a list of two tibble data frames and represent all observations of ungulates in Angola by the iNaturalist community science project. I downloaded these data using the R package “rinat”. Taxonomic information for the observed species were obtained from the [Integrated Taxonomic Information System (ITIS)](https://www.itis.gov/) and downloaded using the R package “taxize”.
+
+**[chickadees.csv]{.mono}**: This file includes measures of Carolina and Black-capped chickadees across several regions of the United States. The data were collected by the Smithsonian Neighborhood Nestwatch Project, a community science project. Measurements taken include the species of bird, mass, wing length, and sex. You can learn more about Neighborhood Nestwatch at [this link](https://nationalzoo.si.edu/migratory-birds/neighborhood-nestwatch).
+
+**[district_birds.rds]{.mono}**: This is a tidy dataset that contains a subset of records from the Smithsonian Migratory Bird Center's [Neighborhood Nestwatch](https://nationalzoo.si.edu/migratory-birds/neighborhood-nestwatch) (NN) program. NN is a community science project where scientists visit backyards, neighborhoods, and schools to conduct bird banding demonstrations and sample bird populations. The data include tables for sites, visits, point counts, and capture events, and a table that provides natural history information for observed birds. Geographic coordinate values have been jittered to protect the privacy of NN participants.
+
+**[weather_tidy.rds]{.mono}**: The data were collected from 2010-2020 at five NOAA weather stations located in California, North Carolina, New York, and Wisconsin. The file contains measures of precipitation, snow, and temperatures during the month of March.
+
+**[spotted_lanternfly.rds]{.mono}**: This is a tabular dataset of [iNaturalist observations of spotted lanternfly (*Lycorma delicatula*)](https://www.inaturalist.org/projects/spotted-lanternfly), an invasive pest species whose spread is of commercial and ecological concern. Each row is an observation submitted by a community science participant via a web or smartphone application.
+
+**[untidy_data.rds]{.mono}**: These are "fake" data (though subsets of "real" data!) that I am using for illustration purposes in the tidy data lecture.
+
+## Readings and resources
+
+<button class="accordion">Functions used through the end of this module (I am a button ... click me!)</button>
+::: panel
+**Important!** Primitive functions as well as functions in the *base* and *utils* packages, are loaded by default when you start an R session. Functions in *tibble* and *tidyverse* are loaded with `library(tidyverse)`. Although the *magrittr* package is not a part of the core tidyverse, the `%>%` function is imported by the *dplyr* (core tidyverse) library.
+
+::: function_table
+
+```{r, message = FALSE, echo = FALSE}
+render_function_table("functions_through_module_2.csv", .align = c("c", "c", "l", "l"))
+```
+
+:::
+
+:::
+
+:::{style="margin-top:16px;"}
+
+-   Wickham & Grolemund:
+    -   [5.1-5.5: Data transformation](https://r4ds.had.co.nz/transform.html#transform){target="_blank"}
+    -   [5.6 Groups summaries](https://r4ds.had.co.nz/transform.html?q=group#grouped-summaries-with-summarise){target="_blank"}
+    -   [12.1-12.5: Tidy data](https://r4ds.had.co.nz/tidy-data.html){target="_blank"}
+
+-   [Wickham, H. 2014. Tidy data. *Journal of Statistical Software* 59: 1-23.](https://vita.had.co.nz/papers/tidy-data.pdf){target="_blank"}
+
+-   Chang, W. 2019. [R Graphics Cookbook](https://r-graphics.org/){target="_blank"}. O’Reilly Media, Inc., Sebastopol CA.
+
+-   Wickham H, D Navarro, and TL Pedersen. 2021.[ggplot2: Elegant Graphics for Data Analysis](https://ggplot2-book.org/index.html){target="_blank"}. Springer-Verlag, New York NY.
+
+-   **Cheat sheets:** I *strongly* recommend printing the cheat sheets to have a handy reference to tidyverse functions and how they are used (*Note: Please use [this link](https://rstudio.github.io/cheatsheets/translations.html) to access translated cheat sheets*)!
+
+    -   [Data tidying (tidyr)](https://raw.githubusercontent.com/rstudio/cheatsheets/main/tidyr.pdf){target="_blank"}
+    -   [Data transformation (dplyr)](https://raw.githubusercontent.com/rstudio/cheatsheets/main/data-transformation.pdf){target="_blank"}
+    -   [Data visualization (ggplot)](https://rstudio.github.io/cheatsheets/html/data-visualization.html){target="_blank"}
+
+:::
+

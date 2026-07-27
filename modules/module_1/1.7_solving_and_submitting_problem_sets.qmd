@@ -1,0 +1,81 @@
+---
+title: "1.7 Solving and submitting problem sets"
+format:
+  html:
+    embed-resouces: true
+    self-contained: true
+    standalone: true
+    toc: false
+    number-sections: false
+    search: true
+    include-in-header: ../../src/includes/header_includes.html
+    include-after-body: ../../src/includes/accordion_script.html
+    theme: 
+      - cosmo
+      - ../../src/css/custom_style.scss
+editor: source
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r, include = FALSE}
+source("src/r/course_functions.R")
+```
+<hr>
+
+![](../../src/images/hex_complex.png){.intro_image}
+
+Each problem set in this course will ask you to address three types of questions:
+
+* **The gimmes**: The first few questions of each problem set ask you to do things like name your R file and load the tidyverse.
+
+* **Straight from the course material**: Most questions will directly reflect the material as it was provided.
+
+* **Integrated questions**: Some questions ask that you integrate across the material that was provided and/or test your conceptual understanding of the material. Do avoid getting stuck asking yourself "*where did we do …? *", as this can lead to a time sink when you are being asked to apply functions in a new way. Taking careful notes during the lectures can help. Additionally, have a look at the functions guide at the end of each module!
+
+## Recommended workflow
+
+**Do not code your way through the problems**! Data wrangling is basically the process of solving a series of puzzles and it is a *major* time sink to solve these puzzles by jumping straight to the code. Instead, *plan ahead* … a whiteboard and/or pencil and scrap paper are a coders most important tools for problem solving. 
+
+Here is my recommended workflow for solving problem sets:
+
+1. **Functions you that may use**: For problem sets, start by looking at the "Functions that you may use …" list. If there are any functions that are unfamiliar to you, use `?function` to learn about it. Then go to your code-along-code scripts and/or course tutorials to find how we’ve used the function in the past. If you’re on a Mac, using Finder with the function name can usually take you to the script where the function was used (I’m not sure if this works well on Windows).
+
+2. **Explore the data**: Before heading to the questions (other than data loading), explore the data set using functions like `str` and `summary`. Pay careful attention to the class and type of values present, the container used to hold those values (e.g., list or atomic vector) and whether there are any [NA]{.mono} values. Note that, unless you are explicitly asked to do so, you will not include data exploration code in your submitted assignment.
+
+3. **Visualize**: For each question, visualize what you want the resultant object to look like. Look for clues in the language of the question to determine the *class* of the resultant object (e.g., is it a single value or should you return a data frame?).
+
+4. **Write out the primary steps** (*integrated questions*): If you’re confronted with an *integrated question*, plan the primary steps that you need to do to achieve this result using pencil and paper or a whiteboard. I am a visual-thinker, so I typically make diagrams that look like flow charts. You could just write the steps out too (but use plain language that a non-coder could understand).
+
+5. **Append with the individual stages** (*integrated questions*): Modify your plan (again with pencil and paper or whiteboard) by breaking down any multi-step process into individual stages (still with a diagram or non-coder language). Be specific at this stage (for example "subset the rows of the data frame using a logical test").
+
+6. **Append with the functions** (*integrated questions*): Once you are sure that your plan is complete, start to append it (still pencil and paper or whiteboard) by adding the functions that can be used to address the step in the process (from the *approved* functions list). Really give this step careful consideration — for example, if I am asked to subset a data frame, I know I can choose from the select family of functions to subset a data frame by columns, the slice family to subset by row position, or the filter family to subset by logical condition. Look for clues in the language of the question to help guide you to the family of functions to draw from (e.g., Adding or modifying a variable suggests that you will be using a mutate or summarize).
+
+7. **Code it**: Then (and only then) should you address a problem with code!
+
+8. **Test it**: Make sure the output represents what you expected. If a multi-step process is not generating the expected output (or throwing an error), highlight sections of the code and run it to make sure that each component generates the desired output. If this process includes iteration or a custom function (e.g., an `i` for indexing, an `x` or `.x` for variables in functions), try assigning the index or variable name to your global environment and making sure that it works as expected outside of the loop or function. *Note: The worst thing you can do at this stage is to make changes to the whole code block in hopes of achieving a different outcome.*
+
+While the first step is specific to solving our problem sets, steps 2-8 are super useful when you are solving data wrangling problems in the real world!
+
+## Other tips and tricks
+
+I take off points for **code formatting and other minor issues**, but many of these points are easily avoidable if you:
+
+* Always ensure that the naming convention used for your assignment is [problem_set\_\[week\]\_\[last name\]\_\[first name\].R]{.mono}. For example, if I submitted a problem set for the first week, the name of my submitted document would be [problem_set_1_evans_brian.R]{.mono}.
+
+* Never, never, never use `setwd()`!
+
+* Always use keyboard shortcuts for adding global assignment operators ([alt/option + dash]{.mono}), comments ([Ctrl/Cmd + shift + C]{.mono}), and pipes ([Ctrl/Cmd + shift + M]{.mono}).
+* Before submitting your problem set:
+
+    * Select all content ([Ctrl/Cmd + A]{.mono}) and fix any potential indentation errors with the keyboard shortcut [Ctrl/Cmd + I]{.mono}.
+
+    * Double-check your code formatting with principles outlined in the ***Course style guide***.
+
+    * Cross-check your functions (including operators) with those provided to you in the "Functions you may use …" section.
+
+    * Clear your global environment and run your entire script … if it works with no errors, you are ready to submit!
+
+## A note on **Stack Overflow**
+
+Every coder I know (including me) uses the website Stack Overflow when they get stuck. It is an awesome resource where coding questions are answered by members of the Stack Overflow community. Despite its utility, **I strongly advise against using Stack Overflow** when completing weekly problem sets. First, there’s simply a lot of bad advice out there – although the Stack Overflow community contains some heavy-hitters in the world of coding (e.g., Ben Bolker), anyone can submit their answer to questions. As a reader, you’ve got to be discerning out which/whose advise to take. Next, the world of R coding is changing at a rapid pace (especially as it relates to GIS) – a good answer two years ago may not represent a good answer today. Finally, Stack Overflow can be a major time sink – the course content and additional readings that have been provided to you can be used to address all questions for a given problem set.

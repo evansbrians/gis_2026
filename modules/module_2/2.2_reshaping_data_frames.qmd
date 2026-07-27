@@ -1,0 +1,852 @@
+---
+title: "2.2 Reshaping data frames"
+format:
+  html:
+    embed-resouces: true
+    self-contained: true
+    standalone: true
+    toc: true
+    toc-location: left
+    number-sections: false
+    search: true
+    include-in-header: ../../src/includes/header_includes.html
+    include-after-body: ../../src/includes/accordion_script.html
+    theme: 
+      - cosmo
+      - ../../src/css/custom_style.scss
+editor: source
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r, include = FALSE}
+source("src/r/course_functions.R")
+```
+```{r setup, include=FALSE}
+library(tidyverse)
+
+knitr::opts_chunk$set(
+  echo = TRUE,
+  eval = TRUE,
+  error = TRUE)
+
+rm(has_annotations)
+```
+
+<hr>
+
+<div>
+![](../../src/images/hex_complex.png){.intro_image}
+
+When we receive a dataset, modifying how the data are arranged is often the first processing step that we must take. Given that most datasets (especially in ecology) are often quite messy, this *should* almost always be the first thing you do after (or as) you read in and explore the structure of your data. This pre-processing step is also known as "data tidying" and "data normalization". The rules that govern how and why we reshape data during pre-processing represent core principles of data engineering. The *tidyverse* is founded on the principles of **tidy data** which can, in brief, be simplified as:
+
+* Every variable forms a column
+* Each observation forms a row
+* Each level of observation forms a table
+
+Understanding these rules, spotting violations, and knowing how to modify data to address them are, by far, *the most important skills that you will gain in this course*. This tutorial will cover the primary functions and methods used to address tidy data problems.
+
+In this lesson, you will learn how to:
+
+* Combine and split columns with `unite()` and `separate()`
+* Combine data frames with `bind_rows()`, `bind_cols()`, and `left_join()`
+* Transpose data frames with `pivot_longer()`, `pivot_wider()`, `count()`, `group_by()`, and `summarize()`
+* Subset columns with `select()`
+* Remove duplicated rows with `distinct()`
+
+**Important!** Before starting this tutorial, be sure that you have completed all preliminary and  previous lessons!
+
+</div>
+
+## Set up your session
+
+An R Studio **session** represents the time spent and operations conducted since opening R (*Note: sessions may be saved and loaded to avoid lost work*). At the beginning of each session, I like to do a series of housekeeping steps. Please do the following before continuing:
+
+1. Open your RStudio project (*Note: Always work from inside of a project!*).
+
+1. If there are any script files open in your source pane. Close them. *Note: If any of your script titles are blue, you might want to save them prior to closing!*
+
+1. In the *Environment* tab of your **workspace pane**, ensure that your **Global Environment** is empty. If it is not, click the *broom* to remove all objects.
+
+1. In the *History* tab of your **workspace pane**, ensure that your history is empty. If it is not, click the *broom* to remove your history.
+
+By completing the steps above, your current session will be dedicated, in its entirety, to the task at hand. That really helps organize your workflow during a given session.
+
+Now that we're working in a clean session:
+
+1. Create a script file (Windows: Ctrl + Shift + N; Mac: Cmd + Shift + N)
+
+2. Add metadata (e.g., `# My code for the tutorial: reshaping data frames`)
+
+3. Following your metadata, create a new code section (Windows: Ctrl + Shift + R; Mac: Cmd + Shift + R) and call it "setup" (*Note: A **code section** is a portion of a script file that is delineated by a section header*)
+
+4. Following your section header, load the tidyverse library (`library(tidyverse)`)
+
+At this point, your script should look something like:
+
+```{r eval = FALSE}
+# My code for the tutorial: reshaping data frames
+
+# setup --------------------------------------------------------
+
+library(tidyverse)
+```
+
+*Note: This is already done for you in the script file for this lesson, "2.1_reshaping_data_frames.R"*
+
+## Data for this lesson
+
+For this lesson, we will use the file [angola_ungulates.rds]{.mono}. This dataset represents all observations of ungulates in Angola by the iNaturalist community science project. I downloaded these data using the R package "rinat". Taxonomic information for the observed species were obtained from the [Integrated Taxonomic Information System (ITIS)](https://www.itis.gov/) and downloaded using the R package "taxize". The data are formatted as a list of two tibble data frames:
+
+* [perissodactyla]{.mono}: Observations and taxonomy of odd-toed ungulates in Angola
+* [artiodactyla]{.mono}: Observations and taxonomy of even-toed ungulates in Angola
+
+The variables in each data frame are equivalent and include the columns:
+
+* [year]{.mono}: The year that an observation occurred
+* [month]{.mono}: The month that an observation occurred
+* [day]{.mono}: The day of the month that an observation occurred
+* [user_login]{.mono}: The iNaturalist observer that submitted the data
+* [taxonomy]{.mono}: The taxonomic class, order, and family of the observed animal, with each taxonomic level separated with a dash (ITIS)
+* [genus]{.mono}: The taxonomic genus of the observed animal (ITIS)
+* [species]{.mono}: The taxonomic species of the observed animal (ITIS)
+* [common_name]{.mono}: The common name provided by iNaturalist
+
+To read in the file, we'll use the readr (**core** tidyverse) function `read_rds()`. 
+
+```{r}
+# Read rds file:
+
+angola_ungulates_list <- 
+  read_rds("data/raw/angola_ungulates.rds")
+```
+
+To explore this object, let's have a look at its reference tree:
+
+```{r}
+lobstr::ref(angola_ungulates_list)
+```
+
+We can see that the data are structured as a list object where:
+
+* Each list item is a tibble
+* Each tibble is assigned to a name in the list
+* Each tibble contains a number of variables (columns)
+* The names assigned to each of the columns are equivalent for both tibbles.
+
+*Note: The orders Perissodactyla are odd-toed ungulates and Artiodactyla are even-toed ungulates, respectively.*
+
+We can store each of the list items of the dataset in our memory by assigning the list names to the global environment with the base R function `list2env()` and specifying to assign the items to the `.GlobalEnv`:
+
+```{r, results = "hide"}
+# Assign each list item name to the global environment (Not my preferred 
+# method!): 
+
+list2env(angola_ungulates_list, envir = .GlobalEnv)
+```
+
+Print the names assigned to your global environment to see the results:
+
+```{r}
+ls()
+```
+
+We will not use angola_ungulates_list again, so it is best practice to remove the assignment from the global environment:
+
+```{r}
+# Remove the name angola_ungulates_list from the global environment:
+
+rm(angola_ungulates_list)
+```
+
+Alternatively, we could have nested the `read_rds()` function inside of `list2env`:
+
+```{r, results = "hide"}
+# Read and assign names (better!):
+
+list2env(
+  read_rds("data/raw/angola_ungulates.rds"),
+  envir = .GlobalEnv)
+```
+
+Because the data associated with the name `angola_ungulates_list` was equivalent to the data obtained with `read_rds("data/raw/angola_ungulates.rds")`, the assignment was really not necessary. Instead, it's much more parsimonious to nest the two functions. Even better, we could have also piped the resultant object from `read_rds()` to the `list2env` function:
+
+```{r, results = "hide"}
+# Read in a list and assign each list item name to the global environment 
+# (preferred method):
+
+read_rds("data/raw/angola_ungulates.rds") %>% 
+  list2env(envir = .GlobalEnv)
+```
+
+## Bind rows
+
+Let's take a moment to look at the head of each of the data sets with the *dplyr* (core tidyverse) function `slice_head()`:
+
+```{r}
+
+slice_head(perissodactyla)
+
+slice_head(artiodactyla)
+```
+
+We can see that the two datasets have the same column names, in the same order, and each of the variables is the same class (all are atomic character vectors). Moreover, the taxonomic order that defines the split of each data frame is present in the `taxonomy` column of the data:
+
+```{r}
+unique(perissodactyla$taxonomy)
+
+unique(artiodactyla$taxonomy)
+```
+
+Because the data represent the same level of observation (and no data are lost by combining them), it is best practice to combine the two datasets into a single tibble. 
+
+To combine tables by row, we use the *dplyr* function `bind_rows()`. The formals that we'll use for this function are simply the names assigned to the data frames that we would like to combine:
+
+```{r}
+bind_rows(
+  perissodactyla,
+  artiodactyla)
+```
+
+In the above, `artiodactyla` is bound to `perissodactyla` using `bind_rows()`. We can also use a pipe to complete the operation:
+
+```{r}
+perissodactyla %>% 
+  bind_rows(artiodactyla)
+```
+
+Here, the pipe passes `perissodactyla` to the first argument of `bind_rows()` and `artiodactyla` remains as the second argument. If we wanted `perissodactyla` to come after `artiodactyla`, but still maintain the same order of operations, we can use the period placeholder:
+
+```{r}
+perissodactyla %>% 
+  bind_rows(artiodactyla, .)
+```
+
+The `bind_rows` function can also be used (carefully!) to combine items in a list. Knowing what we do now about each list item in `angola_ungulates.rds`, we could have completed the reading and combining of the two list items in a single step. We'll do so and save the object to our computer's memory by assigning the name `angola_ungulates` to the resultant object:
+
+```{r}
+# Read in the list, bind the list items, and then globally assign to a name
+# (this nested version is not preferred!):
+
+angola_ungulates <- 
+  bind_rows(
+    read_rds("data/raw/angola_ungulates.rds"))
+
+angola_ungulates
+```
+
+The above uses a nested coding structure for the chained analysis. We could have also completed the above using a pipe (my preference, by far). We pass the object created with the operation on the left-hand-side (LHS), `read_rds()`, to the function on the right, `bind_rows()`:
+
+```{r}
+# Read in the list, bind the list items, and then globally assign to a name
+# (the piped version *is* preferred!):
+
+angola_ungulates <- 
+  read_rds("data/raw/angola_ungulates.rds") %>% 
+  bind_rows()
+```
+
+In a real coding session, I would have used the version that binds the rows while reading in the data rather than the version that uses the function `list2env()`. As such, we have no need for the `perissodactyla` or `artiodactyla` data frames. Let's remove them:
+
+```{r}
+# Remove the names perissodactyla and artiodactyla from the global environment:
+
+rm(perissodactyla, artiodactyla)
+```
+
+## Combine columns
+
+A single variable is often stored across multiple columns. This is probably the most common problem that I encounter when working with data that I offer assistance with. In this dataset, we see year, month, and day columns -- these data could be represented by a single variable, "date".
+
+We can combine columns using the *tidyr* (core tidyverse) function `unite()`. We provide the name of the data frame, the name of the new column within quotes (`col = `), the selection of columns that we would like to combine, and the separator between the values (`sep = `), provided in quotes. 
+
+```{r}
+unite(
+  angola_ungulates,
+  col = "date",
+  year:day,
+  sep = "-")
+```
+
+*Note: This date format is the official international date format, as determined by the International Organization for Standardization (ISO). We will soon cover this in depth!*
+
+Because the data object being modified is the first argument of `unite()`, we can pass that data object to the function using a pipe. Let's use a pipe and `unite()` to combine the columns associated with a new `date` column and assign the name `angola_ungulates_date_fix` to the resultant object:
+
+```{r}
+# Unite date columns and globally assign to the name 
+# angola_ungulates_date_fix:
+
+angola_ungulates_date_fix <- 
+  angola_ungulates %>% 
+  unite(
+    col = "date",
+    year:day,
+    sep = "-")
+```
+
+The data also has separate columns for `genus` and `species`. While these can be considered two taxonomic variables, by convention they are usually combined to represent the scientific name of a species. Let's combine these two columns, separating the genus and species with a space:
+
+```{r}
+# Unite genus and species columns and globally assign to the name 
+# angola_ungulates_spp_fix:
+
+angola_ungulates_spp_fix <- 
+  angola_ungulates_date_fix %>% 
+  unite(
+    col = "sci_name",
+    genus:species,
+    sep = " ")
+```
+
+We will not work with `angola_ungulates` or `angola_ungulates_date_fix` again, so let's remove the assignments from our global environment:
+
+```{r}
+# Remove the names angola_ungulates_spp_fix and angola_ungulates_date_fix
+# from the global environment:
+
+rm(angola_ungulates_spp_fix, angola_ungulates_date_fix)
+```
+
+::: mysecret
+
+{{< fa user-secret size=2x >}} [Avoid assignments that are only used once!]{style="font-size: 1.25em; padding-left: 0.5em;"}
+
+Given that we only used `angola_ungulates` and `angola_ungulates_date_fix` once, it makes sense to avoid the preliminary assignments altogether. In the real world, I would have simply chained the above operations together as I read in the data:
+
+```{r}
+# Complete in a single chained analysis and globally assign a name:
+
+angola_ungulates <-
+  
+  # Read in the data:
+  
+  read_rds("data/raw/angola_ungulates.rds") %>% 
+  
+  # Combine the datasets by row:
+  
+  bind_rows() %>% 
+  
+  # Combine the date columns:
+  
+  unite(
+    col = "date",
+    year:day,
+    sep = "-") %>% 
+  
+  # Combine the scientific name columns:
+  
+  unite(
+    col = "sci_name",
+    genus:species,
+    sep = " ")
+```
+
+:::
+
+## Split columns
+
+In many datasets that I have encountered, multiple variables are provided within a single column. Let's look at the current state of our data:
+
+```{r}
+angola_ungulates
+```
+
+Here, we see that the taxonomic information is stored in a single column -- each taxonomic level should actually be their own variable. To address this, we can use the *tidyr* function `separate()`. We provide the data set upon which we want the function to act, the column that will be the target of our separation (`col = `), a character vector of new column names (`into = `), and the separator used to delineate the variables (`sep = `):
+
+```{r}
+separate(
+  angola_ungulates,
+  col = "taxonomy",
+  into = c("class", "order", "family"),
+  sep = "-")
+```
+
+Using a pipe, we can pass the data object to the first argument of the function. Let's do so and assign the name `angola_ungulates_taxonomy_fix` to the resultant object:
+
+```{r}
+# Separate the taxonomy columns and globally assign a name:
+
+angola_ungulates_taxonomy_fix <- 
+  angola_ungulates %>% 
+  separate(
+    col = "taxonomy",
+    into = c("class", "order", "family"),
+    sep = "-")
+```
+
+We could have, of course, completed the above operation while reading in *and* exploring the file!
+
+```{r}
+# Complete in a single chained analysis and globally assign a name:
+
+angola_ungulates <- 
+  
+  # Read in the data:
+  
+  read_rds("data/raw/angola_ungulates.rds") %>% 
+  
+  # Combine the datasets by row:
+  
+  bind_rows() %>% 
+  
+  # Combine the date columns:
+  
+  unite(
+    col = "date",
+    year:day,
+    sep = "-") %>% 
+  
+  # Combine the scientific name columns:
+  
+  unite(
+    col = "sci_name",
+    genus:species,
+    sep = " ") %>% 
+  
+  # Separate the taxonomy into multiple columns:
+  
+  separate(
+    col = "taxonomy",
+    into = c("class", "order", "family"),
+    sep = "-")
+```
+
+::: mysecret
+
+{{< fa user-secret size=2x >}} [A superseded function!]{style="font-size: 1.25em; padding-left: 0.5em;"}
+
+I should note that the function `separate()` has now been **superseded**, meaning that the tidyverse team has developed a different (better?) function, or functions, for this task. I would normally recommend avoiding using such functions, as they might be removed from the package in the future (i.e., become deprecated). That being said, the two functions that are slated to replace separate are still in the **experimental** phase of their life cycle -- this means that they may not be used in the package in the future (not likely) or (more likely) that their usage will change considerably. When faced with a choice between using a superseded function and an experimental one, I believe that it is often more safe to choose superseded.
+
+:::
+
+Let's remove `angola_ungulates_taxonomy_fix`:
+
+```{r}
+# Remove the name angola_ungulates_taxonomy_fix from the global environment:
+
+rm(angola_ungulates_taxonomy_fix)
+```
+
+
+## Split table by columns
+
+Looking at the data, it appears that we have a very common tidy data problem -- the table contains more than one level of observation. The levels of observation are the taxonomy of the observed species and the the iNaturalist observations themselves. The biggest clue that we have a "multiple levels of observation" problem is repeated values. Here, for example, we see that one of the species observed is *Hippopotamus amphibius* -- the class, order, and family of any *Hippopotamus amphibius* does not change when more are observed. When this is the case, we must split the data into two tables.
+
+We can use the *dplyr* function `select()` for this task. We provide the target dataset and a selection of columns to keep (or remove). For observations, I'll choose date, user, and observed taxa:
+
+```{r}
+# Subset to observations of ungulates and globally assign the name
+# observations:
+
+observations <- 
+  select(
+    angola_ungulates,
+    date:user_login,
+    sci_name)
+
+observations
+```
+
+For taxonomic information, I'll choose scientific name, class, order, family, and common name:
+
+```{r}
+# Subset to taxonomic information and globally assign the name taxonomy:
+
+taxonomy <- 
+  select(
+    angola_ungulates,
+    sci_name,
+    class:family,
+    common_name)
+
+taxonomy
+```
+
+Note in the above, that I placed `sci_name` at the start of the taxonomy table. This is a bit arbitrary, but I did it to highlight the remaining variables that describe the taxonomy of the `sci_name` variable. Also note that I chose to use `sci_name` as the column in both tables that describe the observed taxa. I chose to avoid using `common_name` because common names are often not used consistently.
+
+For both of the processes above, I almost always pipe the data frame into the select function. This better communicates your selection of columns:
+
+```{r}
+# Subset to observations of undulates and globally assign the name
+# observations (preferred):
+
+observations <- 
+  angola_ungulates %>% 
+  select(
+    date:user_login,
+    sci_name)
+
+# Subset to taxonomic information and globally assign the name taxonomy
+# (preferred):
+
+taxonomy <- 
+  angola_ungulates %>% 
+  select(
+    sci_name,
+    class:family,
+    common_name)
+```
+
+Let's have a look at our taxonomy table:
+
+```{r}
+taxonomy
+```
+
+Looking at our table above, it appears that the class column is likely not needed. Of course, all even-and-odd toed ungulates are mammals -- as such, every `class` in the data frame should be "Mammalia". Let's verify this by extracting that column and assessing the unique values:
+
+```{r}
+unique(taxonomy$class)
+```
+
+There is indeed a single value repeated across all rows. This column really provides little taxonomic information about the species. To address this, we can remove it by using a **negated selection**. This will allow us to select all columns *except* for a given column. We specify the column to remove with the negated selection operator, `!`:
+
+```{r}
+taxonomy %>% 
+  select(!class)
+```
+
+A better alternative would be to select the columns of interest during the initial subsetting process:
+
+```{r}
+# Subset to taxonomic information (but do not include class) and globally 
+# assign the name taxonomy (preferred):
+
+taxonomy <- 
+  angola_ungulates %>% 
+  select(
+    sci_name,
+    order:family,
+    common_name)
+```
+
+*Note: In a real coding session, this would be modified in the creation of the* `taxonomy` *dataset, not written subsequent to the assignment.*
+
+*Note: The* `select()` *function will be covered in more depth later this module!*
+
+## Remove duplicates
+
+When we split the table into two, the taxonomy table contained many duplicated rows. This really diminishes the utility of storing levels of observation in different tables. With duplicated rows, each potential problem must be searched and edited across cells of a dataset. Duplicated rows are almost always a sign of problems in the structure of a dataset (Tidy data rule: Every observation forms a row -- here, there are repeated observations).
+
+To remove duplicated rows, we use the *dplyr* function `distinct()` and simply supply the name assigned to the dataset:
+
+```{r}
+distinct(taxonomy)
+```
+
+... or (better yet):
+
+```{r}
+taxonomy %>% 
+  distinct()
+```
+
+... or (even better!):
+
+```{r}
+# Subset to taxonomy columns, make distinct, and assign a name to the 
+# the global environment:
+
+taxonomy_distinct <- 
+  angola_ungulates %>% 
+  select(
+    sci_name,
+    order:family,
+    common_name) %>% 
+  distinct()
+```
+
+*Note: We are going to use* `taxonomy` and `taxonomy_distinct` *again, so we will not remove the assignment from the global environment.*
+
+::: mysecret
+<i class="fas fa-user-secret" style='font-size:36px'></i>&nbsp;&nbsp; <span style = "font-size: 20px">Is `distinct()` not doing what you expected?</span>
+
+Distinct will only remove what I call "true duplicates" -- in other words, rows that are duplicated in their entirety. If you notice that a row appears to be a duplicate, but is not removed by distinct, it is often a cause for further investigation. A frequent cause is hidden blank spaces in a character variable.
+:::
+
+## Combine columns
+
+Although having these tables separated keeps our data tidy and removes redundancy, there are numerous scenarios that would require us to combine information from both of these tables. For example, we may want to group some of the data by family for graphing or analytical purposes. In that case, we can employ one of the various joining functions in the tidyverse.
+
+### Combine by binding columns (usually unsafe)
+
+The version of the taxonomy dataset in which duplicates were maintained is a columnar subset of the original data frame. Therefore, all we need to do is join the two datasets together by column. This is done with the *dplyr* function `bind_cols()`; we simply provide the names of the two datasets that we would like to bind:
+
+```{r}
+bind_cols(observations, taxonomy)
+```
+
+... or (better):
+
+```{r}
+observations %>% 
+  bind_cols(taxonomy)
+```
+
+Notice that the column `sci_name` has been given an odd notation. That's because it is contained in both datasets. As such, we need to remove it from one of the datasets. Here, I choose to remove it from observations:
+
+```{r}
+# The function bind_cols can be used to join if you are super sure that the 
+# orders of the variables in the tables are equivalent"
+
+observations %>% 
+  select(!sci_name) %>% 
+  bind_cols(taxonomy)
+```
+
+The above works, and I sometimes use this method programmatically, but it is rarely safe in situations like this. For example, perhaps you sorted the `taxonomy` dataset alphabetically by species name, this would yield:
+
+```{r}
+# But this is often unsafe!
+
+observations %>% 
+  select(!sci_name) %>% 
+  bind_cols(
+    taxonomy %>% 
+      arrange(sci_name)
+  )
+```
+
+The second observation was actually a Hippopotamus, but it appears here as a Common Impala! You might find the error hard to spot -- it is -- this illustrates the danger of combining data frames with `bind_cols()`.
+
+### Combine by joining data frames (usually safe)
+
+A much safer method is joining two data sets by a common key. In tabular data, a **key** is a variable that identifies unique records in a table or is associated with unique records in another table (more on this soon!). In the dataset `taxonomy_distinct`, the `sci_name` column represents unique rows. That column is also present in the `observations` data frame (but is not distinct).
+
+We can join the two data frames together based on this common column using the *dplyr* function `left_join()`. A left join combines the second data frame listed (right object) with the first data frame listed (left object) by a common key:
+
+```{r}
+left_join(
+  observations,
+  taxonomy_distinct,
+  by = "sci_name")
+```
+
+Or (better):
+
+```{r}
+# A join is much safer than bind_cols!
+
+observations %>% 
+  left_join(
+    taxonomy_distinct,
+    by = "sci_name"
+  )
+```
+
+Watch what happens when we try to join `observations` and `taxonomy` (the version with the duplicated rows):
+
+```{r}
+# ... but can also be unsafe if you are not careful!
+
+observations %>% 
+  left_join(
+    taxonomy,
+    by = "sci_name"
+  )
+```
+
+We get a warning message and over 2,000 rows of data (for just 186 observations)! That's because `left_join()` joined all data in which the common values in the key columns matched. This brings us to two tips for best practices ...
+
+::: mysecret
+<i class="fas fa-user-secret" style='font-size:36px'></i>&nbsp;&nbsp; <span style = "font-size: 20px">Join carefully!</span>
+
+Watch for warning messages and always anticipate the number of resultant rows after a join.
+:::
+
+Understanding the dangers of `bind_cols()` and joining data with duplicate rows, let's remove `taxonomy`:
+
+```{r}
+# Remove the name taxonomy from the global environment:
+
+rm(taxonomy)
+```
+
+As a final note on joins (for now), my preference is to only join data that include my variables of interest (and the key). For example, if I was only interested in the taxonomic families of iNaturalist observations, I would use:
+
+```{r}
+# Join taxonomic observations and globally assign a name to the global
+# environment:
+
+families <- 
+  observations %>% 
+  select(sci_name) %>% 
+  left_join(
+    taxonomy_distinct %>% 
+      select(sci_name, family),
+    by = "sci_name"
+  )
+```
+
+While the columns of interest may be subset at the end of the process, you have to wade through a lot of column names to do so. That's time consuming and can sometimes be frustrating. The above version forces you to think of the output that you want *before* you execute the function and can avoid the annoyance of a lot of unnecessary columns.
+
+### Reshape and summarize
+
+We sometimes want to reshape a data object while calculating a summary statistic of the data. For example, in Module 1, we used `table()` to count the number of observations associated with unique character values:
+
+```{r}
+table(families$family)
+```
+
+This is useful for data exploration, but notice the class of object produced by this function:
+
+```{r}
+table(families$family) %>% 
+  class()
+```
+
+Tables are great for visualizing data, but do not have the same flexibility that a data frame does.
+
+Instead, we can use the *dplyr* function `count()` to count the number of observations for each `family`:
+
+```{r}
+families %>% 
+  count(family)
+```
+
+The above produced a long form tibble data frame of the number of observations per family.
+
+Another option, which offers us a *ton* of flexibility, is the *dplyr* functions `group_by` and `summarize`. This requires a three-step process:
+
+1. Specify the variable that you wish to summarize with `group_by()` (*Note: We will learn an alternate method!* ). After invoking this function, subsequent steps in a chained analysis are grouped by the values in the specified variable.
+2. Apply the `summarize` function to the grouped data.
+3. Apply a statistical summary function 
+
+For example, we can reproduce our `count()` operation above with `summarize()` by:
+
+1. Grouping the `families` by `family` with `group_by(families, family)`
+2. Applying `summarize()` to the above
+3. Using the statistical summary function `n()` to calculate the number of unique character values in `family`
+
+```{r}
+summarize(
+  group_by(families, family),
+  count = n())
+```
+
+In a piped statement, this would be written as:
+
+```{r}
+# `summarize()` is a great (and flexible) way to summarize the data by some
+# data grouping:
+
+families %>% 
+  group_by(family) %>% 
+  summarize(count = n())
+```
+
+Although the use of `summarize()` requires more steps than `count()`, it can be used in a much broader range of applications than simply tallying counts of unique values. As such, we will use this workflow much more often in this course than `count()`.
+
+::: mysecret
+
+{{< fa user-secret size=2x >}} [New options are available!]{style="font-size: 1.25em; padding-left: 0.5em;"}
+
+A recent update of the *dplyr* package allows us to specify a grouping variable with a new argument, `.by = ...`:
+
+```{r}
+# With a new(ish) update to the tidyverse, this can be accomplished without
+# `group_by()`:
+
+families %>% 
+  summarize(
+    count = n(),
+    .by = family)
+```
+
+Although this requires less coding than `group_by()`, we will predominantly use the `group_by()` workflow in this course (because it is more flexible).
+:::
+
+## Transpose data frames
+
+A *very* common task is to change the shape of our dataset from long form (every row is an observation) to wide form (observations are stored in columns) or from wide to long form. We will discuss reasons for this in-depth in our next lesson. For now, I'll provide the methods for reshaping our data. *Note: In Excel, this operation is known as a transpose.*
+
+### Pivot from long to wide form
+
+Many statistical methods in ecology (unfortunately) require data to be provided in wide format. This is especially the case for community analyses. For example, perhaps we want our columns to represent families and our rows (just one in this case) to represent counts per family. 
+To convert a data frame from long to wide form, we use the *tidyr* function `pivot_wider()`. We provide (at a minimum):
+
+* The dataset to pivot (first argument)
+* `names_from = `: The existing column that contains the new column names
+* `values_from = `: The existing column that contains the cell values to place in column and row
+
+Let's transpose our family counts such that the family is provided in columns and the counts are provided in rows (well, a single row in this case):
+
+```{r}
+# We often need to pivot from long-form data to wide-form data:
+
+wide_families <- 
+  families %>% 
+  count(family) %>% 
+  pivot_wider(
+    names_from = family,
+    values_from = n)
+```
+
+... and have a look at the output:
+
+```{r}
+wide_families
+```
+
+*Note: There are often analytical purposes of such transformations but this is also a necessary data tidying step if variables are stored in more than one row.*
+
+### Pivot from wide to long form
+
+Many data frames built in Excel are provided in an untidy wide format. Because of this, we often need to convert data frames from wide to long format. Even when the data are tidy, it can also be useful when we want to plot several variables in a single plot (e.g., with variables mapped to different facets of a plot or a color aesthetic mapped to a given variable).
+
+For this, we'll return our `wide_families` data frame to its original long format using the *tidyr* function `pivot_longer()`. We provide (at a minimum):
+
+* The dataset to pivot (first argument)
+* `cols = `: The columns that we would like to pivot from wide to long form
+* `names_to = `: The new name of the data that represented the wide format column names (a character value, provided in quotes)
+* `values_to = `: The new name of the data that represented the rows in the wide format data (a character value, provided in quotes)
+
+```{r}
+# When working with data supplied by others, the necessity to pivot from
+# long to wide form is more common:
+
+wide_families %>% 
+  pivot_longer(
+  cols = Bovidae:Suidae,
+  names_to = "family",
+  values_to = "n")
+```
+
+## Reference
+
+<button class="accordion">Glossary</button>
+::: panel
+* **Code section**:  A portion of an R script file that is delineated by a section header.
+* **Core tidyverse package** or **Core tidyverse**: Packages that are attached with `library(tidyverse)`.
+* **Experimental** (function): A function currently being tested for permanent distribution in a package (these functions are usually, but not always, safe to use).
+* **Key** (variable): A variable in a data frame that is used to identify unique records.
+* **Negated selection**: The use of the negative symbol (`-`) or, more recently, the *not* operator (`!`) to select all columns *except* the supplied column or columns.
+* **Superseded** (function): A function for which a new function or argument has been added to a package (these functions should typically be avoided).
+:::
+
+<button class="accordion">Functions</button>
+::: panel
+**Important!** Primitive functions as well as functions in the *base* and *utils* packages, are loaded by default when you start an R session. Functions in *dplyr*, *tibble*, *tidyr*, and *tidyverse* are loaded with `library(tidyverse)`.
+
+::: function_table
+
+```{r, message = FALSE, echo = FALSE}
+render_function_table("functions_2.1_reshaping_data_frames.csv")
+```
+
+:::
+
+:::
+
+
+<button class="accordion">Keyboard shortcuts</button>
+::: panel
+
+{{< include ../../src/includes/keyboard_shortcuts.qmd >}}
+:::
+
+<button class="accordion">R Studio panes</button>
+::: panel
+{{< include ../../src/includes/rstudio_panes.qmd >}}
+:::
+

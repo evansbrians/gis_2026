@@ -1,0 +1,43 @@
+project:
+  type: default
+  execute-dir: project
+
+engine: knitr
+
+format:
+  html:
+    embed-resouces: true
+    self-contained: true
+    standalone: true
+    toc: true
+    toc-location: left
+    number-sections: false
+    search: true
+    include-in-header: src/includes/header_includes.html
+    include-after-body: src/includes/accordion_script.html
+    theme:
+      - cosmo
+      - src/css/custom_style.scss
+  live-html:
+    embed-resouces: true
+    self-contained: true
+    standalone: true
+    toc: true
+    toc-location: left
+    number-sections: false
+    search: true
+    css: src/includes/webex.css
+    include-in-header: src/includes/header_includes.html
+    include-after-body:
+      - src/includes/accordion_script.html
+      - src/includes/webex.js
+      - src/includes/parsons_includes.html
+    theme:
+      - cosmo
+      - src/css/custom_style.scss
+    webr:
+      packages: [tidyverse]
+
+editor: source
+editor_options:
+  chunk_output_type: console

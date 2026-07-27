@@ -1,0 +1,681 @@
+---
+title: "Preliminary Lesson 3: Values"
+format: live-html
+---
+
+```{r}
+#| include: false
+
+source("src/r/course_functions.R")
+```
+```{r}
+#| label: setup
+#| include: false
+
+library(webexercises)
+
+knitr::opts_chunk$set(
+  echo = TRUE,
+  eval = TRUE,
+  error = TRUE
+)
+```
+
+{{< include ../../_extensions/r-wasm/live/_knitr.qmd >}}
+
+<hr>
+
+<div>
+
+![](../../src/images/hex_complex.png){.intro_image}
+
+The fundamental data object in R is the **atomic vector**. Atomic vectors form the building block of every other data object that we will use in this course, and in fact any *single* value in R (a single number, a single word) is itself an atomic vector. An atomic vector can be described by its **class**, which tells us what kind of values it contains. All values within a single atomic vector must share the same class.
+
+In this lesson, we will explore the four classes of atomic vectors that you will encounter most often in this course. You will learn:
+
+* The difference between double numeric and integer vectors
+* How to work with character values, including when single quotes are (and are not) necessary
+* What a factor is and why the order of its levels matters
+* How logical values are stored and tested, including a common mistake that catches almost everyone at least once
+
+[{{< fa exclamation-triangle size=2x >}} Important!]{style="color: red;"} This lesson assumes that you have completed [Preliminary Lesson 2: Environment & Functions](0.2_environment_and_functions.qmd){target="_blank"}. As the material covered herein will build on the content in that lesson, please do not proceed until its completion.
+
+</div>
+
+## Before you begin
+
+To get the most out of this lesson, please:
+
+* Open RStudio in a clean session;
+* Open a new, blank script file and save it as "lesson_0.3.R";
+* Code along with the content!
+
+## Numbers
+
+There are two kinds of number values that we will work with in this course:
+
+* **Double numeric**: For our purposes, this can be thought of as a decimal number
+* **Integer**: A whole number
+
+Let's create an atomic vector of numbers and assign it to the name `number_object`:
+
+```{webr}
+#| autorun: true
+
+number_object <-
+  c(1, 1, 2, 3)
+
+number_object
+```
+
+We can determine the class of the vector with the `class` function:
+
+```{webr}
+class(number_object)
+```
+
+How an atomic vector is stored in your computer is known as its **type**. We use `typeof` to determine this:
+
+```{webr}
+typeof(number_object)
+```
+
+Notice that numbers created with `c()` are stored as double numeric by default -- even though every value we supplied was a whole number!
+
+::: now_you
+{{< fa user-circle size=2x >}} [True or false: Numeric values created with `c()`, such as `c(1, 1, 2, 3)`, are stored as integer type by default because they are whole numbers.]{style="padding-left: 0.5em;"}
+
+`r torf(FALSE)`
+:::
+
+To generate an integer vector of adjacent whole numbers, we use the colon function (`:`), which generates a regular sequence from a starting to an ending value:
+
+```{webr}
+#| autorun: true
+
+my_integers <- 1:3
+
+class(my_integers)
+
+typeof(my_integers)
+```
+
+If we want to generate an integer vector with `c()`, we add an uppercase `L` after each value:
+
+```{webr}
+class(
+  c(1L, 1L, 2L, 3L)
+)
+```
+
+We can also convert a double numeric vector to an integer vector with `as.integer`:
+
+```{webr}
+class(
+  as.integer(
+    c(1, 1, 2, 3)
+  )
+)
+```
+
+::: mysecret
+{{< fa user-secret size=2x >}} [`as.integer()` truncates, it does not round!]{style="font-size: 1.25em; padding-left: 0.5em;"}
+
+`as.integer()` is only safe to use if the values that you are converting are already whole numbers. Notice what happens when we convert decimal values to integers:
+
+```{r}
+as.integer(
+  c(1.1, 2.3, 5.8)
+)
+```
+
+`as.integer()` truncated (i.e., dropped) the decimal portion of each value rather than rounding to the nearest whole number.
+:::
+
+::: now_you
+{{< fa user-circle size=2x >}} [True or false: `as.integer(c(1.1, 2.3, 5.8))` rounds each value to the nearest whole number.]{style="padding-left: 0.5em;"}
+
+`r torf(FALSE)`
+:::
+
+Likewise, we use `as.numeric` to convert an integer vector to a double numeric vector:
+
+```{webr}
+class(
+  as.numeric(1:3)
+)
+
+typeof(
+  as.numeric(1:3)
+)
+```
+
+::: now_you
+{{< fa user-circle size=2x >}} [Which of the following produces an atomic vector whose type is integer?]{style="padding-left: 0.5em;"}
+
+`r longmcq(c("c(1, 2, 3)", answer = "1:3", "c(1.0, 2.0, 3.0)", "as.numeric(1:3)"))`
+:::
+
+::: now_you
+{{< fa user-circle size=2x >}} [Parsons Problem: Reorder the lines below into a pipe that combines the values 8, 13, and 21, coerces them to integer, then reports the resulting type. One line doesn't belong -- leave it in the trash.]{style="padding-left: 0.5em;"}
+
+<div class="parsons-problem">
+<div id="p-0-3-01-trash" class="sortable-code"></div>
+<div id="p-0-3-01-sortable" class="sortable-code"></div>
+<div style="clear: both;"></div>
+<button id="p-0-3-01-check" class="btn btn-outline-dark btn-sm" type="button">Check My Order</button>
+<button id="p-0-3-01-reset" class="btn btn-outline-dark btn-sm" type="button">Shuffle Again</button>
+<p id="p-0-3-01-feedback" class="parsons-feedback"></p>
+</div>
+
+<script>
+window.parsonsProblems = window.parsonsProblems || [];
+window.parsonsProblems.push({
+  id: "p-0-3-01",
+  maxDistractors: 1,
+  code: "c(8, 13, 21) |&gt;\n  as.integer() |&gt;\n  typeof()\n  as.numeric() |&gt; #distractor"
+});
+</script>
+:::
+
+### Exercise
+
+::: now_you
+{{< fa user-circle size=2x >}} [Without assigning anything to your global environment, use `c()` to combine the numeric values 8, 13, and 21, and determine the type of the resultant object. Then, convert the values to integers and determine the type of the result again.]{style="padding-left: 0.5em;"}
+
+```{webr}
+#| edit: true
+#| min-lines: 5
+
+```
+:::
+
+::: mysecret
+{{< fa user-secret size=2x >}} [This editor won't auto-format your code!]{style="font-size: 1.25em; padding-left: 0.5em;"}
+
+Unlike RStudio, the code editor in these practice boxes does not automatically indent your code as you type -- pressing Enter after an opening parenthesis or a pipe will not indent the next line for you the way RStudio does. Get in the habit of indenting your own code as you go here; it's good practice for when you're writing real scripts in RStudio, where our [style guide](../module_1/1.6_course_style_guide.qmd){target="_blank"} rules do apply (and are graded!).
+:::
+
+<button class="accordion" style="margin-bottom: 1em;">Solution</button>
+::: panel
+
+```{r}
+c(8, 13, 21) |>
+  typeof()
+
+c(8, 13, 21) |>
+  as.integer() |>
+  typeof()
+```
+:::
+
+::: now_you
+{{< fa user-circle size=2x >}} [What did `as.integer()` change about the values in the exercise above? (Hint: it isn't how they printed.)]{style="padding-left: 0.5em;"}
+
+`r fitb(c("It changed the way the values are stored", "it changed the way the values are stored"), width = 45, ignore_case = TRUE)`
+:::
+
+## Characters
+
+A **character** value is a symbol or set of symbols from a given alphabet (this may also include numbers and punctuation). When a character value is made up of more than one symbol, it is often called a **string**.
+
+Character values are always enclosed in quotation marks. The code below creates a character vector and assigns it to the name `months`:
+
+```{webr}
+#| autorun: true
+
+months <-
+  c("March",
+    "February",
+    "January",
+    "January"
+  )
+```
+
+The class and type of a character vector are both `"character"`:
+
+```{webr}
+class(months)
+
+typeof(months)
+```
+
+Any atomic vector can be converted to a character vector with `as.character`:
+
+```{webr}
+as.character(1:5)
+```
+
+::: now_you
+{{< fa user-circle size=2x >}} [Which function converts an atomic vector of any class into a character vector?]{style="padding-left: 0.5em;"}
+
+`r longmcq(c(answer = "as.character()", "as.numeric()", "typeof()", "c()"))`
+:::
+
+### Single or double quotes?
+
+Single (`'hello world'`) and double (`"hello world"`) quotes can largely be used interchangeably in R. **In this course, we will always use double quotes for character values** -- this is the convention set out in our [style guide](../module_1/1.6_course_style_guide.qmd){target="_blank"} and it matches the [tidyverse style guide](https://style.tidyverse.org/syntax.html#character-vectors){target="_blank"}.
+
+There is exactly one situation in which you will need to reach for single quotes: when the character value itself contains a double quote. Watch what happens when we try to enclose a quoted phrase in double quotes:
+
+```{r}
+#| error: true
+
+"Maude said, "to me they will always be glorious birds""
+```
+
+R reads the second double quote as the *end* of the string, and has no idea what to do with the text that follows. We can resolve this by enclosing the entire value in single quotes instead:
+
+```{r}
+'Maude said, "to me they will always be glorious birds"'
+```
+
+The reverse problem occurs if a character value contains an apostrophe and is enclosed in single quotes:
+
+```{r}
+#| error: true
+
+'Maude's Cadillac'
+```
+
+Because our course convention is to default to double quotes, this particular problem should rarely come up -- but it is worth knowing that the fix is the same in either direction (switch to the other kind of quote) or that you can **escape** the problematic character with a backslash, which tells R to treat the following character literally:
+
+```{r}
+"Maude's Cadillac"
+
+'Maude said, "to me they will always be glorious birds"'
+
+"Maude said, \"to me they will always be glorious birds\""
+```
+
+::: mysecret
+{{< fa screwdriver-wrench size=2x >}} [So when *should* I use single quotes?]{style="font-size: 1.25em; padding-left: 0.5em;"}
+
+Only when the character value contains a double quote. If you find yourself reaching for single quotes for any other reason, switch back to double quotes -- this is one of the rules that our automated style checks will flag!
+:::
+
+::: now_you
+{{< fa user-circle size=2x >}} [Test your knowledge!]{style="padding-left: 0.5em;"}
+
+1. You need a character value that itself contains a double quote. Which approach works?
+
+`r longmcq(c(answer = "Enclose the whole value in single quotes, or escape the inner double quote with a backslash", "There is no way to include a double quote in a string", "Type two double quotes in a row", "Remove the inner quote -- R does not allow it"))`
+
+2. True or false: in this course, single and double quotes should be used interchangeably, based on whichever you happen to type first.
+
+`r torf(FALSE)`
+:::
+
+## Factors
+
+A **factor** is a value that maps character labels onto integers. A factor contains three pieces of information:
+
+* **Integer values**: An integer associated with each factor level.
+* **Levels**: The character values associated with each integer.
+* **Labels**: The character values used when the factor is printed or plotted (these may differ from the levels).
+
+::: now_you
+{{< fa user-circle size=2x >}} [A factor stores three pieces of information. Which set correctly names them?]{style="padding-left: 0.5em;"}
+
+`r longmcq(c("Class, type, and dimension", answer = "Integer values, levels, and labels", "Names, values, and attributes", "Rows, columns, and cells"))`
+:::
+
+Factors are useful when a character value can be grouped into one of a few categories (e.g., "juvenile" and "adult"), especially when you care about the order those categories are displayed in (e.g., "small", "medium", "large").
+
+We create a factor with the `factor` function, supplying a character vector as the first argument:
+
+```{webr}
+#| autorun: true
+
+example_factor <-
+  factor(
+    c("one",
+      "one",
+      "two",
+      "three"
+    )
+  )
+
+class(example_factor)
+
+typeof(example_factor)
+```
+
+Notice that the type is `"integer"` even though we typed in words!
+
+::: now_you
+{{< fa user-circle size=2x >}} [True or false: A factor is stored in your computer as an integer type, even though you create it by supplying a character vector to `factor()`.]{style="padding-left: 0.5em;"}
+
+`r torf(TRUE)`
+:::
+
+Let's have a look at the object itself:
+
+```{webr}
+example_factor
+```
+
+There are four values, but they have been grouped into three levels. We can see the integers mapped to each level with `as.integer`:
+
+```{webr}
+as.integer(example_factor)
+```
+
+::: mysecret
+{{< fa user-secret size=2x >}} [Factor levels are ordered alphabetically by default!]{style="font-size: 1.25em; padding-left: 0.5em;"}
+
+Notice that "one" was assigned the integer 1, "three" was assigned 2, and "two" was assigned 3 -- that's alphabetical order, not the order in which the values appeared! This can cause real problems when a factor's levels have a natural, non-alphabetical order (e.g., "low", "medium", "high").
+:::
+
+::: now_you
+{{< fa user-circle size=2x >}} [True or false: When you create a factor with `factor()` without specifying levels, the levels are ordered according to the order in which the values first appear in the data.]{style="padding-left: 0.5em;"}
+
+`r torf(FALSE)`
+:::
+
+We can plot a factor to see the count of values at each level:
+
+```{webr}
+plot(example_factor)
+```
+
+Given the x-axis labels, this order doesn't make a lot of sense. We can manually set the level order with the `levels` argument:
+
+```{webr}
+#| autorun: true
+
+plot(
+  factor(
+    c("one",
+      "one",
+      "two",
+      "three"
+    ),
+    levels =
+      c("one", "two", "three")
+  )
+)
+```
+
+::: now_you
+{{< fa user-circle size=2x >}} [Parsons Problem: Reorder and nest the lines below into a call that plots a factor of `"one"`, `"one"`, `"two"`, `"three"` in the order one, two, three. `levels` must end up nested inside `factor()`, which must end up nested inside `plot()`. One line doesn't belong -- leave it in the trash.]{style="padding-left: 0.5em;"}
+
+<div class="parsons-problem">
+<div id="p-0-3-02-trash" class="sortable-code"></div>
+<div id="p-0-3-02-sortable" class="sortable-code"></div>
+<div style="clear: both;"></div>
+<button id="p-0-3-02-check" class="btn btn-outline-dark btn-sm" type="button">Check My Order</button>
+<button id="p-0-3-02-reset" class="btn btn-outline-dark btn-sm" type="button">Shuffle Again</button>
+<p id="p-0-3-02-feedback" class="parsons-feedback"></p>
+</div>
+
+<script>
+window.parsonsProblems = window.parsonsProblems || [];
+window.parsonsProblems.push({
+  id: "p-0-3-02",
+  maxDistractors: 1,
+  code: "plot(\n  factor(\n    c(\"one\", \"one\", \"two\", \"three\"),\n    levels =\n      c(\"one\", \"two\", \"three\")\n  )\n)\n    sort() #distractor"
+});
+</script>
+:::
+
+We can also relabel the levels (useful for tidier plots) with the `labels` argument, supplied in the order of `levels`:
+
+```{webr}
+plot(
+  factor(
+    c("one",
+      "one",
+      "two",
+      "three"
+    ),
+    levels =
+      c("one", "two", "three"),
+    labels =
+      c("One", "Two", "Three")
+  )
+)
+```
+
+::: now_you
+{{< fa user-circle size=2x >}} [True or false: The `labels` argument of `factor()` is applied in the order the `levels` are given, so setting `labels` without also setting `levels` can attach a label to the wrong category.]{style="padding-left: 0.5em;"}
+
+`r torf(TRUE)`
+:::
+
+::: now_you
+{{< fa user-circle size=2x >}} [Parsons Problem: Extend the previous plot by relabeling the levels "One", "Two", "Three". Inside `factor()`, `levels` must come before `labels`. One line doesn't belong -- leave it in the trash.]{style="padding-left: 0.5em;"}
+
+<div class="parsons-problem">
+<div id="p-0-3-03-trash" class="sortable-code"></div>
+<div id="p-0-3-03-sortable" class="sortable-code"></div>
+<div style="clear: both;"></div>
+<button id="p-0-3-03-check" class="btn btn-outline-dark btn-sm" type="button">Check My Order</button>
+<button id="p-0-3-03-reset" class="btn btn-outline-dark btn-sm" type="button">Shuffle Again</button>
+<p id="p-0-3-03-feedback" class="parsons-feedback"></p>
+</div>
+
+<script>
+window.parsonsProblems = window.parsonsProblems || [];
+window.parsonsProblems.push({
+  id: "p-0-3-03",
+  maxDistractors: 1,
+  code: "plot(\n  factor(\n    c(\"one\", \"one\", \"two\", \"three\"),\n    levels =\n      c(\"one\", \"two\", \"three\"),\n    labels =\n      c(\"One\", \"Two\", \"Three\")\n  )\n)\n    labels =\n      c(\"One\", \"Two\", \"Three\"), #distractor"
+});
+</script>
+:::
+
+### Exercise
+
+::: now_you
+{{< fa user-circle size=2x >}} [Create a factor from the values "low", "medium", and "high" (do not assign a name), then repeat with the `levels` argument set so that the values print in order from low to high.]{style="padding-left: 0.5em;"}
+
+```{webr}
+#| edit: true
+#| min-lines: 6
+
+```
+:::
+
+<button class="accordion" style="margin-bottom: 1em;">Solution</button>
+::: panel
+
+```{r}
+factor(
+  c("low", "medium", "high")
+)
+
+factor(
+  c("low", "medium", "high"),
+  levels =
+    c("low", "medium", "high")
+)
+```
+:::
+
+## Logical values
+
+R reserves the words `TRUE` and `FALSE` as **logical constants**. These are mapped to the integers 0 (`FALSE`) and 1 (`TRUE`), which means we can evaluate them numerically:
+
+```{webr}
+#| autorun: true
+
+FALSE + TRUE
+
+mean(
+  c(FALSE, TRUE)
+)
+```
+
+::: now_you
+{{< fa user-circle size=2x >}} [True or false: The logical constants `TRUE` and `FALSE` are mapped to the integers 1 and 0, so `FALSE + TRUE` evaluates to 1.]{style="padding-left: 0.5em;"}
+
+`r torf(TRUE)`
+:::
+
+### Logical operators
+
+We generate logical values by testing an object with a **logical operator**:
+
+| Operator | Usage      | Meaning                                    |
+|:--------:|:----------:|:-------------------------------------------|
+| `==`     | `x == y`   | x is equal to y                            |
+| `!=`     | `x != y`   | x is NOT equal to y                        |
+| `!`      | `!(x)`     | NOT x                                      |
+| `\|`     | `x \| y`   | x OR y                                     |
+| `&`      | `x & y`    | x AND y                                    |
+| `%in%`   | `x %in% y` | x is a set of values found within y        |
+| `<`      | `x < y`    | x is less than y                           |
+| `<=`     | `x <= y`   | x is less than or equal to y               |
+| `>`      | `x > y`    | x is greater than y                        |
+| `>=`     | `x >= y`   | x is greater than or equal to y            |
+
+```{webr}
+3 < 4
+
+3 > 4
+
+2:4 == 3
+```
+
+::: mysecret
+{{< fa screwdriver-wrench size=2x >}} [Be careful when comparing two sets of values with `==`!]{style="font-size: 1.25em; padding-left: 0.5em;"}
+
+This is one of the most common mistakes that early R users make (we will see it again, applied to data frames, in ***Lesson 1.3: R Objects***). Notice what happens when we compare two integer vectors of the same length with `==`:
+
+```{r}
+2:4 == 1:3
+```
+
+You might expect two of these to evaluate to `TRUE` -- but `==` compares values *by position*, not by set membership. To test whether values in one vector are found *anywhere* in another, use `%in%` instead:
+
+```{r}
+2:4 %in% 1:3
+```
+:::
+
+::: now_you
+{{< fa user-circle size=2x >}} [True or false: Comparing two equal-length vectors with `==` tests set membership, so `2:4 == 1:3` returns `TRUE` wherever a value on the left also appears anywhere on the right.]{style="padding-left: 0.5em;"}
+
+`r torf(FALSE)`
+:::
+
+### Exercise
+
+::: now_you
+{{< fa user-circle size=2x >}} [Consider the vectors below. Use a logical test to determine which of the spring months also occur during the summer, and count how many summer months also occur during the spring.]{style="padding-left: 0.5em;"}
+
+```{webr}
+#| autorun: true
+#| edit: false
+
+spring <-
+  c("March", "April", "May", "June")
+
+summer <-
+  c("June", "July", "August", "September")
+```
+
+```{webr}
+#| min-lines: 4
+
+```
+:::
+
+<button class="accordion" style="margin-bottom: 1em;">Solution</button>
+::: panel
+
+```{r}
+spring %in% summer
+
+summer %in% spring
+
+sum(summer %in% spring)
+```
+:::
+
+::: now_you
+{{< fa user-circle size=2x >}} [Parsons Problem: Reorder the lines below to count how many summer months also occur in spring, wrapping the correct membership test inside `sum()`. One line doesn't belong -- leave it in the trash.]{style="padding-left: 0.5em;"}
+
+<div class="parsons-problem">
+<div id="p-0-3-04-trash" class="sortable-code"></div>
+<div id="p-0-3-04-sortable" class="sortable-code"></div>
+<div style="clear: both;"></div>
+<button id="p-0-3-04-check" class="btn btn-outline-dark btn-sm" type="button">Check My Order</button>
+<button id="p-0-3-04-reset" class="btn btn-outline-dark btn-sm" type="button">Shuffle Again</button>
+<p id="p-0-3-04-feedback" class="parsons-feedback"></p>
+</div>
+
+<script>
+window.parsonsProblems = window.parsonsProblems || [];
+window.parsonsProblems.push({
+  id: "p-0-3-04",
+  maxDistractors: 1,
+  code: "sum(\n  summer %in% spring\n)\nspring %in% summer #distractor"
+});
+</script>
+:::
+
+::: now_you
+{{< fa user-circle size=2x >}} [Which statement best describes how `%in%` behaves?]{style="padding-left: 0.5em;"}
+
+`r longmcq(c("They test equivalence between two sets of values, regardless of position", answer = "They test equivalence between two sets of values, but only ever produce a result the length of the vector on the left-hand-side", "They can only be used to compare character vectors", "They are directionally agnostic, in the same way == is"))`
+:::
+
+## Take-home points
+
+Before you move on, here are the ideas from this lesson that are most worth holding onto:
+
+* The **atomic vector** is R's fundamental object -- even a single number or word is one -- and every value in a given vector shares the same **class** (what it holds) and **type** (how it's stored).
+* With numbers, `c()` gives you **double** by default even when every value is a whole number; use `:` or an `L` suffix (like `1L`) when you actually want **integer**.
+* Reach for `as.integer()` only on values that are already whole, because it **truncates** the decimal portion rather than rounding -- so `as.integer(2.8)` gives you 2, not 3.
+* For characters, default to **double quotes** in this course; single quotes are only needed when the value itself contains a double quote (or you can **escape** that quote with a backslash), and `as.character()` will coerce any vector to character.
+* A **factor** maps character labels onto integers, which is why its `typeof()` is integer; unless you say otherwise, its levels are ordered **alphabetically**, not in the order the values appeared.
+* Take control of a factor with the `levels` argument to set the order and the `labels` argument to rename the categories -- and remember `labels` are matched in the order of the `levels`, so setting labels without levels can mislabel a category.
+* Logical `TRUE`/`FALSE` are stored as 1 and 0, so you can `sum()` them to count `TRUE`s or take their `mean()` to get a proportion.
+* Finally, `==` compares **by position** while `%in%` tests **set membership** -- so when you want to know whether values appear *anywhere* in another vector, reach for `%in%`, not `==`.
+
+## Reference
+
+<button class="accordion">Glossary</button>
+::: panel
+* **Character**: A symbol or set of symbols from a given alphabet (note: also includes numbers and punctuation).
+* **Class**: A blueprint that describes an object's structure.
+* **Double numeric vector**: An atomic numeric vector where the values are stored as decimal numbers (essentially).
+* **Escape character**: A backslash (`\`) placed before a character to tell R to treat that character literally rather than as part of R's syntax.
+* **Factor**: A value that maps character labels onto integers.
+* **Integer**: A whole number, or an atomic vector of data stored as whole numbers.
+* **Labels (of a factor)**: The character values associated with a factor level when printing or plotting.
+* **Levels (of a factor)**: The character values mapped to a factor's integer values.
+* **Logical constant**: `TRUE` or `FALSE`.
+* **Logical operator**: An operator used to test a logical statement (e.g., `3 > 2`).
+* **String**: A character value comprised of more than one symbol.
+* **Type**: How an object is stored in your computer.
+:::
+
+<button class="accordion">Functions</button>
+::: panel
+**Important!** Primitive functions as well as functions in the *base* and *graphics* packages are loaded by default when you start an R session.
+
+::: function_table
+
+```{r}
+#| echo: false
+#| message: false
+
+render_function_table("functions_0.3_values.csv")
+```
+
+:::
+:::
+
+<button class="accordion">Keyboard shortcuts</button>
+::: panel
+
+{{< include ../../src/includes/keyboard_shortcuts.qmd >}}
+:::
+
+<button class="accordion">R Studio panes</button>
+::: panel
+{{< include ../../src/includes/rstudio_panes.qmd >}}
+:::

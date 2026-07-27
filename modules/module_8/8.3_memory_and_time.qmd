@@ -1,0 +1,140 @@
+---
+title: "8.3 Memory and time"
+format:
+  html:
+    embed-resouces: true
+    self-contained: true
+    standalone: true
+    toc: true
+    toc-location: left
+    number-sections: false
+    search: true
+    include-in-header: ../../src/includes/header_includes.html
+    include-after-body: ../../src/includes/accordion_script.html
+    theme: 
+      - cosmo
+      - ../../src/css/custom_style.scss
+editor: source
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r, include = FALSE}
+source("src/r/course_functions.R")
+```
+<hr>
+
+![](../../src/images/hex_complex.png){.intro_image}
+
+As you get to advanced applications of R, for example working with big data and making Shiny apps, benchmarking your code becomes an important step to ensure performance. Benchmarking describes the process of evaluating the memory used and processing time associated with executing code. This video lesson (runtime -- 19:57) illustrates a few methods for benchmarking. Completing this lesson will give you some more practice on building custom functions and may help you understand how I decide when to apply a given function over another or which classes of data objects to use for a given application. You will explore:
+
+* RStudio's built-in features for evaluating memory usage
+
+## Before you begin
+
+There are couple of new packages that you *may* need to install prior to running the code in this lesson.
+
+Please run the code below to install the packages *microbenchmark* and *profmem*:
+
+```{r, eval = FALSE}
+install.packages(
+  c("microbenchmark", "profmem")
+)
+```
+
+
+## Video lesson
+
+Notes: 
+
+* I describe this lesson on Shiny apps, which is truly the case, but this is very applicable to big data operations as well!
+* At the end of the video (which is a couple of years old), I describe that I use the package *lineprof* the most for benchmarking. This is no longer the case. Later in this module you will see my current go-to package.
+
+{{< video https://www.youtube.com/embed/CvDWsEpGiGQ >}}
+
+## Reference
+
+<button class="accordion">Glossary</button>
+::: panel
+* **Memory (RAM)**: A temporary storage location for instructions (functions) and data.
+* **Recursive object**: Objects that are made up of references to other objects (e.g., a list).
+:::
+
+<button class="accordion">Functions</button>
+::: panel
+
+::: mysecret
+
+{{< fa user-secret size=2x >}} [**Important!**]{style="font-size: 1.25em; padding-left: 0.5em;"}
+
+* Primitive functions, as well as functions in the *base*, *stats*, and *utils* packages, are loaded by default when you start an R session. Functions in *dplyr*, *ggplot2*, *lubridate*, *purrr*, *readr*, *stringr*, *tibble*, *tidyr*, and *tidyverse* are loaded with `library(tidyverse)`.
+* The functions `magrittr::%>%`, `rlang::{{}}`, `rlang::set_names` are attached with `library(tidyverse)`
+* I do not include functions that I recommend avoiding.
+* Regular expressions metacharacters are not functions!
+:::
+
+* `.Primitive, ()`: Operator that evaluates the function name on the left-hand-side (LHS) of the opening parentheses using the arguments enclosed by the parentheses
+* `.Primitive, {`: Operator that passes the last operation in `{...}` to the global environment
+* `.Primitive, <-`: Infix operator that assigns a name (LHS) to the object on the right-hand-side (RHS) -- this should be used for global assignments!
+* `.Primitive, =`: Infix operator that assigns a name (LHS) to the object on the RHS -- this should not be used for global assignments!
+* `.Primitive, +`: Infix arithmetic operator (add)
+* `.Primitive, -`: Infix arithmetic operator (subtract)
+* `.Primitive, *`: Infix arithmetic operator (multiply)
+* `.Primitive, c`: Combine values to form an atomic vector
+* `.Primitive, list`: Combine multiple objects of any type into a single, recursive, data object
+* `.Primitive, rep`: Replicate elements of a vector a certain number of times
+* `base::capabilities`: Report the optional features compiled in your R build 
+* `base::factor`: Convert a character vector to a factor
+* `base::function`: Initiate the creation of a custom function
+* `base::library`: Attach the package environment for a given package to the current R session
+* `base::rm`: Remove a name from a specified environment (default is the global environment)
+* `dplyr::group_by`: Group the data in a data frame by a given variable such that one or more subsequent analyses are run separately on each group
+* `dplyr::mutate`: Add or modify a column in a data frame
+* `lobstr::mem_used`: View the number of bytes used by R in your current session
+* `lobstr::obj_addr`: Find the location of an object and its children
+* `lobstr::obj_size`: Determine the size of an object in your computer's memory
+  `lobstr::obj_sizes`: Determine the contribution of multiple objects to the total memory allocation
+* `lobstr::ref`: View the structure of an object in your computer's memory
+* `lubridate::now`: Return the current date and time
+* `magrittr::%>%`: The pipe operator passes the output of the LHS argument to the function on the right
+* `microbenchmark::microbenchmark`: Calculate the time it takes to complete an operation
+* `profmem::profmem`: Profile the memory used during an operation
+* `profmem::total`: Determine the total amount of memory allocated during an operation
+
+:::
+
+<button class="accordion">Metacharacters in regex</button>
+::: panel
+
+::: mysecret
+{{< fa user-secret size=2x >}} [Metacharacters are not R functions!]{style="font-size: 1.25em; padding-left: 0.5em;"}
+
+When you are given a list of functions that you may use in a given problem set, recall that regex metacharacters are not functions. As such, they will not be included in your function list. You may use *any* metacharacter to address a given problem!
+:::
+
+* **Alternation constraint**, `(...)`: Constrains the use of a metacharacter to just the symbols inside of parentheses
+* **Anchor**, `^...`: Specify the start of a string
+* **Anchor**, `...$`: Specify the end of a string
+* **Character class**, `[...]`: Define a *set* of symbols that you would like to match
+* **Metacharacter escape**, `\\`: Treat a metacharacter as a literal character
+* **Optional match**, `?`: Specify that the preceding symbol is optional
+* **Range** (in a character class), `[...-...]`: Define a *range* of symbols that you would like to match in a given position
+* **Or**, `...|...`: Specify a match of one string "or" another string
+* **Repetition**, `...*`: Specify that a symbol can appear no times or an unlimited number of times
+* **Repetition**, `...+`: Specify that a symbol appears at least once or an unlimited number of times
+* **Repetition**, `{...}`: Specify the number of times a symbol should appear
+* **Repetition**, `{...,...}`: Specify that a symbol may appear within a range of repetitions
+* **Wild card**, `.`: Specify that a character value at a given location can be any symbol
+:::
+
+<button class="accordion">Keyboard shortcuts</button>
+::: panel
+
+{{< include ../../src/includes/keyboard_shortcuts.qmd >}}
+:::
+
+<button class="accordion">R Studio panes</button>
+::: panel
+{{< include ../../src/includes/rstudio_panes.qmd >}}
+:::
+

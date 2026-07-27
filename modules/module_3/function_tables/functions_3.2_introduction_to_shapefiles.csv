@@ -1,0 +1,36 @@
+Package,Function,Definition
+.Primitive,(...),Operator that evaluates the function name on the left-hand-side (LHS) of the opening parentheses using the arguments enclosed by the parentheses
+.Primitive,{…},Operator that passes the last operation in `{...}` to the global environment
+.Primitive,<-,Infix operator that assigns an object on the right-hand-side (RHS) to a name on the left-hand-side (LHS) -- this should be used for global assignments!
+.Primitive,=,Infix operator that assigns an object on the right-hand-side (RHS) to a name on the left-hand-side (LHS) -- this should not be used for global assignments!
+.Primitive,$,Infix operator that extracts the values associated with a name (RHS) from a recursive object (LHS)
+.Primitive,==,Infix relational operator (is equal to)
+.Primitive,!,Prefix logical operator (not)
+.Primitive,+,Infix arithmetic operator (addition)
+.Primitive,-,Infix arithmetic operator (subtract) or prefix negative symbol operator
+.Primitive,/,Infix arithmetic operator (divide)
+.Primitive,c,Combine values to form an atomic vector
+.Primitive,ceiling,Round a numeric vector to an integer value not less than the the corresponding elements of x
+.Primitive,function,Write a custom function
+.Primitive,names,Retrieve the names (or names attribute) assigned to an R object (generates a character vector)
+base,function,Initiate the creation of a custom function
+base,library,Attach the package environment for a given package to the current R session
+base,nrow,"Return the number of rows (i.e., observations) in a data frame as a one-value integer vector"
+base,source,Execute a source script (in its entirety)
+base,tolower,Convert a character vector to lowercase
+base,unique,Subset an atomic vector to the unique values in the set
+dplyr,filter,Subset a data frame by logical condition
+dplyr,pull,Extract a column from a data frame as a vector
+dplyr,select,Subset columns in a data frame by name (without quotes!)
+ggplot2,+,ggplot's pipe operator (adds a layer to a plot)
+ggplot2,geom_sf,Add an sf layer to a ggplot
+ggplot2,ggplot,"Set the data and, potentially, the aesthetics of a plot"
+magrittr,%>%,The pipe operator passes the output of the LHS argument to the function on the right
+readr,read_csv,Read a tabular csv file into R as a tibble data frame
+rlang,set_names,Assign names to values in a vector or items in a list
+sf,st_as_sf,Convert a data frame to an sf object
+sf,st_cast,Convert a geometry from one type to another
+sf,st_crs,Get the CRS of a shapefile
+sf,st_read,Read in a simple features or other GIS shapefile
+sf,st_transform,Transform the CRS of a shapefile to a different CRS
+tidyselect,everything,"Used in combination with select, this selects all but the specified columns."

@@ -1,0 +1,1266 @@
+---
+title: "7.1 Advanced rasters"
+format:
+  html:
+    embed-resouces: true
+    self-contained: true
+    standalone: true
+    toc: true
+    toc-location: left
+    number-sections: false
+    search: true
+    include-in-header: ../../src/includes/header_includes.html
+    include-after-body: ../../src/includes/accordion_script.html
+    theme: 
+      - cosmo
+      - ../../src/css/custom_style.scss
+editor: source
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r, include = FALSE}
+source("../../src/r/course_functions.R")
+```
+```{r setup, include=FALSE}
+library(tidyverse)
+
+knitr::opts_chunk$set(
+  echo = TRUE,
+  eval = TRUE,
+  error = TRUE
+)
+
+rm(has_annotations)
+```
+
+
+<hr>
+
+<div>
+
+![](../../src/images/hex_complex.png){.intro_image}
+
+Shapefiles are useful (and cool!), but when it comes to ecological and other sorts of environmental data, rasters are often where things get really exciting. In this lesson, we will add some new *terra* tools to our raster tool kits. In the video portion of this lesson you will explore the urban heat island effect in the District of Columbia. In the written portion of this lesson, you will explore iNaturalist observations and the environment around the Smithsonian-Mason School of Conservation. Along the way, you will learn how to:
+
+-   Convert rasters to shapefiles
+-   Change raster resolution via resampling
+-   Sample a raster to generate points within a raster
+-   Calculate spatial density using rasters
+-   Generate distance rasters
+
+</div>
+
+## Data for this lesson
+
+Please click on the buttons below to explore the metadata for this lesson!
+
+<button class="accordion">Metadata: Video lesson</button>
+
+::: panel
+
+**[dc_census.geojson]{.mono}**: A polygon shapefile of census tracts in the District of Columbia. The data are in a projected coordinate system (datum = WGS84, projection is UTM, Zone 18N) with the EPSG code 32618. The data include the following fields:
+
+* [GEOID]{.mono}, character: The **primary key** key for each census tract.
+* [STATEFP]{.mono}, character: A **foreign key** to the US state in the [states]{.mono} data.
+* [ALAND]{.mono}, numeric: The area covered by land in each census tract, in square meters.
+* [AWATER]{.mono}, numeric: The area covered by water in each census tract, in square meters.
+* [INCOME]{.mono}, numeric: The median income of each census tract.
+* [POPULATION]{.mono}, numeric: The total population of each census tract.
+
+**[dc_crimes.csv]{.mono}**: Crime data were obtained from <a href="https://opendata.dc.gov/" target="_blank">Open Data DC</a>. This is a tabular dataset and each row represents the record for an individual crime committed. Relevant fields (columns) include:
+
+* [id]{.mono}, character: The primary key for each observation;
+* [offense]{.mono}, character: The type of crime committed.
+
+**[dc_forests.geojson]{.mono}**: This is a polygon shapefile of forested land in Washington DC. Each polygon represents an individual forest and represent a subset of the original file (to polygon areas greater than 9 hectares). The data were obtained from Open Data DC and the CRS is EPSG 4326. See the original metadata at this link.
+
+**[dc_land.geojson]{.mono}**: This is a multipolygon shapefile of land (as opposed to water) in Washington DC. We made this (or something very similar) in one of the earlier video lessons. The CRS is projected (NAD83/Conus Albers; EPSG 5070).
+
+**[dc_rivers.geojson]{.mono}**:This is a polygon shapefile of water bodies that are classified as "River" in Washington DC. The data were derived from the Water Bodies shapefile obtained from Open Data DC and the CRS is EPSG 4326. See the original metadata at this link.
+
+**[dc_stack.tif]{.mono}**: This is geotiff a raster stack of land cover files from Multi-Resolution Land Characteristics Consortium (MRLC). The resolution of the stack is 30 by 30 meters and the CRS of the object is EPSG 5070. Layers include canopy (proportion of canopy cover), imp (proportion of impervious surface), nlcd (classified land cover of each cell), and land (binary raster representing cells over land (as opposed to water).
+
+**[dem_dc_10m.tif]{.mono}**: This is geotiff raster of elevation in Washington DC. Elevation values are provided in meters above sea level. The data were obtained from the National Map. The resolution of the raster is approximately 9 x 9 m and the CRS is EPSG 5070 (NAD83/Conus Albers).
+
+**[inat_scbi.geojson]{.mono}**:  iNaturalist point shapefile observations from the campus of the Smithsonian-Mason School of Conservation in 2024. The data were downloaded using the R package *rinat* and are in the unprojected coordinate reference system EPSG 4326.
+
+**[roads_scbi.geojson]{.mono}**: Linestring shapefile of roads within the spatial extent of the Smithsonian Conservation Biology Institute. The data were obtained using the [National Map download tool](https://apps.nationalmap.gov/downloader/){target="_blank"} and are in an unprojected CRS (EPSG 4326).
+
+**[scbi_canopy_cover.tif]{.mono}**: Proportion of canopy cover within a 30m resolution map pixel, subset to the spatial extent of the Smithsonian Conservation Biology Institute. The data were obtained using the [MRLC viewer tool](https://www.mrlc.gov/viewer/){target="_blank} and are in an unprojected CRS (EPSG 4269).
+
+**[scbi_dem.tif]{.mono}**: Digital elevation model (raster; 10m resolution), subset to the spatial extent of the Smithsonian Conservation Biology Institute. The data were obtained using the [National Map download tool](https://apps.nationalmap.gov/downloader/){target="_blank"} and are in an unprojected CRS (EPSG 4269).
+
+**[scbi_lc.tif]{.mono}**: Classified land cover (raster; 1m resolution), subset to the spatial extent of the Smithsonian Conservation Biology Institute. The data were obtained using the [Chesapeake Conservancy tool](https://cicgis.org/portal/apps/webappviewer/index.html?id=bdf7ca3e249a40fd9a9d83d6e16100ea&extent=-88.252,35.0981,-62.3462,45.7489){target="_blank"} and are in an unprojected CRS (EPSG 4269)
+
+**[smsc_campus_scbi.geojson]{.mono}**: Shapefile that describes the boundaries of the Smithsonian-Mason-School of Conservation campus. Brian digitized this file by hand (poorly) and the data are in an unprojected CRS (EPSG 4326).
+
+:::
+
+## Video lesson
+
+Notes: 
+
+* You will see me complain about my usage of hanging parentheses ... but that is now my preference!
+* Your script will not exactly match my video script. Wherever possible, I have modified the script to adhere to the course style guide (e.g., indentation) and replaced single quotes with double quotes.
+* I talk about error messages that you will receive with [NA]{.values} in `if_else()` and `case_when()` ... this no longer produces an error (as of early 2023)!
+
+{{< video https://www.youtube.com/embed/Qnr0UOgC-so >}}
+
+## Written tutorial
+
+### Setup
+
+Please do the following to ensure that you are working in a clean session:
+
+1. In the *Environment* tab of your *workspace pane*, ensure that your *Global Environment* is empty. If it is not, click the *broom* to remove all objects. *Note: Conversely, you can remove all items with `rm(list = ls())`*.
+2. In the *History* tab of your *workspace pane*, ensure that your history is empty. If it is not, click the *broom* to remove your history.
+
+Now we will start the written tutorial with a couple of our typical setup steps, loading libraries and setting the *tmap* mode to "view":
+
+```{r, message = FALSE, warning = FALSE}
+# setup -------------------------------------------------------------------
+
+library(sf)
+library(spatstat)
+library(tmap)
+
+# Set the tmap mode for the whole session:
+
+tmap_mode("view")
+```
+
+Now we will read in the land cover key for Warren County, Virginia (where SMSC is located). Let's read in the data while subsetting the columns and changing column names:
+
+```{r}
+lc_key <-
+  read_csv("data/raw/gis_scbi/lc_key_warren_county_va.csv") %>% 
+  select(
+    id = Value,
+    category = LandUse
+  )
+```
+
+Things get a little more interesting with the below. The `.` is a **metacharacter**. We can "escape" a metacharacter (i.e., treat it as a **literal character**) by preceding the symbol with `\\`. In `list.files()` below, I search for any file that ends with `scbi.geojson` (using the argument `pattern = ...`):
+
+```{r, results = "hide"}
+
+# Read in the shapefiles:
+
+list.files(
+  "data/raw/gis_scbi",
+  pattern = "scbi\\.geojson$",
+  full.names = TRUE
+) %>% 
+  map(
+    ~ st_read(.x, quiet = TRUE) %>% 
+      st_transform(4269)
+  ) %>% 
+  set_names(
+    "inat",
+    "roads",
+    "smsc_campus"
+  ) %>% 
+  list2env(.GlobalEnv)
+```
+
+Things get even more interesting with my search pattern below. To read in the raster files, I use:
+
+* `^scbi` to specify that the patter `"scbi"` should occur at the start of a string;
+* The `.` metacharacter -- this is a wildcard metacharacter that allows us to follow `"scbi"` with any symbol;
+* The `*` metacharacter -- this is a repetition metacharacter that allows us to repeat the metacharacter `.` any number of times;
+* The `tif$` to specify that the filename should end in `"tif"`.
+
+```{r, results = "hide"}
+# Read in the raster files:
+
+list.files(
+  "data/raw/gis_scbi",
+  pattern = "^scbi.*tif$",
+  full.names = TRUE
+) %>% 
+  map(
+    ~ terra::rast(.x)
+  ) %>% 
+  set_names(
+    "canopy",
+    "elevation", 
+    "land_cover"
+  ) %>% 
+  list2env(.GlobalEnv)
+```
+
+### Rasters to shapefiles
+
+Rasters are great, but we are often interested in the shapefiles that they can be used to generate. For example, we may want to extract just the `buildings` associated with the `land_cover` raster and interact with these data as a shapefile.
+
+Let's look at the land cover key for Warren County Virginia:
+
+```{r}
+lc_key
+```
+
+We can use `if_else()` to change values that contain the string `"Structures"` to `1` and all other values to `NA`:
+
+```{r}
+lc_key %>% 
+  mutate(
+    class = 
+      if_else(
+        str_detect(category, "Structures"),
+        1,
+        NA
+      )
+  )
+```
+
+... and use the above to create a reclassified land cover layer with a reclass matrix and `terra::classify()`:
+
+```{r}
+buildings <- 
+  
+  # Create a reclass matrix:
+  
+  lc_key %>% 
+  mutate(
+    class = 
+      if_else(
+        str_detect(category, "Structures"),
+        1,
+        NA
+      )
+  ) %>% 
+  select(!category)%>% 
+  as.matrix() %>% 
+  
+  # Reclassify the raster:
+  
+  terra::classify(land_cover, .)
+```
+
+Let's have a look (you have to zoom in a bit to see the buildings):
+
+```{r}
+# Add basemap:
+
+tm_basemap("Esri.WorldImagery") +
+  
+  # Add the building layer:
+  
+  buildings %>% 
+  tm_shape(name = "Buildings") +
+  tm_raster(
+    col.scale =
+      tm_scale_categorical(),
+    col_alpha = 0.9,
+    col.legend =
+      tm_legend(title = "Buildings", show = FALSE)
+  )
+```
+
+To transform these data to a polygon, we can use the *terra* function `as.polygon()`:
+
+```{r}
+# Add basemap:
+
+tm_basemap("Esri.WorldImagery") +
+  
+  # Add the building layer:
+  
+  buildings %>% 
+  terra::as.polygons() %>% 
+  st_as_sf() %>% 
+  tm_shape(name = "Buildings") +
+  tm_polygons(
+    fill_alpha = 0.9
+  )
+```
+
+*Note: In the above I use `st_as_sf()` to transform the polygons to an sf shapefiles.*
+
+*Also note: To transform these data to a point shapefile, you can use the terra function `as.points()` ,,, but be warned at a 1m resolution there would be a lot of points!*
+
+### Change raster resolution
+
+Resampling rasters describes the process of aligning each cell of one raster to the location and resolution of a second raster. 
+
+By clicking around the map below, you might see that our three rasters have very different resolutions (`canopy` = 30m, `elevation` = 10m, `land_cover` = 1m):
+
+```{r}
+# Add basemap:
+
+tm_basemap("Esri.WorldImagery") +
+  
+  # Add canopy cover raster (30m resolution):
+  
+  canopy %>% 
+  tm_shape(name = "Canopy cover (30m)") +
+  tm_raster(
+    col.scale =
+      tm_scale(values = "brewer.greens"),
+    col.legend =
+      tm_legend(title = "Canopy cover (30m)")
+  ) +
+
+  # Add elevation raster (10m resolution):
+
+  elevation %>%
+  tm_shape(name = "Elevation (10m)") +
+  tm_raster(
+    col.scale =
+      tm_scale(
+        values = terrain.colors(20),
+        n = 20
+      ),
+    col.legend =
+      tm_legend(title = "Elevation (10m)")
+  ) +
+
+  # Add land cover raster (1m resolution):
+
+  land_cover %>%
+  tm_shape(name = "Land cover (1m)") +
+  tm_raster(
+    col.legend =
+      tm_legend(title = "Land cover (1m)")
+  )
+```
+
+*Note: In the above, I use the color palette `terrain.colors()` to generate a classic palette used for elevation. Within the function, I specify that I want to create 20 separate colors (`n = 20`) for the palette.*
+
+#### Resample to a courser resolution
+
+To resample a raster, we use `terra::resample`. We supply:
+
+* The name of the original raster;
+* The raster that will provide the template upon which to provide the resampled cells.
+
+Below, I resample `elevation` (10 m resolution) to the same resolution as `canopy` (30 m resolution) and globally assign the object to the name `elevation_30m`:
+
+```{r}
+elevation_30m <- 
+  elevation %>% 
+  terra::resample(canopy)
+```
+
+We can see the difference between the two rasters by plotting the data:
+
+```{r}
+# Add basemap:
+
+tm_basemap("Esri.WorldImagery") +
+  
+  # Add original elevation raster (10m resolution):
+  
+  elevation %>% 
+  tm_shape(name = "Elevation (10m)") +
+  tm_raster(
+    col.scale =
+      tm_scale(
+        values = terrain.colors(100),
+        n = 100
+      ),
+    col.legend =
+      tm_legend(title = "Elevation (10m)")
+  ) +
+
+  # Add resampled elevation raster (30m resolution):
+
+  elevation_30m %>%
+  tm_shape(name = "Elevation (30m)") +
+  tm_raster(
+    col.scale =
+      tm_scale(
+        values = terrain.colors(100),
+        n = 100
+      ),
+    col.legend =
+      tm_legend(title = "Elevation (30m)")
+  )
+```
+
+#### Resample to a finer resolution
+
+We can also resample a raster to a more course resolution. In the below, I resample `canopy_cover` (30m resolution) to the same resolution as `elevation` (10 m resolution) and globally assign the object to the name `canopy_10m`:
+
+```{r}
+canopy_10m <-
+  canopy %>% 
+  terra::resample(elevation)
+```
+
+Let's have a look at the data:
+
+```{r}
+# Add basemap:
+
+tm_basemap("Esri.WorldImagery") +
+  
+  # Add original canopy raster (30m resolution):
+  
+  canopy %>% 
+  tm_shape(name = "Canopy cover (30m)") +
+  tm_raster(
+    col.scale =
+      tm_scale(values = "brewer.greens"),
+    col.legend =
+      tm_legend(title = "Canopy cover (30m)")
+  ) +
+
+  # Add resampled canopy raster (10m resolution):
+
+  canopy_10m %>%
+  tm_shape(name = "Canopy cover (10m)") +
+  tm_raster(
+    col.scale =
+      tm_scale(values = "brewer.greens"),
+    col.legend =
+      tm_legend(title = "Canopy cover (10m)")
+  )
+```
+<br>
+If you click the layers above on-and-off, you should notice that, although the resolution of `canopy_10m` is finer than that of `canopy`, the derived layer does not necessarily do a better job of characterizing the canopy cover. This is because the default resampling method uses **bilinear interpolation** -- it is simply calculating the new, finer resolution values by averaging the value of a given cell with the values of neighboring cells! As such, we would not want to use this within an analytical framework -- the inference of our raster is still bound to its original 30m resolution.
+
+### Terrain
+
+Terrain functions are a super useful application of digital elevation models. For example, at one time I created a species distribution model of morel mushrooms in Western North Carolina (I am a big fan of mushroom hunting). The two most important variables in my model were slope and aspect. These variables can be derived from a single digital elevation model using a single function ... `terra::terrain()`! We supply:
+
+* `x = ...`: The digital elevation model from which to extract the terrain variable;
+* `v = ...`: The terrain variable to calculate;
+* `unit = ...`: The unit of the output in `"degrees"` (the default) or `"radians"`.
+
+To calculate slope in degrees (and visualize the output), we would run:
+
+```{r}
+elevation %>% 
+  terra::terrain(v = "slope") %>% 
+  tm_shape(name = "Slope") +
+  tm_raster(
+    col.scale =
+      tm_scale(
+        values = "brewer.spectral",
+        n = 20
+      )
+  )
+```
+
+Aspect describes the compass direction of a given slope. To calculate aspect in degrees (and visualize the output), we would run:
+
+```{r}
+elevation %>% 
+  terra::terrain(v = "aspect") %>% 
+  tm_shape(name = "Aspect") +
+  tm_raster(
+    col.scale =
+      tm_scale(
+        values = "brewer.spectral",
+        n = 16
+      )
+  )
+```
+
+If we set slope and aspect to radians, we can use `terra::shade()` to generate a shaded relief map (i.e., a hillshade) of our digital elevation model:
+
+```{r}
+# Add basemap:
+
+tm_basemap("Esri.WorldImagery") +
+  
+  # Add shaded relief:
+  
+  terra::shade(
+    
+    # Calculate slope in radians:
+    
+    slope = 
+      terra::terrain(
+        elevation,
+        v = "slope",
+        unit = "radians"
+      ),
+    
+    # Calculate aspect in radians:
+    
+    aspect =
+      terra::terrain(
+        elevation,
+        v = "aspect",
+        unit = "radians"
+      )
+  ) %>% 
+  tm_shape(name = "Hillshade") +
+  tm_raster(
+    col.scale =
+      tm_scale(
+        values = "brewer.greens",
+        n = 20
+      ),
+    col_alpha = 0.8,
+    col.legend =
+      tm_legend(show = FALSE)
+  )
+```
+
+If we are unsatisfied with the above (why should we ever be satisfied?), we can also change the elevation angle (with `angle = ...`) and the direction (with `direction = ...`) of the sun:
+
+```{r}
+# Add basemap:
+
+tm_basemap("Esri.WorldImagery") +
+  
+  # Add shaded relief:
+  
+  terra::shade(
+    
+    # Calculate slope in radians:
+    
+    slope = 
+      terra::terrain(
+        elevation,
+        v = "slope",
+        unit = "radians"
+      ),
+    
+    # Calculate aspect in radians:
+    
+    aspect =
+      terra::terrain(
+        elevation,
+        v = "aspect",
+        unit = "radians"
+      ),
+    angle = 40,
+    direction = 160
+  ) %>% 
+  tm_shape(name = "Hillshade") +
+  tm_raster(
+    col.scale =
+      tm_scale(
+        values = "brewer.greens",
+        n = 20
+      ),
+    col.legend =
+      tm_legend(show = FALSE)
+  )
+```
+
+Adding this with the original elevation model and a bit of transparency can really make us feel like we are heading into the mountains. 
+
+In the below, I add hillshade above elevation and add a gray color scale with `gray.colors()` (see `?gray.colors`:
+
+```{r}
+# Add basemap:
+
+tm_basemap("Esri.WorldImagery") +
+  
+  # Add original elevation raster (10m resolution):
+  
+  elevation %>% 
+  tm_shape(name = "Elevation (10m)") +
+  tm_raster(
+    col.scale =
+      tm_scale(
+        values = terrain.colors(10),
+        n = 200
+      ),
+    col.legend =
+      tm_legend(title = "Elevation (10m)", show = FALSE)
+  ) +
+  
+  # Add shaded relief:
+  
+  terra::shade(
+    
+    # Calculate slope in radians:
+    
+    slope = 
+      terra::terrain(
+        elevation,
+        v = "slope",
+        unit = "radians"
+      ),
+    
+    # Calculate aspect in radians:
+    
+    aspect =
+      terra::terrain(
+        elevation,
+        v = "aspect",
+        unit = "radians"
+      ),
+    angle = 40,
+    direction = 160
+  ) %>% 
+  tm_shape(name = "Hillshade") +
+  tm_raster(
+    col.scale =
+      tm_scale(
+        values =
+          gray.colors(
+            n = 10,
+            start = 1,
+            end = 0
+          ),
+        n = 100
+      ),
+    col_alpha = 0.6,
+    col.legend =
+      tm_legend(show = FALSE)
+  )
+```
+
+I strongly suggest playing around with the above until you can make an elevation map that you are really proud of!
+
+### Sampling a raster
+
+We will now shift our attention from pretty to pretty-darned-useful. It is often necessary to generate random or uniform samples within a raster. For example, perhaps you want to generate samples along an elevational gradient. We can do so using the *terra* function `spatSample`. We supply (at a minimum):
+
+* `x = ...`: The name of the raster that you want to sample;
+* `size = ...`: The number of samples to generate;
+* `method = ...`: The sampling method (`method = "regular"` for uniform samples or `method = "random"` for random samples)
+
+The following produces a regular sample of canopy cover values within the `canopy` raster:
+
+```{r}
+canopy %>% 
+  terra::spatSample(
+    size = 10,
+    method = "regular"
+  )
+```
+
+We can convert the above to SpatVector points by adding the argument `as.points = TRUE`:
+
+```{r}
+canopy %>% 
+  terra::spatSample(
+    size = 10,
+    method = "regular",
+    as.points = TRUE
+  )
+```
+
+... and convert the SpatVector object to an *sf* point shapefile with `st_as_sf()`:
+
+```{r}
+canopy %>% 
+  terra::spatSample(
+    size = 10,
+    method = "regular",
+    as.points = TRUE
+  ) %>% 
+  st_as_sf()
+```
+
+Let's have a look at the above on a map:
+
+```{r}
+# Add basemap:
+
+tm_basemap("Esri.WorldImagery") +
+  
+  # Add canopy cover raster:
+  
+  canopy %>% 
+  tm_shape(name = "Canopy cover (%)") +
+  tm_raster(
+    col.scale =
+      tm_scale(
+        values = "brewer.greens",
+        n = 10
+      ),
+    col.legend =
+      tm_legend(title = "Canopy cover (%)")
+  ) +
+  
+  # Add the regular sample points:
+  
+  canopy %>% 
+  terra::spatSample(
+    size = 10,
+    method = "regular",
+    as.points = TRUE
+  ) %>% 
+  st_as_sf() %>% 
+  tm_shape(name = "Sampling points") +
+  tm_dots(
+    size = 0.15,
+    fill = "yellow"
+  )
+
+```
+
+Rather than choose `method = "regular"`, we can generate a random sample with `method = "random"` (given that this is random, your plot will look different from mine!):
+
+```{r}
+# Add basemap:
+
+tm_basemap("Esri.WorldImagery") +
+  
+  # Add canopy cover raster:
+  
+  canopy %>% 
+  tm_shape(name = "Canopy cover (%)") +
+  tm_raster(
+    col.scale =
+      tm_scale(
+        values = "brewer.greens",
+        n = 10
+      ),
+    col.legend =
+      tm_legend(title = "Canopy cover (%)")
+  ) +
+  
+  # Add the random sample points:
+  
+  canopy %>% 
+  terra::spatSample(
+    size = 10,
+    method = "random",
+    as.points = TRUE
+  ) %>% 
+  st_as_sf() %>% 
+  tm_shape(name = "Sampling points") +
+  tm_dots(
+    size = 0.15,
+    fill = "yellow"
+  )
+```
+
+The above is a great method for choosing where to sample within a given landscape! The use cases for this go well beyond choosing sampling locations (see video and our next lesson on spatial autocorrelation).
+
+### Rasterize
+
+It is often useful to convert points to rasters. For example, the students at the Smithsonian-Mason School of Conservation (SMSC) are very active on iNaturalist. The SMSC campus, however, is contained within the Smithsonian Conservation Biology Institute, a US government research facility. As such, students are required to spend most of their time within their academic campus. As we might expect, this means that the distribution of samples are highly clustered:
+
+```{r}
+# Add basemap:
+
+tm_basemap("Esri.WorldImagery") +
+  
+  # Add iNaturalist observations:
+  
+  inat %>% 
+  tm_shape(name = "iNaturalist observations") +
+  tm_dots(
+    fill = "yellow"
+  )
+```
+
+Given the dense cluster of points above, using `tm_dots()` is not the best way to visualize the distribution of iNaturalist observations. Instead, we can convert the points to rasters! 
+
+We will start by creating a template raster. For this, we will crop and mask `canopy` to the Smithsonian-Mason School of Conservation campus (`smsc_campus`):
+
+```{r}
+canopy_smsc <-
+  canopy %>% 
+  terra::crop(
+    smsc_campus,
+    mask = TRUE
+  )
+
+```
+
+We will now use `terra::rasterize()` to count the number of iNaturalist observations per raster cell.  We supply (at a minimum):
+
+* `x = ...`: The shape file that you wish to convert to a raster;
+* `y = ...`: The raster that will serve as a template for the new raster object;
+* `fun = ...`: The function to apply to the data.
+
+To count the number of observations per 30m raster cell, we can use the `canopy_smsc` layer as our template:
+
+```{r}
+# Add basemap:
+
+tm_basemap("Esri.WorldImagery") +
+  
+  # Count the number of iNaturalist observations per 30m cell:
+  
+  inat %>% 
+  terra::rasterize(
+    canopy_smsc,
+    fun = length
+  ) %>% 
+  
+  # Add layer:
+  
+  tm_shape(name = "iNaturalist observations") +
+  tm_raster(
+    as.count = TRUE,
+    col.scale =
+      tm_scale(
+        values = "-brewer.spectral",
+        style = "pretty",
+        n = 10
+      ),
+    col.legend =
+      tm_legend(title = "Number of observations")
+  )
+```
+
+*Note: `as.count = TRUE` starts the count at 1 if no zeroes are present in the data.*
+
+Notice that the cell values were often classified as `NA` when no values were present. We can address this by adding an additional argument to rasterize -- `backgroud = 0`:
+
+```{r}
+# Add basemap:
+
+tm_basemap("Esri.WorldImagery") +
+  
+  # Count the number of iNaturalist observations per 30m cell:
+  
+  inat %>% 
+  terra::rasterize(
+    canopy_smsc,
+    fun = length,
+    background = 0
+  ) %>% 
+  terra::mask(smsc_campus) %>% 
+  
+  # Add layer:
+  
+  tm_shape(name = "iNaturalist observations") +
+  tm_raster(
+    as.count = TRUE,
+    col.scale =
+      tm_scale(
+        values = "-brewer.spectral",
+        style = "pretty",
+        n = 10
+      ),
+    col.legend =
+      tm_legend(title = "Number of observations")
+  )
+```
+
+*Note: While not applicable here, you may want to explore the video content to see how other functions (e.g., `count()`) may be applied to `rasterize()`.*
+
+If you are disappointed with the above, so am I. As such, let's turn our attention to density ...
+
+### Density
+
+Density can mean different things in spatial analyses. For example, the number of observations per unit area is a density measure. We have derived density in this way when we looked at the human population and the number of iNaturalist observations per unit area of census tracts. Here, we will look at the probability density, which can be loosely thought of as the probability of a given outcome relative to the other values in a sample.
+
+I can more than understand if I lost you a bit in the above. My PhD was in quantitative ecology and I remember reaching a point somewhere around the second year in which I screamed into the sky *Why is there so much danged math in this field*? We are going to skip the math and more formal definitions of probability density and go straight to application. 
+
+Continuing with our example of the distribution of iNaturalist observations at the Smithsonian Conservation Biology Institute, our goal will be to determine where iNaturalist observations are most, and least, likely to occur.
+
+Let's start again by looking at the locations where observations occurred on campus:
+
+```{r}
+# Add basemap:
+
+tm_basemap("Esri.WorldImagery") +
+  
+  # Add iNaturalist observations:
+  
+  inat %>% 
+  tm_shape(name = "iNaturalist observations") +
+  tm_dots(
+    fill = "yellow"
+  )
+```
+
+Our method for calculating density will be a bit old school, unfortunately. I have hunted around for an easy-to-follow modern version but have come up empty. We are going to follow a tried-and-true method that uses the *SpatStat* package. 
+
+As an overview of the steps in this process:
+
+1. Convert points to a matrix.
+2. Define the observation window (e.g., spatial extent or boundaries of a polygon) upon which we want to calculate/return our density distribution.
+3. Create a point pattern object, which describes the locations of points in a given area.
+
+#### 1. Convert points to a matrix
+
+Our first task will be to generate a two-column matrix that represents the geospatial coordinates of iNaturalist observations. In the code below, I:
+
+* Convert the points to a projected coordinate system (EPSG 5070);
+* Use `st_coordinates()` to extract the coordinates of iNaturalist observations as a two-column matrix;
+* Globally assign the resultant object to the name `inat_coords`.
+
+```{r}
+inat_coords <-
+  inat %>% 
+  st_transform(5070) %>% 
+  st_coordinates()
+```
+
+The resultant object from above is a matrix:
+
+```{r}
+class(inat_coords)
+```
+
+... and has 320 rows and two columns:
+
+```{r}
+dim(inat_coords)
+```
+
+This is a bigger matrix than is typically useful to print, so let's just look at the first few rows with the base R function `head`:
+
+```{r}
+head(inat_coords)
+```
+
+We can see that this is a two-column matrix where:
+
+* Each row represents a point feature;
+* The first column (`[, 1]`) represents the longitudinal coordinates;
+* The second column (`[, 2]`) represents the latitudinal coordinates.
+
+:::{class="mysecret"}
+{{< fa user-secret size=2x >}} [Always report longitude before latitude!]{style="font-size: 1.25em; padding-left: 0.5em;"}
+
+Although many GIS applications, such as Google Earth, specify latitude before longitude (i.e., Y before X), the formal standard is to denote coordinates as longitude before latitude (X, Y). Failing to do so can become a major headache when you get to the analysis phase. I cannot begin to estimate how many freaked out students and colleagues I have helped because their points kept landing somewhere in Antarctica!
+:::
+
+#### 2. Determine the observation window
+
+The observation window represents the spatial bounds of our analysis, which may be the spatial extent upon which to calculate density or the boundaries of a polygon shapefile. To create our observation window, we will:
+
+* Supply the shapefile `smsc_campus` as the template for our observation window;
+* Transform the CRS of the object to a projected coordinate system (EPSG 5070);
+* Convert the bounding box to an observation window with the *spatstat.geom* function `as.owin`.
+
+```{r}
+smsc_owin <-
+  smsc_campus %>% 
+  st_transform(5070) %>% 
+  as.owin()
+
+smsc_owin
+```
+
+#### 3. Create a point pattern object
+
+Our next goal is to generate an object that defines the locations of points within our extent -- the point pattern. We do so with the *spatstat.geom* function `ppp` and supply (at a minimum):
+
+* `x = ...`: A vector of longitudinal coordinates;
+* `y = ...`: A vector latitudinal coordinates;
+* `window = ...`: The observation window.
+
+```{r}
+inat_ppp <-
+  ppp(
+    x = inat_coords[, 1],
+    y = inat_coords[, 2],
+    window = smsc_owin
+  )
+```
+
+*Note: We receive a message that the `data contain duplicated points`, but that is okay for our purposes here (these are just iNaturalist observations at the same location).*
+
+We can, of course, also complete these steps as a single piped operation:
+
+```{r}
+inat_ppp <-
+  inat %>% 
+  
+  # Transform CRS and extract coordinates:
+  
+  st_transform(5070) %>% 
+  st_coordinates() %>% 
+  
+  # Convert to a point pattern object:
+  
+  ppp(
+    x = .[, 1],
+    y = .[, 2],
+    
+    # Set the observation window:
+    
+    window = 
+      smsc_campus %>% 
+      st_transform(5070) %>% 
+      as.owin()
+  )
+```
+
+#### 4. Calculate density
+
+We are now ready to calculate the probability density of our points! This is not an explicitly spatial procedure -- we will use the *stats* package (provided with base R) function `density` to calculate this. 
+
+We supply (at a minimum) the point pattern object that we would like to calculate the density of.
+
+```{r}
+inat_density <-
+  stats::density(inat_ppp)
+
+inat_density
+```
+
+*Note: There are other arguments in the function (e.g., `bw = ...`) that are worth exploring, but are outside of the bounds of this introductory course!*
+
+#### 5. Convert to a raster
+
+Our last step of the process is to convert the output to a raster file. I use the *stars* package for this, with the function `st_as_stars` and then add the CRS information to the raster with `st_set_crs`:
+
+```{r}
+density_stars <-
+  stars::st_as_stars(inat_density) %>% 
+  st_set_crs(value = 5070)
+```
+
+Let's have a look:
+
+```{r}
+# Add density layer:
+
+density_stars %>% 
+  tm_shape() +
+  tm_raster(
+    group = "Density",
+    col.scale =
+      tm_scale(values = "-brewer.spectral"),
+    col_alpha = 0.8,
+    col.legend =
+      tm_legend(title = "Density")
+  ) +
+  
+  # Add iNaturalist observation layer:
+  
+  inat %>% 
+  tm_shape(name = "iNaturalist observations") +
+  tm_dots(group = "Observations") +
+  
+  # Add basemap:
+  
+  tm_basemap("Esri.WorldImagery")
+```
+
+*Note: We have been using the stars package ever since we started plotting rasters in tmap -- under-the-hood, SpatRasters are converted to stars rasters when we plot them.*
+
+#### Completing the above in a single step
+
+I am, of course, unsatisfied with all of the global assignments above. If the assigned names are only used once, those assignments are not necessary. Instead, we can do this in a single chained analysis:
+
+```{r}
+# Calculate density of iNaturalist observations:
+
+inat %>% 
+  
+  # Transform CRS and extract coordinates:
+  
+  st_transform(5070) %>% 
+  st_coordinates() %>% 
+  
+  # Convert to a point pattern object:
+  
+  ppp(
+    x = .[, 1],
+    y = .[, 2],
+    
+    # Set the observation window:
+    
+    window = 
+      smsc_campus %>% 
+      st_transform(5070) %>% 
+      as.owin()
+  ) %>% 
+  
+  # Calculate density:
+  
+  stats::density() %>% 
+  
+  # Convert to a stars raster:
+  
+  stars::st_as_stars() %>% 
+  st_set_crs(value = 5070) %>% 
+  
+  # Add density layer:
+  
+  tm_shape() +
+  tm_raster(
+    group = "Density",
+    col.scale =
+      tm_scale(values = "-brewer.spectral"),
+    col_alpha = 0.7,
+    col.legend =
+      tm_legend(title = "Density")
+  ) +
+  
+  # Add iNaturalist observation layer:
+  
+  inat %>% 
+  tm_shape(name = "iNaturalist observations") +
+  tm_dots(group = "Observations") +
+  
+  # Add basemap:
+  
+  tm_basemap("Esri.WorldImagery")
+```
+
+### Distance
+
+Our final topic for this lesson will be how to generate distance rasters. Distance rasters can be applied to a number of scenarios, for example I have used them to calculate the distance to:
+
+* Forest edges when describing bird habitats;
+* Streams when studying the flow of pollutants into mountain streams;
+* Roads when studying anthropogenic noise;
+* Trails when assessing the spatial bias in participatory science observations.
+
+There are a ton of applications for distance rasters! Luckily, the process of generating a distance raster is very straightforward. We use `terra:distance()` and supply (see `?terra::distance`):
+
+* `x = ...`: The raster that will provide the template for the distance calculations (e.g. provides the cell size);
+* `y = ...`: The object that you would like to calculate the distance to (can be lines, points, or polygons!).
+
+For this, we will calculate the distance to `roads` across the Smithsonian Conservation Biology Institute.
+
+```{r, eval = FALSE}
+road_distance <- 
+  terra::distance(
+    elevation,
+    roads
+  )
+```
+
+```{r, include = FALSE}
+road_distance <- 
+  terra::distance(
+    elevation,
+    roads
+  )
+```
+
+
+```{r}
+# Add basemap:
+
+tm_basemap("Esri.WorldImagery") +
+  
+  # Add the distance layer:
+  
+  road_distance %>% 
+  tm_shape(name = "Distance to roads") +
+  tm_raster(
+    col.scale =
+      tm_scale_continuous(values = "brewer.spectral"),
+    col.legend =
+      tm_legend(title = "Distance (m)")
+  )
+```
+
+Let's take this a step further by conducting the above operation on buildings in our classified raster:
+
+```{r}
+# Add basemap:
+
+tm_basemap("Esri.WorldImagery") +
+  
+  # Add the land cover layer:
+  
+  land_cover %>% 
+  tm_shape(name = "Classified land cover") +
+  tm_raster(
+    col.scale =
+      tm_scale_categorical(),
+    col_alpha = 0.9
+  )
+```
+
+The resolution of the `buildings` raster is greater than 1 meter so, for the sake of processing time, let's resample the cells to the same resolution as the `elevation` raster:
+
+```{r}
+buildings_resampled <-
+  buildings %>% 
+  terra::resample(elevation)
+```
+
+To calculate the distance here, we do not need to specify `y = ...`. We calculate the distance between cells that are not `NA` and any that are `NA`:
+
+```{r, eval = FALSE}
+building_distance <- 
+  terra::distance(buildings_resampled)
+```
+
+```{r, include = FALSE}
+building_distance <- 
+  terra::distance(buildings_resampled)
+```
+
+Let's look at this on a map:
+
+```{r}
+# Add basemap:
+
+tm_basemap("Esri.WorldImagery") +
+  
+  # Add the distance layer:
+  
+  building_distance %>% 
+  tm_shape(name = "Distance from buildings") +
+  tm_raster(
+    col.scale =
+      tm_scale_continuous(values = "brewer.spectral"),
+    col.legend =
+      tm_legend(title = "Distance (m)")
+  )
+```
+
+Cool, yeah?
+
+## Reference
+
+<button class="accordion">Glossary</button>
+::: panel
+* **Literal character**: In regex, this is used to search for exact character matches in the case (i.e., lower vs. upper) and order of characters.
+* **Metacharacter**: Special characters used to modify the conditions of a regex search string (such a a choice of letters or position of literal characters in a string). Note: Metacharacters are not R functions!
+* **Regular expressions (regex)**: An algorithm used to search strings (character values).
+:::
+
+<button class="accordion">Functions</button>
+::: panel
+
+::: mysecret
+
+{{< fa user-secret size=2x >}} [**Important!**]{style="font-size: 1.25em; padding-left: 0.5em;"}
+
+* Primitive functions, as well as functions in the *base*, *stats*, and *utils* packages, are loaded by default when you start an R session. Functions in *dplyr*, *ggplot2*, *lubridate*, *purrr*, *readr*, *stringr*, *tibble*, *tidyr*, and *tidyverse* are loaded with `library(tidyverse)`.
+* I do not include functions that I recommend avoiding.
+* Regular expressions metacharacters are not functions!
+:::
+
+::: function_table
+
+```{r, message = FALSE, echo = FALSE}
+render_function_table("functions_7.1_advanced_rasters.csv")
+```
+
+:::
+:::
+
+<button class="accordion">Metacharacters in regex</button>
+::: panel
+
+::: mysecret
+{{< fa user-secret size=2x >}} [Metacharacters are not R functions!]{style="font-size: 1.25em; padding-left: 0.5em;"}
+
+When you are given a list of functions that you may use in a given problem set, recall that regex metacharacters are not functions. As such, they will not be included in your function list. You may use *any* metacharacter to address a given problem!
+:::
+
+* **Alternation constraint**, `(...)`: Constrains the use of a metacharacter to just the symbols inside of parentheses
+* **Anchor**, `^...`: Specify the start of a string
+* **Anchor**, `...$`: Specify the end of a string
+* **Character class**, `[...]`: Define a *set* of symbols that you would like to match
+* **Metacharacter escape**, `\\`: Treat a metacharacter as a literal character
+* **Optional match**, `?`: Specify that the preceding symbol is optional
+* **Range** (in a character class), `[...-...]`: Define a *range* of symbols that you would like to match in a given position
+* **Or**, `...|...`: Specify a match of one string "or" another string
+* **Repetition**, `...*`: Specify that a symbol can appear no times or an unlimited number of times
+* **Repetition**, `...+`: Specify that a symbol appears at least once or an unlimited number of times
+* **Repetition**, `{...}`: Specify the number of times a symbol should appear
+* **Repetition**, `{...,...}`: Specify that a symbol may appear within a range of repetitions
+* **Wild card**, `.`: Specify that a character value at a given location can be any symbol
+:::
+
+<button class="accordion">Keyboard shortcuts</button>
+::: panel
+
+{{< include ../../src/includes/keyboard_shortcuts.qmd >}}
+:::
+
+<button class="accordion">R Studio panes</button>
+::: panel
+{{< include ../../src/includes/rstudio_panes.qmd >}}
+:::
+

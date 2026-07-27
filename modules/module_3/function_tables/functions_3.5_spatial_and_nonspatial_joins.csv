@@ -1,0 +1,42 @@
+Package,Function,Definition
+.Primitive,(...),Operator that evaluates the function name on the left-hand-side (LHS) of the opening parentheses using the arguments enclosed by the parentheses
+.Primitive,<-,Infix operator that assigns an object on the right-hand-side (RHS) to a name on the left-hand-side (LHS) -- this should be used for global assignments!
+.Primitive,=,Infix operator that assigns an object on the right-hand-side (RHS) to a name on the left-hand-side (LHS) -- this should not be used for global assignments!
+.Primitive,:,Infix operator that generates a regular sequence of adjacent values
+.Primitive,$,Infix operator that extracts the values associated with a name (RHS) from a recursive object (LHS)
+.Primitive,==,Infix relational operator (is equal to)
+.Primitive,!,Prefix logical operator (not)
+.Primitive,+,Infix arithmetic operator (addition)
+.Primitive,/,Infix arithmetic operator (divide)
+.Primitive,c,Combine values to form an atomic vector
+base,%in%,Infix relational operator that tests whether the vector on the left-hand-side (LHS) is within the vector on the right
+base,library,Attach the package environment for a given package to the current R session
+base,source,Execute a source script (in its entirety)
+dplyr,anti_join,A filtering join that joins a source table to a target table and maintains only records in which the key values *do not* match
+dplyr,filter,Subset a data frame by logical condition
+dplyr,group_by,Group the data in a data frame by a given variable such that one or more subsequent analyses are run separately on each group
+dplyr,inner_join,A mutating join that joins a source table to a target table and maintains only records with matching key values
+dplyr,left_join,"A mutating join that joins a source table to a target table and maintains all records found in the target table, regardless of matching key values"
+dplyr,n,Calculate the number of observations (rows)
+dplyr,pull,Extract a column from a data frame as a vector
+dplyr,select,Subset columns in a data frame by name (without quotes!)
+dplyr,semi_join,A filtering join that joins a source table to a target table and maintains only records with matching key values
+dplyr,summarize,Calculate one or more summary statistics on a variable or variables in a data frame (often used in conjunction with `group_by()` but may also be used with `.by = ...`)
+ggplot2,+,ggplot's pipe operator (adds a layer to a plot)
+ggplot2,aes,Define aesthetics
+ggplot2,geom_sf,Add an sf layer to a ggplot
+ggplot2,ggplot,"Set the data and, potentially, the aesthetics of a plot"
+ggplot2,scale_fill_viridis_c,Add a continuous virdis color scale to a plot
+ggplot2,theme_set,Set the ggplot theme for an entire session
+ggplot2,theme_void,A ggplot theme that contains no axes or panel background
+magrittr,%>%,The pipe operator passes the output of the LHS argument to the function on the right
+readr,read_rds,Read an RDS file into R
+sf,st_as_sf,Convert a data frame to an sf object
+sf,st_crs,Get the CRS of a shapefile
+sf,st_filter,"Conduct a filtering join (i.e., subset geometries) of a target table relative to the geometry of a source table"
+sf,st_join,Conduct a mutating join of a target table relative to the geometry of a source table
+sf,st_read,Read in a simple features or other GIS shapefile
+sf,st_sf,Convert a simple features column object to an sf object
+sf,st_transform,Transform the CRS of a shapefile to a different CRS
+tibble,as_tibble,Convert a data frame (and some other non-tibble objects!) to a tibble data frame
+utils,str,View the structure of a data object

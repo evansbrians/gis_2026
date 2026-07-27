@@ -1,0 +1,1376 @@
+---
+title: "3.5 Spatial and non-spatial joins with sf"
+format:
+  html:
+    embed-resouces: true
+    self-contained: true
+    standalone: true
+    toc: true
+    toc-location: left
+    toc-depth: 4
+    number-sections: false
+    search: true
+    include-in-header: ../../src/includes/header_includes.html
+    include-after-body: ../../src/includes/accordion_script.html
+    theme: 
+      - cosmo
+      - ../../src/css/custom_style.scss
+editor: source
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r, include = FALSE}
+source("src/r/course_functions.R")
+```
+<hr>
+
+```{r, include=FALSE}
+library(tidyverse)
+library(sf)
+
+theme_set(
+  new = theme_bw()
+)
+
+spotted_lanternfly <-
+  read_rds("data/raw/spotted_lanternfly.rds") %>% 
+  filter(quality_grade == "research") %>% 
+  select(
+    !c(
+      description,
+      image_url,
+      place_guess,
+      quality_grade,
+      user
+    )
+  )
+
+states <-
+  st_read("data/raw/shapefiles/states.shp") %>% 
+  st_transform(crs = 5070) %>% 
+  set_names(
+    names(.) %>% 
+      tolower()
+  )
+
+counties <-
+  st_read("data/raw/shapefiles/counties.geojson") %>% 
+  st_transform(crs = 5070) %>% 
+  set_names(
+    names(.) %>% 
+      tolower()
+  )
+
+lanternfly_sf <-
+  spotted_lanternfly %>% 
+  
+  # Convert the table to a spatial points object:
+  
+  st_as_sf(
+    
+    # Supply coordinate columns:
+    
+    coords = c("longitude", "latitude"),
+    
+    # Supply the CRS that the data were recorded in:
+    
+    crs = 4326) %>% 
+  
+  # Transform to the same CRS as the counties object:
+  
+  st_transform(
+    crs = st_crs(counties)
+  )
+
+counties_lanternfly <-
+  counties %>% 
+  semi_join(
+    spotted_lanternfly,
+    by = c("state_name" = "state")
+  )
+```
+
+
+<div style="margin-bottom: 3em;">
+
+![](../../src/images/hex_complex.png){.intro_image}
+
+In this video lesson (runtime: 27:03) and tutorial, we will extend our understanding of joins by revisiting non-spatial joins (as they relate to spatial applications) and I will introduce the important concept and application of spatial joins. Specifically, we will cover:
+
+* When non-spatial joins can be used for spatial objects
+* Mutating spatial joins with `st_join()`
+* Filtering spatial joins with `st_filter()`
+* Mutating spatial joins with `st_join()`
+
+Note: The written portion of this tutorial is primarily meant to provide you with a reference to the video content. Read it if you need it!
+
+</div>
+
+## Data for this lesson
+
+Please click on the buttons below to explore the metadata for this lesson!
+
+<button class="accordion">Metadata: Video lesson</button>
+::: panel
+In the video portion of this lesson, we will explore:
+
+**[counties.geojson]{.mono}** and **[counties_low_res.geojson]{.mono}**: A polygon shapefile of all counties in the United States. The data are in an unprojected Coordinate Reference System with the datum NAD83 and EPSG code 4269. Relevant fields include:
+
+* [STATEFP]{.mono}, character: A **foreign key** to each US state in the [states]{.mono} data.
+* [COUNTYFP]{.mono}, character: An ID assigned to a given county in a given state.
+* [GEOID]{.mono}, character: The **primary key** key for each county (*Note: These values are a concatenation of [STATEFP]{.mono} and [COUNTYFP]{.mono}*).
+* [NAME]{.mono}, character: The name of each county.
+* [STUSPS]{.mono}, character: The two-letter postal code of the state each county is within.
+* [STATE_NAME]{.mono}, character: The name of the state each county is within.
+* [ALAND]{.mono}, numeric: The area covered by land in each census tract, in square meters.
+* [AWATER]{.mono}, numeric: The area covered by water in each census tract, in square meters.
+
+**[spotted_lanternfly.rds]{.mono}**. The data are formatted as a tibble data frame object. Location data are recorded in an unprojected Coordinate Reference System (CRS) with the datum WGS84 and EPSG code 4326. The dataset includes the following variables:
+
+* [datetime]{.mono}, datetime: The date and time in which an observation took place.
+* [user]{.mono}, character: The user id for a given iNaturalist user (*Note: In combination with `datetime`, this variable represents the **compound key** for this table -- a compound key is a set of variables in a data frame that, combined, represent the primary key of the data frame.*).
+* [state]{.mono}, character: The state in which an observation was made.
+* [place_guess]{.mono}, character: The location in which an observation was made (based on the coordinates of the observation).
+* [longitude]{.mono}, numeric: The longitudinal coordinates of an observation, in decimal degrees.
+* [latitude]{.mono}, numeric: The latitudinal coordinates of an observation, in decimal degrees.
+* [image_url]{.mono}, character: The web address of the picture submitted with an observation.
+* [quality_grade]{.mono}, character: Whether the observation was verified by experts ("research" grade) or has not been able to be verified ("casual" grade).
+* [description]{.mono}, character: A notes column where users can input comments about their observation
+
+**[states]{.mono} ([.dbf]{.mono}, [.prj]{.mono}, [.shp]{.mono}, [.shx]{.mono})**: A polygon shapefile of US states (not including Hawaii). The data are in an unprojected Coordinate Reference System with the datum NAD83 and EPSG code 4269. The data include the following fields:
+
+* [GEOID]{.mono}, character: The **primary key** key for each state.
+* [NAME]{.mono}, character: The name of each state.
+* [REGION]{.mono}, character: The region of the United States where each state is located.
+* [AREA]{.mono}, numeric: The total area of each state, in square kilometers.
+* [ttl__10]{.mono}, numeric: The total population of each state in 2010.
+* [ttl__15]{.mono}, numeric: The total population of each state in 2015.
+:::
+
+## Video content
+
+In the video below, the following content is outdated (I have updated the script, but not the video):
+
+* You no longer need to include `library(tidyverse)` *and* `library(lubridate)`. The package *lubridate* has now been added as a core package of the tidyverse.
+* I (once again) use single quotes in this video and recommend using double-quotes.
+* When using `!c(..., ...., ...)` I now place each argument on its own line to ensure that the arguments are indented two spaces underneath the function call.
+* In the first "Now you!" challenge I ask you to "Add the following files to your global environment ..." -- this language is incorrect and should be something more like "read the files and assign them to names in your global environment".
+* While not a part of the course style guide, I now prefer hanging parentheses over collapsed parentheses.
+* In places where the code can be modernized a bit (using `join_by()` and `.by =`), I have included alternate versions under `# Note: ...`.
+
+{{< video https://youtu.be/K9uzBxXv2NU?si=tsfhKtkRDO1Baq0x >}}
+
+<button class="accordion">After watching the video, click here to see how our final plotting code could have been simplified!</button>
+::: panel
+For the plotting code we developed in the video, because we added one piece at a time, the code was not as parsimonious as it could have been. 
+
+Here is the code as we developed it in the video lesson:
+```{r}
+lanternfly_sf %>% 
+  
+  # Join counties to lanternflies and convert to a tibble:
+  
+  st_join(
+    counties_lanternfly %>% 
+      select(geoid)
+  ) %>%
+  as_tibble() %>% 
+  
+  # Tally lanternflies by county:
+  
+  group_by(geoid) %>% 
+  summarize(
+    n = n()
+  ) %>% 
+  
+  # Join tally to counties:
+  
+  inner_join(
+    counties_lanternfly,
+    .,
+    by = "geoid"
+  ) %>% 
+  
+  # Plot the data:
+  
+  ggplot() +
+  
+  # Background states:
+  
+  geom_sf(
+    data = 
+      states %>%
+      st_filter(lanternfly_sf)
+  ) +
+  
+  # Affected counties:
+  
+  geom_sf(
+    aes(fill = n),
+    color = NA
+  ) +
+  scale_fill_viridis_c(
+    option = "plasma",
+    na.value = "#dcdcdc"
+  ) +
+  
+  # State borders:
+  
+  geom_sf(
+    data = 
+      states %>% 
+      st_filter(lanternfly_sf),
+    fill = NA
+  )
+```
+
+Because we use `inner_join()`, defining `na.value = "#dcdcdc"` was not necessary (because `inner_join()` does not contain `NA` values in the resultant object). 
+
+```{r}
+lanternfly_sf %>% 
+  
+  # Join counties to lanternflies and convert to a tibble:
+  
+  st_join(
+    counties_lanternfly %>% 
+      select(geoid)
+  ) %>%
+  as_tibble() %>% 
+  
+  # Tally lanternflies by county:
+  
+  group_by(geoid) %>% 
+  summarize(
+    n = n()
+  ) %>% 
+  
+  # Join tally to counties:
+  
+  inner_join(
+    counties_lanternfly,
+    .,
+    by = "geoid"
+  ) %>% 
+  
+  # Plot the data:
+  
+  ggplot() +
+  
+  # Background states:
+  
+  geom_sf(
+    data = 
+      states %>%
+      st_filter(lanternfly_sf)
+  ) +
+  
+  # Affected counties:
+  
+  geom_sf(
+    aes(fill = n),
+    color = NA
+  ) +
+  scale_fill_viridis_c(option = "plasma") +
+  
+  # State borders:
+  
+  geom_sf(
+    data = 
+      states %>% 
+      st_filter(lanternfly_sf),
+    fill = NA
+  )
+```
+
+
+However, if we had chosen to use `left_join()` rather than `inner_join()`, counties with no observations (NA) would be maintained and the first states layer would not be necessary. In this case, `na.value = #dcdcdc` *is* necessary because you are not adding a background states layer:
+
+```{r}
+lanternfly_sf %>% 
+  
+  # Join counties to lanternflies and convert to a tibble:
+  
+  st_join(
+    counties_lanternfly %>% 
+      select(geoid)
+  ) %>%
+  as_tibble() %>% 
+  
+  # Tally lanternflies by county:
+  
+  group_by(geoid) %>% 
+  summarize(
+    n = n()
+  ) %>% 
+  
+  # Join tally to counties, maintaining counties with no observations:
+  
+  left_join(
+    counties_lanternfly,
+    .,
+    by = "geoid"
+  ) %>% 
+  
+  # Plot the data:
+  
+  ggplot() +
+  
+  # Affected counties:
+  
+  geom_sf(
+    aes(fill = n),
+    color = NA
+  ) +
+  scale_fill_viridis_c(
+    option = "plasma",
+    na.value = "#dcdcdc"
+  ) +
+  
+  # State borders:
+  
+  geom_sf(
+    data = 
+      states %>% 
+      st_filter(lanternfly_sf),
+    fill = NA
+  )
+```
+
+The above was possible because we added state borders on top of the county layer!
+:::
+
+## Written tutorial
+
+### Setup
+
+We start by:
+
+* Generating a "setup" code section
+* Loading the libraries
+* Passing the names of the functions in `source_script.R` to the global environment.
+
+```{r, warning = FALSE, message = FALSE}
+# setup -------------------------------------------------------------------
+
+# Load libraries:
+
+library(sf)
+library(tidyverse)
+
+source("modules/module_3/scripts/source_script.R")
+```
+
+In the video of this lesson, I included a new function, `theme_set`, that allows us to set the theme for all of our ggplot output. Here, I choose to use `theme_void()`, which removes all background and plot window elements from the output:
+
+```{r, warning = FALSE, message = FALSE}
+# Set the default theme for this session to `theme_void()`:
+
+theme_set(
+  new = theme_void()
+)
+```
+
+We will be using the `states` shapefile for this lesson. The code below:
+
+* Reads in the data with `st_read()`
+* Cleans up names a bit with my custom function (from `source_script.R`) `clean_names()`
+* Uses `select()` to subset the fields (i.e., variables) to `name` and rename the field `state` 
+* Transforms the data to EPSG 5070 with `st_transform()`
+* Assigns the data to the name `states` to the resultant object
+
+```{r, warning = FALSE, message = FALSE}
+# Read in and pre-process the states shapefile:
+
+states <-
+  st_read("data/raw/shapefiles/states.shp") %>%
+  
+  # Clean up the names a bit:
+  
+  clean_names() %>% 
+  
+  # Subset to our column of interest and rename:
+  
+  select(state = name) %>% 
+  
+  # Transform to EPSG 5070:
+  
+  st_transform(5070)
+```
+
+Please highlight `states` and run it to view the metadata of our transformed shapefile:
+
+```{r, echo = FALSE}
+states
+```
+
+Now let's plot the shapefile to see how it looks:
+
+```{r}
+states %>% 
+  ggplot() +
+  geom_sf()
+```
+
+We will once again be using `spotted_lanternfly.rds` for this lesson. The following code reads in and pre-processes the data:
+
+```{r, warning = FALSE, message = FALSE}
+
+# Read in the tabular data file of spotted lanternfly and pre-process the
+# data:
+
+spotted_lanternfly_tabular <-
+  read_rds("data/raw/spotted_lanternfly.rds") %>% 
+  
+  # Subset to research-grade observations:
+  
+  filter(quality_grade == "research") %>% 
+  
+  # Subset to columns of interest:
+  
+  select(
+    !c(
+      description,
+      image_url,
+      place_guess,
+      quality_grade,
+      user
+    )
+  )
+```
+
+Please highlight and run `spotted_lanternfly_tabular` to have a look at the data:
+
+```{r, echo = FALSE}
+spotted_lanternfly_tabular
+```
+
+### Non-spatial joins with shapefiles
+
+Whenever possible, I vastly prefer non-spatial joins (i.e., tabular joins using *dplyr* functions) over spatial joins. We can do so if our data objects have common columns, or at least common values, and they are of the same class.
+
+For example, above we can see that both `spotted_lanterfly_tabular` and `states` contain a column named `state`. We can use `str()` to determine if the columns are of the same class and share the same state-naming convention:
+
+```{r}
+str(spotted_lanternfly_tabular)
+
+str(states)
+```
+
+This is a lot of content to wade through. We might want to extract the variables prior to passing them to the `str` function:
+
+```{r}
+spotted_lanternfly_tabular %>% 
+  pull(state) %>% 
+  str()
+
+states %>% 
+  pull(state) %>% 
+  str()
+```
+
+*Note: I would complete the above operation in the Console pane!*
+
+The column `state` in each dataset are both character vectors and use the same naming convention, so we are safe to do non-spatial joins! 
+
+#### **Subset features with filtering non-spatial joins**
+
+Our first goal will be to generate this map of the conterminous US where the states with spotted lanternfly observations are highlighted in yellow:
+
+```{r, echo = FALSE}
+states %>% 
+  semi_join(
+    spotted_lanternfly_tabular,
+    by = "state"
+  ) %>% 
+  ggplot() +
+  geom_sf(data = states) +
+  geom_sf(fill = "#FBEC5D")
+```
+
+This is a great application of a **filtering join** ... the `semi_join()`! Let's start by subsetting the `states` object to just states with spotted lanternfly observations:
+
+* Set `states` as the target table of the join by passing the data into `semi_join()` with a pipe.
+* Set `spotted_lanternfly_tabular` as the source table
+* Define our common column with `by = "state"`
+
+```{r}
+states %>% 
+  semi_join(
+    spotted_lanternfly_tabular,
+    by = "state"
+  )
+```
+
+:::{class="mysecret"}
+<i class="fa fa-user-secret" aria-hidden="true" style = "font-size: 150%; padding-right: 5px;"></i>The above subsetting operation can be also calculated, without a join, using `filter()`:
+
+```{r}
+states %>% 
+  filter(state %in% spotted_lanternfly_tabular$state)
+```
+
+The above is actually a little more memory efficient, but the difference is negligible and I find the `semi_join()` to be a little easier to read.
+:::
+
+We can then pass the resultant data into `ggplot()` to look at the results:
+
+```{r}
+states %>% 
+  
+  # Subset to features where key values match: 
+  
+  semi_join(
+    spotted_lanternfly_tabular,
+    by = "state"
+  ) %>% 
+  
+  # Plot the data:
+  
+  ggplot() +
+  geom_sf()
+```
+
+... and add our yellow fill color:
+
+```{r}
+states %>% 
+  
+  # Subset to features where key values match: 
+  
+  semi_join(
+    spotted_lanternfly_tabular,
+    by = "state"
+  ) %>% 
+  
+  # Plot the data:
+  
+  ggplot() +
+  geom_sf(fill = "#FBEC5D")
+```
+
+To add states in the background, we:
+
+* Add an additional layer with `geom_sf()`
+* Specify the data argument of that layer as the original `states` object
+* Place the layer before our `states` subset.
+
+```{r}
+states %>% 
+  
+  # Subset to features where key values match: 
+  
+  semi_join(
+    spotted_lanternfly_tabular,
+    by = "state"
+  ) %>% 
+  
+  # Plot the data:
+  
+  ggplot() +
+  geom_sf(data = states) +
+  geom_sf(fill = "#FBEC5D")
+```
+
+For your reference (though this is not a great use case), you can use `anti_join()` to generate a plot of states where there were *no* observations of spotted lanternfly:
+
+```{r}
+states %>% 
+  
+  # Subset to features where key values do not match: 
+  
+  anti_join(
+    spotted_lanternfly_tabular,
+    by = "state"
+  ) %>% 
+  
+  # Plot the data:
+  
+  ggplot() +
+  geom_sf()
+```
+
+#### **Add fields with mutating joins**
+
+Recall that a **mutating join** is a join that adds a column from a source data frame to a target data frame. In this section, we will use mutating joins to create this visualization of the number of spotted lanternfly observations per state:
+
+```{r, echo = FALSE}
+states %>% 
+  left_join(
+    spotted_lanternfly_tabular %>% 
+      summarize(
+        n = n(),
+        .by = state
+      ),
+    by = "state"
+  ) %>% 
+  ggplot() +
+  aes(fill = n) +
+  scale_fill_viridis_c(
+    option = "plasma",
+    na.value = "#dcdcdc"
+  ) +
+  geom_sf()
+```
+
+For this, we will start by using `spotted_lanternfly_tabular` to summarize the number of observations in each state:
+
+```{r}
+spotted_lanternfly_tabular %>% 
+  
+  # Count the number of observations in each state:
+  
+  summarize(
+    n = n(),
+    .by = state
+  )
+```
+
+As above, we have a common column, `state` with which we can conduct a tabular join. Here, I will use `inner_join()` to join the tabular summary (source frame) to the `states` object (target frame). Recall that an `inner_join()` is a mutating join where only rows with matching key values, across both datasets, are maintained.
+
+```{r}
+states %>% 
+  
+  # Join with summary data:
+  
+  inner_join(
+    spotted_lanternfly_tabular %>% 
+      
+      # Count the number of observations in each state:
+      
+      summarize(
+        n = n(),
+        .by = state
+      ),
+    by = "state"
+  )
+```
+
+You might find the above a bit hard to read because there is a lot of data processing happening inside of the `inner_join()` function. Perhaps we can change the order of the target and source tables?
+
+```{r}
+spotted_lanternfly_tabular %>% 
+  
+  # Count the number of observations in each state:
+  
+  summarize(
+    n = n(),
+    .by = state
+  ) %>% 
+  
+  # Join with states data:
+  
+  inner_join(
+    states,
+    by = "state"
+  )
+```
+
+The above may look similar, but notice that the class of our object is now a tibble! This is because only the class of the target table is maintained during the join.
+
+If we missed that, the problem becomes painfully obvious when we try to plot the output:
+
+```{r, error = TRUE}
+spotted_lanternfly_tabular %>% 
+  
+  # Count the number of observations in each state:
+  
+  summarize(
+    n = n(),
+    .by = state
+  ) %>% 
+  
+  # Join with states data:
+  
+  inner_join(
+    states,
+    by = "state"
+  ) %>% 
+  
+  # Plot the data:
+  
+  ggplot() +
+  aes(fill = n) +
+  geom_sf()
+```
+
+We have two options for dealing with this problem. Our first is to convert the tibble back to an *sf* object with `st_sf()`:
+
+```{r}
+spotted_lanternfly_tabular %>% 
+  
+  # Count the number of observations in each state:
+  
+  summarize(
+    n = n(),
+    .by = state
+  ) %>% 
+  
+  # Join with states data:
+  
+  inner_join(
+    states,
+    by = "state"
+  ) %>% 
+  
+  # Convert back to an sf shapefile:
+  
+  st_sf() %>% 
+  
+  # Plot the data:
+  
+  ggplot() +
+  aes(fill = n) +
+  geom_sf()
+```
+
+An alternative (that I prefer) is to use a placeholder to specify that our summarized data frame should be the second argument (source table) of `inner_join()`:
+
+```{r}
+spotted_lanternfly_tabular %>% 
+  
+  # Count the number of observations in each state:
+  
+  summarize(
+    n = n(),
+    .by = state
+  ) %>% 
+  
+  # Join summarized data to states:
+  
+  inner_join(
+    states,
+    .,
+    by = "state"
+  ) %>% 
+  
+  # Plot the data:
+  
+  ggplot() +
+  aes(fill = n) +
+  geom_sf()
+```
+
+I have not observed big performance differences between the two methods above, but I like the placeholder method a bit more (it is a bit more parsimonious, in my opinion).
+
+To overlay this above the original states object, we:
+
+* Add the states layer with `geom_sf(data = states)`.
+* Specify the aesthetics of our summarized layer inside of the second `geom_sf()`. *Note: This is necessary because it will otherwise attempt to apply `aes(fill = n)` to `geom_sf(data = states)`.*
+
+```{r}
+spotted_lanternfly_tabular %>% 
+  
+  # Count the number of observations in each state:
+  
+  summarize(
+    n = n(),
+    .by = state
+  ) %>% 
+  
+  # Join summarized data to states:
+  
+  inner_join(
+    states,
+    .,
+    by = "state"
+  ) %>% 
+  
+  # Plot the data:
+  
+  ggplot() +
+  geom_sf(data = states) +
+  geom_sf(
+    aes(fill = n)
+  )
+```
+
+For this use case, we can simplify the above operation with a different **mutating join** -- the `left_join()`. For a `left_join()`:
+
+* When key values match, the values in the source table are added to the target table as a new column (or columns).
+* When key values *do not* match, the value `NA` is added to the new column(s) in the target table.
+
+```{r}
+spotted_lanternfly_tabular %>% 
+  
+  # Count the number of observations in each state:
+  
+  summarize(
+    n = n(),
+    .by = state
+  ) %>% 
+  
+  # Join summarized data to states:
+  
+  left_join(
+    states,
+    .,
+    by = "state"
+  )
+```
+
+These data can be plotted as:
+
+```{r}
+spotted_lanternfly_tabular %>% 
+  
+  # Count the number of observations in each state:
+  
+  summarize(
+    n = n(),
+    .by = state
+  ) %>% 
+  
+  # Join summarized data to states:
+  
+  left_join(
+    states,
+    .,
+    by = "state"
+  ) %>% 
+  
+  # Plot the data:
+  
+  ggplot() +
+  aes(fill = n) +
+  geom_sf()
+```
+
+Notice in the above that, by using a `left_join()`, we were not required to add the original `states` object as a background layer and we were able to set the aesthetics (`aes()`) for the whole plot!
+
+We are almost to our desired output! Next, let's generate a prettier (or at least more informative) set of colors with the function `scale_fill_viridis_c`:
+
+```{r}
+spotted_lanternfly_tabular %>% 
+  
+  # Count the number of observations in each state:
+  
+  summarize(
+    n = n(),
+    .by = state
+  ) %>% 
+  
+  # Join summarized data to states:
+  
+  left_join(
+    states,
+    .,
+    by = "state"
+  ) %>% 
+  
+  # Plot the data:
+  
+  ggplot() +
+  aes(fill = n) +
+  geom_sf() +
+  scale_fill_viridis_c()
+```
+
+I am not crazy about the default color scheme here either -- we can define a new color scheme with the argument `option = ...`. Here, I have chosen the "plasma" color scheme (see `?scale_fill_viridis_c`):
+
+```{r}
+spotted_lanternfly_tabular %>% 
+  
+  # Count the number of observations in each state:
+  
+  summarize(
+    n = n(),
+    .by = state
+  ) %>% 
+  
+  # Join summarized data to states:
+  
+  left_join(
+    states,
+    .,
+    by = "state"
+  ) %>% 
+  
+  # Plot the data:
+  
+  ggplot() +
+  aes(fill = n) +
+  geom_sf() +
+  scale_fill_viridis_c(option = "plasma")
+```
+
+We can further improve this by setting a color value for instances in which the value of `n` is `NA` (with `na.value = ...`):
+
+```{r}
+spotted_lanternfly_tabular %>% 
+  
+  # Count the number of observations in each state:
+  
+  summarize(
+    n = n(),
+    .by = state
+  ) %>% 
+  
+  # Join summarized data to states:
+  
+  left_join(
+    states,
+    .,
+    by = "state"
+  ) %>% 
+  
+  # Plot the data:
+  
+  ggplot() +
+  aes(fill = n) +
+  geom_sf() +
+  scale_fill_viridis_c(
+    option = "plasma",
+    na.value = "#dcdcdc"
+  )
+```
+
+### Spatial joins
+
+Spatial joins are useful if your data do not include a common key field. Instead, such joins are based on the spatial location of one shape relative to another (e.g., points in polygons, polygons overlapping points, or polygons overlapping one another). For this portion of the tutorial, I will remove the common column (`state`) to fake the problem -- in the future we will deal with many instances in which the problem is real! 
+
+Let's start by removing all fields *except* for `longitude` and `latitude` from `spotted_lanternfly_tabular`:
+
+```{r}
+spotted_lanternfly_tabular %>% 
+  
+  # Subset to columns of interest:
+  
+  select(longitude:latitude)
+```
+
+We can convert this to a shapefile (*sf* points object) with the `st_as_sf` function:
+
+* For the option `coords = ...` we supply a vector of names associated with the `longitude` and `latitude` columns (in that order).
+* For the option `crs = ...` we supply the Coordinate Reference System that the data were recorded in (see metadata, above).
+
+```{r}
+spotted_lanternfly_sf <-
+  spotted_lanternfly_tabular %>% 
+  
+  # Subset to columns of interest:
+  
+  select(longitude:latitude) %>% 
+  
+  # Convert to a shapefile:
+  
+  st_as_sf(
+    coords = c("longitude", "latitude"),
+    crs = 4326
+  )
+```
+
+#### **Filtering spatial join -- `st_filter()`**
+
+In this section, we will use filtering spatial joins to once again reproduce this map of the conterminous US where the states with spotted lanternfly observations are highlighted in yellow:
+
+```{r, echo = FALSE}
+states %>% 
+  st_filter(
+    spotted_lanternfly_tabular %>% 
+      select(longitude:latitude) %>% 
+      st_as_sf(
+        coords = c("longitude", "latitude"),
+        crs = 4326
+      ) %>% 
+      st_transform(
+        st_crs(states)
+      )
+  ) %>% 
+  ggplot() +
+  geom_sf(data = states) +
+  geom_sf(fill = "#FBEC5D")
+```
+
+We will also produce this map of locations where spotted lanterflies have been observed (black dots) in the state of Virginia:
+
+```{r, echo = FALSE}
+spotted_lanternfly_tabular %>% 
+  select(longitude:latitude) %>% 
+  st_as_sf(
+    coords = c("longitude", "latitude"),
+    crs = 4326
+  ) %>% 
+  st_transform(
+    st_crs(states)
+  ) %>% 
+  st_filter(
+    states %>% 
+      filter(state == "Virginia")
+  ) %>% 
+  ggplot() +
+  geom_sf(
+    data = 
+      states %>% 
+      filter(state == "Virginia")
+  ) +
+  geom_sf()
+```
+
+We use the function `st_filter` to conduct a filtering spatial join. We simply provide the name of target object (i.e., the object that you would like to subset) and the name of the source object (i.e., the object that you would like to be the basis of the subsetting). For example, if we wanted to subset `states` to those that have had spotted lanternfly observations, we would write:
+
+```{r, error = TRUE}
+states %>% 
+  
+  # Subset states to those with spotted lanternfly observations:
+  
+  st_filter(spotted_lanternfly_sf)
+```
+
+But this failed! Why??? This is because the source table *does not* share the same CRS as the target table! The CRS of the source table is currently EPSG 4326, which represents the CRS that the data were recorded in. We have to transform the CRS such that it is the same CRS of the target table. We can do so with `st_transform()` and use `st_crs(states)` to ensure that the CRSs are equivalent:
+
+```{r}
+spotted_lanternfly_sf <-
+  spotted_lanternfly_tabular %>% 
+  
+  # Subset to columns of interest:
+  
+  select(longitude:latitude) %>% 
+  
+  # Convert to a shapefile:
+  
+  st_as_sf(
+    coords = c("longitude", "latitude"),
+    crs = 4326
+  ) %>% 
+  
+  # Transform the CRS to match the CRS of states:
+  
+  st_transform(
+    st_crs(states)
+  )
+```
+
+*Note: I would typically do so in the setup portion of the script but have placed it here purely for pedagogical reasons!*
+
+:::{class="mysecret"}
+<i class="fa fa-user-secret" aria-hidden="true" style = "font-size: 150%; padding-right: 5px;"></i>It is super, super, super important that tabular data are converted to shapefiles using the same CRS in which the data were recorded. Any transformation of the CRS has to come after the data are read in!
+:::
+
+With our `spotted_lanternfly_sf` object transformed to the same CRS as `states`, we can easily subset features in `states` to those that have had spotted lanternfly observations:
+
+```{r}
+states %>% 
+  
+  # Subset states to those with spotted lanternfly observations:
+  
+  st_filter(spotted_lanternfly_sf)
+```
+
+We can plot the above to view only the states that have had spotted lanternfly observations:
+
+```{r}
+states %>% 
+  
+  # Subset states to those with spotted lanternfly observations:
+  
+  st_filter(spotted_lanternfly_sf) %>% 
+  
+  # Plot the data:
+  
+  ggplot() +
+  geom_sf()
+```
+
+... and reproduce our full map (from above) as follows:
+
+```{r}
+states %>% 
+  
+  # Subset states to those with spotted lanternfly observations:
+  
+  st_filter(spotted_lanternfly_sf) %>% 
+  
+  # Plot the data:
+  
+  ggplot() +
+  geom_sf(data = states) +
+  geom_sf(fill = "#FBEC5D")
+```
+
+:::{class="mysecret"}
+<i class="fa fa-user-secret" aria-hidden="true" style = "font-size: 150%; padding-right: 5px;"></i>The above seems way simpler than the tabular version right? Under-the-hood, however, spatial joins are more complex -- this spatial join actually took more than 10 times longer to process than the tabular join! This time penalty increases exponentially with the size/complexity of our spatial objects. As such, use tabular joins whenever possible and save spatial joins for instances in which you have no alternative.
+:::
+
+Let's now use the `states` polygon shapefile to subset the `spotted_lanternfly_sf` point shapefile. Here, our goal will be to subset to observations in the state of Virginia. We can start by using `filter()` to subset `states` to where the value in `state` is equal to `Virginia`:
+
+```{r}
+states %>% 
+  
+  # Subset states to Virginia:
+  
+  filter(state == "Virginia") %>% 
+  
+  # Plot the data:
+  
+  ggplot() +
+  geom_sf()
+```
+
+If we overlay our `spotted_lanterfly_sf` observations, we can see that they extend well outside of the boundaries of Virginia:
+
+```{r}
+states %>% 
+  
+  # Subset states to Virginia:
+  
+  filter(state == "Virginia") %>% 
+  
+  # Plot the data:
+  
+  ggplot() +
+  geom_sf() +
+  geom_sf(data = spotted_lanternfly_sf)
+```
+
+To address this, we can use `st_filter()` to subset features in `spotted_lanternfly_sf` (target object) that occurred within the state (source object):
+
+```{r}
+spotted_lanternfly_sf %>% 
+  
+  # Subset lanternfly observations to Virginia:
+  
+  st_filter(
+    states %>% 
+      
+      # Subset states to Virginia:
+      
+      filter(state == "Virginia")
+  )
+```
+
+Mapping the data verifies that we have successfully subset the point observations in `spotted_lanternfly_sf` to those in Virginia:
+
+```{r}
+states %>% 
+  
+  # Subset states to Virginia:
+  
+  filter(state == "Virginia") %>% 
+  
+  # Plot the data:
+  
+  ggplot() +
+  geom_sf() +
+  geom_sf(
+    data =
+      spotted_lanternfly_sf %>% 
+      
+      # Subset lanternfly observations to Virginia:
+      
+      st_filter(
+        states %>% 
+          
+          # Subset states to Virginia:
+          
+          filter(state == "Virginia")
+      )
+  )
+```
+
+#### **Mutating spatial join -- `st_join()`**
+
+Our final join for this lesson will be a mutating spatial join -- `st_join()`. A mutating spatial join adds values from one object to another based on spatial overlap (or lack thereof, see `?geos_binary_pred`). Here, we will use a mutating spatial join to recreate our plot of the number of spotted lanternfly observations per state:
+
+```{r, echo = FALSE}
+# Count the number of observations in each state:
+
+spotted_lanternfly_sf %>% 
+  st_join(states) %>% 
+  as_tibble() %>% 
+  summarize(
+    n = n(),
+    .by = state
+  ) %>% 
+  
+  # Join summarized data to states:
+  
+  left_join(
+    states,
+    .,
+    by = "state"
+  ) %>% 
+  
+  # Plot the data:
+  
+  ggplot() +
+  aes(fill = n) +
+  geom_sf() +
+  scale_fill_viridis_c(
+    option = "plasma",
+    na.value = "#dcdcdc"
+  )
+```
+
+To reproduce this, we must:
+
+1. Join our polygons (`states`; source table) to our points (`spotted_lanternfly_sf`; target table);
+2. Convert the resultant object to a tibble (with `as_tibble()`);
+3. `summarize()` the resultant object by counting the number of observations per `state`;
+4. Conduct a non-spatial join, joining our summary information (source table) with our `states` object (target table);
+5. Plot the data.
+
+On our end (but not our poor overtaxed computer's) the spatial join is pretty simple. We provide the name of the target table (here `spotted_lanternfly_sf`) and the name of the source table (`states`).
+
+```{r}
+spotted_lanternfly_sf %>% 
+  
+  # Join with states to add a state field:
+  
+  st_join(states)
+```
+
+We can see that `state` was added as a column to our target table.
+
+We now convert the resultant object to a tibble data frame:
+
+```{r}
+spotted_lanternfly_sf %>% 
+  
+  # Join with states to add a state field:
+  
+  st_join(states) %>% 
+  
+  # Convert to a tibble:
+  
+  as_tibble()
+```
+
+... and use `summarize()` to count the number of features (i.e., observations or rows) for each `state`:
+
+```{r}
+spotted_lanternfly_sf %>% 
+  
+  # Join with states to add a state field:
+  
+  st_join(states) %>% 
+  
+  # Convert to a tibble:
+  
+  as_tibble() %>% 
+  
+  # Count the number of features per state:
+  
+  summarize(
+    n = n(),
+    .by = state
+  )
+```
+
+:::{class="mysecret"}
+<i class="fa fa-user-secret" aria-hidden="true" style = "font-size: 150%; padding-right: 5px;"></i>Why did we convert it to a tibble? When using `summarize()` with a shapefile, always convert the object to a tibble before passing the object to the `summarize` function. This greatly reduces the memory required to conduct the operation! In the above, excluding `as_tibble()` nearly doubles the amount of time needed to process the operation and *more than* doubles the amount of memory the operation takes!
+:::
+
+We now use a tabular join to join the resultant object (as the source table) to the original `states` object (the target table):
+
+```{r}
+spotted_lanternfly_sf %>% 
+  
+  # Join with states to add a state field:
+  
+  st_join(states) %>% 
+  
+  # Convert to a tibble:
+  
+  as_tibble() %>% 
+  
+  # Count the number of features per state:
+  
+  summarize(
+    n = n(),
+    .by = state
+  ) %>% 
+  
+  # Join summarized data to states:
+  
+  left_join(
+    states,
+    .,
+    by = "state"
+  )
+```
+
+... and plot the data (as above):
+
+```{r}
+spotted_lanternfly_sf %>% 
+  
+  # Join with states to add a state field:
+  
+  st_join(states) %>% 
+  
+  # Convert to a tibble:
+  
+  as_tibble() %>% 
+  
+  # Count the number of features per state:
+  
+  summarize(
+    n = n(),
+    .by = state
+  ) %>% 
+  
+  # Join summarized data to states:
+  
+  left_join(
+    states,
+    .,
+    by = "state"
+  ) %>% 
+  
+  # Plot the data:
+  
+  ggplot() +
+  aes(fill = n) +
+  geom_sf() +
+  scale_fill_viridis_c(
+    option = "plasma",
+    na.value = "#dcdcdc"
+  )
+```
+
+*Note: In a future lesson ("Memory management when using shapefiles") I will introduce another powerful spatial join ... `st_intersection()`!*
+
+## Reference
+
+<button class="accordion">Glossary</button>
+::: panel
+* **Choropleth**: A thematic map where a shape's values are mapped to colors.
+* **Coordinate reference system (CRS)**: The reference system (may be projected or geographic) that allows us to define the location of a geometry on the surface of the Earth.
+* **Geometry**: The coordinates of points or vertices of an sfg object. 
+* **Linestring**: A one-dimensional geometry containing a sequence of vertices (points) connected by straight lines.
+* **Multipoint**: A geometry that contains one or more points within a single geometry object
+* **Point**: A zero-dimensional geometry containing a single point.
+* **Polygon**: Two-dimensional geometry containing a sequence of vertices (points) forming a closed ring of straight lines.
+* **Simple features object (sf)**: A data frame that contains the geometry, attributes, and coordinate reference system (CRS) information.
+* **Simple Features Geometry (sfg)**: The geometry of an individual simple feature.
+* **Simple Features Geometry List Column Object (sfc)**:  List column with the geometry of all simple features in a dataset. 
+* **Tab**: Each pane has a tab on the top of it. For example, I will often refer to the Environment or History tabs of the workspace pane.
+* **Vertex (plural: vertices)**: A point where two or more lines (also called edges) meet.
+:::
+
+<button class="accordion">Functions</button>
+::: panel
+**Important!** Primitive functions as well as functions in the *base* and *utils* packages, are loaded by default when you start an R session. Functions in *dplyr*, *ggplot2*, *lubridate*, *purrr*, *readr*, *tibble*, *tidyr*, and *tidyverse* are loaded with `library(tidyverse)`.
+
+::: function_table
+
+```{r, message = FALSE, echo = FALSE}
+render_function_table("functions_3.5_spatial_and_nonspatial_joins.csv")
+```
+
+:::
+
+:::
+
+<button class="accordion">Keyboard shortcuts</button>
+::: panel
+
+{{< include ../../src/includes/keyboard_shortcuts.qmd >}}
+:::
+
+<button class="accordion">R Studio panes</button>
+::: panel
+{{< include ../../src/includes/rstudio_panes.qmd >}}
+:::
+

@@ -1,0 +1,49 @@
+Package,Function,Definition
+.Primitive,(...),Operator that evaluates the function name on the left-hand-side (LHS) of the opening parentheses using the arguments enclosed by the parentheses
+.Primitive,{…},Operator that passes the last operation in `{...}` to the global environment
+.Primitive,<-,Infix operator that assigns an object on the right-hand-side (RHS) to a name on the left-hand-side (LHS) -- this should be used for global assignments!
+.Primitive,=,Infix operator that assigns an object on the right-hand-side (RHS) to a name on the left-hand-side (LHS) -- this should not be used for global assignments!
+.Primitive,~,The formula operator separates the left- and right-hand sides (LHS and RHS) in a formula.
+.Primitive,:,Infix operator that generates a regular sequence of adjacent values
+.Primitive,::,Infix operator that can be used to access a package environment without attaching the whole package environment to your current session
+.Primitive,$,Infix operator that extracts the values associated with a name (RHS) from a recursive object (LHS)
+.Primitive,==,Infix relational operator (is equal to)
+.Primitive,+,Infix arithmetic operator (addition)
+.Primitive,/,Infix arithmetic operator (divide)
+.Primitive,c,Combine values to form an atomic vector
+.Primitive,list,"Combine multiple objects of any type into a single, recursive, data object"
+.Primitive,names,Retrieve the names (or names attribute) assigned to an R object (generates a character vector)
+base,library,Attach the package environment for a given package to the current R session
+base,list.files,List files in a specified folder on your computer's hard drive
+base,tolower,Convert a character vector to lowercase
+dplyr,filter,Subset a data frame by logical condition
+dplyr,mutate,Add or modify a column in a data frame
+dplyr,pull,Extract a column from a data frame as a vector
+dplyr,select,Subset columns in a data frame by name (without quotes!)
+lubridate,month,Extract the month from a properly formatted date value
+magrittr,%>%,The pipe operator passes the output of the LHS argument to the function on the right
+magrittr,extract,Extract a value from an atomic vector or list item by position or name
+purrr,map,Iterate across a vector and return a list
+purrr,pluck,Extract a list item from a list
+readr,read_csv,Read a tabular csv file into R as a tibble data frame
+rlang,set_names,Assign names to values in a vector or items in a list
+sf,st_as_sf,Convert a data frame to an sf object
+sf,st_crs,Get the CRS of a shapefile
+sf,st_difference,A type of filtering spatial join in which you remove portions of a target shapefile that overlap with a source shapefile
+sf,st_filter,"Conduct a filtering join (i.e., subset geometries) of a target table relative to the geometry of a source table"
+sf,st_make_valid,Fix invalid features in a polygon shapefile
+sf,st_read,Read in a simple features or other GIS shapefile
+sf,st_sf,Convert a simple features column object to an sf object
+sf,st_transform,Transform the CRS of a shapefile to a different CRS
+sf,st_union,Dissolve boundaries between polygons
+terra,crop,"Subset a raster to a new spatial extent (e.g., a bounding box)"
+terra,global,Calculate a summary statistic across each cell in a raster
+terra,mask,"A type of join in which you convert all cells in a target raster to NA if they are outside of a source object (e.g., a polygon shapefile or SpatVector)"
+terra,plot,Apply a base R-style plot to a terra raster object
+terra,project,Transform the CRS of a raster
+terra,rast,"Read in a raster object, create a raster object from scratch, or convert a list of raster objects to a raster stack"
+terra,vect,Convert an sf object to a SpatVector (or create a SpatVector from scratch)
+tmap,tm_basemap,Add a basemap layer to an interactive tmap
+tmap,tm_raster,Add a raster layer to a tmap
+tmap,tm_shape,Define the shape that is the source of a tmap layer
+tmap,tmap_mode,"Set a tmap to either ""plot"" (static map) or ""view"" (interactive map)"

@@ -1,0 +1,1994 @@
+---
+title: "6.3. Categorizing spatial and non-spatial data"
+format:
+  html:
+    embed-resouces: true
+    self-contained: true
+    standalone: true
+    toc: true
+    toc-location: left
+    toc-depth: 4
+    number-sections: false
+    search: true
+    include-in-header: ../../src/includes/header_includes.html
+    include-after-body: ../../src/includes/accordion_script.html
+    theme: 
+      - cosmo
+      - ../../src/css/custom_style.scss
+editor: source
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r, include = FALSE}
+source("../../src/r/course_functions.R")
+```
+```{r setup, include=FALSE}
+library(tidyverse)
+
+knitr::opts_chunk$set(
+  echo = TRUE,
+  eval = TRUE,
+  error = TRUE, 
+  warning = FALSE, 
+  message = FALSE
+)
+
+rm(has_annotations)
+```
+
+<hr>
+
+![](../../src/images/hex_complex.png){.intro_image}
+
+This lesson is going to be *annoyingly ... long*. Classifying data is such an important component of GIS analysis, however, that the length is worth it. Frankly, it is *way* too easy to classify spatial data incorrectly or, worse, *dishonestly*. As such, we have really got to make sure that we know what we are doing when we classify data and are honest about the distribution of our classes. In this lesson we will review the tabular classification techniques covered in 6.1 and 6.2 and explore how to use them in a spatial context. Content includes:
+
+* Using `if_else()` to classify data into two classes; 
+* Using `case_when()` to classify data into three or more classes;
+* Modifying `NA` values when working with spatial data;
+* Using the *string* package for classification;
+* The unique, and awkward, world of classifying raster files.
+
+## Data for this lesson
+
+Please click on the buttons below to explore the metadata for this lesson!
+
+<button class="accordion">Metadata: Video lesson</button>
+::: panel
+**[birds_cicadas_lc.rds]{.mono}**: The data are formatted as a list of tibble data frames. The only one we will use for this lesson is [nlcd_key]{.mono}, which is a key to the [Multi-Resolution Land Characteristics (MRLC) Consortium](https://www.mrlc.gov/){target="_blank"} land cover classes. Fields in this list item include:
+
+* [id]{.mono}, numeric: The value assigned to each land cover class.
+* [name]{.mono}, character: A name assigned to each land cover class.
+* [color_value]{.mono}, character: The recommended color to use for each land cover class.
+* [description]{.mono}, character: A description of the type of land cover that each land cover class represents.
+
+**[canopy_cover.tif]{.mono}**: This is a geotiff raster obtained from the [Multi-Resolution Land Characteristics Consortium (MRLC)](https://www.mrlc.gov/data){target="_blank"} that describes the canopy cover in the greater Washington DC region. Cell values are continuous and represent the percentage of each cell that is covered by tree canopy. The resolution of the raster is approximately 30 x 30 m and the CRS is EPSG 5070 (datum = NAD83; projection = Albers Equal Area).
+
+**[dc_census.geojson]{.mono}**: A polygon shapefile of census tracts in the District of Columbia. The data are in a projected coordinate system (datum = WGS84, projection is UTM, Zone 18N) with the EPSG code 32618. The data include the following fields:
+
+* [GEOID]{.mono}, character: The **primary key** key for each census tract.
+* [STATEFP]{.mono}, character: A **foreign key** to the US state in the [states]{.mono} data.
+* [ALAND]{.mono}, numeric: The area covered by land in each census tract, in square meters.
+* [AWATER]{.mono}, numeric: The area covered by water in each census tract, in square meters.
+* [INCOME]{.mono}, numeric: The median income of each census tract.
+* [POPULATION]{.mono}, numeric: The total population of each census tract.
+
+**[dc_crimes.csv]{.mono}**: Crime data were obtained from <a href="https://opendata.dc.gov/" target="_blank">Open Data DC</a>. This is a tabular dataset and each row represents the record for an individual crime committed. Relevant fields (columns) include:
+
+* [id]{.mono}, character: The primary key for each observation;
+* [offense]{.mono}, character: The type of crime committed;
+
+**[impervious_surface.tif]{.mono}**: This is a geotiff raster obtained from the [Multi-Resolution Land Characteristics Consortium (MRLC)](https://www.mrlc.gov/data){target="_blank"} that describes the impervious surface cover cover in the greater Washington DC region. Cell values are continuous and represent the percentage of each cell that is covered by man-made materials (pavement, sidewalks, rooftops). The resolution of the raster is approximately 30 x 30 m and the CRS is EPSG 5070 (datum = NAD83; projection = Albers Equal Area).
+
+**[nlcd.tif]{.mono}**: This is a geotiff raster obtained from the [Multi-Resolution Land Characteristics Consortium (MRLC)](https://www.mrlc.gov/data){target="_blank"} that describes the land cover in the greater Washington DC region. Values are categorical and each value represents the dominant land cover class (link) of each cell. The resolution of the raster is approximately 30 x 30 m and the CRS is EPSG 5070 (datum = NAD83; projection = Albers Equal Area).
+
+**[sick_birds.geojson]{.mono}**: This is a point shapefile that represents sick birds that were brought to City Wildlife, a wildlife rehabilitation center in the District of Columbia, in the spring of 2021. These data were obtained directly from City Wildlife staff. Location information for birds brought into the center were obtained by Brian through geocoding addresses via the Google Maps API with the R package *ggmap*. The CRS for these data is EPSG 4326.
+
+* [patient_id]{.mono}, character: The **primary key** for each patient, assigned to bird upon intake.
+* [admission_date]{.mono}, date: The date that a bird was brought to City Wildlife.
+* [common_name]{.mono}, character: The common name for the species of bird. 
+* [age]{.mono}, character: The age of a given bird. 
+* [attitude]{.mono}, character: Behavioral observations of a given bird upon intake
+
+:::
+
+## Video lesson
+
+Note: Your script will not exactly match my video script. Wherever possible, I have modified the script to adhere to the course style guide (e.g., indentation) and replaced single quotes with double quotes.
+
+* I suggest that you have not yet been exposed to `pluck()` ... of course you have! We have evaluated your ability to use that function!
+* At 13:43 I show that you get a error message when using the function `rasterize()` -- the error was introduced by a bug in the function that has now been fixed.
+* Your output from some of the *terra* functions may be slightly different than mine (e.g., integers as double numeric values). This represents changes under-the-hood regarding how *terra* treats some variable classes.
+* I use the value `NA_real_` in an `if_else()` statement. This was at one time required for both `if_else()` and `case_when()`, but requirement was removed with a 2023 update of *dplyr*.
+
+
+{{< video https://www.youtube.com/embed/OhLAnUtflrc >}}
+
+## Setup
+
+1. Open R Studio and a new script file. Remember that it's best practice to start with a clean R Studio session!
+
+2. Add a new code section and call it "setup".
+
+3. After a space between your section break, include and run the following:
+
+:::{style="margin-left: 40px"}
+```{r results = 'hide', message = FALSE}
+library(sf)
+library(tmap)
+library(tidyverse)
+```
+:::
+
+4. Load the source script and set the tmap mode for all plots in this lesson:
+
+:::{style="margin-left: 40px"}
+```{r}
+# Load the source script:
+
+source("scripts/source_script_categorize_tutorial.R")
+
+# Set the tmap_mode for our entire session:
+
+tmap_mode("view")
+```
+
+The above loaded several data files that we use in this lesson. We have use most of these files before, so have a look at your Global Environment to see what you've loaded or take a moment to explore these files before proceeding.
+
+*Note: You may want read the source script because it could be a handy review of shapefile and raster pre-processing steps!*
+
+:::
+
+
+## Two classes
+
+
+The primary function that we use to reclassify data into two classes is `if_else()`. The function requires three arguments:
+
+* A logical test of a vector of values
+* `true = `: The value to assign if a value in the vector evaluates to `TRUE`
+* `false =`: The value to assign if a value in the vector evaluates to `FALSE`
+
+To see how this works, let's first look at a simple logical test. The code below tests whether the values in the vector `1:2` are equal to the value `2`:
+
+```{r}
+1:2 == 2
+```
+
+The first value is `1`, so the logical test evaluates to `FALSE` for that value. The second value is `2`, so the logical test evaluates to `TRUE` for that value. 
+
+By wrapping this inside of `if_else` and supplying the value to assign to `TRUE` and `FALSE`, we can return a new vector of values:
+
+```{r}
+if_else(
+  1:2 == 2, 
+  true = "world", 
+  false = "hello"
+)
+```
+
+So the above generated a new vector of the values "world", where the value is equal to `2`, and "hello", where the values are not equal to `2`. This is typically written more simply as:
+
+```{r}
+if_else(
+  1:2 == 2, 
+  "world", 
+  "hello"
+)
+```
+
+*Note: If you find remembering that the second argument of the function is the value if `TRUE` and the third argument is the value if `FALSE`, you may want to continue to include `true = ...` and `false = ...`.*
+
+Let's have a look at this inside of a data frame. The data frame `example_df` (that you created and assigned in the source script), is a two-column tibble where the first column, `numbers`, is a vector of integer values, and the second column, `fruit` is a character vector of fruit names:
+
+```{r, echo = FALSE}
+example_df
+```
+
+When we place an `if_else()` statement inside of `mutate()` we can use to this to classify our data into two values based on the results of our logical test:
+
+```{r}
+example_df %>% 
+  mutate(
+    classes = 
+      if_else(
+        numbers == 0,
+        "zero",
+        "not zero"
+      )
+  )
+```
+
+### `if_else()`, applied
+
+We can apply `if_else()` to non-spatial data frames and *sf* objects. 
+
+#### Example 1: National Land Cover Database
+
+Let's start with a non-spatial data object that we often use within a spatial context. The file `nlcd_key` can be used to classify a raster object. Have a look at the `id` and `name` fields of the data set `nlcd_key`:
+
+```{r}
+nlcd_key %>% 
+  select(id:name)
+```
+
+Perhaps we want to classify the land cover classes into "undeveloped" and "developed" land. We can see that land cover classes 21 through 24 are described as "Developed ...". To reclassify these data, we can test whether values in the numeric `id` field are within the sequence of numbers `21:24` and add a value if a given value in this vector evaluates to `TRUE` and a different value if a value evaluates to `false`:
+
+```{r}
+nlcd_key %>% 
+  select(id:name) %>% 
+  mutate(
+    class = 
+      if_else(
+        id %in% 21:24,
+        "developed",
+        "undeveloped"
+      )
+  )
+```
+
+#### Example 2: Surface water
+
+Let's have a look at how we might use `if_else()` to reclassify a shapefile object. For this, we will use the `census` polygon shapefile:
+
+```{r}
+census
+```
+
+One less-than-environmental decision made when developing the District of Columbia was moving most of the surface water underground. The field `awater` represents the total area of surface water in the census tract, recorded in square meters. Let's subset the data to just the fields `geoid` and `awater`:
+
+```{r}
+census %>% 
+  select(geoid, awater)
+```
+
+We can see that there are at least some census tracts that do not contain surface water. One way to test this is to filter the data to where `awater` is equal to `0`:
+
+```{r}
+census %>% 
+  select(geoid, awater) %>% 
+  filter(awater == 0)
+```
+
+We can see that 126 of the 179 census tracts in the region have no surface water!
+
+Let's classify the full census layer for the District of Columbia. We will create a new field called `surface_water` and use `if_else()` to classify census tracts without surface water as "no" and those with surface water as "yes":
+
+```{r}
+census %>% 
+  select(geoid, awater) %>% 
+  
+  # Classify surface water:
+  
+  mutate(
+    surface_water = 
+      if_else(
+        awater == 0,
+        "no",
+        "yes"
+      )
+  )
+```
+
+... and visualize these data on a map:
+
+```{r}
+census %>% 
+  select(geoid, awater) %>% 
+  
+  # Classify surface water:
+  
+  mutate(
+    surface_water = 
+      if_else(
+        awater == 0,
+        "no",
+        "yes"
+      )
+  ) %>% 
+  
+  # Visualize the distribution with a map:
+  
+  tm_shape() +
+  tm_polygons(fill = "surface_water")
+```
+
+If we are only interested in whether there is surface water present, rather than the census tracts themselves, we may want to use our categories to generate a shapefile for each class. We can do so by summarizing the data by the name we assigned to our classes (`surface_water`) and combining geometries with `st_union()`:
+
+```{r}
+census %>% 
+  select(geoid, awater) %>% 
+  
+  # Classify surface water:
+  
+  mutate(
+    surface_water = 
+      if_else(
+        awater == 0,
+        "no",
+        "yes"
+      )
+  ) %>% 
+  
+  # Unionize geometries:
+  
+  summarize(
+    geometry = st_union(geometry),
+    .by = surface_water
+  )
+```
+
+... and visualize the distribution of surface water on a map:
+
+```{r}
+census %>% 
+  select(geoid, awater) %>% 
+  
+  # Classify surface water:
+  
+  mutate(
+    surface_water = 
+      if_else(
+        awater == 0,
+        "no",
+        "yes"
+      )
+  ) %>% 
+  
+  # Unionize geometries:
+  
+  summarize(
+    geometry = st_union(geometry),
+    .by = surface_water
+  ) %>% 
+  
+  # Visualize the distribution with a map:
+  
+  tm_shape() +
+  tm_polygons(fill = "surface_water")
+```
+
+:::{class="mysecret"}
+<i class="fa fa-user-secret" aria-hidden="true" style = "font-size: 150%; padding-right: 5px;"></i>
+It is worth noting that how we bin the data really matters and can really affect our interpretation of the results. 
+
+For example, taken as a whole, it may seem that the District of Columbia has a lot of surface water:
+
+```{r}
+census %>% 
+  select(geoid, awater) %>% 
+  
+  # Classify surface water:
+  
+  mutate(
+    surface_water = 
+      if_else(
+        awater == 0,
+        "no",
+        "yes"
+      )
+  ) %>% 
+  
+  # Unionize geometries:
+  
+  summarize(
+    geometry = st_union(geometry),
+    .by = surface_water
+  ) %>% 
+  
+  # Calculate the total area per class:
+  
+  mutate(
+    area = st_area(.) %>% 
+      units::set_units('km^2')
+  ) %>% 
+  st_drop_geometry()
+
+```
+
+But note that we defined a census tract as having surface water if it contained 1 or more square meter of standing water! 
+
+It is dangerously easy to lie to ourselves and others when binning data!
+:::
+
+## Three or more classes
+
+To reclassify data into three or more classes, use the function `case_when()`. This function is similar to `if_else()`. Each logical test and value is separated by the formula operator, `~` and each logical test `~` value pair is separated by a comma.
+
+The `case_when()` function can get really confusing, really fast, so let's start very simply. The `case_when()` function is almost always applied to data frame operations, so we are going to jump right in with `example_df`:
+
+```{r}
+example_df
+```
+
+Let's assign the class "low" to `numbers` values less than or equal to 20, "medium" for values between 30 and 60, and "high" for values greater than 60:
+
+```{r}
+example_df %>% 
+  mutate(
+    class = 
+      case_when(
+        numbers <= 20 ~ "low",
+        numbers <= 60 ~ "medium",
+        numbers > 60 ~ "high"
+      )
+  )
+```
+
+Each logical test in `case_when()` is evaluated in order. Notice that the below does not work:
+
+```{r}
+example_df %>% 
+  mutate(
+    class = 
+      case_when(
+        numbers <= 60 ~ "medium",
+        numbers <= 20 ~ "low",
+        numbers > 60 ~ "high"
+      )
+  )
+```
+
+This is unsuccessful in capturing values less than or equal to 20 because these values were excluded by the logical test `numbers <= 60`. As such, we need to be *super careful* about the order in which we provide our logical tests.
+
+That being said, the ordered nature of `case_when()` provides us with an additional opportunity that can be used, but *only* if you are *super* clear about the distribution of your data. In the example that properly classified the data, the logical test `numbers <= 20` was first evaluated, then values that evaluated to `FALSE` were passed to the next logical test. In that test, `numbers <= 60` was evaluated and all values that evaluated to `FALSE` were passed to the the next logical test.  Because of that, the last test was not necessary -- all remaining values evaluated to `TRUE`! As such, this could be simplified as:
+
+```{r}
+example_df %>% 
+  mutate(
+    class = 
+      case_when(
+        numbers <= 20 ~ "low",
+        numbers <= 60 ~ "medium",
+        TRUE ~ "high"
+      )
+  )
+```
+
+:::{class="mysecret"}
+<i class="fa fa-user-secret" aria-hidden="true" style = "font-size: 150%; padding-right: 5px;"></i>
+
+**If all of my *super italicized warnings* about using `TRUE ~ ...` was not overkill enough ...**
+
+Again, you have to *really* understand the distribution of your data prior to using `TRUE ~ ...`. 
+
+The tibble data frame `example_df_with_na` includes an `NA` value for one of the `numbers`:
+
+```{r}
+example_df_with_na
+```
+
+Let's see what happens when we use `TRUE ~ "high"`:
+
+```{r}
+example_df_with_na %>% 
+  mutate(
+    class = 
+      case_when(
+        numbers <= 20 ~ "low",
+        numbers <= 60 ~ "medium",
+        TRUE ~ "high"
+      )
+  )
+```
+
+The `NA` value is classified as "high"!
+
+:::
+
+### `case_when()`, applied
+
+#### Example 1: National Land Cover Database
+
+Let's by apply `case_when()` to our `nlcd_key` data frame:
+
+```{r}
+nlcd_key
+```
+
+Perhaps we are interested in classifying land cover into two different types of human-managed systems, those represented by "Developed ..." land cover (id = `21:24`) and agricultural land cover (id = `81:82`, "Pasture/Hay" and "Cultivated Crops"). We will classify all other land cover types as "other":
+
+```{r}
+nlcd_key %>% 
+  select(id:name) %>% 
+  mutate(
+    class = case_when(
+      id %in% 21:24 ~ "developed",
+      id %in% 81:82 ~ "agriculture",
+      TRUE ~ "other"
+    )
+  )
+```
+
+####  Example 2: Population density
+
+In the code block below, I calculate the population density of each census tract, by land area (Note: `aland` is in square meters, I convert this value to square kilometers by multiplying the value by 1,000,000):
+
+```{r}
+census %>% 
+  mutate(
+    population_density = 
+      population / aland * 1E6
+  )
+```
+
+We can visualize this with:
+
+```{r}
+census %>% 
+  mutate(
+    population_density = 
+      population / aland * 1E6
+  ) %>% 
+  tm_shape() +
+  tm_polygons(fill = "population_density")
+```
+
+We can use the `case_when()` function to categorize the data. One of the census tracts has no residents (just businesses, federal government offices, and museums). In the below, I classify census tracts with no residents as "not populated". I then use the median population density as the cut-off between "populated" (less than or equal to the median) and "densely populated" (greater than the median, or all other values):
+
+```{r}
+census %>% 
+  mutate(
+    population_density = 
+      population / aland * 1E6,
+    density_class = 
+      case_when(
+        population_density == 0 ~ "not populated",
+        population_density <= median(population_density) ~ "populated",
+        TRUE ~ "densely populated"
+      )
+  )
+```
+
+Let's visualize these results:
+
+```{r}
+census %>% 
+  mutate(
+    population_density = 
+      population / aland * 1E6,
+    density_class = 
+      case_when(
+        population_density == 0 ~ "not populated",
+        population_density <= median(population_density) ~ "populated",
+        TRUE ~ "densely populated"
+      )
+  ) %>% 
+  tm_shape() +
+  tm_polygons(fill = "density_class")
+```
+
+If we are only interested in the distribution of our population density classes, and not the individual census tracts, we should combine like polygons into a single object:
+
+```{r}
+census %>% 
+  mutate(
+    population_density = 
+      population / aland * 1E6,
+    density_class = 
+      case_when(
+        population_density == 0 ~ "not populated",
+        population_density <= median(population_density) ~ "populated",
+        TRUE ~ "densely populated"
+      )
+  ) %>% 
+  summarize(
+    geometry = st_union(geometry),
+    .by = density_class
+  ) %>% 
+  tm_shape() +
+  tm_polygons(fill = "density_class")
+```
+
+
+#### Example 3: District crime
+
+Let's now look at our manipulation of the `crime` data set from our previous lessons (and problem set!). These data represent the locations of crimes in the District of Columbia:
+
+```{r}
+crime
+```
+
+Our goal will be to reclassify the `offense` field. 
+
+Unlike `example_df` and `nlcd_key`, we can see that there are a lot of rows in this dataset and that the `offense` field contains duplicate values. When this is the case, we need to get a solid sense of the values that we would like to reclassify. For this, I often like to use the `distinct()` function:
+
+```{r}
+crime %>% 
+  distinct(offense)
+```
+
+This could have also been accomplished by turning the field into a character vector and subsetting the vector to unique values:
+
+```{r}
+crime %>% 
+  pull(offense) %>% 
+  unique()
+```
+
+*The above method is preferred if there are more than 10 unique values in the field of interest!*
+
+The character values "assault w/dangerous weapon" and "sex abuse" could present a challenge. For example, in our previous exploration of "District crime", we tabulated the number of crimes by census tract and type of crime (`offense`):
+
+```{r}
+census %>% 
+  select(geoid) %>% 
+  
+  # Join crime data to census:
+  
+  st_join(crime) %>% 
+  
+  # Count the number of observations per geoid and type of crime:
+  
+  as_tibble() %>% 
+  summarize(
+    n = n(),
+    .by = c(geoid, offense)
+  )
+```
+
+... we then reshaped the data frame, with `geoid` and the type of crime as columns:
+
+```{r}
+census %>% 
+  select(geoid) %>% 
+  
+  # Join crime data to census:
+  
+  st_join(crime) %>% 
+  
+  # Count the number of observations per geoid and type of crime:
+  
+  as_tibble() %>% 
+  summarize(
+    n = n(),
+    .by = c(geoid, offense)
+  ) %>% 
+  
+  # Reshape the resultant object: 
+  
+  pivot_wider(
+    names_from = offense,
+    values_from = n
+  )
+```
+
+The column names that include spaces and the `/` symbol can be difficult to work with. We can modify these values using a `case_when()` function:
+
+```{r}
+crime %>% 
+  
+  # Reclassify "assault w/dangerous weapon" and "sex abuse":
+  
+  mutate(
+    offense = 
+      case_when(
+        offense == "assault w/dangerous weapon" ~ "assault",
+        offense == "sex abuse" ~ "sex_abuse",
+        TRUE ~ offense
+      )
+  )
+```
+
+We can double-check our work by subsetting to distinct values and *temporarily* assigning a new column name for our new values:
+
+```{r}
+crime %>% 
+  
+  # Reclassify "assault w/dangerous weapon" and "sex abuse":
+  
+  mutate(
+    offense_classified = 
+      case_when(
+        offense == "assault w/dangerous weapon" ~ "assault",
+        offense == "sex abuse" ~ "sex_abuse",
+        TRUE ~ offense
+      )
+  ) %>% 
+  distinct(offense, offense_classified)
+```
+
+... and, if the above generated the desire results (it did), we can apply this within our larger code block:
+
+```{r}
+census %>% 
+  select(geoid) %>% 
+  
+  # Join crime data to census:
+  
+  st_join(
+    crime %>% 
+      
+      # Reclassify "assault w/dangerous weapon" and "sex abuse":
+      
+      mutate(
+        offense = 
+          case_when(
+            offense == "assault w/dangerous weapon" ~ "assault",
+            offense == "sex abuse" ~ "sex_abuse",
+            TRUE ~ offense
+          )
+      )
+  ) %>% 
+  
+  # Count the number of observations per geoid and type of crime:
+  
+  as_tibble() %>% 
+  summarize(
+    n = n(),
+    .by = c(geoid, offense)
+  ) %>% 
+  
+  # Reshape the resultant object: 
+  
+  pivot_wider(
+    names_from = offense,
+    values_from = n
+  )
+```
+
+Then make our output spatial by joining these data to the `census` shapefile. We will use the shapefile again, so let's also globally assign a name for the resultant shapefile: 
+
+```{r}
+census_crimes <- 
+  census %>% 
+  select(geoid) %>% 
+  
+  # Join crime data to census:
+  
+  st_join(
+    crime %>% 
+      
+      # Reclassify "assault w/dangerous weapon" and "sex abuse":
+      
+      mutate(
+        offense = 
+          case_when(
+            offense == "assault w/dangerous weapon" ~ "assault",
+            offense == "sex abuse" ~ "sex_abuse",
+            TRUE ~ offense
+          )
+      )
+  ) %>% 
+  
+  # Count the number of observations per geoid and type of crime:
+  
+  as_tibble() %>% 
+  summarize(
+    n = n(),
+    .by = c(geoid, offense)
+  ) %>% 
+  
+  # Reshape the resultant object: 
+  
+  pivot_wider(
+    names_from = offense,
+    values_from = n
+  ) %>% 
+  
+  # Make spatial:
+  
+  left_join(
+    census, 
+    ., 
+    by = "geoid"
+  )
+```
+
+Let's visualize the distribution of assaults by census tract by generating a map of the output:
+
+```{r}
+tm_shape(census_crimes) +
+  tm_polygons(fill = "assault")
+```
+
+*Note: If we were not going to continue with these data later in this lesson, I would have piped the data associated with `census_crimes` directly into tmap without globally assigning the name.*
+
+## NA interlude
+
+I admit to having been a little flippant about `NA` values thus far. Now that we are in the "categorization/classification" portion of this course, however, this is no more. Via the tidyverse, we have many tools for dealing with `NA` values at our disposal!
+
+### Replacing NA values
+
+When dealing with spatial data, it is often the case that we need to replace `NA` values with other values.
+
+Let's look again at our `example_df_with_na`:
+
+```{r}
+example_df_with_na
+```
+
+We could replace the `NA` in fruit with an `if_else()` or `case_when()` function:
+
+```{r}
+example_df_with_na %>% 
+  mutate(
+    fruit = 
+      if_else(
+        is.na(fruit),
+        "bell pepper",
+        fruit
+      )
+  )
+```
+
+... however, we can more parsimoniously replace `NA` values with the `replace_na()` function. We specify the name assigned to the vector of values and the value we would like to replace `NA` values with:
+
+```{r}
+example_df_with_na %>% 
+  mutate(
+    fruit = replace_na(fruit, "bell pepper")
+  )
+```
+
+### NA, applied
+
+Thus far in this course we have been largely treating zeros as missing data ... this is rarely appropriate!
+
+Consider, for example, our plot of the distribution of assaults by census tract in the District of Columbia:
+
+```{r}
+tm_shape(census_crimes) +
+  tm_polygons(fill = "assault")
+```
+
+The plot above shows the number of assaults in several census tracts as "missing", but are they? In fact, these data are complete -- assaults are not missing in these census tracts, there are no assaults to report!
+
+To address this, we can use the function `replace_na()` to replace `NA` values with zero:
+
+```{r}
+census_crimes %>% 
+  mutate(
+    assault = replace_na(assault, 0)
+  ) %>% 
+  tm_shape() +
+  tm_polygons(fill = "assault")
+```
+
+:::{class="mysecret"}
+<i class="fa fa-user-secret" aria-hidden="true" style = "font-size: 150%; padding-right: 5px;"></i>
+**Take the time to consider your missing values**
+
+There many instances in which `NA` values are produced in the data wrangling process. Some of those values are truly missing values. Others may represent zeros! Unlike `NA` values, zeroes *are* data and should, therefore, never be treated as missing!
+:::
+
+## Factors with *forcats*
+
+As covered in <a href="https://smbc.shinyapps.io/L1-rValues/#section-factors" target="_blank">Lesson 2.3: Values, factors</a>, a factor is a value that includes the following information:
+
+* **Integer value**: An integer value associated with factor level. For example, you may construct a factor of female and male treatment groups – each treatment group would be assigned to a different integer value.
+* **Levels**: Character values that are associated with the integer value. Continuing with the example above, the levels would be “female” and “male”.
+* **Labels**: Character values assigned to each factor level. This relates to the character values that you see when you print or plot your data. For example, you may want to visualize female as “F” and males as “M”.
+
+Factors are useful for classifying data and can also be useful if you are interested in specifying the order that values are displayed on maps or plots (e.g., small, medium, and large).
+
+While factors are often more challenging to work with than character values, the *forcats* package has taken the pain out of the process!
+
+### Change factor levels by hand
+
+The function `fct_recode()` is useful when there are not a lot of levels in your data and you want to change the levels and labels associated with a character or factor value.
+
+For example, you can use `fct_recode()` to change the character vector `c("tiny", "huge")` to a factor with the levels "small" and "large". You supply a vector of character or factor values to recode, the new levels you would like to assign to the data, and the original value.
+
+```{r}
+c("tiny", "huge") %>% 
+  fct_recode(
+    small = "tiny", 
+    large = "huge"
+  )
+```
+
+Notice in the above that each new factor level and the original value that it is associated with is specified as an argument in the function.
+
+Despite the utility of this function, I only recommend using it if you need to reclassify less than three individual values. For example, the below is quite cumbersome:
+
+```{r}
+example_df %>% 
+  filter(
+    str_detect(fruit, "berry")
+  ) %>% 
+  mutate(
+    fruit = 
+      fruit %>% 
+      fct_recode(
+        "true berry" = "bilberry",
+        "true berry" = "blueberry",
+        "aggregate berry" = "blackberry",
+        "aggregate berry" = "boysenberry"
+      )
+  )
+```
+
+### Combine factor levels
+
+If you need to reclassify a number of factor levels, your best choice is `fct_collapse()`. Here, you provide the vector of values that you would like to reclassify, the new factor levels, and a vector of values associated with each factor level.
+
+```{r}
+example_df %>% 
+  filter(
+    str_detect(fruit, "berry")
+  ) %>% 
+  mutate(
+    fruit = 
+      fruit %>% 
+      fct_collapse(
+        "true berry" = c("bilberry", "blueberry"),
+        "aggregate berry" = c("blackberry", "boysenberry")
+      )
+  )
+```
+
+You can also use the argument `other_level = ...` to specify a level for all other values:
+
+```{r}
+example_df %>% 
+  mutate(
+    fruit = 
+      fruit %>% 
+      fct_collapse(
+        "true berry" = c("bilberry", "blueberry"),
+        "aggregate berry" = c("blackberry", "boysenberry"),
+        other_level = "other fruit"
+      )
+  )
+```
+
+### Reorder factors by hand
+
+If we have just a few factor levels, we can reorder the factors by hand.
+for example, have another look at the order of factor levels below:
+
+```{r}
+c(
+  "tiny",
+  "huge",
+  "tiny"
+) %>% 
+  fct_recode(
+    small = "tiny", 
+    large = "huge"
+  )
+```
+
+We can see that the factor levels are `large` and then `small.` By common convention, we might expect that the levels should instead be written as `small` and then `large`. 
+
+To reorder a factor by hand, we use the `fct_relevel()` function. We specify the order of the factors by providing each level in the desired order (*Note: each level is provided in quotes and separated by a comma*):
+
+```{r}
+c(
+  "tiny",
+  "huge",
+  "tiny"
+) %>% 
+  fct_recode(
+    small = "tiny", 
+    large = "huge"
+  ) %>% 
+  fct_relevel("small", "large")
+```
+
+I typically only use this when I am plotting data. For example, if I were to plot the data in `size`, the levels are, by default, placed in alphabetical order along the axis:
+
+```{r}
+tibble(
+  size = 
+    c(
+      "tiny", 
+      "huge",
+      "tiny"
+    ) %>% 
+    fct_recode(
+      small = "tiny", 
+      large = "huge"
+    )
+) %>% 
+  ggplot() +
+  aes(x = size) +
+  geom_bar()
+```
+
+By reordering the factor levels, we can change this!
+
+```{r}
+tibble(
+  size = 
+    c(
+      "tiny", 
+      "huge",
+      "tiny"
+    ) %>% 
+    fct_recode(
+      small = "tiny", 
+      large = "huge"
+    ) %>% 
+    fct_relevel("small", "large")
+) %>% 
+  ggplot() +
+  aes(x = size) +
+  geom_bar()
+```
+
+:::{class="mysecret"}
+<i class="fa fa-user-secret" aria-hidden="true" style = "font-size: 150%; padding-right: 5px;"></i>
+You can also change factor levels within the `aes()` argument, but I strongly suggest *not* doing that. Instead, I always recommend changing the order of the levels within the data itself with *forcats*. There are a few reasons for this but the most important among them is that you would likely have to use different arguments for each plotting system you use (e.g., *ggplot* and *tmap*).
+:::
+
+### Reorder factors by a variable
+
+We often want to change the order of a lot of factor levels at once -- this task is predominantly associated with ordering a factor by another variable in the dataset. To do so, we use the function `fct_reorder()`.
+
+For example, the plot below shows the number of sick or dead birds brought to City Wildlife during the bird mortality event that we discussed.
+
+```{r}
+birds %>% 
+  as_tibble() %>% 
+  summarize(
+    n = n(), 
+    .by = common_name
+  ) %>% 
+  ggplot() +
+  aes(
+    x = common_name,
+    y = n
+  ) +
+  geom_bar(stat = "identity") +
+  coord_flip()
+```
+
+The data in the plot are ordered alphabetically. This conveys the information, but our eyes have to search around a bit to determine the most impacted birds. 
+
+We can use `fct_reorder()` to order the bars by the number of sick/dead birds by species. We supply the name assigned to the factor variable that we would like to reorder and the name of the column that we would like to order the variable by:
+
+```{r}
+birds %>% 
+  as_tibble() %>% 
+  summarize(
+    n = n(), 
+    .by = common_name
+  ) %>% 
+  mutate(
+    common_name = fct_reorder(common_name, n)
+  ) %>% 
+  ggplot() +
+  aes(
+    x = common_name,
+    y = n
+  ) +
+  geom_bar(stat = "identity") +
+  coord_flip()
+```
+
+### *forcats* applied
+
+#### Example 1: National Land Cover Database
+
+Let's look at using *forcats* for classifying land cover into "developed" and "undeveloped" land. Previously we did this using the `if_else()` function:
+
+```{r}
+nlcd_key %>% 
+  select(id:name) %>% 
+  mutate(
+    class = 
+      if_else(
+        id %in% 21:23,
+        "developed",
+        "undeveloped"
+      )
+  )
+```
+
+Because this relied on numeric `id` values, this did not do a great job at communicating what we were doing. With `fct_collapse`, we can really communicate how we are reclassifying the data:
+
+```{r}
+nlcd_key %>% 
+  select(id:name) %>% 
+  mutate(
+    class = 
+      name %>% 
+      fct_collapse(
+        "developed" = 
+          c("Developed, open space",
+            "Developed, low intensity",
+            "Developed, medium intensity",
+            "Developed, high intensity"),
+        other_level = "undeveloped"
+      )
+  )
+```
+
+#### Example 2: Surface water
+
+Let's take another moment to look at how we reclassified census tracts into those that contained surface water vs. those that did not:
+
+```{r}
+census %>% 
+  select(geoid, awater) %>% 
+  
+  # Classify surface water:
+  
+  mutate(
+    surface_water = 
+      if_else(
+        awater == 0,
+        "no",
+        "yes"
+      )
+  ) %>% 
+  
+  # Unionize geometries:
+  
+  summarize(
+    geometry = st_union(geometry),
+    .by = surface_water
+  ) %>% 
+  
+  # Visualize the distribution with a map:
+  
+  tm_shape() +
+  tm_polygons(fill = "surface_water")
+```
+
+By convention, we should place the values "yes" before the "no" values:
+
+```{r}
+census %>% 
+  select(geoid, awater) %>% 
+  
+  # Classify surface water:
+  
+  mutate(
+    surface_water = 
+      if_else(
+        awater == 0,
+        "no",
+        "yes"
+      ) %>% 
+      fct_relevel("yes", "no")
+  ) %>% 
+  
+  # Unionize geometries:
+  
+  summarize(
+    geometry = st_union(geometry),
+    .by = surface_water
+  ) %>% 
+  
+  # Visualize the distribution with a map:
+  
+  tm_shape() +
+  tm_polygons(fill = "surface_water")
+```
+
+You likely know that our classification scheme is pretty deceptive. If we wanted to be *really* deceptive (e.g., we have been hired as a GIS expert for the potentially fictitious underground-water-lobby), we might take this a step further:
+
+```{r}
+census %>% 
+  select(geoid, awater) %>% 
+  
+  # Classify surface water:
+  
+  mutate(
+    surface_water = 
+      if_else(
+        awater == 0,
+        "no",
+        "yes"
+      ) %>% 
+      fct_relevel("yes", "no")
+  ) %>% 
+  
+  # Unionize geometries:
+  
+  summarize(
+    geometry = st_union(geometry),
+    .by = surface_water
+  ) %>% 
+  
+  # Visualize the distribution with a map:
+  
+  tm_shape() +
+  tm_polygons(
+    fill = "surface_water",
+    lwd = 0.25,
+    fill.scale =
+      tm_scale_categorical(values = c("#33bcff", "#C1E1C1"))
+  )
+```
+
+*Note: In the above I characterize the District of Columbia as a watery world by playing on the common color schema used to portray land and water! DC is very dry!*
+
+#### Example 3: Population density
+
+As our last example, let's look at population density in the District of Columbia. Here's how we did it with `case_when()`:
+
+```{r}
+census %>% 
+  mutate(
+    population_density = 
+      population / aland * 1E6,
+    density_class = 
+      case_when(
+        population_density == 0 ~ "not populated",
+        population_density <= median(population_density) ~ "populated",
+        TRUE ~ "densely populated"
+      )
+  ) %>% 
+  summarize(
+    geometry = st_union(geometry),
+    .by = density_class
+  ) %>% 
+  tm_shape() +
+  tm_polygons(fill = "density_class")
+```
+
+The issue with the above is the legend -- classes are provide in the alphabetical order. We can instead define our own order for these classes using `fct_relevel()`:
+
+```{r}
+census %>% 
+  mutate(
+    population_density = 
+      population / aland * 1E6,
+    density_class = 
+      case_when(
+        population_density == 0 ~ "not populated",
+        population_density <= median(population_density) ~ "populated",
+        TRUE ~ "densely populated"
+      ) %>% 
+      fct_relevel(
+        "not populated",
+        "populated",
+        "densely populated"
+      )
+  ) %>% 
+  summarize(
+    geometry = st_union(geometry),
+    .by = density_class
+  ) %>% 
+  tm_shape() +
+  tm_polygons(fill = "density_class")
+```
+
+... an added element to this map might be a color pallete that is also ordered:
+
+```{r}
+census %>% 
+  mutate(
+    population_density = 
+      population / aland * 1E6,
+    density_class = 
+      case_when(
+        population_density == 0 ~ "not populated",
+        population_density <= median(population_density) ~ "populated",
+        TRUE ~ "densely populated"
+      ) %>% 
+      fct_relevel(
+        "not populated",
+        "populated",
+        "densely populated"
+      )
+  ) %>% 
+  summarize(
+    geometry = st_union(geometry),
+    .by = density_class
+  ) %>% 
+  tm_shape() +
+  tm_polygons(
+    fill = "density_class",
+    fill.scale =
+      tm_scale_categorical(
+        values =
+          c(
+            "#bebebe",
+            "#fbec5d",
+            "#d22b2b"
+          )
+      )
+  )
+```
+
+## Strings 
+
+The *stringr* package, which is a member of the **core tidyverse**, really simplifies the process of working with character vectors. The primary *stringr* functions that I use are:
+
+* `str_detect()`: Detect a pattern of symbols in a character vector
+* `str_replace()`: Replace a pattern of symbols in a character vector
+* `str_remove()`: Remove a pattern of symbols from a character vector
+
+### Detect strings
+
+As a review, `str_detect()` is a logical test. We supply the arguments:
+
+* `string = ...`: The character vector (or assigned name) that we would like to modify;
+* `pattern = ...`: The pattern to search for.
+
+When used in conjunction with `filter()`, we can use `str_detect()` to subset rows in a data frame. For example, let's subset `fruit` in `example_df` to fruits that contain the pattern "an":
+
+```{r}
+example_df %>% 
+  filter(
+    str_detect(fruit, "an")
+  )
+```
+
+To search subset `example_df` to fruit that do not contain the pattern "an", we place the logical negation operator before `str_detect()`:
+
+```{r}
+example_df %>% 
+  filter(
+    !str_detect(fruit, "an")
+  )
+```
+
+**Metacharacters** really enhance our ability to search for strings. For example, we can add the **anchor metacharacter** `^` to subset the data to fruit that start with the letter "a":
+
+```{r}
+example_df %>% 
+  filter(
+    str_detect(fruit, "^a")
+  )
+```
+
+... use the `$` anchor metacharacter to subset the data to fruit that end with the letter "a":
+
+```{r}
+example_df %>% 
+  filter(
+    str_detect(fruit, "a$")
+  )
+```
+
+... and use the "or" metacharacter (`|`) to subset the data to  fruit that begin *or* end with the letter "a":
+
+```{r}
+example_df %>% 
+  filter(
+    str_detect(fruit, "^a|a$")
+  )
+```
+
+When used as the logical test within `if_else()` or `case_when()` (and `mutate()`, of course), `str_detect()` can be use to classify data.
+
+For example, we can add a column to `example_df` that uses `str_detect()` and `if_else()` to classify fruit into two classes:
+
+```{r}
+example_df %>% 
+  mutate(
+    a_fruit =
+      if_else(
+        str_detect(fruit, "^a"),
+        'starts with a',
+        'does not start with a'
+      )
+  )
+```
+
+... or classify the fruit into more than two classes using `str_detect()` and `case_when()`:
+
+```{r}
+example_df %>% 
+  mutate(
+    a_fruit =
+      case_when(
+        str_detect(fruit, "^a") ~ "starts with a",
+        str_detect(fruit, "y$") ~ "ends with y",
+        TRUE ~ "Does not start with a or end with y"
+      )
+  )
+```
+
+### Replace strings
+
+We can directly modify parts of strings, or entire strings, using `str_replace()`. We supply the arguments:
+
+* `string = ...`: The character vector (or assigned name) that we would like to modify;
+* `pattern = ...`: The pattern to search for;
+* `replacement = ...`: The string to replace the pattern with.
+
+For example, we can replace the first letter "a" with "A":
+
+```{r}
+example_df %>% 
+  mutate(
+    fruit = 
+      str_replace(
+        fruit,
+        "^a",
+        "A"
+      )
+  )
+```
+
+*Note: By using the anchor metacharacter `^` we were able to only replace the first letter in the fruit!*
+
+We can chain together multiple `str_replace()` operations:
+
+```{r}
+example_df %>% 
+  mutate(
+    fruit = 
+      fruit %>% 
+      str_replace("^a", "A") %>% 
+      str_replace("^b", "B")
+  )
+```
+
+### Remove strings
+
+We can remove a part of a string with `str_remove()`. To do so, we supply the arguments:
+
+* `string = ...`: The character vector (or assigned name) that we would like to modify;
+* `pattern = ...`: The pattern to search for and remove;
+
+For example, we can remove the pattern `berry` from our fruit with:
+
+```{r}
+example_df %>% 
+  mutate(
+    fruit = str_remove(fruit, "berry")
+  )
+```
+
+### *stringr* applied
+
+#### Example 1: National Land Cover Database
+
+Functions from *stringr* are super useful for reclassification! For example, in the `if_else()` section above, we reclassified `nlcd_key` into "developed" and "undeveloped" land using the `id` field.
+
+```{r}
+nlcd_key %>% 
+  select(id:name) %>% 
+  mutate(
+    class = 
+      if_else(
+        id %in% 21:24,
+        "developed",
+        "undeveloped"
+      )
+  )
+```
+
+The above parsimoniously reclassified the data but, because it is classifying the data based on the numeric `id` field, did a poor job of communicating what was happening in this process.
+
+Conversely, conducting this operation with `fct_collapse()`, as we did in the *Factors with forcats* section above, does a great job at communicating the process but is not parsimonious:
+
+```{r}
+nlcd_key %>% 
+  select(id:name) %>% 
+  mutate(
+    class = 
+      name %>% 
+      fct_collapse(
+        "developed" = 
+          c("Developed, open space",
+            "Developed, low intensity",
+            "Developed, medium intensity",
+            "Developed, high intensity"),
+        other_level = "undeveloped"
+      )
+  )
+```
+
+Searching for and replacing based on partial string matching, however, *is* parsimonious *and* does an excellent job of communicating!
+
+```{r}
+nlcd_key %>% 
+  select(id:name) %>% 
+  mutate(
+    class = 
+      if_else(
+        str_detect(name, "Developed"),
+        "developed",
+        "undeveloped"
+      )
+  )
+```
+
+### Example 2: District crime classification
+
+Using *stringr* can also yield direct benefits to the effectiveness of our code. For example, above we used `case_when()` to reclassify "assault w/dangerous weapon" as "assault" and "sex abuse" as "sex_abuse":
+
+```{r}
+crime %>% 
+  
+  # Reclassify "assault w/dangerous weapon" and "sex abuse":
+  
+  mutate(
+    offense_classified = 
+      case_when(
+        offense == "assault w/dangerous weapon" ~ "assault",
+        offense == "sex abuse" ~ "sex_abuse",
+        TRUE ~ offense
+      )
+  ) %>% 
+  distinct(offense, offense_classified)
+```
+
+We can complete the same operation with chained *stringr* functions. Let's first use `str_remove()` to remove the pattern " w/dangerous weapon":
+
+```{r}
+crime %>% 
+  
+  # Reclassify "assault w/dangerous weapon" and "sex abuse":
+  
+  mutate(
+    offense_classified = 
+      offense %>% 
+      str_remove(" w/dangerous weapon")
+  ) %>% 
+  distinct(offense, offense_classified)
+```
+
+To replace the space in "sex abuse" with "_", we will pipe the output of `str_remove()` into the `str_replace()` function:
+
+```{r}
+crime %>% 
+  
+  # Reclassify "assault w/dangerous weapon" and "sex abuse":
+  
+  mutate(
+    offense_classified = 
+      offense %>% 
+      str_remove(" w/dangerous weapon") %>% 
+      str_replace(" ", "_")
+  ) %>% 
+  distinct(offense, offense_classified)
+```
+
+## Raster classification
+
+Classifying raster files in *terra* is unfortunately quite different from classifying shapefiles. Before we can reclassify a raster, we need to generate a matrix that defines how to bin the raster -- this matrix is often called a **reclass matrix**. The structure of these matrices depends on whether the raster that you want to reclassify is categorical or continuous.
+
+### Reclassify categorical rasters
+
+#### Reclass matrix -- categorical
+
+For reclassifying rasters that already represent categorical data, your matrix will contain two columns, one representing the original class of the data and the other representing the new class that you would like to assign.
+
+Let's start with another look at the `id` and `name` fields of our `nlcd_key` data frame:
+
+```{r}
+nlcd_key %>% 
+  select(id:name)
+```
+
+We can use our *stringr* method for reclassifying the data into "Developed" (`class` = 1) and "Undeveloped" (`class` = 0) land:
+
+```{r}
+nlcd_key %>% 
+  select(id:name) %>% 
+  mutate(
+    class = 
+      if_else(
+        str_detect(name, "Developed"),
+        1,
+        0
+      )
+  )
+```
+
+I don't think that we can legitimately call the first value (`id` = 11, `name` = "Open water") undeveloped land. Let's modify the above, using `case_when()` to modify our classification scheme by setting "Open water" to `NA`:
+
+```{r}
+nlcd_key %>% 
+  select(id:name) %>% 
+  mutate(
+    class = 
+      case_when(
+        name == "Open water" ~ NA,
+        str_detect(name, "Developed") ~ 1,
+        TRUE ~ 0
+      )
+  )
+```
+
+If we are sure that our classes are correctly assigned, we can turn this into a matrix where the first column represents the original raster values, and the second column represents the new classification for those values:
+
+```{r}
+nlcd_key %>% 
+  select(id:name) %>% 
+  mutate(
+    class = 
+      case_when(
+        name == "Open water" ~ NA,
+        str_detect(name, "Developed") ~ 1,
+        TRUE ~ 0
+      )
+  ) %>% 
+  select(!name)
+```
+
+We can now convert this into a reclass matrix, using the function `as.matrix()` and assign a name for the matrix to our global environment:
+
+```{r}
+rcl_nlcd <-
+  nlcd_key %>% 
+  select(id:name) %>% 
+  mutate(
+    class = 
+      case_when(
+        name == "Open water" ~ NA,
+        str_detect(name, "Developed") ~ 1,
+        TRUE ~ 0
+      )
+  ) %>% 
+  select(!name) %>% 
+  as.matrix()
+```
+
+#### Reclassifying categorical data with the reclass matrix
+
+We can now apply our reclass matrix to reclassifying our categorical raster. To do so, we use the function `terra::classify()`. We supply the name of the target raster and the name assigned to the reclass matrix.
+
+```{r}
+terra::classify(nlcd, rcl_nlcd)
+```
+
+Let's plot this to view the results:
+
+```{r}
+terra::classify(nlcd, rcl_nlcd) %>% 
+  tm_shape() +
+  tm_raster()
+
+```
+
+Note that, based on our printed and plotted output, the data are still stored as a numeric vector. We can convert this into categorical raster using the function `terra::categories`. We supply the raster that we would like to categorize, and a data frame (unfortunately not a tibble) with the name of the raster values, and the categories to assign to those values:
+
+```{r}
+nlcd %>% 
+  terra::classify(rcl_nlcd) %>% 
+  terra::categories(
+    value = 
+      data.frame(
+        from = 0:1, 
+        to = c("Undeveloped", "Developed")
+      )
+  ) %>% 
+  tm_shape() +
+  tm_raster()
+```
+
+Not crazy about the name assigned to the raster? You can use the base R function `setNames()` to add a new name to that (and any) raster layer:
+
+```{r}
+nlcd %>% 
+  terra::classify(rcl_nlcd) %>% 
+  terra::categories(
+    value = 
+      data.frame(
+        from = 0:1, 
+        to = c("Undeveloped", "Developed")
+      )
+  ) %>% 
+  setNames("Land use") %>% 
+  tm_shape() +
+  tm_raster()
+```
+
+### Continuous rasters
+
+#### Reclass matrix -- continuous
+
+Reclassifying continuous data requires that we provide a three-column reclass matrix. The columns are (in order):
+
+1. The lowest value in a class;
+2. The highest value in a class;
+3. A numeric value representing the class to assign to the set of values.
+
+I find that the easiest way to do so is to use `tribble()` for row-wise creation of a tibble data frame. Let's create a tibble where we classify percent canopy cover less than 60 as 0 (representing land cover that is "not forested"), and canopy cover greater than 60 as 1 (representing "forest" land cover; we will determine what to do at the boundary between the classes, 60, later):
+
+```{r}
+tribble(
+  ~ from, ~ to, ~ becomes,
+       0,   60,         0,
+      60,  100,         1
+) 
+```
+
+Now let's convert the above to a matrix, and global assign the name `forest_rcl` to the resultant object:
+
+```{r}
+forest_rcl <-
+  tribble(
+    ~ from, ~ to, ~ becomes,
+         0,   60,         0,
+        60,  100,         1
+  ) %>% 
+  as.matrix()
+```
+
+#### Reclass matrix -- determining behavior at boundaries
+
+The above is all that is necessary to create a reclass matrix for continuous data (easy, right?). We are left, however, to determine what we want to happen at the boundaries between classes. As covered in the video lesson for this module, the `terra::classify()` function contains two arguments, `include.lowest = TRUE/FALSE` and `right = TRUE/FALSE` -- our decisions for `TRUE` and `FALSE` can have a considerable impact on the resultant raster!
+
+I like to use a toy dataset to observe what might happen at my chosen boundaries. For this, we will use `example_df` and subset to the `numbers` field:
+
+```{r}
+example_df %>% 
+  select(numbers)
+```
+
+The behavior at the boundaries between classes is determined by the function `cut()`. We supply the position of the `breaks` in the data and the  `include.lowest = TRUE/FALSE` and `right = TRUE/FALSE` arguments:
+
+```{r}
+example_df %>% 
+  select(numbers) %>% 
+  mutate(
+    class =
+      cut(
+        numbers, 
+        breaks = c(0, 60, 100),
+        include.lowest = TRUE, 
+        right = TRUE
+        )
+    )
+```
+
+Resultant symbols from the `cut()` function can be interpreted as:
+
+* `(`: Greater than
+* `[`: Greater than or equal to
+* `)`: Less than
+* `]`: Less than or equal to
+
+I **strongly** suggest examining what happens between boundaries, at least until you get the hang of the behavior of the arguments, across *all possible combinations* of `include_lowest = TRUE/FALSE` and `right = TRUE/FALSE`:
+
+```{r}
+example_df %>% 
+  select(numbers) %>% 
+  mutate(
+    class =
+      cut(
+        numbers, 
+        breaks = c(0, 60, 100),
+        include.lowest = TRUE, 
+        right = TRUE
+      )
+  )
+
+example_df %>% 
+  select(numbers) %>% 
+  mutate(
+    class =
+      cut(
+        numbers, 
+        breaks = c(0, 60, 100),
+        include.lowest = TRUE, 
+        right = FALSE
+      )
+  )
+
+example_df %>% 
+  select(numbers) %>% 
+  mutate(
+    class =
+      cut(
+        numbers, 
+        breaks = c(0, 60, 100),
+        include.lowest = FALSE, 
+        right = TRUE
+      )
+  )
+
+example_df %>% 
+  select(numbers) %>% 
+  mutate(
+    class =
+      cut(
+        numbers, 
+        breaks = c(0, 60, 100),
+        include.lowest = FALSE, 
+        right = FALSE
+      )
+  )
+```
+
+Our goal here is to classify raster cells that have a canopy cover of less than 60 percent as "Not forest" and canopy cover greater than or equal to 60 percent as "Forest". Among the options above, only the arguments `include.lowest = TRUE` and `right = FALSE` generates the appropriate boundary behavior. Armed with this knowledge, we are ready to reclassify our continouous raster ...
+
+#### Reclassify the continuous raster
+
+The hard part of reclassifying a continuous raster is determining what happens at the boundaries (are you annoyed? I am!). Once you have determined your preferred values for `include.lowest = TRUE` and `right = FALSE`, you are ready to reclassify!
+
+```{r}
+canopy %>% 
+  terra::classify(
+    forest_rcl,
+    include.lowest = TRUE,
+    right = FALSE
+  )
+```
+
+The above generates a continuous raster (albeit one with values that are either zero or one), so you can make this categorical with the `terra::categories()` function:
+
+```{r}
+canopy %>% 
+  terra::classify(
+    forest_rcl,
+    include.lowest = TRUE,
+    right = FALSE
+  ) %>% 
+  terra::categories(
+    value = 
+      data.frame(
+        from = 0:1, 
+        to = c("Not forested", "Forested")
+      )
+  )
+```
+
+... set the name for your new raster layer with `setNames()`:
+
+```{r}
+canopy %>% 
+  terra::classify(
+    forest_rcl,
+    include.lowest = TRUE,
+    right = FALSE
+  ) %>% 
+  terra::categories(
+    value = 
+      data.frame(
+        from = 0:1, 
+        to = c("Not forested", "Forested")
+      )
+  ) %>% 
+  setNames("Land cover")
+```
+
+... and finally (ugh) plot the results!
+
+```{r}
+canopy %>% 
+  terra::classify(
+    forest_rcl,
+    include.lowest = TRUE,
+    right = FALSE
+  ) %>% 
+  terra::categories(
+    value = 
+      data.frame(
+        from = 0:1, 
+        to = c("Not forested", "Forested")
+      )
+  ) %>% 
+  setNames("Land cover") %>% 
+  tm_shape() +
+  tm_raster(
+    col.scale =
+      tm_scale(values = "brewer.greens"),
+    col_alpha = 0.6
+  )
+```
+
+A bit painful but, with a little bit of practice, it soon will become second nature!
+
+## Rasterize
+
+It is often necessary (or desired!) to convert a shapefile to a raster, this is done with the  *terra* function `rasterize`. To do so, we supply the arguments (at a minimum):
+
+* `x = ...`: The shapefile that you wish to convert into a raster;
+* `y = ...`: The raster file that will provide the template (extent and resolution) of the resultant object;
+* `field = ...`: The name of the field that contains the values that will represent the resultant cell values.
+
+```{r}
+census %>% 
+  terra::rasterize(
+    rasters,
+    field = "population") %>% 
+  tm_shape() +
+  tm_raster()
+```
+
+*Note: while `rasterize()` is relatively straightforward, it is crucial to ensure that the raster and shapefile share the same CRS!*
+
+The output of the function is a raster with the same spatial extent and resolution as the raster template (`y = ...`) but with the values (`field = ...`) of the polygon (`x = ...`) converted to raster cells.
+
+## Lying with tmap
+
+As a final note, I want to address that tmap itself will categorize the continuous data for you. For example, the below categorizes the amount of water in a given census polygon:
+
+```{r}
+census %>% 
+  tm_shape() +
+  tm_polygons(
+    fill = "awater",
+    fill.scale =
+      tm_scale(values = "brewer.blues")
+  )
+```
+
+We should not just accept the default classification system. We can define the classes assigned to continuous data using the `style = ...` argument, which in tmap v4 now lives inside `tm_scale()` and is passed via `fill.scale = tm_scale(style = ...)`. Each method of classifying the data can yield vastly different results!
+
+```{r}
+census %>% 
+  tm_shape() +
+  tm_polygons(
+    fill = "awater",
+    fill.scale =
+      tm_scale(
+        values = "brewer.blues",
+        style = "kmeans"
+      )
+  )
+
+census %>% 
+  tm_shape() +
+  tm_polygons(
+    fill = "awater",
+    fill.scale =
+      tm_scale(
+        values = "brewer.blues",
+        style = "sd"
+      )
+  )
+```
+
+The choices you make for this can greatly influence how you visualize your results. I admit that I am the dreaded **reviewer 3** when I peer-review manuscripts -- if I suspect that a map (or other type of plot) might be too-good-to-be-true, there's a strong chance that I am going to ask for the data and tmap code that the authors used!
+
+## Reference
+
+<button class="accordion">Glossary</button>
+::: panel
+* **Literal character**: In regex, this is used to search for exact character matches in the case (i.e., lower vs. upper) and order of characters.
+* **Metacharacter**: Special characters used to modify the conditions of a regex search string (such a a choice of letters or position of literal characters in a string). Note: Metacharacters are not R functions!
+* **Regular expressions (regex)**: An algorithm used to search strings (character values).
+:::
+
+<button class="accordion">Functions</button>
+::: panel
+
+::: mysecret
+
+{{< fa user-secret size=2x >}} [**Important!**]{style="font-size: 1.25em; padding-left: 0.5em;"}
+
+* Primitive functions, as well as functions in the *base*, *stats*, and *utils* packages, are loaded by default when you start an R session. Functions in *dplyr*, *ggplot2*, *lubridate*, *purrr*, *readr*, *stringr*, *tibble*, *tidyr*, and *tidyverse* are loaded with `library(tidyverse)`.
+* I do not include functions that I recommend avoiding.
+* Regular expressions metacharacters are not functions!
+:::
+
+::: function_table
+
+```{r, message = FALSE, echo = FALSE}
+render_function_table("functions_6.3_categorizing_spatial_and_nonspatial_data.csv")
+```
+
+:::
+
+:::
+
+<button class="accordion">Metacharacters in regex</button>
+::: panel
+
+::: mysecret
+{{< fa user-secret size=2x >}} [Metacharacters are not R functions!]{style="font-size: 1.25em; padding-left: 0.5em;"}
+
+When you are given a list of functions that you may use in a given problem set, recall that regex metacharacters are not functions. As such, they will not be included in your function list. You may use *any* metacharacter to address a given problem!
+:::
+
+* **Alternation constraint**, `(...)`: Constrains the use of a metacharacter to just the symbols inside of parentheses
+* **Anchor**, `^...`: Specify the start of a string
+* **Anchor**, `...$`: Specify the end of a string
+* **Character class**, `[...]`: Define a *set* of symbols that you would like to match
+* **Metacharacter escape**, `\\`: Treat a metacharacter as a literal character
+* **Optional match**, `?`: Specify that the preceding symbol is optional
+* **Range** (in a character class), `[...-...]`: Define a *range* of symbols that you would like to match in a given position
+* **Or**, `...|...`: Specify a match of one string "or" another string
+* **Repetition**, `...*`: Specify that a symbol can appear no times or an unlimited number of times
+* **Repetition**, `...+`: Specify that a symbol appears at least once or an unlimited number of times
+* **Repetition**, `{...}`: Specify the number of times a symbol should appear
+* **Repetition**, `{...,...}`: Specify that a symbol may appear within a range of repetitions
+* **Wild card**, `.`: Specify that a character value at a given location can be any symbol
+:::
+
+
+<button class="accordion">Keyboard shortcuts</button>
+::: panel
+
+{{< include ../../src/includes/keyboard_shortcuts.qmd >}}
+:::
+
+<button class="accordion">R Studio panes</button>
+::: panel
+{{< include ../../src/includes/rstudio_panes.qmd >}}
+:::
+

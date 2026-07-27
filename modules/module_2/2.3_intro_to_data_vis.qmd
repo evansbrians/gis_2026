@@ -1,0 +1,1526 @@
+---
+title: "2.3 Introduction to data visualization with ggplot"
+format:
+  html:
+    embed-resouces: true
+    self-contained: true
+    standalone: true
+    toc: true
+    toc-location: left
+    number-sections: false
+    search: true
+    include-in-header: ../../src/includes/header_includes.html
+    include-after-body: ../../src/includes/accordion_script.html
+    theme: 
+      - cosmo
+      - ../../src/css/custom_style.scss
+editor: source
+---
+
+```{r, include = FALSE}
+source("src/r/course_functions.R")
+```
+![](../../src/images/hex_complex.png){.intro_image}
+
+In this lesson we will explore, create, and modify a plot using the core tidyverse package *ggplot* -- an extraordinarily powerful and well-designed plotting system. This lesson is broken into two primary sections:
+
+* A video introduction to ggplot (runtime: 33:24). Please be sure to watch that video prior to moving forward with the tutorial!
+* A written guide that will serve as a reference for using ggplot and includes incorporating pipes into your plotting scripts. Although much of this content is a review of the introductory video, there will be new content sprinkled throughout. 
+
+You will learn:
+
+* Grammar of graphics
+* Aesthetic mappings
+* Layers (geometries)
+* Modifying scales
+* The coordinate system
+* Labels
+* Themes
+* Saving plots
+
+## Introductory video
+
+*Please note: I made this video quite a long time ago (and it used to come before the lesson on using pipes). The code in the written portion of this tutorial is much more closely aligned with modern code styling principles!*
+
+{{< video https://www.youtube.com/embed/przzfGihKSY?si=f_oZbXcPiyKTCqhl >}}
+
+## Background
+
+The *ggplot* package is built on on the design principles of Leland Wilkinson's book <a href = "https://www.amazon.com/Grammar-Graphics-Statistics-Computing/dp/0387245448" target = "_blank">The Grammar of Graphics</a>.
+
+The grammar of graphics considers the structure of a given data visualization to be defined by the:
+
+* **Data**: The information being plotted
+* **Aesthetic mappings**: How the data are mapped to visual attributes
+* **Layers (geometries)**: Expression of the data in the plot
+* **Scales**: Maps from data to aesthetic space
+* **Coordinate system**: Projection of data (e.g., x and y Cartesian coordinates)
+* **Facets**: Subsets of data within a given plot (i.e., plots are broken into subplots based on some grouping variable)
+* **Theme**: Styling of non-data elements in a plot
+
+
+## Applying the Grammar of Graphics
+
+Consider the plot we made in the *Introduction to visualizing data with ggplot* video. 
+
+<img src = 'www/chickadee_mass.png' style = 'display: block;
+margin-left: auto;
+margin-right: auto;
+width: 75%;padding-top: 15px; padding-bottom: 15px;'></img>
+
+Try to answer the following regarding the plot, you can click the buttons to see the answers (but try to answer them first!):
+
+<div>
+<button class="accordion">What are the aesthetic mappings?</button>
+<div class="panel">
+
+* Species is mapped to the x axis
+* Mass is mapped to the y axis
+* Sex is mapped to color
+
+</div>
+</div>
+
+<div>
+<button class="accordion">Which elements of the plot are related to the plots theme?</button>
+<div class="panel">
+
+Trick question. **All** non-data elements!
+
+</div>
+</div>
+
+<div>
+<button class="accordion">Which of the elements of the plot are related to scale?</button>
+<div class="panel">
+
+* The range of the x and y axis in data and image space
+* The colors
+
+</div>
+</div>
+
+<div>
+<button class="accordion">What is the coordinate system of this plot?</button>
+<div class="panel">
+
+Cartesian (x and y axes)
+</div>
+</div>
+
+<div>
+<button class="accordion">What geometries are present in this plot?</button>
+<div class="panel">
+Boxplots
+</div>
+</div>
+
+
+
+## Getting started
+
+Please open the `gis_in_r_2024` project in R Studio.
+
+Before we begin, please take the following housekeeping steps before continuing:
+
+1. If there are any script files open in your source pane. Close them. If any of the file titles are blue, save them prior to closing.
+
+1. In the *Environment* tab of your **workspace pane**, ensure that your **Global Environment** is empty. If it is not, click the *broom* to remove all objects.
+
+1. In the *History* tab of your **workspace pane**, ensure that your history is empty. If it is not, click the *broom* to remove your history.
+
+Ensure that the file `chickadees.csv` is located in your project folder, in the subfolder `data/raw`.
+
+Open up a new script and save the script as "ggplot_worksheet.R" inside your `gis_in_r_2024/scripts` folder.
+
+Please complete the following steps in your ggplot_worksheet script:
+
+1. Give the top of the script a section header with the name "setup"
+
+1. Load the tidyverse library
+
+```{r eval = TRUE, message=FALSE}
+# setup  -----------------------------------...
+
+library(tidyverse)
+```
+
+## The data
+
+In your script file, please provide a comment stating that you are reading in a file. Use `read_csv` to read `chickadees.csv` into your Global Environment and assign the key `chickadees` to the resultant object.
+
+```{r}
+# Read in data
+
+chickadees <- 
+  read_csv('data/raw/chickadees.csv')
+```
+
+Let's take a quick look at the `chickadees` tibble:
+
+```{r eval = TRUE, message=FALSE}
+chickadees
+```
+
+We are also going to use elements from the tidy dataset `district_birds.rds` for this lesson:
+
+```{r}
+read_rds('data/raw/district_birds.rds') %>% 
+  list2env(.GlobalEnv)
+```
+
+From the data we loaded above, which are arranged as the tables in a database, we will use the captures and the birds datasets:
+
+```{r}
+captures
+
+birds
+```
+
+Please remove the other names from your global environment:
+
+```{r}
+rm(
+  sites,
+  visits,
+  counts)
+```
+
+### Plotting data
+
+We begin a plot by adding the grammar of graphics data element. The resultant plot isn't meaningful, but it is a good place to start.
+
+```{r eval = TRUE, message=FALSE}
+ggplot(data = chickadees)
+```
+
+*Note: It is often unnecessary to include things like `data = `. I am including the names of the arguments here until I am sure that everyone is comfortable with ggplot.*
+
+Because data is the first argument of the `ggplot()` function, this argument can also be piped in:
+
+```{r}
+chickadees %>% 
+  ggplot()
+```
+
+One of my goals of this lesson will be to demonstrate why piping your data is *more appropriate* when plotting your data with ggplot. Why this is the case will become more apparent once we add more elements to our plot ...
+
+## Aesthetic mappings
+
+After adding data, we need to decide which aesthetic mappings are appropriate for our question. It entirely depends on what we want to explore or visualize with our dataset. In this case, let's create a plot that compares wing length with mass. The body size to mass ratio is a common measurement in ecological studies of birds and other wildlife. We will visualize wing as the predictor variable (x axis) and mass as the response variable (y axis).  
+
+```{r eval = TRUE, message=FALSE}
+chickadees %>% 
+  ggplot(mapping = aes(x = wing, y = mass))
+```
+
+Notice that ggplot assigned the scale element to the visualization automatically, It chose the scale based on the limits of the data. By default, ranges of the x and y axes are 5% below and above the upper and lower limits of the data.
+
+Mapping is the second argument of the function. Because mapping is required for every plot, we do not need to specify the argument each time (as long as we understand what it does). Let's remove `mapping =` from the code:
+
+```{r}
+chickadees %>% 
+  ggplot(aes(x = wing, y = mass))
+```
+
+Note that the function `aes()` is an exception to the rule that two named functions should not be placed on the same line -- this is okay, as long as there are only two variables being mapped.
+
+An alternative method (that I often use), is to specify my aesthetics *after* the `ggplot` function:
+
+```{r}
+chickadees %>% 
+  ggplot() +
+  aes(x = wing, y = mass)
+```
+
+## Layers (geometries)
+
+With our data mapped to our aesthetics, it is now time to add layers to our plot. Layers are also called geometries. Each geometry function is written as  `geom_` followed by the type of geometry.
+
+### Scatterplot
+
+Let's create a scatterplot. Therefore, we want to add point geometries to our plot using the function `geom_point`:
+
+```{r eval = TRUE, message=FALSE}
+chickadees %>% 
+  ggplot() +
+  aes(x = wing, y = mass) +
+  geom_point()
+```
+
+Have a look at the `+` sign. This is actually a pipe, but it is a pipe that can exclusively be used in `ggplot()` functions (and a few other related packages). Here, we are piping the output of the `ggplot()` function into the input of the `geom_point()` function.
+
+We can add a line of best fit through these points using the `geom_smooth` function. I supply the following arguments to my function:
+
+* `formula  = y ~ x` to specify the predictor and response variables
+* `method = "lm"` to specify that we want to use a linear model to compare the association between the variables
+* `se = FALSE` because I am not interested in standard error at the moment
+
+```{r eval = TRUE, message=FALSE}
+chickadees %>% 
+  ggplot() +
+  aes(x = wing, y = mass) +
+  geom_point() +
+  geom_smooth(
+    formula = y ~ x, 
+    method = 'lm',
+    se = FALSE)
+```
+
+Note that when we added this line, we added a new geometry to the plot. I am not crazy about that blue line. I only like to use color in a plot to convey meaning. Let's set the color of our line to black:
+
+```{r eval = TRUE, message=FALSE}
+chickadees %>% 
+  ggplot() +
+  aes(x = wing, y = mass) +
+  geom_point() +
+  geom_smooth(
+    formula = y ~ x, 
+    method = 'lm',
+    se = FALSE, 
+    color = 'black')
+```
+
+Let's add a new aesthetic mapping to the data. Recall that in the video lecture we found that Black-capped chickadees are larger than Carolina chickadees. Let's color the points by species by adding the new aesthetic mapping argument to our `geom_point` function:
+
+```{r eval = TRUE, message=FALSE}
+chickadees %>% 
+  ggplot() +
+  aes(x = wing, y = mass) +
+  geom_point(aes(color = spp)) +
+  geom_smooth(
+    formula = y ~ x, 
+    method = 'lm',
+    se = FALSE, 
+    color = 'black')
+```
+
+Notice that there is still only one black line for both species but the points are colored by species. If we suspected that the slope of the line might be species-dependent, we might want the aesthetic to apply to both geometries. We could so by also adding the aesthetic mapping to the line:
+
+```{r eval = TRUE, message=FALSE}
+chickadees %>% 
+  ggplot() +
+  aes(x = wing, y = mass) +
+  geom_point(aes(color = spp)) +
+  geom_smooth(
+    aes(color = spp),
+    method = 'lm',
+    formula = y ~ x, 
+    se = FALSE)
+```
+
+If we know that we want both the points and the lines mapped to species, we can simplify our argument above by specifying the color aesthetic in our initial mapping.
+
+```{r eval = TRUE, message=FALSE}
+chickadees %>% 
+  ggplot() +
+  aes(
+    x = wing, 
+    y = mass,
+    color = spp) +
+  geom_point() +
+  geom_smooth(
+    method = 'lm',
+    formula = y ~ x, 
+    se = FALSE)
+```
+
+We have a lot of control over the style of our geometries. For example, perhaps we want our points to be a little larger, we can specify that in our `geom_point` function using the `size = ` argument:
+
+```{r eval = TRUE, message=FALSE}
+chickadees %>% 
+  ggplot() +
+  aes(
+    x = wing, 
+    y = mass,
+    color = spp) +
+  geom_point(size = 2.75) +
+  geom_smooth(
+    method = 'lm',
+    formula = y ~ x, 
+    se = FALSE)
+```
+
+Well ... that's pretty crazy looking. We can add transparency using the `alpha =` argument:
+
+```{r eval = TRUE, message=FALSE}
+chickadees %>% 
+  ggplot() +
+  aes(
+    x = wing, 
+    y = mass,
+    color = spp) +
+  geom_point(size = 2.75, alpha = 0.25) +
+  geom_smooth(
+    method = 'lm',
+    formula = y ~ x, 
+    se = FALSE)
+```
+
+That's more reasonable, plots like this say to me "I am more interested in seeing the trends, but I want others to also notice the underlying data." We can enhance that message a bit further by making our line a little wider using the `linewidth =` argument:
+
+```{r eval = TRUE, message=FALSE}
+chickadees %>% 
+  ggplot() +
+  aes(
+    x = wing, 
+    y = mass,
+    color = spp) +
+  geom_smooth(
+    method = 'lm',
+    formula = y ~ x, 
+    se = FALSE,
+    linewidth = 1.5)
+```
+
+### Bar plots
+
+Bar plots are a great way to display count data (or quantities of some values). Let's try to make a bar plot:
+
+```{r}
+captures %>% 
+  ggplot() +
+  aes(x = spp) +
+  geom_bar()
+```
+
+By default, the `geom_bar()` function will generate a bar that represents counts of the x variable. I prefer to pipe around the data going in, though. It is, by far my preference to generate a summary table ... 
+
+```{r}
+captures %>% 
+  group_by(spp) %>% 
+  summarize(n = n())
+```
+
+... and then pipe those data into the bar plot. To do so, we need to specify the argument `stat = "identity"` inside the `geom_bar()` function:
+
+```{r}
+captures %>% 
+  group_by(spp) %>% 
+  summarize(n = n()) %>% 
+  ggplot() +
+  aes(x = spp, y = n) +
+  geom_bar(stat = "identity")
+```
+
+The two plots above are quite ugly, I know. Let's see why piping data in is a good idea ...
+
+### Why pipe in data?
+
+Only bird nerds know the 4-letter species codes (which aren't really even legible in this plot). These codes are great for storing data, but not very useful for communicated data. The capture data are tidy, so we will need to join the tables to bring in the more meaningful species names:
+
+```{r}
+captures %>% 
+  left_join(
+    birds %>% 
+      select(species:common_name),
+    by = c("spp" = "species"))
+```
+
+If we are only interested in the counts and the `common_name` field, we should reduce this further:
+
+```{r}
+captures %>% 
+  select(spp) %>% 
+  left_join(
+    birds %>% 
+      select(species:common_name),
+    by = c("spp" = "species")) %>% 
+  select(common_name)
+```
+
+... and then calculate our counts again:
+
+```{r}
+captures %>% 
+  select(spp) %>% 
+  left_join(
+    birds %>% 
+      select(species:common_name),
+    by = c("spp" = "species")) %>% 
+  group_by(common_name) %>% 
+  summarize(n = n())
+```
+
+Let's try to plot it and bask in our ggplot glory:
+
+```{r}
+captures %>% 
+  select(spp) %>% 
+  left_join(
+    birds %>% 
+      select(species:common_name),
+    by = c("spp" = "species")) %>% 
+  group_by(common_name) %>% 
+  summarize(n = n()) %>% 
+  ggplot() +
+  aes(x = common_name, y = n) +
+  geom_bar(stat = "identity")
+```
+
+We did it! However, after rewarding yourself with a beer and bragging about your plot to your friends, you recognize that your plot has not successfully communicated anything. It ... is ... completely ... illegible. Alas.
+
+Maybe it would be better to just plot counts of dietary guilds?
+
+```{r}
+captures %>% 
+  select(spp) %>% 
+  left_join(
+    birds %>% 
+      select(
+        species, 
+        common_name, 
+        diet),
+    by = c("spp" = "species")) %>% 
+  group_by(diet) %>% 
+  summarize(n = n()) %>% 
+  ggplot() +
+  aes(x = diet, y = n) +
+  geom_bar(stat = "identity")
+```
+
+Once again proud of your gg-excellence, you show your plot to your advisor (*they are gonna love this ... it is so ecologically meaningful!* ). They like the diet counts, but want to see the species too. Just as we can add a `color` aesthetic to points, we can add color to a bar plot. Notice that, in the below, I now place my aesthetics on their own lines (because there are three or more of them):
+
+```{r}
+captures %>% 
+  select(spp) %>% 
+  left_join(
+    birds %>% 
+      select(
+        species, 
+        common_name, 
+        diet),
+    by = c("spp" = "species")) %>% 
+  group_by(common_name, diet) %>% 
+  summarize(
+    n = n(),
+    .groups = "drop") %>% 
+  ggplot() +
+  aes(
+    x = diet, 
+    y = n,
+    color = common_name) +
+  geom_bar(stat = "identity")
+```
+
+*Note: It is best to drop any grouping in the data prior to piping the output of summarize into the next function.*
+
+... well, that didn't work as expected. Why? For polygon aesthetics (like bars), the color of the bars is defined by `fill = `, the color argument just represents the borders:
+
+```{r}
+captures %>% 
+  select(spp) %>% 
+  left_join(
+    birds %>% 
+      select(
+        species, 
+        common_name, 
+        diet),
+    by = c("spp" = "species")) %>% 
+  group_by(common_name, diet) %>% 
+  summarize(
+    n = n(),
+    .groups = "drop") %>% 
+  ggplot() +
+  aes(
+    x = diet, 
+    y = n,
+    fill = common_name) +
+  geom_bar(stat = "identity")
+```
+
+That's better ... but what does `color = ` do for bars? The color argument adds a line color to the bars. We can add it inside of our layer:
+
+```{r}
+captures %>% 
+  select(spp) %>% 
+  left_join(
+    birds %>% 
+      select(
+        species, 
+        common_name, 
+        diet),
+    by = c("spp" = "species")) %>% 
+  group_by(common_name, diet) %>% 
+  summarize(
+    n = n(),
+    .groups = "drop") %>% 
+  ggplot() +
+  aes(
+    x = diet, 
+    y = n,
+    fill = common_name) +
+  geom_bar(stat = "identity",
+           color = "black")
+```
+
+If you find that a little overbearing (I do), you can change the width of the lines with `linewidth =`
+
+```{r}
+captures %>% 
+  select(spp) %>% 
+  left_join(
+    birds %>% 
+      select(
+        species, 
+        common_name, 
+        diet),
+    by = c("spp" = "species")) %>% 
+  group_by(common_name, diet) %>% 
+  summarize(
+    n = n(),
+    .groups = "drop") %>% 
+  ggplot() +
+  aes(
+    x = diet, 
+    y = n,
+    fill = common_name) +
+  geom_bar(
+    stat = "identity",
+    color = "black",
+    linewidth = 0.3)
+```
+
+... or modify the color to something a bit less intense:
+
+```{r}
+captures %>% 
+  select(spp) %>% 
+  left_join(
+    birds %>% 
+      select(
+        species, 
+        common_name, 
+        diet),
+    by = c("spp" = "species")) %>% 
+  group_by(common_name, diet) %>% 
+  summarize(
+    n = n(),
+    .groups = "drop") %>% 
+  ggplot() +
+  aes(
+    x = diet, 
+    y = n,
+    fill = common_name) +
+  geom_bar(
+    stat = "identity",
+    color = "#424242",
+    linewidth = 0.3)
+```
+
+Perhaps you have become less impressed with your plot over time. One option would be to subset the data to just the 10 species with the most observations in the data. With the flexibility afforded to us with piping our data in, we have gained that power:
+
+```{r}
+captures %>% 
+  select(spp) %>% 
+  left_join(
+    birds %>% 
+      select(
+        species, 
+        common_name, 
+        diet),
+    by = c("spp" = "species")) %>% 
+  group_by(common_name, diet) %>% 
+  summarize(
+    n = n(),
+    .groups = "drop") %>% 
+  slice_max(n, n = 10) %>% 
+  ggplot() +
+  aes(
+    x = diet, 
+    y = n,
+    fill = common_name) +
+  geom_bar(
+    stat = "identity",
+    color = "#424242",
+    linewidth = 0.3)
+```
+
+Hopefully, it is apparent that the power to play with the data that you are plotting really gives you a lot of control over your plot! Piping the data in really helps you do so.
+
+## Modifying scales
+
+We have thus far created reasonable plots that perhaps convey the information we would like to communicate. Our plots are not very pretty yet though.
+
+### Scales: Numeric range
+
+Let's start by modifying the range of the x and y axes. Before I scale an axis, I usually like be sure what the limits of my data actually are. We can use `summary()` to figure that out.
+
+```{r eval = TRUE, message=FALSE}
+summary(chickadees)
+```
+
+We use the function `scale_y_continuous` to scale the y axis. Based on the results of our function, it looks like 7 and 13 are probably pretty good values for our scaling operation. We will set the following arguments:
+
+* `limits = c(7, 13)`: This provides a vector representing the lower and upper limits of the values we want to plot.
+* `expand = c(0, 0)`: This ensures that the axis stops at our chosen values.
+
+```{r eval = TRUE, message=FALSE}
+chickadees %>% 
+  ggplot() +
+  aes(
+    x = wing, 
+    y = mass,
+    color = spp) +
+  geom_point(size = 2.75, alpha = 0.25) +
+  geom_smooth(
+    method = 'lm',
+    formula = y ~ x, 
+    se = FALSE,
+    linewidth = 1.5) +
+  scale_y_continuous(
+    limits = c(7, 13),
+    expand = c(0, 0))
+```
+
+We can do the same with our x axis, using the function `scale_x_continuous`. The results from summarizing our dataset suggested that a minimum wing size of 50 mm and maximum wing size of 70 would fit our needs perfectly.
+
+```{r eval = TRUE, message=FALSE}
+chickadees %>% 
+  ggplot() +
+  aes(
+    x = wing, 
+    y = mass,
+    color = spp) +
+  geom_point(size = 2.75, alpha = 0.25) +
+  geom_smooth(
+    method = 'lm',
+    formula = y ~ x, 
+    se = FALSE,
+    linewidth = 1.5) +
+  scale_y_continuous(
+    limits = c(7, 13),
+    expand = c(0, 0)) +
+  scale_x_continuous(
+    limits = c(50, 70),
+    expand = c(0, 0))
+```
+
+We can also (and should) modify the scales of our bar plot. Let's look again at our last plot of banded bird counts:
+
+```{r}
+captures %>% 
+  select(spp) %>% 
+  left_join(
+    birds %>% 
+      select(
+        species, 
+        common_name, 
+        diet),
+    by = c("spp" = "species")) %>% 
+  group_by(common_name, diet) %>% 
+  summarize(
+    n = n(),
+    .groups = "drop") %>% 
+  slice_max(n, n = 10) %>% 
+  ggplot() +
+  aes(
+    x = diet, 
+    y = n,
+    fill = common_name) +
+  geom_bar(
+    stat = "identity",
+    color = "#424242",
+    linewidth = 0.3)
+```
+
+Given that these are count data, it makes no sense to start with a minimum value of less than zero. To address this, we would first add the `scale_y_continuous()` function and modify the expand argument as above:
+
+```{r}
+captures %>% 
+  select(spp) %>% 
+  left_join(
+    birds %>% 
+      select(
+        species, 
+        common_name, 
+        diet),
+    by = c("spp" = "species")) %>% 
+  group_by(common_name, diet) %>% 
+  summarize(
+    n = n(),
+    .groups = "drop") %>% 
+  slice_max(n, n = 10) %>% 
+  ggplot() +
+  aes(
+    x = diet, 
+    y = n,
+    fill = common_name) +
+  geom_bar(
+    stat = "identity",
+    color = "#424242",
+    linewidth = 0.3) +
+  scale_y_continuous(
+    expand = c(0, 0))
+```
+
+That looks a little silly because removing the expansion sets the upper bound to the upper bound of the data. One way to address this is to look at the distribution of the data:
+
+```{r}
+captures %>% 
+  select(spp) %>% 
+  left_join(
+    birds %>% 
+      select(
+        species, 
+        common_name, 
+        diet),
+    by = c("spp" = "species")) %>% 
+  group_by(common_name, diet) %>% 
+  summarize(
+    n = n(),
+    .groups = "drop") %>%
+  summary()
+```
+
+But each bar in this instance represents the total of common names and diets. As such, we have to simplify our data grouping so we can calculate the height of the bars:
+
+```{r}
+captures %>% 
+  select(spp) %>% 
+  left_join(
+    birds %>% 
+      select(
+        species, 
+        common_name, 
+        diet),
+    by = c("spp" = "species")) %>% 
+  group_by(diet) %>% 
+  summarize(
+    n = n(),
+    .groups = "drop") %>%
+  summary()
+```
+
+We can use the returned values to specify the limits of the y-axis:
+
+```{r}
+captures %>% 
+  select(spp) %>% 
+  left_join(
+    birds %>% 
+      select(
+        species, 
+        common_name, 
+        diet),
+    by = c("spp" = "species")) %>% 
+  group_by(common_name, diet) %>% 
+  summarize(
+    n = n(),
+    .groups = "drop") %>% 
+  slice_max(n, n = 10) %>% 
+  ggplot() +
+  aes(
+    x = diet, 
+    y = n,
+    fill = common_name) +
+  geom_bar(
+    stat = "identity",
+    color = "#424242",
+    linewidth = 0.3) +
+  scale_y_continuous(
+    expand = c(0, 0),
+    limits = c(0, 4000))
+```
+
+That looks nice (*probably good for the final product!*), but was perhaps a lot of work. Instead, we can use the `expansion()` function inside of `scale_y_continuous()`. This function was released in dplyr 3.3.0 back in 2020. We supply a vector of two numbers with `mult = c(min, max)`. The first number is the proportional expansion at the lower limit, relative to the current distribution of the data, and the second is the proportion to expand relative to upper limit:
+
+```{r}
+captures %>% 
+  select(spp) %>% 
+  left_join(
+    birds %>% 
+      select(
+        species, 
+        common_name, 
+        diet),
+    by = c("spp" = "species")) %>% 
+  group_by(common_name, diet) %>% 
+  summarize(
+    n = n(),
+    .groups = "drop") %>% 
+  slice_max(n, n = 10) %>% 
+  ggplot() +
+  aes(
+    x = diet, 
+    y = n,
+    fill = common_name) +
+  geom_bar(
+    stat = "identity",
+    color = "#424242",
+    linewidth = 0.3) +
+  scale_y_continuous(
+    expand = expansion(mult = c(0, 0.05)))
+```
+
+We can also set the expansion by using a number in the same units as the y-axis by using the argument `add =` (rather than `mult = `) as an argument of `expansion()`:
+
+```{r}
+captures %>% 
+  select(spp) %>% 
+  left_join(
+    birds %>% 
+      select(
+        species, 
+        common_name, 
+        diet),
+    by = c("spp" = "species")) %>% 
+  group_by(common_name, diet) %>% 
+  summarize(
+    n = n(),
+    .groups = "drop") %>% 
+  slice_max(n, n = 10) %>% 
+  ggplot() +
+  aes(
+    x = diet, 
+    y = n,
+    fill = common_name) +
+  geom_bar(
+    stat = "identity",
+    color = "#424242",
+    linewidth = 0.3) +
+  scale_y_continuous(
+    expand = expansion(add = c(0, 100)))
+```
+
+As I hinted at above, however, for finished plots I usually opt for exploring the data and providing fixed values within the `limits` argument of `scale_y_continuous()`.
+
+### Scales: Colors
+
+Recall that color is actually a type of scaling, even in this case (where the data are binary). We will use `scale_color_manual` to change the color scale. Following what we did in our video lecture, I could choose colors by name:
+
+```{r eval = TRUE, message=FALSE}
+chickadees %>% 
+  ggplot() +
+  aes(
+    x = wing, 
+    y = mass,
+    color = spp) +
+  geom_point(size = 2.75, alpha = 0.25) +
+  geom_smooth(
+    method = 'lm',
+    formula = y ~ x, 
+    se = FALSE,
+    linewidth = 1.5) +
+  scale_y_continuous(
+    limits = c(7, 13),
+    expand = c(0, 0)) +
+  scale_x_continuous(
+    limits = c(50, 70),
+    expand = c(0, 0)) +
+  scale_color_manual(
+    values = c('orange', 'green'))
+```
+
+Or we can use a color picker app (I like <a href = "https://chrome.google.com/webstore/detail/colorpick-eyedropper/ohcpnigalekghcmgcdcenkpelffpdolg?hl=en" target = "_blank">this one</a>) to find colors that we like online. I am going to use this image from the Fantastic Mr. Fox. 
+
+<img src = 'www/fantastic_fox.jpeg' style = 'display: block;
+margin-left: auto;
+margin-right: auto;
+width: 100%; height: auto; padding-top: 15px; padding-bottom: 15px;'>
+
+With this picture, I have chosen to go with a color from Kylie Sven Opposum's jacket (#595B18) and from the coat of Mr. Fox himself (#CA621E).
+
+```{r eval = TRUE, message=FALSE}
+chickadees %>% 
+  ggplot() +
+  aes(
+    x = wing, 
+    y = mass,
+    color = spp) +
+  geom_point(size = 2.75, alpha = 0.25) +
+  geom_smooth(
+    method = 'lm',
+    formula = y ~ x, 
+    se = FALSE,
+    linewidth = 1.5) +
+  scale_y_continuous(
+    limits = c(7, 13),
+    expand = c(0, 0)) +
+  scale_x_continuous(
+    limits = c(50, 70),
+    expand = c(0, 0)) +
+  scale_color_manual(
+    values = c('#595B18', '#CA621E'))
+```
+
+This plot is probably great for Wes Anderson fans who do not suffer from red-green color blindness, but not likely optimal otherwise. 
+
+I will stay with this version for now, but you give it a try. See if you can find a color scheme that you like (especially with a color picker app) and modify the plot to suit your color preference.
+
+#### Brewed colors
+
+One option for generating with colors is using a pre-made palette from the package `RColorBrewer`. We can see available default palettes using the function `RColorBrewer::display.brewer.all()`. To add an RColorBrewer palette, we use `scale_fill_brewer()` and specify the name of the palette in quotes. Let's add a nicer color palette to our bar plot:
+
+```{r}
+captures %>% 
+  select(spp) %>% 
+  left_join(
+    birds %>% 
+      select(
+        species, 
+        common_name, 
+        diet),
+    by = c("spp" = "species")) %>% 
+  group_by(common_name, diet) %>% 
+  summarize(
+    n = n(),
+    .groups = "drop") %>% 
+  slice_max(n, n = 10) %>% 
+  ggplot() +
+  aes(
+    x = diet, 
+    y = n,
+    fill = common_name) +
+  geom_bar(
+    stat = "identity",
+    color = "#424242",
+    linewidth = 0.3) +
+  scale_y_continuous(
+    expand = expansion(add = c(0, 100))) +
+  scale_fill_brewer(palette = "Spectral")
+```
+
+*Note: I typically like to generate my own palettes though!*
+
+## The coordinate system
+
+
+The role of the coordinate system is to generate a 2-dimensional surface upon which the x and y aesthetics are placed. The coordinate system we typically use when plotting data is Cartesian -- there is a horizontal and vertical axis. The x-variable (predictor | independent variable) is typically reserved for the horizontal plane and the y-variable (response | dependent variable) is generally used on the vertical axis. This is often not the best option for viewing the data though ...
+
+### Flipping the coordinate system
+
+You have brought your plot (now with better colors!) to your advisor and sure enough, they do not like the grouped bars! They want each bar to represent a species. Well, we know what that will look like:
+
+```{r}
+captures %>% 
+  select(spp) %>% 
+  left_join(
+    birds %>% 
+      select(
+        species, 
+        common_name, 
+        diet),
+    by = c("spp" = "species")) %>% 
+  group_by(common_name) %>% 
+  summarize(n = n()) %>% 
+  slice_max(n, n = 10) %>% 
+  ggplot() +
+  aes(x = common_name, y = n) +
+  geom_bar(stat = "identity") +
+  scale_y_continuous(
+    expand = expansion(add = c(0, 100)))
+```
+
+A handy solution to this problem is to flip the coordinate system with `coord_flip()`. This places the x-axis on the vertical plane and the y-axis on the horizontal plane:
+
+```{r}
+captures %>% 
+  select(spp) %>% 
+  left_join(
+    birds %>% 
+      select(
+        species, 
+        common_name, 
+        diet),
+    by = c("spp" = "species")) %>% 
+  group_by(common_name) %>% 
+  summarize(n = n()) %>% 
+  slice_max(n, n = 10) %>% 
+  ggplot() +
+  aes(x = common_name, y = n) +
+  geom_bar(stat = "identity") +
+  scale_y_continuous(
+    expand = expansion(add = c(0, 100))) +
+  coord_flip()
+```
+
+This is worlds better! The challenge that we face, however, is in remembering that the x- and y-axes have not changed, just the coordinate system has! This will become all-too-apparent in the next section of this document.
+
+## Labels
+
+Now we will add some labels to our plot. In my data frames, I always use lowercase as my convention. It makes it easier on my fingers to call columns (no extra shift button to hit) and does not really affect the readability of the table. When it comes time to plot the data, however, it is pretty suboptimal.
+
+Let's use `labs()` to add a title and x- and y-axis labels:
+
+```{r eval = TRUE, message=FALSE}
+chickadees %>% 
+  ggplot() +
+  aes(
+    x = wing, 
+    y = mass,
+    color = spp) +
+  geom_point(size = 2.75, alpha = 0.25) +
+  geom_smooth(
+    method = 'lm',
+    formula = y ~ x, 
+    se = FALSE,
+    linewidth = 1.5) +
+  scale_y_continuous(
+    limits = c(7, 13),
+    expand = c(0, 0)) +
+  scale_x_continuous(
+    limits = c(50, 70),
+    expand = c(0, 0)) +
+  scale_color_manual(
+    values = c('#595B18', '#CA621E')) +
+  labs(
+    title = 'Wing length and mass of Black-capped and Carolina chickadees',
+    x = 'Wing length', 
+    y = 'Mass')
+```
+
+Of course, the axis titles are not yet complete. We should always include units, when appropriate:
+
+```{r eval = TRUE, message=FALSE}
+chickadees %>% 
+  ggplot() +
+  aes(
+    x = wing, 
+    y = mass,
+    color = spp) +
+  geom_point(size = 2.75, alpha = 0.25) +
+  geom_smooth(
+    method = 'lm',
+    formula = y ~ x, 
+    se = FALSE,
+    linewidth = 1.5) +
+  scale_y_continuous(
+    limits = c(7, 13),
+    expand = c(0, 0)) +
+  scale_x_continuous(
+    limits = c(50, 70),
+    expand = c(0, 0)) +
+  scale_color_manual(
+    values = c('#595B18', '#CA621E')) +
+  labs(
+    title = 'Wing length and mass of Black-capped and Carolina chickadees',
+    x = 'Wing length (mm)', 
+    y = 'Mass (g)')
+```
+
+We can change the legend title in our argument for `scale_color_manual`:
+
+```{r eval = TRUE, message=FALSE}
+chickadees %>% 
+  ggplot() +
+  aes(
+    x = wing, 
+    y = mass,
+    color = spp) +
+  geom_point(size = 2.75, alpha = 0.25) +
+  geom_smooth(
+    method = 'lm',
+    formula = y ~ x, 
+    se = FALSE,
+    linewidth = 1.5) +
+  scale_y_continuous(
+    limits = c(7, 13),
+    expand = c(0, 0)) +
+  scale_x_continuous(
+    limits = c(50, 70),
+    expand = c(0, 0)) +
+  scale_color_manual(
+    'Species',
+    values = c('#595B18', '#CA621E')) +
+  labs(
+    title = 'Wing length and mass of Black-capped and Carolina chickadees',
+    x = 'Wing length (mm)', 
+    y = 'Mass (g)')
+```
+
+### Labels and flipped coordinate systems
+
+As I stated above, when you flip your coordinate system, you have to be sure to remember that this has no effect on your x and y aesthetics.
+
+Excited that you now have a readable bar plot of banded species, you bring it to your (surprisingly plot-savvy) advisor. They like it ... but ... those axis titles are terrible. Let's change them to "Common name" and "Number banded":
+
+```{r}
+captures %>% 
+  select(spp) %>% 
+  left_join(
+    birds %>% 
+      select(
+        species, 
+        common_name, 
+        diet),
+    by = c("spp" = "species")) %>% 
+  group_by(common_name) %>% 
+  summarize(n = n()) %>% 
+  slice_max(n, n = 10) %>% 
+  ggplot() +
+  aes(x = common_name, y = n) +
+  geom_bar(stat = "identity") +
+  scale_y_continuous(
+    expand = expansion(add = c(0, 100))) +
+  coord_flip() +
+  labs(
+    title = "Banded birds by species",
+    x = "Common name",
+    y = "Number banded")
+```
+
+Notice in the above that the x-axis label was placed on the vertical axis and the y-axis label was placed on the horizontal axis!
+
+### Why pipe in data? The sequel.
+
+Another option of specifying x- and y-axis labels is to modify the names in the data being piped into ggplot. I actually much prefer this version ... and it is the only time I am totally comfortable with breaking best practices in variable naming conventions! Publication-ready ggplot scripts can get monstrously long and the data going into the ggplot analysis is almost certainly the lightest load on script real estate for such scripts. Moreover, having your data "plot-ready" is great for necessary exploration steps on the way in.
+
+Notice, for our bar plots, that our axis labels break two naming conventions -- there is a space between the words and the first word is capitalized. We can generate axis labels with these otherwise-loathsome names by using backtick quotes in our piped data code block:
+
+```{r}
+captures %>% 
+  select(spp) %>% 
+  left_join(
+    birds %>% 
+      select(
+        species, 
+        common_name, 
+        diet),
+    by = c("spp" = "species")) %>% 
+  group_by(`Common name` = common_name) %>% 
+  summarize(
+    `Number banded` = n(),
+    .groups = "drop") %>% 
+  slice_max(`Number banded`, n = 10) %>% 
+  ggplot() +
+  aes(x = `Common name`, y = `Number banded`) +
+  geom_bar(stat = "identity") +
+  scale_y_continuous(
+    expand = expansion(add = c(0, 100))) +
+  coord_flip() +
+  labs(title = "Banded birds by species")
+```
+
+Notice in the above that this actually tightened up our code a bit. Although we would not want to use names like these in a typical coding session, it actually made the plotting code more parsimonious. Moreover, we no longer had to solve the logic puzzle of which label goes to which axis after the `coord_flip()`!
+
+We will leave this plot behind for now, but I recommend using this plot as an example for the modifications that we will continue to make in this document.
+
+## Facets
+
+Facets separate a single plot into subplots. They can really help us visualize data.
+
+In this example, perhaps we are interested in comparing between species, but observing the relationship by sex. Let's keep our points and lines colored by species but add a facet for each sex using `facet_wrap`:
+
+```{r eval = TRUE, message=FALSE}
+chickadees %>% 
+  ggplot() +
+  aes(
+    x = wing, 
+    y = mass,
+    color = spp) +
+  geom_point(size = 2.75, alpha = 0.25) +
+  geom_smooth(
+    method = 'lm',
+    formula = y ~ x, 
+    se = FALSE,
+    linewidth = 1.5) +
+  scale_y_continuous(
+    limits = c(7, 13),
+    expand = c(0, 0)) +
+  scale_x_continuous(
+    limits = c(50, 70),
+    expand = c(0, 0)) +
+  scale_color_manual(
+    'Species',
+    values = c('#595B18', '#CA621E')) +
+  labs(
+    title = 'Wing length and mass of Black-capped and Carolina chickadees',
+    x = 'Wing length (mm)', 
+    y = 'Mass (g)') +
+  facet_wrap(~sex)
+```
+
+We have not made the most compelling labels for those facets. The way that I normally deal with this is changing the data to a factor and using the factor labels. Let's explore the sex variable:
+
+```{r eval = TRUE}
+table(chickadees$sex)
+```
+
+We can use `factor()` to change this variable to a factor (*Note: there will soon be a better way to do this!*):
+
+```{r eval = TRUE}
+chickadees$sex <-
+  factor(
+    chickadees$sex, 
+    levels = c('F', 'M'),
+    labels = c('Female', 'Male'))
+```
+
+*We specified levels as one of the arguments of the above `factor()` operation. Why was this not necessary?*
+
+Let's see how it looks now when we plot it:
+
+```{r eval = TRUE, message=FALSE}
+chickadees %>% 
+  ggplot() +
+  aes(
+    x = wing, 
+    y = mass,
+    color = spp) +
+  geom_point(size = 2.75, alpha = 0.25) +
+  geom_smooth(
+    method = 'lm',
+    formula = y ~ x, 
+    se = FALSE,
+    linewidth = 1.5) +
+  scale_y_continuous(
+    limits = c(7, 13),
+    expand = c(0, 0)) +
+  scale_x_continuous(
+    limits = c(50, 70),
+    expand = c(0, 0)) +
+  scale_color_manual(
+    'Species',
+    values = c('#595B18', '#CA621E')) +
+  labs(
+    title = 'Wing length and mass of Black-capped and Carolina chickadees',
+    x = 'Wing length (mm)', 
+    y = 'Mass (g)') +
+  facet_wrap(~sex)
+```
+
+## Themes
+
+Now that we have a plot that we like (maybe ... my color choices were questionable at best ... hopefully you found better ones?), it is time to specify the **themes**. Recall that themes determine how the non-data elements look.
+
+One trick that I didn't show in the lecture is my preferred theme, `theme_bw()`. I usually use this as a starting point for my plots:
+
+```{r eval = TRUE, message=FALSE}
+chickadees %>% 
+  ggplot() +
+  aes(
+    x = wing, 
+    y = mass,
+    color = spp) +
+  geom_point(size = 2.75, alpha = 0.25) +
+  geom_smooth(
+    method = 'lm',
+    formula = y ~ x, 
+    se = FALSE,
+    linewidth = 1.5) +
+  scale_y_continuous(
+    limits = c(7, 13),
+    expand = c(0, 0)) +
+  scale_x_continuous(
+    limits = c(50, 70),
+    expand = c(0, 0)) +
+  scale_color_manual(
+    'Species',
+    values = c('#595B18', '#CA621E')) +
+  labs(
+    title = 'Wing length and mass of Black-capped and Carolina chickadees',
+    x = 'Wing length (mm)', 
+    y = 'Mass (g)') +
+  facet_wrap(~sex) +
+  theme_bw()
+```
+
+Now we can modify specific theme elements inside the `theme()` function. We almost always have to modify the size of the axis labels and titles. Text theme elements are modified by passing arguments to `element_text()`. Let's make our axis text larger:
+
+```{r eval = TRUE, message=FALSE}
+chickadees %>% 
+  ggplot() +
+  aes(
+    x = wing, 
+    y = mass,
+    color = spp) +
+  geom_point(size = 2.75, alpha = 0.25) +
+  geom_smooth(
+    method = 'lm',
+    formula = y ~ x, 
+    se = FALSE,
+    linewidth = 1.5) +
+  scale_y_continuous(
+    limits = c(7, 13),
+    expand = c(0, 0)) +
+  scale_x_continuous(
+    limits = c(50, 70),
+    expand = c(0, 0)) +
+  scale_color_manual(
+    'Species',
+    values = c('#595B18', '#CA621E')) +
+  labs(
+    title = 'Wing length and mass of Black-capped and Carolina chickadees',
+    x = 'Wing length (mm)', 
+    y = 'Mass (g)') +
+  facet_wrap(~sex) +
+  theme_bw() +
+  theme(
+    axis.text = element_text(size = 12)
+  )
+```
+
+Perhaps we do not want the dull gray boxes on top of our facets. We could spice them up by adding the yellow from Mrs. Felicity Fox's dress (#F6CD58) with the theme argument `strip.background =` with `element_rect()`:
+
+```{r eval = TRUE, message=FALSE}
+chickadees %>% 
+  ggplot() +
+  aes(
+    x = wing, 
+    y = mass,
+    color = spp) +
+  geom_point(size = 2.75, alpha = 0.25) +
+  geom_smooth(
+    method = 'lm',
+    formula = y ~ x, 
+    se = FALSE,
+    linewidth = 1.5) +
+  scale_y_continuous(
+    limits = c(7, 13),
+    expand = c(0, 0)) +
+  scale_x_continuous(
+    limits = c(50, 70),
+    expand = c(0, 0)) +
+  scale_color_manual(
+    'Species',
+    values = c('#595B18', '#CA621E')) +
+  labs(
+    title = 'Wing length and mass of Black-capped and Carolina chickadees',
+    x = 'Wing length (mm)', 
+    y = 'Mass (g)') +
+  facet_wrap(~sex) +
+  theme_bw() +
+  theme(
+    axis.text = element_text(size = 12),
+    strip.background = element_rect(fill = '#F6CD58')
+  )
+```
+
+We can make our axis lines stronger using the argument `axis.line = ` and `element_line()`:
+
+```{r eval = TRUE, message=FALSE}
+chickadees %>% 
+  ggplot() +
+  aes(
+    x = wing, 
+    y = mass,
+    color = spp) +
+  geom_point(size = 2.75, alpha = 0.25) +
+  geom_smooth(
+    method = 'lm',
+    formula = y ~ x, 
+    se = FALSE,
+    linewidth = 1.5) +
+  scale_y_continuous(
+    limits = c(7, 13),
+    expand = c(0, 0)) +
+  scale_x_continuous(
+    limits = c(50, 70),
+    expand = c(0, 0)) +
+  scale_color_manual(
+    'Species',
+    values = c('#595B18', '#CA621E')) +
+  labs(
+    title = 'Wing length and mass of Black-capped and Carolina chickadees',
+    x = 'Wing length (mm)', 
+    y = 'Mass (g)') +
+  facet_wrap(~sex) +
+  theme_bw() +
+  theme(
+    axis.text = element_text(size = 12),
+    strip.background = element_rect(fill = '#F6CD58'),
+    axis.line = element_line(linewidth = 1)
+  )
+```
+
+**Almost everything** we modify in the `theme()` is done so using `element_[type of element]`. An exception is the `unit()` function. Let's see how it looks by adjusting a major weak point in our plot so far ... the spacing between the panels. Let's add some space with the `panel.spacing =` argument and the function `unit()`:
+
+```{r eval = TRUE, message=FALSE}
+chickadees %>% 
+ ggplot() +
+  aes(
+    x = wing, 
+    y = mass,
+    color = spp) +
+  geom_point(size = 2.75, alpha = 0.25) +
+  geom_smooth(
+    method = 'lm',
+    formula = y ~ x, 
+    se = FALSE,
+    linewidth = 1.5) +
+  scale_y_continuous(
+    limits = c(7, 13),
+    expand = c(0, 0)) +
+  scale_x_continuous(
+    limits = c(50, 70),
+    expand = c(0, 0)) +
+  scale_color_manual(
+    'Species',
+    values = c('#595B18', '#CA621E')) +
+  labs(
+    title = 'Wing length and mass of Black-capped and Carolina chickadees',
+    x = 'Wing length (mm)', 
+    y = 'Mass (g)') +
+  facet_wrap(~sex) +
+  theme_bw() +
+  theme(
+    axis.text = element_text(size = 12),
+    strip.background = element_rect(fill = '#F6CD58'),
+    axis.line = element_line(linewidth = 1),
+    panel.spacing = unit(2, 'lines'))
+```
+
+Be sure to look through the help file (`?theme`) at all of the various options you have for changing the theme of a plot!
+
+<br>
+
+<i class="fas fa-user-secret" style = "font-size: 36px;"></i> I adjust my themes at the very end of my ggplot code. You typically need to adjust themes iteratively when you save a file. Having `theme()` at the end of your ggplot code section makes it easier to find and modify.
+
+## Saving plots
+
+Our final step is fairly straightforward.
+
+To save a plot, we will always use `ggsave()`. Doing so allows you to re-create your plot under almost any circumstance (e.g., a change in the underlying data). The buttons are easy. I do it sometimes too. But they should be avoided.
+
+To save a plot you provide the path to where you are going to save it, the width and height of the plot, and the units. The dpi (dots per inch) are set to 300, which is a common requirement for journals.
+
+```{r, eval = FALSE}
+ggsave(
+  'output/chickadee_wing_chord.png',
+  height = 5,
+  width = 7,
+  units = 'in')
+```
+
+Here's the trick -- save the plot, then open it up in your file system. How did it look? Was the title of the plot, or the axis titles/labels crazy? Were the size of the points gigantic or super small? Go back and adjust the theme until you have an aesthetically pleasing result!
+
+## Reference
+
+<button class="accordion">Glossary</button>
+::: panel
+* **Aesthetic mappings**: How the data are mapped to visual attributes.
+* **Data** (in the Grammar of Graphics): The information being plotted.
+* **Layers (geometries)**: Expression of the data in the plot.
+* **Scales**: Maps from data to aesthetic space.
+* **Coordinate system**: Projection of data (e.g., x and y Cartesian coordinates).
+* **Facets**: Subsets of data within a given plot (i.e., plots are broken into subplots based on some grouping variable).
+* **Theme**: Styling of non-data elements in a plot.
+:::
+
+<button class="accordion">Functions</button>
+::: panel
+**Important!** Primitive functions as well as functions in the *base* and *utils* packages, are loaded by default when you start an R session. Functions in *tibble* and *tidyverse* are loaded with `library(tidyverse)`.
+
+::: function_table
+
+```{r, message = FALSE, echo = FALSE}
+render_function_table("functions_2.2_intro_to_data_vis.csv")
+```
+
+:::
+
+:::
+
+
+<button class="accordion">Keyboard shortcuts</button>
+::: panel
+
+{{< include ../../src/includes/keyboard_shortcuts.qmd >}}
+:::
+
+<button class="accordion">R Studio panes</button>
+::: panel
+{{< include ../../src/includes/rstudio_panes.qmd >}}
+:::
+

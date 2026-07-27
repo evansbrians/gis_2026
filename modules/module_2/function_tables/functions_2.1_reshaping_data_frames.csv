@@ -1,0 +1,36 @@
+Package,Function,Definition
+.Primitive,(...),Operator that evaluates the function name on the left-hand-side (LHS) of the opening parentheses using the arguments enclosed by the parentheses
+.Primitive,<-,Infix operator that assigns an object on the right-hand-side (RHS) to a name on the left-hand-side (LHS) -- this should be used for global assignments!
+.Primitive,=,Infix operator that assigns an object on the right-hand-side (RHS) to a name on the left-hand-side (LHS) -- this should not be used for global assignments!
+.Primitive,:,Infix operator that generates a regular sequence of adjacent values
+.Primitive,::,Infix operator that can be used to access a package environment without attaching the whole package environment to your current session
+.Primitive,$,Infix operator that extracts the values associated with a name (RHS) from a recursive object (LHS)
+.Primitive,!,Prefix logical operator (not)
+.Primitive,-,Infix arithmetic operator (subtract) or prefix negative symbol operator
+.Primitive,/,Infix arithmetic operator (divide)
+.Primitive,c,Combine values to form an atomic vector
+.Primitive,class,Print the class of an object as a one-value character vector
+base,library,Attach the package environment for a given package to the current R session
+base,list2env,Assign the items in a list to a specified environment
+base,ls,Generate a character vector of names in a specified environment (default is the global environment)
+base,rm,Remove a name from a specified environment (default is the global environment)
+base,table,Count the number of unique observations in an atomic vector
+base,unique,Subset an atomic vector to the unique values in the set
+dplyr,arrange,Sort the rows of a data frame by the values in a variable or variables
+dplyr,bind_cols,Combine two variables or columns of two tibbles to create a new tibble
+dplyr,bind_rows,Combine rows of two or more tibbles to create a new tibble
+dplyr,count,Tabulate the number of observations of each unique value of a column in a data frame and return as a long format tibble
+dplyr,distinct,Subset a data frame by removing duplicate rows
+dplyr,group_by,Group the data in a data frame by a given variable such that one or more subsequent analyses are run separately on each group
+dplyr,left_join,"A mutating join that joins a source table to a target table and maintains all records found in the target table, regardless of matching key values"
+dplyr,n,Calculate the number of observations (rows)
+dplyr,select,Subset columns in a data frame by name (without quotes!)
+dplyr,slice_head,Subset a data frame to the first row (default) or rows
+dplyr,summarize,Calculate one or more summary statistics on a variable or variables in a data frame (often used in conjunction with `group_by()` but may also be used with `.by = ...`)
+lobstr,ref,View the structure of an object in your computer's memory
+magrittr,%>%,The pipe operator passes the output of the LHS argument to the function on the right
+readr,read_rds,Read an RDS file into R
+tidyr,pivot_longer,Convert a data frame from wide to long format
+tidyr,pivot_wider,Convert a data frame from long to wide format
+tidyr,separate,Separate a single column into multiple columns by a delimiter
+tidyr,unite,Combine columns in a data frame to create a single column

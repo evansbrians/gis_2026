@@ -1,0 +1,45 @@
+Package,Function,Definition
+.Primitive,(...),Operator that evaluates the function name on the left-hand-side (LHS) of the opening parentheses using the arguments enclosed by the parentheses
+.Primitive,<-,Infix operator that assigns an object on the right-hand-side (RHS) to a name on the left-hand-side (LHS) -- this should be used for global assignments!
+.Primitive,=,Infix operator that assigns an object on the right-hand-side (RHS) to a name on the left-hand-side (LHS) -- this should not be used for global assignments!
+.Primitive,~,The formula operator separates the left- and right-hand sides (LHS and RHS) in a formula.
+.Primitive,:,Infix operator that generates a regular sequence of adjacent values
+.Primitive,[…],Extraction operator used to index multiple values from a data object (LHS) based on the position or values specified inside the brackets
+.Primitive,$,Infix operator that extracts the values associated with a name (RHS) from a recursive object (LHS)
+.Primitive,==,Infix relational operator (is equal to)
+.Primitive,!,Prefix logical operator (not)
+.Primitive,&,Prefix logical operator (and)
+.Primitive,|,Prefix logical operator (or)
+.Primitive,>,Infix relational operator (greater than)
+.Primitive,<,Infix relational operator (less than)
+.Primitive,>=,Infix relational operator (greater than or equal to)
+.Primitive,<=,Infix relational operator (less than or equal to)
+.Primitive,+,Infix arithmetic operator (addition)
+.Primitive,-,Infix arithmetic operator (subtract) or prefix negative symbol operator
+.Primitive,/,Infix arithmetic operator (divide)
+.Primitive,^,Infix arithmetic operator (to the power of)
+.Primitive,c,Combine values to form an atomic vector
+base,%in%,Infix relational operator that tests whether the vector on the left-hand-side (LHS) is within the vector on the right
+base,cut,Convert a numeric vector into a factor
+base,library,Attach the package environment for a given package to the current R session
+base,seq,Generate a numeric vector between a range of values by some increment
+dplyr,case_when,Classify or reclassify a vector into two or more  classes based on a series of logical tests
+dplyr,filter,Subset a data frame by logical condition
+dplyr,if_else,Classify or reclassify a vector into two classes by applying a logical test and assigning one value if the test evaluates to `TRUE` and another if it evaluates to `FALSE`
+dplyr,mutate,Add or modify a column in a data frame
+dplyr,n,Calculate the number of observations (rows)
+dplyr,summarize,Calculate one or more summary statistics on a variable or variables in a data frame (often used in conjunction with `group_by()` but may also be used with `.by = ...`)
+ggplot2,+,ggplot's pipe operator (adds a layer to a plot)
+ggplot2,aes,Define aesthetics
+ggplot2,geom_bar,Create a bar geometry
+ggplot2,ggplot,"Set the data and, potentially, the aesthetics of a plot"
+ggplot2,theme_bw,Generate a pre-packaged light background theme for a plot
+magrittr,%>%,The pipe operator passes the output of the LHS argument to the function on the right
+purrr,pluck,Extract a list item from a list
+readr,read_rds,Read an RDS file into R
+stringr,str_detect,Logical test of whether a pattern (string) is contained within a character value
+stringr,str_remove,Remove part of a string based on a search pattern
+stringr,str_replace,Replace a given pattern in a string with a new pattern
+stringr,str_to_sentence,Convert a string to sentence case (first letter capitalized)
+stringr,str_to_title,Convert a string to title case (first letter of each word capitalized)
+tibble,tibble,Column-wise creation of a tibble data frame

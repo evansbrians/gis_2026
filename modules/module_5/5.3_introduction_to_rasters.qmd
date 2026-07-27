@@ -1,0 +1,876 @@
+---
+title: "5.3 Introduction to rasters"
+format:
+  html:
+    embed-resouces: true
+    self-contained: true
+    standalone: true
+    toc: true
+    toc-location: left
+    number-sections: false
+    search: true
+    include-in-header: ../../src/includes/header_includes.html
+    include-after-body: ../../src/includes/accordion_script.html
+    theme: 
+      - cosmo
+      - ../../src/css/custom_style.scss
+editor: source
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r, include = FALSE}
+source("../../src/r/course_functions.R")
+```
+![](../../src/images/hex_complex.png){.intro_image}
+
+**Rasters** represent data across a continuous surface and are used to characterize a wide variety of environmental features such as land cover, elevation, temperature, and much more. This video lesson (runtime: 47:04) will introduce the core concepts for getting started with working with raster files in the *terra* package. The lesson also includes a *brief* tutorial -- the goal of this tutorial is only to provide a written reference for the functions used in the video content. During this lesson you will learn:
+
+* What a raster file is (review);
+* How to read in a raster
+* Common steps for pre-processing a raster file
+* How to use *terra*'s own shapefile format, the spatVector
+* How to extract raster data to shapefiles
+
+## Data for this lesson
+
+Please click on the buttons below to explore the metadata for this lesson!
+
+<button class="accordion">Metadata: Video lesson</button>
+::: panel
+
+**[canopy_cover.tif]{.mono}**: This is a geotiff raster obtained from the [Multi-Resolution Land Characteristics Consortium (MRLC)](https://www.mrlc.gov/data){target="_blank"} that describes the canopy cover in the greater Washington DC region. Cell values are continuous and represent the percentage of each cell that is covered by tree canopy. The resolution of the raster is approximately 30 x 30 m and the CRS is EPSG 5070 (datum = NAD83; projection = Albers Equal Area).
+
+**[cicadas_brood_x_2021.csv]{.mono}**: The cicada data is a tabular dataset collected by iNaturalist participants from February through September of 2021 and obtained using the R package *rinat*. The data represent iNaturalist observations of Brood X periodical cicadas from February through September of 2021. Location data are recorded in an unprojected Coordinate Reference System (CRS) with the datum WGS84 and EPSG code 4326. Relevant fields include:
+
+* [datetime]{.mono}, datetime: The date and time of the observation, formatted as an ISO 8601 (yyyy-mm-dd hh:mm:ss) datetime object and rep0orted in UTC;
+* [scientific_name]{.mono}, character: The genus and species of the observed cicada;
+* [longitude]{.mono}, numeric: The longitude of an observation;
+* [latitude]{.mono}, numeric: The latitude of an observation;
+* [quality_grade]{.mono}, character: Whether the species identification has been verified, based on expert opinion -- options include "casual", "needs_id", and "research" (verified by experts);
+
+**[dc_census.geojson]{.mono}**: A polygon shapefile of census tracts in the District of Columbia. The data are in a projected coordinate system (datum = WGS84, projection is UTM, Zone 18N) with the EPSG code 32618. The data include the following fields:
+
+* [GEOID]{.mono}, character: The **primary key** key for each census tract.
+* [STATEFP]{.mono}, character: A **foreign key** to the US state in the [states]{.mono} data.
+* [ALAND]{.mono}, numeric: The area covered by land in each census tract, in square meters.
+* [AWATER]{.mono}, numeric: The area covered by water in each census tract, in square meters.
+* [INCOME]{.mono}, numeric: The median income of each census tract.
+* [POPULATION]{.mono}, numeric: The total population of each census tract.
+
+**[impervious_surface.tif]{.mono}**: This is a geotiff raster obtained from the [Multi-Resolution Land Characteristics Consortium (MRLC)](https://www.mrlc.gov/data){target="_blank"} that describes the impervious surface cover cover in the greater Washington DC region. Cell values are continuous and represent the percentage of each cell that is covered by man-made materials (pavement, sidewalks, rooftops). The resolution of the raster is approximately 30 x 30 m and the CRS is EPSG 5070 (datum = NAD83; projection = Albers Equal Area).
+
+**[nlcd.tif]{.mono}**: This is a geotiff raster obtained from the [Multi-Resolution Land Characteristics Consortium (MRLC)](https://www.mrlc.gov/data){target="_blank"} that describes the land cover in the greater Washington DC region. Values are categorical and each value represents the dominant land cover class (link) of each cell. The resolution of the raster is approximately 30 x 30 m and the CRS is EPSG 5070 (datum = NAD83; projection = Albers Equal Area).
+
+**[rock_creek_park.geojson]{.mono}**: This is a multipolygon shapefile (EPSG 32618; UTM Zone 18N) that represent Washington DC's Rock Creek Park, a National Park that bisects the city.  The data were obtained from [https://opendata.dc.gov/](https://opendata.dc.gov/){target="_blank"}. We do not use any of the fields from this file, but feel free to explore them!
+
+**[sick_birds.geojson]{.mono}**: This is a point shapefile that represents sick birds that were brought to City Wildlife, a wildlife rehabilitation center in the District of Columbia, in the spring of 2021. These data were obtained directly from City Wildlife staff. Location information for birds brought into the center were obtained by Brian through geocoding addresses via the Google Maps API with the R package *ggmap*. The CRS for these data is EPSG 4326.
+
+* [patient_id]{.mono}, character: The **primary key** for each patient, assigned to bird upon intake.
+* [admission_date]{.mono}, date: The date that a bird was brought to City Wildlife.
+* [common_name]{.mono}, character: The common name for the species of bird. 
+* [age]{.mono}, character: The age of a given bird. 
+* [attitude]{.mono}, character: Behavioral observations of a given bird upon intake
+
+**[Waterbodies_2019.geojson]{.mono}** This is a polygon shapefile (EPSG 4326) that represents surface water in Washington DC.  The data were obtained from [https://opendata.dc.gov/](https://opendata.dc.gov/){target="_blank"}. We do not use any of the fields from this file, but feel free to explore them!
+
+:::
+
+## Video content
+
+A couple of things to note prior to watching the video:
+
+* When I made this video in 2022, it was necessary to convert *sf* files to *terra*'s own "vect" shapefile format. It no longer appears that these conversions are necessary.
+* I unfortunately used the base R (package: *utils*) function `object.size` to calculate the amount of memory taken up by an object. I strongly recommend using `lobstr::obj_size()` for this instead.
+* The `canopy` raster file that I used in the video already had defined colors, so your maps with the `canopy` file may be different than mine.
+* You may have an issue with transparency (`alpha = ...`). Please let us know if this is the case. We have not yet been able to identify the cause of this problem.
+
+{{< video https://www.youtube.com/embed/WYNsCisUdkw >}}
+
+## Written content: Review of functions
+
+### Setup
+
+1. Open R Studio and create a new script file. Remember that it is best practice to start with a clean R Studio session!
+
+2. Add a new code section and call it "setup"
+
+3. After a space between your section break, include and run the following:
+
+```{r results = 'hide', message = FALSE, warning = FALSE}
+# setup -------------------------------------------------------------------
+
+library(tmap)
+library(sf)
+library(tidyverse)
+
+tmap_mode("view")
+```
+
+::: mysecret
+<i class="fas fa-user-secret" style="font-size:36px"></i>   [Do not attach the *terra* library ... ever!]{style="font-size: 20px"}
+
+Explicitly loading the *terra* library will change R's search path to function names that we use *a lot*! This is a super painful problem that will lead to lots of inscrutable errors in your code. As such, I always run *terra* functions with `terra::[function name]`.
+:::
+
+Load and pre-process the polygon shapefile data:
+
+```{r, warning = FALSE}
+# load polygons -----------------------------------------------------------
+
+# Polygon files:
+
+polygons <-
+  list(
+    
+    # Polygon shapefile of US Census data for Washington DC:
+    
+    census =
+      st_read(
+        "data/raw/shapefiles/dc_census.geojson",
+        quiet = TRUE
+      ) %>% 
+      select(
+        GEOID, 
+        INCOME,
+        POPULATION
+      ),
+    
+    # Multipolygon shapefile for Rock Creek Park:
+    
+    rock_creek = 
+      st_read(
+        "data/raw/shapefiles/rock_creek_park.geojson",
+        quiet = TRUE
+      ),
+    
+    # Polygon shapefile of DC waterbodies:
+    
+    water = 
+      st_read(
+        "data/raw/shapefiles/Waterbodies_2019.geojson",
+        quiet = TRUE
+      )
+  ) %>% 
+  
+  # Pre-processing:
+  
+  map(
+    ~ .x %>% 
+      set_names(
+        names(.) %>% 
+          tolower()
+      ) %>% 
+      
+      # EPSG 32618 is UTM zone 18N for Washington DC:
+      
+      st_transform(crs = 32618) %>% 
+      
+      # Fix invalid geometries:
+      
+      st_make_valid()
+  )
+
+
+# Dissolve inner borders from polygons:
+
+unionized_polygons <-
+  polygons %>%
+  map(
+    ~ st_union(.x) %>% 
+      st_sf()
+  )
+
+# Remove water from census shape:
+
+census_no_water <-
+  polygons$census %>% 
+  st_difference(
+    st_union(polygons$water)
+  )
+```
+
+Load and pre-process the point shapefile data:
+
+```{r, quiet = TRUE}
+# load points -------------------------------------------------------------
+
+points <-
+  list(
+    
+    # iNaturalist observations of cicada:
+    
+    cicadas = 
+      read_csv("data/raw/cicadas_brood_x_2021.csv") %>% 
+      select(
+        datetime, 
+        longitude, 
+        latitude
+      ) %>% 
+      filter(
+        month(datetime) == 5
+      ) %>% 
+      st_as_sf(
+        coords = c("longitude", "latitude"),
+        crs = 4326
+      ),
+    
+    # Location of sick birds from DC"s wildlife rehab center:
+    
+    birds = 
+      st_read(
+        "data/raw/shapefiles/sick_birds.geojson",
+        quiet = TRUE
+      )
+  ) %>% 
+  
+  # Process the shapes:
+  
+  map(
+    ~ .x %>%
+      
+      # Transform to the same CRS as the polygons:
+      
+      st_transform(
+        crs = st_crs(polygons$census)
+      ) %>% 
+      
+      # Filter points to the Washington DC region:
+      
+      st_filter(polygons$census)
+  )
+```
+
+### Reading raster files
+
+The function for reading in a raster file is `terra::rast()`. We can read in the raster file `impervious_surface.tif` with:
+
+```{r}
+terra::rast("data/raw/rasters/impervious_surface.tif")
+```
+
+The above displays the metadata of the object, be sure to watch the video to understand how to interpret it!
+
+To plot a raster in base R, you need to call the plot function from the *terra* package, with `terra::plot()`:
+
+```{r}
+terra::rast("data/raw/rasters/impervious_surface.tif") %>% 
+  terra::plot()
+```
+
+We can read in multiple files at once using a list file and `map()`. In the code below, we:
+
+* Generate a list of relative file paths that are inside of the folder "data/raw/rasters" with `list.files()` and the argument `full.names = TRUE`.
+* Iterate across each of the file paths with `map()`.
+* Read in the raster during each iteration with `terra::rast(x)`
+* Set the names of the list items with `set_names()`
+
+```{r}
+rasters <-
+  list.files(
+    "data/raw/rasters",
+    full.names = TRUE
+  ) %>% 
+  map(
+    \(x){
+      terra::rast(x)
+    }
+  ) %>% 
+  set_names(
+    "can",
+    "imp",
+    "nlcd"
+  )
+```
+
+### *sf* shapefiles and SpatVectors
+
+A **SpatVector** is *terra*'s native version of a shapefile. Recent updates of the *terra* package have made working with *sf* files more seamless, but SpatVectors will *always* work with *terra*, so I still recommend making these conversions.
+
+We can convert an *sf* shapefile to a Spatvector with `terra::vect()`:
+
+```{r}
+points %>% 
+  pluck("birds") %>% 
+  terra::vect()
+```
+
+The above again displays the metadata of the object, be sure to watch the video to understand how to interpret it!
+
+We can convert a SpatVector back to an *sf* object with `st_as_sf()`:
+
+```{r}
+points %>% 
+  pluck("birds") %>% 
+  terra::vect() %>% 
+  st_as_sf()
+```
+
+### Raster pre-processing
+
+Below are pre-processing steps that I typically run as I read in a raster file.
+
+#### Crop
+
+Because raster files are so big, it is best practice to subset the **extent** to only the size that is needed for a given project. To do so, we use the function `terra::crop`.
+
+Let's look at the original raster file that is globally assigned to the name `can`:
+
+```{r}
+rasters %>% 
+  pluck("can") %>% 
+  terra::plot()
+```
+
+... and our cropped `can` raster:
+
+```{r}
+rasters %>% 
+  pluck("can") %>% 
+  
+  # Crop to the spatial extent of the census file:
+  
+  terra::crop(
+    unionized_polygons %>% 
+      pluck("census") %>% 
+      
+      # Transform to the same CRS as the raster file:
+      
+      st_transform(5070)
+  ) %>% 
+  
+  # Plot the data:
+  
+  terra::plot()
+```
+
+Note in the above that the raster is cropped to the extent (i.e. the bounding box) of `unionized_polygons$census`, not the polygon shapefile itself. This is because `terra::crop()` subsets the data to the extent of the source file (not the shape itself) and all rasters are rectangular -- there is no way to remove the cells that are outside of a polygon.
+
+#### Mask
+
+To make it "appear" as though the raster cells outside of the shape are removed, we can convert their values to `NA`. We do so with `terra::mask()`.
+
+To mask a cropped raster, I typically convert the source object to a SpatVector and assign an object that will be the basis of my mask:
+
+```{r}
+temp <- 
+  unionized_polygons %>% 
+  pluck("census") %>% 
+  
+  # Transform to the same CRS as the raster file:
+  
+  st_transform(5070) %>% 
+  
+  # Convert to a SpatVector:
+  
+  terra::vect()
+```
+
+... and then crop and mask the raster:
+
+```{r}
+rasters %>% 
+  pluck("can") %>% 
+  
+  # Crop to the spatial extent of the census file:
+  
+  terra::crop(temp) %>% 
+  
+  # Convert raster cells outside of `census` to `NA`:
+  
+  terra::mask(temp) %>% 
+  
+  terra::plot()
+```
+
+Conversely, you can crop and mask a raster in a single step with `terra::crop()` by adding the argument `mask = TRUE`:
+
+```{r}
+rasters %>% 
+  pluck("can") %>% 
+  
+  # Crop to the spatial extent of the census file and set raster cells 
+  # outside of `census` to `NA`:
+  
+  terra::crop(
+    unionized_polygons %>% 
+      pluck("census") %>% 
+      
+      # Transform to the same CRS as the raster file:
+      
+      st_transform(5070),
+    
+    # Convert raster cells outside of `census` to `NA`:
+
+    mask = TRUE
+  ) %>% 
+  
+  # Plot the data:
+  
+  terra::plot()
+```
+
+The above is considerably more parsimonious!
+
+This is typically done while I read in a raster file -- there is no need to send all of those extra cells to our memory or hard disk.
+
+```{r}
+rasters <-
+  list.files(
+    "data/raw/rasters",
+    full.names = TRUE) %>% 
+  map(
+    \(x) {
+      terra::rast(x) %>% 
+        
+        # Crop to the spatial extent of the census file and set raster cells 
+        # outside of `census` to `NA`:
+        
+        terra::crop(
+          unionized_polygons %>% 
+            pluck("census") %>% 
+            
+            # Transform to the same CRS as the raster file:
+            
+            st_transform(5070),
+          
+          # Convert raster cells outside of `census` to `NA`:
+
+          mask = TRUE
+        )
+    }
+  ) %>% 
+  set_names(
+    "can",
+    "imp",
+    "nlcd"
+  )
+```
+
+#### Create a raster stack
+
+A **raster stack** describes a single raster file with multiple raster layers. This is a handy way of storing information, but rasters can only be combined into a raster stack if each raster has the same CRS, resolution, and extent. 
+
+Each of our rasters for this lesson had the same CRS and resolution from the get-go. We set them to the same extent when we cropped them. To convert our raster list to a raster stack, we just apply `terra::rast()` to our list:
+
+```{r}
+rasters <-
+  list.files(
+    "data/raw/rasters",
+    full.names = TRUE) %>% 
+  map(
+    \(x) {
+      terra::rast(x) %>% 
+        
+        # Crop to the spatial extent of the census file and set raster cells 
+        # outside of `census` to `NA`:
+        
+        terra::crop(
+          unionized_polygons %>% 
+            pluck("census") %>% 
+            
+            # Transform to the same CRS as the raster file:
+            
+            st_transform(5070),
+          
+          # Convert raster cells outside of `census` to `NA`:
+
+          mask = TRUE
+        )
+    }
+  ) %>% 
+  set_names(
+    "can",
+    "imp",
+    "nlcd"
+  ) %>% 
+  terra::rast()
+```
+
+```{r, include = FALSE}
+rasters
+```
+
+Let's plot the data to have a look:
+
+```{r}
+terra::plot(rasters)
+```
+
+#### Transforming projections
+
+Transforming the CRS of rasters must be done very carefully! When transforming an unprojected raster to a projected CRS, the number of cells increases to account for the complexity of the curvature of the Earth. Likewise, transforming rasters between projected coordinate systems often alters the number of cells in the raster and the resolution of the cells. Because the number and position of cells have changed, new values for the cells must be estimated. These estimates are based on the values of nearby cells through a process known as **spatial interpolation**. This can lead to *very* unexpected results!
+
+For rasters that *terra* assumes are continuous, the interpolation method used is known as "bilinear interpolation". This describes the process by which neighboring known cell values are averaged across unknown cells. This is the default interpolation method for continuous rasters (see `?project` and the argument `method`).
+
+Let's transform the projection of the raster stack to EPSG 32618 (UTM Zone 18N). We use the function `terra::project` and supply the argument `y = ...` to define the new EPSG code (with `epsg:...`):
+
+```{r}
+rasters_prj <-
+  rasters %>% 
+  terra::project(y = "epsg:32618")
+```
+
+```{r, include = FALSE}
+rasters_prj
+```
+
+Let's have a look:
+
+```{r}
+terra::plot(rasters_prj)
+```
+
+Note that, in the above, `nlcd` has been changed from categorical to continuous.This is because *terra* assumed that each raster in our raster stack was continuous, and therefore applied bilinear interpolation. The `nlcd` raster layer is categorical, so averaging values between neighboring cells makes little sense. 
+
+To address this, we can add the argument `method = "near"`. With this method, the unknown values are not averaged, but are instead assigned the value of their nearest neighbor within the original raster. Applying this to our `rasters` object:
+
+```{r}
+rasters_prj <-
+  rasters %>% 
+  terra::project(
+    y = "epsg:32618",
+    method = "near"
+  )
+```
+
+... let's see if it worked:
+
+```{r}
+terra::plot(rasters_prj)
+```
+
+::: mysecret
+<i class="fas fa-user-secret" style="font-size:36px"></i>   [Avoid using `"near"` for continuous rasters!]{style="font-size: 20px"}
+
+If I am simply plotting raster data, setting the interpolation method to "near" does the trick. If you are using the raster for further analyses, you would want to use "near" for categorical rasters and a different interpolation method for continuous rasters.
+:::
+
+### Plotting rasters with tmap
+
+We use the function `tm_raster` to plot a raster with *tmap*:
+
+```{r}
+tm_basemap(
+  c(
+    "Esri.WorldTopoMap",
+    "OpenStreetMap",
+    "Esri.WorldImagery"
+  )
+) +
+  
+  # Add the canopy cover layer:
+  
+  rasters_prj$can %>%
+  tm_shape() +
+  tm_raster()
+```
+
+... of course, we can make this look a lot nicer:
+
+```{r}
+tm_basemap(
+  c(
+    "Esri.WorldTopoMap",
+    "OpenStreetMap",
+    "Esri.WorldImagery"
+  )
+) +
+  
+  # Add the canopy cover layer:
+  
+  rasters_prj$can %>%
+  tm_shape() +
+  tm_raster(
+    group = "Canopy cover",
+    col.scale =
+      tm_scale(values = "brewer.greens"),
+    col_alpha = 0.6
+  )
+```
+
+... and add the impervious surface layer:
+
+```{r}
+tm_basemap(
+  c(
+    "Esri.WorldTopoMap",
+    "OpenStreetMap",
+    "Esri.WorldImagery"
+  )
+) +
+  
+  # Add the canopy cover layer:
+  
+  rasters_prj$can %>%
+  tm_shape() +
+  tm_raster(
+    group = "Canopy cover",
+    col.scale =
+      tm_scale(values = "brewer.greens"),
+    col_alpha = 0.6
+  ) +
+
+  # Add the impervious surface layer:
+
+  rasters_prj$imp %>%
+  tm_shape() +
+  tm_raster(
+    group = "Impervious surface",
+    col.scale =
+      tm_scale(values = "brewer.or_rd"),
+    col_alpha = 0.6
+  )
+```
+
+To add categorical rasters (here this is `nlcd`), you will need to set `col.scale = tm_scale_categorical()`:
+
+```{r}
+tm_basemap(
+  c(
+    "Esri.WorldTopoMap",
+    "OpenStreetMap",
+    "Esri.WorldImagery"
+  )
+) +
+  
+  # Add the canopy cover layer:
+  
+  rasters_prj$can %>%
+  tm_shape() +
+  tm_raster(
+    group = "Canopy cover",
+    col.scale =
+      tm_scale(values = "brewer.greens"),
+    col_alpha = 0.6
+  ) +
+
+  # Add the impervious surface layer:
+
+  rasters_prj$imp %>%
+  tm_shape() +
+  tm_raster(
+    group = "Impervious surface",
+    col.scale =
+      tm_scale(values = "brewer.or_rd"),
+    col_alpha = 0.6
+  ) +
+
+  # Add the categorical land cover layer:
+
+  rasters_prj$nlcd %>%
+  tm_shape() +
+  tm_raster(
+    group = "Land cover",
+    col.scale = tm_scale_categorical()
+  )
+```
+
+These categorical rasters will look much better by the end of this course!
+
+### Extracting data from rasters
+
+Our final topic of this lesson will be on how to extract meaningful data from raster layers.
+
+#### Global statistic
+
+A **global statistic** represents a common statistic across all cells in a raster. We can calculate a global statistic with the function `terra::global`.
+
+For example, we might want to know the average impervious surface in the District of Columbia. We can calculate this with:
+
+```{r}
+rasters$imp %>% 
+  terra::global(
+    mean, 
+    na.rm = TRUE
+  )
+```
+
+Notice that parentheses are not needed for the `mean` function. We only need to supply the name of the function to `terra::global()`.
+
+*Note: I set `na.rm = TRUE` because, by masking the raster, cells outside of the shape `census` are set to `NA`.*
+
+Likewise, we can calculate the average canopy cover in the District of Columbia with:
+
+```{r}
+rasters$can %>% 
+  terra::global(
+    mean, 
+    na.rm = TRUE
+  )
+```
+
+#### Extract values to features
+
+We can extract values to features using the function `terra::extract`. This is functionally similar to a mutating spatial join (like `st_join()`) -- you are joining values from a raster (**source** object) to a shapefile (**target** object). I use two basic workflows for this operation:
+
+* **Mutation workflow**: I often conduct extractions within `mutate()`. The drawback to this workflow is that it is fairly unparsimonious. The benefit is that it is very flexible and uses the tidyverse tools that we all know and love.
+* **Native *terra* workflow**: The *terra* package allows us to extract data to a SpatVector object for a very efficient (but somewhat inflexible) workflow.
+
+My **Mutation workflow** uses the following steps:
+
+1. Identify the *sf* shapefile of interest.
+2. Pipe the object into `mutate()` so that you may add a new column to the shapefile.
+3. Assign a name for the new column.
+4. Transform the CRS of the shapefile object (if necessary), using `st_transform()` to ensure that the CRS of the shapefile is the same as the raster.
+5. Convert the *sf* shapefile to a SpatVector with `terra::vect()`
+6. Use `terra::extract()` to extract the raster (first argument) to the shapefile (second argument). *Note: Extracting to points is straightforward (you just extract the raster values at a given point) but, to extract to polygons you must include a function to summarize the raster cells within the polygon.*
+7. Extract the values of interest from the resultant object with `pull()`.
+
+As an example, let's use the Mutation workflow to calculate the mean impervious surface per census tract:
+
+```{r}
+
+# Identify the shapefile of interest:
+
+polygons %>% 
+  pluck("census") %>% 
+  
+  # Add a new column with `mutate()`:
+  
+  mutate(
+    imp = 
+      
+      # Transform the CRS to the same CRS as the raster:
+      
+      st_transform(., crs = 5070) %>% 
+      
+      # Convert to a SpatVector (not always necessary):
+      
+      terra::vect() %>%
+      
+      # Extract the raster values of interest to the shapefile:
+      
+      terra::extract(
+        rasters$imp,
+        .,
+        mean,
+        na.rm = TRUE
+      ) %>% 
+      
+      # Extract the values from the resultant object:
+      
+      pull()
+  )
+```
+
+*Note: If this is confusing, I step through this more slowly in the video! Additionally, I extract values to points in the video as well.*
+
+My **Native *terra* workflow** uses the following steps:
+
+1. Identify the raster file (or files) of interest.
+2. Pipe the object into `terra::extract()` and provide:
+    a. The name of the shapefile that you are extracting to;
+    b. The function for summarizing the data (if the target shapefile is a polygon) with the argument `fun = ...`;
+    c. The argument `bind = TRUE`, which binds the extracted data to the target object;
+    d. Any additional arguments that you would like to pass to the summarizing function.
+3. Convert the resultant object (a SpatVector) to an *sf* shapefile.
+
+```{r}
+# Identify the raster file of interest:
+
+rasters$imp %>% 
+  terra::extract(
+    
+    # Identify the shapefile of interest:
+
+    polygons %>% 
+      pluck("census") %>% 
+      
+      # Transform the CRS to the same CRS as the raster:
+
+      st_transform(crs = 5070),
+    
+    # Define the summarizing function (if the target is a polygon shapefile):
+    
+    fun = mean, 
+    
+    # Bind the extracted data to the target object:
+    
+    bind = TRUE,
+    
+    # Additional arguments passed to `fun = ...`:
+    
+    na.rm = TRUE
+  ) %>% 
+  
+  # Convert to an sf shapefile:
+  
+  st_as_sf()
+```
+
+A cool thing about the method above is that you can easily use it to extract all of the values across all of the layers in a raster stack. In the code below I use `terra::extract()` to obtain all of the environmental data in `rasters` to `cicadas`:
+
+```{r}
+# Identify the raster stack of interest:
+
+rasters %>% 
+  terra::extract(
+    
+    # Identify the shapefile of interest:
+
+    points %>% 
+      pluck("cicadas") %>% 
+      
+      # Transform the CRS to the same CRS as the raster:
+
+      st_transform(crs = 5070),
+    
+    # Bind the extracted data to the target object:
+    
+    bind = TRUE
+  ) %>% 
+  
+  # Convert to an sf shapefile:
+  
+  st_as_sf()
+```
+
+*Note: The operation above is much simpler (and faster) because `terra::extract()` is simply returning the raster cells that are at the same spatial location as the points.*
+
+## Reference
+
+<button class="accordion">Glossary</button>
+::: panel
+
+-   **Coordinate reference system (CRS)**: The reference system (may be projected or geographic) that allows us to define the location of a geometry on the surface of the Earth.
+-   **Extent** (of a raster): The size of a full raster, in the X and Y dimensions.
+-   **Foreign key**: A variable in a data frame that refers to the primary key of another data frame.
+-   **Global statistic** (in *terra*): A common statistic across all cells in a raster.
+-   **Origin** (of a raster): The X and Y location of the lower left-hand corner.
+-   **Primary key**: A variable in a data frame that is used to identify unique records.
+-   **Raster**: A continuous surface of pixels (i.e., raster cells) arranged in a grid.
+-   **Raster stack**: A single raster file with multiple raster layers that share the same CRS, resolution, and extent.
+-   **Resolution** (rasters): The distance covered by each map pixel of a raster (can be expressed in one or two dimensions).
+-   **Source table**: In a join, this is the table that is referenced by the target table (in a mutating join, the source table provides the new variables for the target table) -- this is typically the table with the primary key.
+-   **Target table**: In a join, the target table is the table that you wish to join data to (usually the table with the foreign key).
+-   **Spatial Interpolation**: The estimation of values based on adjacent values.
+-   **SpatVector**: A shapefile in the *terra* package.
+:::
+
+<button class="accordion">Functions</button>
+::: panel
+**Important!** Primitive functions as well as functions in the *base* and *utils* packages, are loaded by default when you start an R session. Functions in *dplyr*, *readr*, *tibble*, *tidyr*, and *tidyverse* are loaded with `library(tidyverse)`.
+
+::: function_table
+
+```{r, message = FALSE, echo = FALSE}
+render_function_table("functions_5.3_introduction_to_rasters.csv")
+```
+
+:::
+
+:::
+
+
+<button class="accordion">Keyboard shortcuts</button>
+::: panel
+
+{{< include ../../src/includes/keyboard_shortcuts.qmd >}}
+:::
+
+<button class="accordion">R Studio panes</button>
+::: panel
+{{< include ../../src/includes/rstudio_panes.qmd >}}
+:::
+

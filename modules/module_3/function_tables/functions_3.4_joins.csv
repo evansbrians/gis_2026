@@ -1,0 +1,32 @@
+Package,Function,Definition
+.Primitive,(...),Operator that evaluates the function name on the left-hand-side (LHS) of the opening parentheses using the arguments enclosed by the parentheses
+.Primitive,<-,Infix operator that assigns an object on the right-hand-side (RHS) to a name on the left-hand-side (LHS) -- this should be used for global assignments!
+.Primitive,=,Infix operator that assigns an object on the right-hand-side (RHS) to a name on the left-hand-side (LHS) -- this should not be used for global assignments!
+.Primitive,:,Infix operator that generates a regular sequence of adjacent values
+.Primitive,==,Infix relational operator (is equal to)
+.Primitive,!,Prefix logical operator (not)
+.Primitive,/,Infix arithmetic operator (divide)
+.Primitive,c,Combine values to form an atomic vector
+base,%in%,Infix relational operator that tests whether the vector on the left-hand-side (LHS) is within the vector on the right
+base,library,Attach the package environment for a given package to the current R session
+base,list2env,Assign the items in a list to a specified environment
+base,rm,Remove a name from a specified environment (default is the global environment)
+base,summary,Print summary stats for a data object
+dplyr,anti_join,A filtering join that joins a source table to a target table and maintains only records in which the key values *do not* match
+dplyr,arrange,Sort the rows of a data frame by the values in a variable or variables
+dplyr,filter,Subset a data frame by logical condition
+dplyr,full_join,"A mutating join that joins a source table to a target table and maintains all records in both tables, regardless of matching key values"
+dplyr,group_by,Group the data in a data frame by a given variable such that one or more subsequent analyses are run separately on each group
+dplyr,inner_join,A mutating join that joins a source table to a target table and maintains only records with matching key values
+dplyr,join_by,Specify the key columns within a join function
+dplyr,left_join,"A mutating join that joins a source table to a target table and maintains all records found in the target table, regardless of matching key values"
+dplyr,mutate,Add or modify a column in a data frame
+dplyr,n,Calculate the number of observations (rows)
+dplyr,pull,Extract a column from a data frame as a vector
+dplyr,select,Subset columns in a data frame by name (without quotes!)
+dplyr,semi_join,A filtering join that joins a source table to a target table and maintains only records with matching key values
+dplyr,slice_max,Sort a data frame by a variable and subset to the rows associated with the highest values of that variable
+dplyr,summarize,Calculate one or more summary statistics on a variable or variables in a data frame (often used in conjunction with `group_by()` but may also be used with `.by = ...`)
+magrittr,%>%,The pipe operator passes the output of the LHS argument to the function on the right
+readr,read_rds,Read an RDS file into R
+tidyr,replace_na,Replace an NA value in a vector with a different value

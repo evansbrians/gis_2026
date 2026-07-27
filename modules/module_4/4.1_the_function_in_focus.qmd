@@ -1,0 +1,915 @@
+---
+title: "4.1 The function in focus"
+format:
+  html:
+    embed-resouces: true
+    self-contained: true
+    standalone: true
+    toc: true
+    toc-location: left
+    number-sections: false
+    search: true
+    include-in-header: ../../src/includes/header_includes.html
+    include-after-body: ../../src/includes/accordion_script.html
+    theme: 
+      - cosmo
+      - ../../src/css/custom_style.scss
+editor: source
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r, include = FALSE}
+source("src/r/course_functions.R")
+```
+```{r setup, include=FALSE}
+library(tidyverse)
+
+knitr::opts_chunk$set(
+  echo = TRUE,
+  eval = TRUE,
+  error = TRUE)
+
+rm(has_annotations)
+```
+
+<hr>
+
+<div>
+![](../../src/images/hex_complex.png){.intro_image}
+
+Recall that anything that exists in R is an object and anything that happens is the product of running a function (<a href="http://user2014.r-project.org/files/chambers.pdf" target = "_blank">John Chambers, userR!2014</a>).
+
+The search for functions that characterizes the early R learning process will eventually (or quickly) lead us to some of the thousands of R packages (libraries) that have been built by the R community. Packages are predominantly comprised of functions (*though they often have example data and some packages only contain data*). These packages allow the user to complete long or complicated processes in just a few simple steps. The importance of community-built packages cannot be overstated -- they are an awesome part of R. If I, an ecologist, wanted to include a model of global temperatures in my analysis, it is amazing that I can load functions built by actual climatologists to do so. 
+
+Overreliance on community packages, however, limits our ability to develop our R skills. We end up spending tons of time on StackOverflow searching for functions that complete simple tasks without thinking through how we could do those tasks with the functions we already know. Too often, this search leads us to new, unnecessary packages that we now have to add to our script. My early R scripts started with a dozen or more lines of `library()`, with most of those libraries used in just a few processes that I could not (or would not) figure out on my own. I call this process *package hunting*. It should be avoided at all costs.
+
+In this lesson we are going to learn how to avoid package hunting by building our own custom functions. This helps us avoid conducting repetitive tasks and allows us to develop a programmatic workflow in R (i.e., generate flexible code that can be applied to a variety of use cases). Custom functions are crucial tools for our data science skillset. Writing custom functions:
+
+* Helps you understand other functions used in the R community
+* Gives you tools to modify functions that you find in the R community
+* Helps you avoid repetitive code
+
+**Important!** Before starting this tutorial, be sure that you have completed all previous preliminary and module lessons!
+
+</div>
+
+## Data for this lesson
+
+<button class="accordion">Please click on the buttons below to explore the metadata for this lesson!</button>
+::: panel
+
+**[earley.csv]{.mono}**: A subset of locations in greater Washington DC where the artist/architect John Joseph Earley installed polychrome concrete mosaics. Locations were recorded with a handheld GPS unit set to the projected Coordinate Reference System (CRS) with the datum WGS84 and EPSG code 32618 (UTM Zone 18N). Fields include:
+
+* [LOCATION]{.mono}, character: A character description of the location where the artwork was installed.
+* [X]{.mono}, numeric: The longitudinal coordinates of each location, in decimal degrees.
+* [Y]{.mono}, numeric: The latitudinal coordinates of each location, in decimal degrees. 
+
+**[sites.csv]{.mono}**: Locations of Neighborhood Nestwatch sampling sites, provided as a tabular dataset. Locations were  recorded with a handheld GPS unit set to the unprojected Coordinate Reference System (CRS) with the datum WGS84 and EPSG code 4326. The data include the following variables:
+
+* [site]{.mono}, character: The **primary key** for each site, which here is a fruit name assigned to each site.
+* [lon]{.mono}, numeric: The longitudinal coordinates of each site, in decimal degrees. 
+* [lat]{.mono}, numeric: The latitudinal coordinates of each site, in decimal degrees.
+
+**[populations_co2.rds]{.mono}**: These data were compiled by the [World Bank DataBank](https://databank.worldbank.org/home.aspx) {target="_blank"} and provide information on the emissions of greenhouse gases and the populations of countries around the world. I normalized these data (the original version was *extremely* untidy) and saved them as a list file: [data/processed/population_co2.rds]{.mono}. The list contains two named objects:
+
+* [countries]{.mono}: A tibble that provides country reference information from the World Bank. Variables include:
+* [country_code]{.mono}, character: A three-letter code assigned to each country (this can be considered the **primary key** of the table)
+* [country_name]{.mono}, character: A name (in English) for each country
+* [country_region]{.mono}, character: The general region where each country is located
+* [country_georegion]{.mono}, character: A finer-scale region within the larger region
+* [land_area]{.mono}, double numeric: The area of a country, in square kilometers
+
+* [populations_co2]{.mono}: A tibble with the population and per capita CO~2~ emissions from 1960-2020 for all countries in the dataset.
+* [country_code]{.mono}, character: A **foreign key **to the country code in `countries`
+* [year]{.mono}, numeric: The year of a given record -- this variable, in combination with [country_code]{.mono} represents the **compound primary key** of this table
+* [population]{.mono}, numeric: The population of a given country in a given year
+* [co2]{.mono}, numeric: The per capita CO~2~ emissions, in metric tons per year
+
+**[spotted_lanternfly.rds]{.mono}**. The data are formatted as a tibble data frame object. Location data are recorded in an unprojected Coordinate Reference System (CRS) with the datum WGS84 and EPSG code 4326. The dataset includes the following variables:
+
+* [datetime]{.mono}, datetime: The date and time in which an observation took place.
+* [user]{.mono}, character: The user id for a given iNaturalist user (*Note: In combination with `datetime`, this variable represents the **compound key** for this table -- a compound key is a set of variables in a data frame that, combined, represent the primary key of the data frame.*).
+* [state]{.mono}, character: The state in which an observation was made.
+* [place_guess]{.mono}, character: The location in which an observation was made (based on the coordinates of the observation).
+* [longitude]{.mono}, numeric: The longitudinal coordinates of an observation, in decimal degrees.
+* [latitude]{.mono}, numeric: The latitudinal coordinates of an observation, in decimal degrees.
+* [image_url]{.mono}, character: The web address of the picture submitted with an observation.
+* [quality_grade]{.mono}, character: Whether the observation was verified by experts ("research" grade) or has not been able to be verified ("casual" grade).
+* [description]{.mono}, character: A notes column where users can input comments about their observation
+
+:::
+
+## Set up your session
+
+Please do the following to ensure that you are working in a clean session:
+
+1. In the *Environment* tab of your *workspace pane*, ensure that your *Global Environment* is empty. If it is not, click the *broom* to remove all objects. *Note: Conversely, you can remove all items with `rm(list = ls())`*.
+2. In the *History* tab of your *workspace pane*, ensure that your history is empty. If it is not, click the *broom* to remove your history.
+
+Now that we are working in a clean session:
+
+1. Create a script file (Windows: [Ctrl + Shift + N]{.mono}; Mac: [Cmd + Shift + N]{.mono}).
+2. Save your script file as "[scripts/function_in_focus_written_content.R]{.mono}".
+3. Add metadata as a comment on the top of the file (e.g., `# My code for the function in focus tutorial`).
+4. Following your metadata, create a new **code section** (Windows: [Ctrl + Shift + R]{.mono}; Mac: [Cmd + Shift + R]{.mono}) and call it "`setup`".
+5. Following your section header, attach the `sf` package and the packages that comprise the **core tidyverse** (`library(tidyverse)`)
+
+At this point, your script should look something like:
+
+```{r}
+# My code for the function in focus tutorial
+
+# setup --------------------------------------------------------
+
+library(sf)
+library(tidyverse)
+```
+
+Now we are going to add our data for this lesson. I will start by reading in the `iris.rds` dataset:
+
+```{r}
+# Add the iris data:
+
+iris <-
+  read_rds("data/raw/iris.rds")
+```
+
+... and the `populations_co2.rds`:
+
+```{r, results = "hide"}
+# Population and CO2 data:
+
+read_rds("data/processed/populations_co2.rds") %>% 
+  list2env(.GlobalEnv)
+```
+
+... and some tabular data that can be converted to point shapefiles:
+
+```{r}
+# Read in tabular spatial data:
+
+earley_works <- 
+  read_csv("data/raw/earley_works.csv")
+
+lanternflies <- 
+  read_rds("data/raw/spotted_lanternfly.rds") 
+
+sites <- 
+  read_csv("data/raw/sites.csv")
+```
+
+## R function basics
+
+Custom functions are important tools for our R skillset. Writing custom functions can:
+
+* Help you understand other functions used in the R community
+* Give you tools to modify functions that you find in the R community
+* Help you avoid repetitive code
+
+We can create our own custom function with the R function `function()`. We then provide the:
+
+* **Formals**: A set of controls (or arguments) for the function, placed inside of parentheses, `(...)`
+* **Body**: The set of instructions inside the function, typically inside of curly brackets, `{...}`
+
+To illustrate this, let's make a simple function and assign it to the name `multiply_by_two`:
+
+Let's make a simple function called `multiple_by_two`:
+
+```{r}
+multiply_by_two <- 
+  function(x) {
+    x * 2
+  }
+```
+
+Note: The other operations that we have conducted in this class allow you to place your cursor anywhere within the code block and hit [Ctrl + Enter]{.mono} (Windows) or [Cmd + Enter]{.mono} (Mac) to run your code. When assigning a function to your global environment, however, you can only run the full code block if your cursor is placed anywhere *outside* of the curly braces. We will discuss why this happens soon!
+
+In the above, we:
+
+1. Initiated our function with `function()`;
+2. Defined the **formals** of the function, within `()`, as the variable `x`;
+3. Delineated the **body** of our function with `{...}`;
+4. Defined the **body** (set of instructions) as `x * 2`;
+5. Globally assigned a name (`multiply_by_two`) to the function with the `<-` operator.
+
+The function takes some value, `x`, which is defined in the **formals**, and carries out a set of instructions, `x * 2`, which is defined in the **body**. We can explicitly explore the structure of the function using the `formals` and `body` functions:
+
+```{r}
+formals(multiply_by_two)
+
+body(multiply_by_two)
+```
+
+Let's run our function and see what happens:
+
+```{r}
+multiply_by_two(x = 5)
+```
+
+We supplied the formals of the function as the value 5. That value was passed to the body of the function and thus any time an `x` appeared in our set of instructions, the variable was replaced by the value 5.
+
+### R function basics, applied
+
+Let's create a function with some real data. Consider that you are given the task of calculating the average `sepal_length` for one of the species in the `iris` dataset:
+
+```{r}
+iris
+```
+
+To calculate the average `sepal_length` of the species *Iris setosa*, we might:
+
+* Subset `iris` to the `species` "setosa" with `filter()`;
+* Extract our variable of interest with `pull()`;
+* Calculate the `mean()` of the extracted variable.
+
+```{r}
+iris %>% 
+  filter(species == "setosa") %>% 
+  pull(sepal_length) %>% 
+  mean()
+```
+
+What if we completed the above only to have our boss pop their head in the door to tell us that they "meant *virginica*"? We are forced to do it all over again ...
+
+```{r}
+iris %>% 
+  filter(species == "virginica") %>% 
+  pull(sepal_length) %>% 
+  mean()
+```
+
+While the above was likely an easy copy-and-paste, our code can often be long and cumbersome and it is easy to miss something.
+
+Instead, we can write this as a custom function! To do so, we need to identify the variable that should be placed within the formals of the function. With the two code blocks above, the only thing that has changed is the *Iris* `species` and thus this will be our variable.
+
+```{r}
+get_mean_sepal_length <-
+  function(spp) {
+    iris %>% 
+      filter(species == spp) %>% 
+      pull(sepal_length) %>% 
+      mean()
+  }
+```
+
+We can now use our function to calculate the mean of any of our species of interest in a single step:
+
+```{r}
+
+get_mean_sepal_length(spp = "setosa")
+
+get_mean_sepal_length("versicolor")
+
+get_mean_sepal_length("virginica")
+```
+
+*Note: In the second two operations, I do not include `spp = ...` because it is not necessary to provide the name of a formal if it is the only argument in the function.*
+
+#### A useful custom function: Standard error
+
+The functions available in the base package do not include a function for calculating the standard error of a sample. Mathematically, this can be expressed as:
+
+$SE_{x} = \frac{\sigma_{x}}{\sqrt(n_{x})}$
+
+The above states that the standard error of some vector, `x` is equal to the standard deviation of `x` divided by the square root of the length (`n`) of the vector `x`.
+
+To convert this to R code, let's consider `x` to be a vector of integer values from one through five:
+
+```{r}
+x <- 1:5
+```
+
+We can use the formula above to calculate the standard error of the samples as:
+
+```{r}
+sd(x) / 
+  sqrt(
+    length(x)
+  )
+```
+
+We can apply this to a vector of values in a data frame. For example, we can use `summarize()` in conjunction with our standard error calculation to determine the standard error of the `sepal_length` numeric vector for each of our three species:
+
+```{r}
+iris %>% 
+  summarize(
+    se_sepal_length = 
+      sd(sepal_length) / 
+      sqrt(
+        length(sepal_length)
+      ),
+    .by = species
+  )
+```
+
+What if we wanted to calculate the standard error of *both* `sepal_length` *and* `sepal_width` though? Things get unnecessarily complex:
+
+```{r}
+iris %>% 
+  summarize(
+    se_sepal_length = 
+      sd(sepal_length) / 
+      sqrt(
+        length(sepal_length)
+      ),
+    se_sepal_width =
+      sd(sepal_width) / 
+      sqrt(
+        length(sepal_width)
+      ),
+    .by = species
+  )
+```
+
+In the above, the only thing that changes is the *name* of the variable that we are calculating the standard error of! This is obviously not very parsimonious and there is a lot of room for error. Instead, we can create a function for this calculation. Our function will calculate the standard error of any variable, `x`:
+
+```{r}
+se <-
+  function(x) {
+    sd(x) / 
+      sqrt(
+        length(x)
+      )
+  }
+```
+
+We can apply this function to a set of values ...
+
+```{r}
+se(1:5)
+```
+
+... to a set of values globally assigned to a name ...
+
+```{r}
+se(x)
+```
+
+... and, of course, to the values associated with a variable in a data frame:
+
+```{r}
+iris %>% 
+  summarize(
+    se_sepal_length = se(sepal_length),
+    se_sepal_width = se(sepal_width),
+    .by = species
+  )
+```
+
+As we can see, the use of a custom function greatly simplifies our code! This reduces the probability of generating an error in what are often long and grueling R sessions! 
+
+We will not use the variable `x` in the remainder of our code, so please remove the variable name from your global environment:
+
+```{r}
+rm(x)
+```
+
+## Functions & the global environment
+
+A function's environment can be a tricky concept. The environment that our function is working in is actually the global environment:
+
+```{r}
+environment(get_mean_sepal_length)
+```  
+
+There is a catch though! Unless specified otherwise, only the last object in the body will be passed to the global environment. Let's explore this by creating an intermediate assignment within the function's body:
+
+```{r, error = TRUE}
+fun_with_internal_assignments <-
+  function(spp) {
+    iris_spp <-
+      iris %>% 
+      filter(species == spp)
+    
+    iris_spp %>% 
+      pull(sepal_length) %>% 
+      mean()
+  }
+
+fun_with_internal_assignments(spp = "virginica")
+```
+
+Does `iris_spp` exist in our global environment? Let's see:
+
+```{r, error = TRUE}
+iris_spp
+```
+
+Why did we get an error here? Have a look in the environment tab of your workspace pane. Notice that the object name `iris_spp` does not exist in your global environment.
+
+::: mysecret
+{{< fa user-secret size=2x >}} [Curly braces are powerful!]{style="font-size: 1.25em; padding-left: 0.5em;"}
+
+This behavior is actually the result of the curly braces (`{...}`). When you wrap an expression in curly braces only the last expression is passed to the global environment. This is why the body of a function is typically wrapped in curly braces. Curly braces are not necessary if a function only occupies a single line, for example our function `multiply_by_two`:
+
+```{r}
+multiply_by_two <- 
+  function(x) {
+    x * 2
+  }
+```
+
+... could have also been written as:
+
+```{r}
+multiply_by_two <- 
+  function(x) x * 2
+```
+
+:::
+
+So we can see that, due to the curly braces, a function *sort of* has its own internal environment, though it works within its parent environment (in this case the global environment). This has been the source of woes for many-an-R-user, but once you get the hang of it, it is an easily avoidable problem. It actually gives you a bit more control on what you are adding to your global environment.
+
+When debugging/quality controlling big functions, I sometimes use `return()` to view values at various points in the **body**. Have a look at the below and give a thought to the output:
+
+```{r, error = TRUE}
+fun_with_internal_assignments <-
+  function(spp) {
+    iris_spp <-
+      iris %>% 
+      filter(species == spp)
+    
+    return(iris_spp)
+    
+    iris_spp %>% 
+      pull(sepal_length) %>% 
+      mean()
+  }
+
+fun_with_internal_assignments(spp = "virginica")
+
+iris_spp
+```
+
+So `return()` gave us the tibble associated with `iris_spp`, but `iris_spp` is still not assigned within our global environment!
+
+::: mysecret
+{{< fa user-secret size=2x >}} [Return?]{style="font-size: 1.25em; padding-left: 0.5em;"}
+
+By default, the last operation in your function is sent to the global environment. As such, unless you are debugging a function, you do not ever need to include `return()` at the end of your functions!
+:::
+
+If you really insist that your environment deserves the intermediate assignment, you can hard code it in there with `<<-`, which is called the "super assignment operator". Let's see if we have stored the object in our global environment now:
+
+```{r}
+fun_with_internal_assignments <-
+  function(spp) {
+    iris_spp <<-
+      iris %>% 
+      filter(species == spp)
+    
+    iris_spp %>% 
+      pull(sepal_length) %>% 
+      mean()
+  }
+
+fun_with_internal_assignments(spp = "virginica")
+
+iris_spp
+```
+
+## Multiple variables
+
+We have thus far written a function with a single formal. We often need to include multiple formals to address multiple variables in a given operation. For example, perhaps we would like to generalize our formula such that it can calculate the `mean()` of any *Iris* species and any petal or sepal measurement.
+
+To address this, we need to again observe where in our code block the repetition is occurring. Let's look again at our original operation:
+
+```{r}
+iris %>% 
+  filter(species == "virginica") %>% 
+  pull(sepal_length) %>% 
+  mean()
+```
+
+We can see that we need to replace "virginica" and `sepal_length` with variables in our formals:
+
+```{r}
+calc_mean_spp_measure <-
+  function(spp, measure) {
+    iris %>% 
+      filter(species == spp) %>% 
+      pull(measure) %>% 
+      mean()
+  }
+
+calc_mean_spp_measure(
+  spp = "setosa",
+  measure = "sepal_length"
+)
+```
+
+If we supply our formals in order, it is not necessary to include the names assigned to the formals:
+
+```{r}
+calc_mean_spp_measure("setosa", "sepal_length")
+```
+
+## Default values
+
+When writing a custom function, we can specify a default value for a given function's argument.
+
+To demonstrate this, let's turn to the data frame `populations_co2`:
+
+```{r}
+populations_co2
+```
+
+The code block below calculates the total global CO~2~ emissions for the year 2010:
+
+```{r}
+populations_co2 %>% 
+  filter(year == 2010) %>% 
+  mutate(
+    total_co2 = co2 * population
+  ) %>%
+  pull() %>%
+  sum()
+```
+
+We can write the above as a function to calculate the total global CO~2~ emissions for a given year:
+
+```{r}
+calculate_total_co2_yr <-
+  function(yr) {
+    populations_co2 %>% 
+      filter(year == yr) %>% 
+      mutate(
+        total_co2 = co2 * population
+      ) %>%
+      pull() %>%
+      sum()
+  }
+
+calculate_total_co2_yr(2010)
+```
+
+The above works, but watch what happens to when we change the year to 2015:
+
+```{r}
+calculate_total_co2_yr(2015)
+```
+
+The above fails. Why?
+
+```{r}
+populations_co2 %>% 
+  filter(year == 2015) %>% 
+  summary()
+```
+
+... because the population data contain an [NA]{.mono} value! 
+
+As we know, we can use `na.rm = TRUE` inside of `sum()` to avoid this error:
+
+```{r}
+calculate_total_co2_yr <-
+  function(yr) {
+    populations_co2 %>% 
+      filter(year == yr) %>% 
+      mutate(
+        total_co2 = co2 * population
+      ) %>%
+      pull() %>%
+      sum(na.rm = TRUE)
+  }
+
+calculate_total_co2_yr(2015)
+```
+
+Perhaps we do not always want to remove [NA]{.mono} values though? For example, the presence of [NA]{.mono} values are very important if we are calculating global CO~2~ emissions! 
+
+We can address this by making it a formal of our function:
+
+```{r}
+calculate_total_co2_yr <-
+  function(yr, remove_na) {
+    populations_co2 %>% 
+      filter(year == yr) %>% 
+      mutate(
+        total_co2 = co2 * population
+      ) %>%
+      pull() %>%
+      sum(na.rm = remove_na)
+  }
+
+calculate_total_co2_yr(
+  yr = 2015,
+  remove_na = TRUE
+)
+
+calculate_total_co2_yr(
+  yr = 2015,
+  remove_na = FALSE
+)
+```
+
+We can also assign a default value for the formal. For example perhaps we want to set the default value to `TRUE`:
+
+```{r}
+calculate_total_co2_yr <-
+  function(
+    yr,
+    remove_na = TRUE
+  ) {
+    populations_co2 %>% 
+      filter(year == yr) %>% 
+      mutate(
+        total_co2 = co2 * population
+      ) %>%
+      pull() %>%
+      sum(na.rm = remove_na)
+  }
+
+calculate_total_co2_yr(2015)
+
+calculate_total_co2_yr(2015, remove_na = FALSE)
+```
+
+By setting a default option above, we *only* have to specify the `remove_na` if we choose to modify the default argument. 
+
+I should note that it is considered to be best practice to specify the name assigned to the formal if you modify a function's behavior. As such, the following works, but is not recommended:
+
+```{r}
+calculate_total_co2_yr(2015, FALSE)
+```
+
+## Writing flexible functions
+
+We have learned how to convert a data frame with geographic coordinates (e.g., longitude and latitude) to a point shapefile. At a minimum, the process requires us to:
+
+* Pass the data to `sf::st_as_sf()`
+* In the argument `coords = ...`, specify the variables where longitudes and latitudes are stored (in that order; as a two-value character vector)
+* Define the Coordinate Reference System that the data were recorded in (here the CRS is EPSG 4326)
+
+Following the steps above, let's convert `lanternflies` to a points shapefile:
+
+```{r}
+lanternflies %>% 
+  st_as_sf(
+    coords = c("longitude", "latitude"),
+    crs = 4326
+  )
+```
+
+The above will, of course, become redundant if we need to repeat this process for multiple files! Let's write a function that can take *any* of our tabular data files (with coordinates) and convert it to a points shapefile. We will start by creating a custom function that has one variable -- the dataset being read in. We simply add the `.data` to our formals and then, in the body of the function, replace `lanternflies` with `.data`:
+
+```{r}
+df_to_sf <-
+  function(.data) {
+    .data %>% 
+      st_as_sf(
+        coords = c("longitude", "latitude"),
+        crs = 4326
+      )
+  }
+```
+
+Let's see if our custom function worked for our `lanternflies` dataset:
+
+```{r}
+df_to_sf(lanternflies)
+```
+
+*Note: In the above, `lanternflies` did not require quotes because the assignment is in our global environment.*
+
+It worked! Now let's test it to see if it works on our `sites` data frame:
+
+```{r}
+df_to_sf(sites)
+```
+
+Alas, it does not ... the error message tells us that "longitude" and "latitude" are not names of variables in `sites`. Let's take a look:
+
+```{r}
+names(sites)
+```
+
+To address this, we need to modify our function. We will add additional arguments in our formals for longitude and latitude:
+
+```{r}
+df_to_sf <-
+  function(
+    .data,
+    longitude,
+    latitude
+    ) {
+    .data %>% 
+      st_as_sf(
+        coords = c(longitude, latitude),
+        crs = 4326
+      )
+  }
+```
+
+We can now run the function by supplying one-value character vectors that represent the names of our longitude and latitude variables:
+
+```{r}
+sites %>% 
+  df_to_sf(
+    longitude = "lon",
+    latitude = "lat"
+  )
+```
+
+That worked! I should note that the use of "lon" and "lat" to represent "longitude" and "latitude", respectively, is pretty standard for many GIS applications. Because of this, we can use these as default values of our custom function:
+
+```{r}
+df_to_sf <-
+  function(
+    .data,
+    longitude = "lon",
+    latitude = "lat"
+    ) {
+    .data %>% 
+      st_as_sf(
+        coords = c(longitude, latitude),
+        crs = 4326
+      )
+  }
+```
+
+Because these are the default values, they do not need to be specified when running the function:
+
+```{r}
+df_to_sf(sites)
+```
+
+... but *do* need to be specified otherwise:
+
+```{r}
+df_to_sf(lanternflies)
+```
+
+```{r}
+lanternflies %>% 
+  df_to_sf(
+    longitude = "longitude",
+    latitude = "latitude"
+    )
+```
+
+
+Let's try to apply this to our data frame `earley_works`. We have learned our lesson from the above, so let's check the names first:
+
+```{r}
+names(earley_works)
+```
+
+... then give it a go:
+
+```{r}
+earley_works %>% 
+  df_to_sf(
+    longitude = "X",
+    latitude = "Y"
+  )
+```
+
+We can see that there is a problem right away! The Geodetic CRS is WGS 84, which is in decimal degrees. On the longitudinal axis, those points should be between 0 (the meridian) and -180 (the antimeridian) in the Western Hemisphere and between 0 and 180 in the Eastern Hemisphere. These data are projected. A glance at the metadata at the top of this document shows that the data are in a projected UTM **coordinate reference system** (EPSG 32618). 
+
+To address this, we need to add an additional argument to our function where we can specify the original CRS of the object:
+
+```{r}
+df_to_sf <-
+  function(
+    .data,
+    longitude = "lon",
+    latitude = "lat",
+    epsg
+  ) {
+    .data %>% 
+      st_as_sf(
+        coords = c(longitude, latitude),
+        crs = epsg
+      )
+  }
+```
+
+Let's give it a try:
+
+```{r}
+earley_works %>% 
+  df_to_sf(
+    longitude = "X",
+    latitude = "Y",
+    epsg = 32618
+  )
+```
+
+This successfully read in the data with the correct CRS!
+
+We can also conduct many repetitive pre-processing steps by including it within a custom function. For example, we can change names to lowercase:
+
+```{r}
+df_to_sf <-
+  function(
+    .data,
+    longitude = "lon",
+    latitude = "lat",
+    epsg
+  ) {
+    .data %>% 
+      st_as_sf(
+        coords = c(longitude, latitude),
+        crs = epsg
+      ) %>% 
+      
+      # Set names to lowercase:
+      
+      set_names(
+        names(.) %>% 
+          tolower()
+      )
+  }
+```
+
+```{r}
+earley_works %>% 
+  df_to_sf(
+    longitude = "X",
+    latitude = "Y",
+    epsg = 32618
+  )
+```
+
+And even transform the data:
+
+```{r}
+df_to_sf <-
+  function(
+    .data,
+    longitude = "lon",
+    latitude = "lat",
+    epsg,
+    epsg_out = epsg
+  ) {
+    .data %>% 
+      st_as_sf(
+        coords = c(longitude, latitude),
+        crs = epsg
+      ) %>% 
+      
+      # Set names to lowercase:
+      
+      set_names(
+        names(.) %>% 
+          tolower()
+      ) %>% 
+      
+      # Transform the CRS of the output:
+      
+      st_transform(epsg_out)
+  }
+```
+
+
+```{r}
+earley_works %>% 
+  df_to_sf(
+    longitude = "X",
+    latitude = "Y",
+    epsg = 32618,
+    epsg_out = 4326
+  )
+```
+
+Hopefully it is fully apparent that writing custom functions can really help simplify your code. If I considered this function complete (I do not), I would even put this in my source script (`source_script.R`) for use in many of my scripts!
+
+## Reference
+
+<button class="accordion">Glossary</button>
+::: panel
+* **Body**: The set of instructions inside the function (determines what happens when you run a function).
+* **Environment**: The location of a function's variables.
+* **Formals**: Arguments within a function.
+* **Code section**:  A portion of an R script file that is delineated by a section header.
+* **Core tidyverse package** or **Core tidyverse**: Packages that are attached with `library(tidyverse)`.
+:::
+
+<button class="accordion">Functions</button>
+::: panel
+**Important!** Primitive functions as well as functions in the *base* and *utils* packages, are loaded by default when you start an R session. Functions in *dplyr*, *ggplot2*, *lubridate*, *purrr*, *readr*, *tibble*, *tidyr*, and *tidyverse* are loaded with `library(tidyverse)`.
+
+::: function_table
+
+```{r, message = FALSE, echo = FALSE}
+render_function_table("functions_4.1_the_function_in_focus.csv")
+```
+
+:::
+
+:::
+
+
+<button class="accordion">Keyboard shortcuts</button>
+::: panel
+
+{{< include ../../src/includes/keyboard_shortcuts.qmd >}}
+:::
+
+<button class="accordion">R Studio panes</button>
+::: panel
+{{< include ../../src/includes/rstudio_panes.qmd >}}
+:::
+

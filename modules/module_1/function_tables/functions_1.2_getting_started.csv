@@ -1,0 +1,7 @@
+Package,Function,Definition
+.Primitive,(...),Operator that evaluates the function name on the left-hand-side (LHS) of the opening parentheses using the arguments enclosed by the parentheses
+.Primitive,=,Infix operator that assigns an object on the right-hand-side (RHS) to a name on the left-hand-side (LHS) -- this should not be used for global assignments!
+.Primitive,c,Combine values to form an atomic vector
+tidyverse,tidyverse_update,Update packages in the tidyverse metapackage
+utils,install.packages,Download and install one or more packages onto your computer
+utils,news,View the version history of a package

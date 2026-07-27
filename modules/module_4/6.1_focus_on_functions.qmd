@@ -1,0 +1,858 @@
+---
+title: "6.1 Focus on functions"
+format:
+  html:
+    embed-resouces: true
+    self-contained: true
+    standalone: true
+    toc: true
+    toc-location: left
+    number-sections: false
+    search: true
+    include-in-header: ../../src/includes/header_includes.html
+    include-after-body: ../../src/includes/accordion_script.html
+    theme: 
+      - cosmo
+      - ../../src/css/custom_style.scss
+editor: source
+---
+
+```{r, include = FALSE}
+source("src/r/course_functions.R")
+```
+```{r setup, include=FALSE}
+library(tidyverse)
+
+knitr::opts_chunk$set(
+  echo = TRUE,
+  eval = TRUE,
+  error = TRUE)
+
+rm(has_annotations)
+```
+
+<hr>
+
+<div>
+![](../../src/images/hex_complex.png){.intro_image}
+
+The search for **functions** that characterizes the early R learning process will eventually (or quickly) lead us to some of the thousands of R packages (libraries) that have been built by the R community. Packages are predominantly comprised of functions (*though they often have example data and some packages only contain data*). These packages allow the user to complete long or complicated processes in just a few simple steps. The importance of community-built packages can not be overstated -- they are an awesome part of R. If I, an ecologist, wanted to include a model of global temperatures in my analysis, it is amazing that I can load functions built by actual climatologists to do so. 
+
+Over-reliance on community packages, however, limits our ability to develop our R skills. We end up spending tons of time on StackOverflow searching for functions that complete simple tasks without thinking through how we could do those tasks with the functions we already know. Too often, this search leads us to new, unnecessary packages that we then have to add to our script. My early R scripts started with a dozen or more lines of `library()`, with most of those libraries used in just a few processes that I could not (or would not) figure out on my own. I call this process *package hunting* and it should be avoided at all costs!
+
+In this lesson we have a single learning goal ahead of us -- learn how to avoid package hunting by building custom functions. In other words, we are going to transition from "function end users" to *function makers* (and end users).
+
+**Important!** Before starting this tutorial, be sure that you have completed all preliminary and previous lessons!
+
+</div>
+
+
+## Data for this lesson
+
+<button class="accordion">Please click this button to explore the metadata for this lesson!
+</button>
+::: panel
+We will use two datasets for this lesson: 
+
+**[iris.rds]{.mono}**: A modified version of the `iris` dataset that is provided with the *datasets* package in the base R distribution. This is a tibble data frame in which each row represents observations of an individual plant (*Note: There is no primary key for the data frame* ).
+
+* [species]{.mono}, character: The species of iris that was measured (*Note: There are three species in the dataset* ).
+* [sepal_length]{.mono}, double numeric: The sepal length of a measured flower, in centimeters.
+* [sepal_width]{.mono}, double numeric: The sepal width of a measured flower, in centimeters.
+* [petal_length]{.mono}, double numeric: The petal length of a measured flower, in centimeters.
+* [petal_width]{.mono}, double numeric: The petal width of a measured flower, in centimeters.
+
+
+**[populations_co2.rds]{.mono}**: These data were compiled by the [World Bank DataBank](https://databank.worldbank.org/home.aspx){target="_blank"} and provide information on the emissions of greenhouse gases and the populations of countries around the world. I normalized these data (the original version was *extremely* untidy) and saved them as a list file: [data/processed/population_co2.rds]{.mono}. The list contains two named objects:
+
+* [countries]{.mono}: A tibble that provides country reference information from the World Bank. Variables include:
+    * [country_code]{.mono}, character: A three-letter code assigned to each country (this can be considered the **primary key** of the table)
+    * [country_name]{.mono}, character: A name (in English) for each country
+    * [country_region]{.mono}, character: The general region where each country is located
+    * [country_georegion]{.mono}, character: A finer-scale region within the larger region
+    * [land_area]{.mono}, double numeric: The area of a country, in square kilometers
+
+* [populations_co2]{.mono}: A tibble with the population and per capita CO~2~ emissions from 1960-2020 for all countries in the dataset.
+    * [country_code]{.mono}, character: A **foreign key **to the country code in `countries`
+    * [year]{.mono}, numeric: The year of a given record -- this variable, in combination with [country_code]{.mono} represents the **compound primary key** of this table
+    * [population]{.mono}, numeric: The population of a given country in a given year
+    * [co2]{.mono}, numeric: The per capita CO~2~ emissions, in metric tons per year
+
+:::
+
+## Set up your session
+
+Please do the following to ensure that you are working in a clean session:
+
+1. In the *Environment* tab of your *workspace pane*, ensure that your *Global Environment* is empty. If it is not, click the *broom* to remove all objects. *Note: Conversely, you can remove all items with `rm(list = ls())`*.
+2. In the *History* tab of your *workspace pane*, ensure that your history is empty. If it is not, click the *broom* to remove your history.
+3. Open the script file [functions.R]{.mono} (Windows: [Ctrl + O]{.mono}; Mac: [Cmd + O]{.mono}).
+4. Run the setup section of the script.
+
+```{r, results = "hide"}
+library(tidyverse)
+
+# The iris dataset:
+
+iris <-
+  read_rds("data/raw/iris.rds")
+
+# Population and CO2 data:
+
+read_rds("data/processed/populations_co2.rds") %>% 
+  list2env(.GlobalEnv)
+
+```
+
+
+## R function basics
+
+Custom functions are important tools for our data science skillset. Writing custom functions can:
+
+* Help you understand other functions used in the R community
+* Give you tools to modify functions that you find in the R community
+* Help you avoid repetitive code
+
+We can create our own custom function with the R function `function()`. We then provide the:
+
+* **Formals**: A set of controls (or arguments) for the function, placed inside of parentheses, `(...)`
+* **Body**: The set of instructions inside the function, typically inside of curly brackets, `{...}`
+
+To illustrate this, let's make a simple function and assign it to the name `multiply_by_two`:
+
+```{r}
+multiply_by_two <- 
+  function(x) {
+    x * 2
+  }
+```
+
+Note: The other operations that we have conducted in this class allow you to place your cursor anywhere within the code block and hit [Ctrl + Enter]{.mono} (Windows) or [Cmd + Enter]{.mono} (Mac) to run your code. When assigning a function to your global environment, however, you can only run the full code block if your cursor is placed anywhere *outside* of the curly braces. We will discuss why this happens soon!
+
+In the above, we:
+
+1. Initiated our function with `function()`;
+2. Defined the **formals** of the function, within `()`, as the variable `x`;
+3. Delineated the **body** of our function with `{...}`;
+4. Defined the **body** (set of instructions) as `x * 2`;
+5. Globally assigned a name (`multiply_by_two`) to the function with the `<-` operator.
+
+We can explicitly explore the structure of the function using the `formals` and `body` functions:
+
+```{r}
+formals(multiply_by_two)
+
+body(multiply_by_two)
+```
+
+Let's run our function and see what happens:
+
+```{r}
+multiply_by_two(x = 5)
+```
+
+We supplied the formals of the function as the value 5. That value was passed to the body of the function and thus any time an `x` appeared in our set of instructions, the variable was replaced by the value 5.
+
+### R function basics, applied
+
+Let's create a function with some real data. Consider that you are given the task of calculating the average `sepal_length` for one of the species in the `iris` dataset:
+
+```{r}
+iris
+```
+
+To calculate the average `sepal_length` of the species *Iris setosa*, we might:
+
+* Subset `iris` to the `species` "setosa" with `filter()`;
+* Extract our variable of interest with `pull()`;
+* Calculate the `mean()` of the extracted variable.
+
+```{r}
+iris %>% 
+  filter(species == "setosa") %>% 
+  pull(sepal_length) %>% 
+  mean()
+```
+
+What if we completed the above only to have our boss pop their head in the door to tell us that they "meant *virginica*"? We are forced to do it all over again ...
+
+```{r}
+iris %>% 
+  filter(species == "virginica") %>% 
+  pull(sepal_length) %>% 
+  mean()
+```
+
+While the above was likely an easy copy-and-paste, our code can often be long and cumbersome and it is easy to miss something.
+
+Instead, we can write this as a custom function! To do so, we need to identify the variable that should be placed within the formals of the function. With the two code blocks above, the only thing that has changed is the *Iris* `species` and thus this will be our variable.
+
+```{r}
+subset_sepal_lengths <-
+  function(spp) {
+    iris %>% 
+      filter(species == spp) %>% 
+      pull(sepal_length) %>% 
+      mean()
+  }
+```
+
+We can now use our function to calculate the mean of any of our species of interest in a single step:
+
+```{r}
+
+subset_sepal_lengths(spp = "setosa")
+
+subset_sepal_lengths("versicolor")
+
+subset_sepal_lengths("virginica")
+```
+
+*Note: In the second two operations, I do not include `spp = ...` because it is not necessary to provide the name of a formal if it is the only argument in the function.*
+
+## Functions & the global environment
+
+A function's environment can be a tricky concept. The environment that our function is working in is actually the global environment:
+
+```{r}
+environment(subset_sepal_lengths)
+```  
+
+There is a catch though! Unless specified otherwise, only the last object in the body will be passed to the global environment. Let's explore this by creating an intermediate assignment within the function's body:
+
+```{r, error = TRUE}
+fun_with_internal_assignments <-
+  function(spp) {
+    iris_spp <-
+      iris %>% 
+      filter(species == spp)
+    
+    iris_spp %>% 
+      pull(sepal_length) %>% 
+      mean()
+  }
+
+fun_with_internal_assignments(spp = "virginica")
+```
+
+Does `iris_spp` exist in our global environment? Let's see:
+
+```{r, error = TRUE}
+iris_spp
+```
+
+Why did we get an error here? Have a look in the environment tab of your workspace pane. Notice that the object name `iris_spp` does not exist in your global environment.
+
+::: mysecret
+{{< fa user-secret size=2x >}} [Curly braces are powerful!]{style="font-size: 1.25em; padding-left: 0.5em;"}
+
+This behavior is actually the result of the curly braces (`{...}`). When you wrap an expression in curly braces only the last expression is passed to the global environment. This is why the body of a function is typically wrapped in curly braces. Curly braces are not necessary if a function only occupies a single line, for example our function `multiply_by_two`:
+
+```{r}
+multiply_by_two <- 
+  function(x) {
+    x * 2
+  }
+```
+
+... could have also been written as:
+
+```{r}
+multiply_by_two <- 
+  function(x) x * 2
+```
+
+:::
+
+So we can see that, due to the curly braces, a function *sort of* has its own internal environment, though it works within its parent environment (in this case the global environment). This has been the source of woes for many-an-R-user, but once you get the hang of it, it is an easily avoidable problem. It actually gives you a bit more control on what you are adding to your global environment.
+
+When debugging/quality controlling big functions, I sometimes use `return()` to view values at various points in the **body**. Have a look at the below and give a thought to the output:
+
+```{r, error = TRUE}
+fun_with_internal_assignments <-
+  function(spp) {
+    iris_spp <-
+      iris %>% 
+      filter(species == spp)
+    
+    return(iris_spp)
+    
+    iris_spp %>% 
+      pull(sepal_length) %>% 
+      mean()
+  }
+
+fun_with_internal_assignments(spp = "virginica")
+
+iris_spp
+```
+
+So `return()` gave us the tibble associated with `iris_spp`, but `iris_spp` is still not assigned within our global environment!
+
+::: mysecret
+{{< fa user-secret size=2x >}} [Return?]{style="font-size: 1.25em; padding-left: 0.5em;"}
+
+By default, the last operation in your function is sent to the global environment. As such, unless you are debugging a function, you do not ever need to include `return()` at the end of your functions!
+:::
+
+If you really insist that your environment deserves the intermediate assignment, you can hard code it in there with `<<-`, which is called the "super assignment operator". Let's see if we have stored the object in our global environment now:
+
+```{r}
+fun_with_internal_assignments <-
+  function(spp) {
+    iris_spp <<-
+      iris %>% 
+      filter(species == spp)
+    
+    iris_spp %>% 
+      pull(sepal_length) %>% 
+      mean()
+  }
+
+fun_with_internal_assignments(spp = "virginica")
+
+iris_spp
+```
+
+## Multiple variables
+
+We have thus far written a function with a single formal. We often need to include multiple formals to address multiple variables in a given operation. For example, perhaps we would like to generalize our formula such that it can calculate the `mean()` of any *Iris* species and any petal or sepal measurement.
+
+To address this, we need to again observe where in our code block the repetition is occurring. Let's look again at our original operation:
+
+```{r}
+iris %>% 
+  filter(species == "virginica") %>% 
+  pull(sepal_length) %>% 
+  mean()
+```
+
+We can see that we need to replace "virginica" and `sepal_length` with variables in our formals:
+
+```{r}
+calc_mean_spp_measure <-
+  function(spp, measure) {
+    iris %>% 
+      filter(species == spp) %>% 
+      pull(measure) %>% 
+      mean()
+  }
+
+calc_mean_spp_measure(
+  spp = "setosa",
+  measure = "sepal_length"
+)
+```
+
+If we supply our formals in order, it is not necessary to include the names assigned to the formals:
+
+```{r}
+calc_mean_spp_measure("setosa", "sepal_length")
+```
+
+## Default values
+
+When writing a custom function, we can specify a default value for a given function's argument.
+
+To demonstrate this, let's turn to the data frame `populations_co2`:
+
+```{r}
+populations_co2
+```
+
+The code block below calculates the total global CO~2~ emissions for the year 2010:
+
+```{r}
+populations_co2 %>% 
+  filter(year == 2010) %>% 
+  mutate(
+    total_co2 = co2 * population
+  ) %>%
+  pull() %>%
+  sum()
+```
+
+We can write the above as a function to calculate the total global CO~2~ emissions for a given year:
+
+```{r}
+calculate_total_co2_yr <-
+  function(yr) {
+    populations_co2 %>% 
+      filter(year == yr) %>% 
+      mutate(
+        total_co2 = co2 * population
+      ) %>%
+      pull() %>%
+      sum()
+  }
+
+calculate_total_co2_yr(2010)
+```
+
+The above works, but watch what happens to when we change the year to 2015:
+
+```{r}
+calculate_total_co2_yr(2015)
+```
+
+The above fails. Why?
+
+```{r}
+populations_co2 %>% 
+  filter(year == 2015) %>% 
+  summary()
+```
+
+... because the population data contain an [NA]{.mono} value! 
+
+As we know, we can use `na.rm = TRUE` inside of `sum()` to avoid this error:
+
+```{r}
+calculate_total_co2_yr <-
+  function(yr) {
+    populations_co2 %>% 
+      filter(year == yr) %>% 
+      mutate(
+        total_co2 = co2 * population
+      ) %>%
+      pull() %>%
+      sum(na.rm = TRUE)
+  }
+
+calculate_total_co2_yr(2015)
+```
+
+Perhaps we do not always want to remove [NA]{.mono} values though? For example, the presence of [NA]{.mono} values are very important if we are calculating global CO~2~ emissions! 
+
+We can address this by making it a formal of our function:
+
+```{r}
+calculate_total_co2_yr <-
+  function(yr, remove_na) {
+    populations_co2 %>% 
+      filter(year == yr) %>% 
+      mutate(
+        total_co2 = co2 * population
+      ) %>%
+      pull() %>%
+      sum(na.rm = remove_na)
+  }
+
+calculate_total_co2_yr(
+  yr = 2015,
+  remove_na = TRUE
+)
+
+calculate_total_co2_yr(
+  yr = 2015,
+  remove_na = FALSE
+)
+```
+
+We can also assign a default value for the formal. For example perhaps we want to set the default value to `TRUE`:
+
+```{r}
+calculate_total_co2_yr <-
+  function(
+    yr,
+    remove_na = TRUE
+  ) {
+    populations_co2 %>% 
+      filter(year == yr) %>% 
+      mutate(
+        total_co2 = co2 * population
+      ) %>%
+      pull() %>%
+      sum(na.rm = remove_na)
+  }
+
+calculate_total_co2_yr(2015)
+
+calculate_total_co2_yr(2015, remove_na = FALSE)
+```
+
+By setting a default option above, we *only* have to specify the `remove_na` if we choose to modify the default argument. 
+
+I should note that it is considered to be best practice to specify the name assigned to the formal if you modify a function's behavior. As such, the following works, but is not recommended:
+
+```{r}
+calculate_total_co2_yr(2015, FALSE)
+```
+
+## Scoping
+
+I am (obviously) a firm believer that just a little bit of knowledge of what happens under-the-hood can go a long way towards improving your code. This is especially the case when building custom functions.
+
+Back in ***Lesson 1.3 Objects***, I introduced the concept of a search path where R will search for variables. The term **scoping** describes the process by which R searches for a variable. When a variable is found, R "inserts" the data object associated with the variable into a given process.
+
+When writing or using functions, the order of the search path that R uses to find variables matters a lot and is known as **scoping rules**. We will address two applications where even a cursory understanding of scoping can really impact your code: scoping ambiguity and the use of quotes.
+
+### Scoping ambiguity
+
+Recall that, in our function `subset_sepal_length`, I used `spp` to refer to the species of *Iris*:
+
+```{r}
+subset_sepal_lengths <-
+  function(spp) {
+    iris %>% 
+      filter(species == spp) %>% 
+      pull(sepal_length) %>% 
+      mean()
+  }
+
+subset_sepal_lengths(spp = "setosa")
+```
+
+The above works, but naming your variable differently based on context (e.g., as a formal vs. a variable in a data frame) makes your code difficult to read/interpret. Can we name our formal `species` instead? Let's see what happens:
+
+```{r}
+# An ill-advised way of naming formals:
+
+fun_with_bad_formals <-
+  function(species) {
+    iris %>% 
+      filter(species == species) %>% 
+      pull(sepal_length) %>% 
+      mean()
+  }
+
+# Yields questionable results!
+
+fun_with_bad_formals(species = "setosa")
+
+fun_with_bad_formals("versicolor")
+
+fun_with_bad_formals("virginica")
+```
+
+The above does not work! Instead, it is calculating the `mean()` of `sepal_length` for all species. This situation is a result of what is known as "scoping ambiguity". Here, R looked up the variable `species` and the first place that it was found was the `species` column name in `iris`. Because R found the column name `species` first, R did not use our formal `species` at all!
+
+To address this problem, the *rlang* package has brought us the function `{{{ ... }}}`. When we surround a variable with `{{{ }}}`, we can force R to look for the variable in our formals first and then insert it into our function:
+
+```{r}
+# An better way of using formals:
+
+fun_with_inserted_formals <-
+  function(species) {
+    iris %>% 
+      filter(
+        species == {{ species }}
+      ) %>% 
+      pull(sepal_length) %>% 
+      mean()
+  }
+
+# Yields great results!
+
+fun_with_inserted_formals(species = "setosa")
+
+fun_with_inserted_formals("versicolor")
+
+fun_with_inserted_formals("virginica")
+```
+
+*Note: Although the rlang package is not a part of the core tidyverse, `{{{ ... }}}` is made available to us with `library(tidyverse)`.*
+
+### Scoping and quoted variables
+
+You might have noticed that we used quotes around the variable `sepal_length` in our function `calc_mean_spp_measure`. This is because `sepal_length` is not an assigned name in our global environment. Let's see what happens if we leave those quotes out:
+
+```{r}
+calc_mean_spp_measure <-
+  function(spp, measure) {
+    iris %>% 
+      filter(species == spp) %>% 
+      pull(measure) %>% 
+      mean()
+  }
+
+calc_mean_spp_measure("setosa", sepal_length)
+```
+
+This error again has to do with how R searches for variables. Within the body of the function, R searched for `measure` -- it first did so in the parent frame, `iris` and did not find it there. In the formals of the function, it found that the `measure` is assigned to the value `sepal_length`. It then searched the global environment for the name `sepal_length`. There is no variable `sepal_length` in our global environment so, as the message states, that variable was not found and R threw an error.
+
+We could simply throw up our hands and say "okay, I guess I will just use quotes!" If you are anything like me though, you have gotten pretty spoiled by the tidyverse and think quotes should not be necessary when referring to a variable (e.g., my sneaky usage of `tidyselect:::select()`). Luckily, there is another way and, even better, we have already learned it! Recall that the `{{{ ... }}}` operator changes R's search path by injecting the variable into a function before it is evaluated. As such, watch what happens when we use `{{{ measure }}}`:
+
+```{r}
+calc_mean_spp_measure <-
+  function(spp, measure) {
+    iris %>% 
+      filter(species == spp) %>% 
+      pull({{ measure }}) %>% 
+      mean()
+  }
+
+calc_mean_spp_measure("setosa", sepal_length)
+```
+
+## Modify existing functions
+
+Sometimes I find a function that is *almost* perfect, but not quite. When this occurs we can make our own custom function to modify the behavior of a function that we use.
+
+For example, I previously expressed my annoyance with arranging data frames in descending order with *dplyr*:
+
+```{r}
+countries %>% 
+  arrange(
+    desc(country_name)
+  )
+```
+
+It seems crazy to me that I need to use a nested function for this operation. To address this, let's create a custom function that will work with *any* data frame and variable.
+
+By modern convention, the first argument in our formals should be the data frame that we are modifying. The second argument will be the variable that will define the order of rows.
+
+```{r}
+arrange_desc <-
+  function(x, sort_by_variable) {
+    arrange(
+      x,
+      desc(sort_by_variable)
+    )
+  }
+```
+
+We can check to see if this works with our original variable:
+
+```{r}
+countries %>% 
+  arrange_desc(country_name)
+```
+
+It did not! Once again, `country_name` was not found due to R's scoping rules. What happens if we place the variable in quotes?
+
+```{r}
+countries %>% 
+  arrange_desc("country_name")
+```
+
+This did not work either! This is because R was trying to sort the data based on the one-value character vector "country_name", not the *variable* `country_name`. We can address this by again using `{{{ ... }}}` to insert our variable into the function:
+
+```{r}
+arrange_desc <-
+  function(x, variable) {
+    arrange(
+      x,
+      desc({{ variable }})
+    )
+  }
+
+countries %>% 
+  arrange_desc(country_name)
+```
+
+Before using our function, we should test it with a different variable:
+
+```{r}
+countries %>% 
+  arrange_desc(country_code)
+```
+
+... and on a different data frame!
+
+```{r}
+iris %>% 
+  arrange_desc(sepal_length)
+```
+
+The above works, but if we save this function for posterity, we might want to explicitly call *dplyr* when we use the function. When I write a custom function that I use across multiple scripts, and that function relies on functions not attached in a base R session, I often explicitly call the function names from their package:
+
+```{r}
+arrange_desc <-
+  function(x, variable) {
+    dplyr::arrange(
+      x,
+      dplyr::desc({{ variable }})
+    )
+  }
+```
+
+::: {class="mysecret"}
+
+<i class="fas fa-user-secret fa-2x"></i> Although we have used `desc()` within `arrange()` throughout the course, there is another option when arranging a numeric variable! If the variable that you want to `arrange()` is *numeric*, you can use the `-` operator in place of `desc()`:
+
+```{r}
+populations_co2 %>% 
+  filter(year == 2020) %>% 
+  arrange(-population)
+```
+
+But note that `-` does not work on character vectors!
+
+```{r}
+populations_co2 %>% 
+  filter(year == 2020) %>% 
+  arrange(-country_code)
+```
+
+:::
+
+## We invoked custom functions before this lesson!
+
+Before completing this lesson, I think that it is good to recognize that you have already invoked custom functions prior to this module. 
+
+Consider the following operation (***Lesson 4.2: Advanced filtering***):
+
+```{r}
+populations_co2 %>% 
+  filter(
+    if_any(
+      population:co2,
+      ~ !is.na(.x)
+    )
+  )
+```
+
+Recall that `~` defines a formula object. In this case, this formula is actually a function where `.x` is the formal of that function! As such, the above could have been written as:
+
+```{r}
+populations_co2 %>% 
+  filter(
+    if_any(
+      population:co2,
+      function(x) {
+        !is.na(x)
+      }
+    )
+  )
+```
+
+... or:
+
+```{r}
+populations_co2 %>% 
+  filter(
+    if_any(
+      population:co2,
+      function(x) !is.na(x)
+    )
+  )
+```
+
+### A new syntax
+
+In 2021, base R introduced a new syntax for calling functions that is useful to know. Rather than writing out our function as `function(...)` we can now use the handy shorthand `\(...)`. For example, the function below ...
+
+```{r}
+multiply_by_two <- 
+  function(x) x * 2
+```
+
+... is equivalent to:
+
+```{r}
+multiply_by_two <- 
+  \(x) x * 2
+```
+
+Thus, an operation such as ...
+
+```{r}
+populations_co2 %>% 
+  filter(
+    if_any(
+      population:co2,
+      ~ !is.na(.x)
+    )
+  )
+```
+
+... can also be written as:
+
+```{r}
+populations_co2 %>% 
+  filter(
+    if_any(
+      population:co2,
+      \(x) !is.na(x)
+    )
+  )
+```
+
+This even works with more complex functions:
+
+```{r}
+arrange_desc <-
+  \(x, variable) {
+    dplyr::arrange(
+      x,
+      dplyr::desc({{ variable }})
+    )
+  }
+
+populations_co2 %>% 
+  filter(year == 2020) %>% 
+  arrange_desc(population)
+```
+
+## Reference
+
+<button class="accordion">Glossary</button>
+::: panel
+* **Body**: The instructions of a function that are run when the function is executed. 
+* **Compound key** (or compound primary key): A set of variables in a data frame that, combined, represent the primary key of a table.
+* **Foreign key**: A variable in a data frame that refers to the primary key of another data frame.
+* **Formals**: The arguments of a function (can also be thought of as the variables upon which the function is run).
+* **Function**: A set of instructions used to complete a given task.
+* **Primary key**: A variable in a data frame that is used to identify unique records.
+* **Scoping**: The process by which R searches for a variable.
+* **Scoping rules**: The order of the search path that R uses to find variables.
+:::
+
+<button class="accordion">Functions</button>
+::: panel
+
+::: mysecret
+
+{{< fa user-secret size=2x >}} [**Important!**]{style="font-size: 1.25em; padding-left: 0.5em;"}
+
+* Primitive functions, as well as functions in the *base*, *stats*, and *utils* packages, are loaded by default when you start an R session. Functions in *dplyr*, *ggplot2*, *lubridate*, *purrr*, *readr*, *stringr*, *tibble*, *tidyr*, and *tidyverse* are loaded with `library(tidyverse)`.
+* The functions `magrittr::%>%`, `rlang::{{}}`, `rlang::set_names` are attached with `library(tidyverse)`
+* I do not include functions that I recommend avoiding.
+* Regular expressions metacharacters are not functions!
+:::
+
+::: function_table
+
+```{r, message = FALSE, echo = FALSE}
+render_function_table("functions_6.1_focus_on_functions.csv")
+```
+
+:::
+:::
+
+<button class="accordion">Metacharacters in regex</button>
+::: panel
+
+::: mysecret
+{{< fa user-secret size=2x >}} [Metacharacters are not R functions!]{style="font-size: 1.25em; padding-left: 0.5em;"}
+
+When you are given a list of functions that you may use in a given problem set, recall that regex metacharacters are not functions. As such, they will not be included in your function list. You may use *any* metacharacter to address a given problem!
+:::
+
+* **Alternation constraint**, `(...)`: Constrains the use of a metacharacter to just the symbols inside of parentheses
+* **Anchor**, `^...`: Specify the start of a string
+* **Anchor**, `...$`: Specify the end of a string
+* **Character class**, `[...]`: Define a *set* of symbols that you would like to match
+* **Metacharacter escape**, `\\`: Treat a metacharacter as a literal character
+* **Optional match**, `?`: Specify that the preceding symbol is optional
+* **Range** (in a character class), `[...-...]`: Define a *range* of symbols that you would like to match in a given position
+* **Or**, `...|...`: Specify a match of one string "or" another string
+* **Repetition**, `...*`: Specify that a symbol can appear no times or an unlimited number of times
+* **Repetition**, `...+`: Specify that a symbol appears at least once or an unlimited number of times
+* **Repetition**, `{...}`: Specify the number of times a symbol should appear
+* **Repetition**, `{...,...}`: Specify that a symbol may appear within a range of repetitions
+* **Wild card**, `.`: Specify that a character value at a given location can be any symbol
+:::
+
+<button class="accordion">Keyboard shortcuts</button>
+::: panel
+
+{{< include ../../src/includes/keyboard_shortcuts.qmd >}}
+:::
+
+<button class="accordion">R Studio panes</button>
+::: panel
+{{< include ../../src/includes/rstudio_panes.qmd >}}
+:::
+

@@ -1,0 +1,252 @@
+---
+title: "Module 4: Programming in R and introduction to tmap"
+format:
+  html:
+    embed-resouces: true
+    self-contained: true
+    standalone: true
+    toc: false
+    number-sections: false
+    search: true
+    include-in-header: ../../src/includes/header_includes.html
+    include-after-body: ../../src/includes/accordion_script.html
+    theme: 
+      - cosmo
+      - ../../src/css/custom_style.scss
+editor: source
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r, include = FALSE}
+source("src/r/course_functions.R")
+```
+<hr>
+
+![](../../src/images/hex_complex.png){.intro_image}
+
+*... because there comes a point in everyone's semester in which they must face the challenge of iteration. Be brave!*
+
+In this module we will focus most of our attention on programmatic tools for streamlining your code. Specifically, you will learn:
+
+* How to write your own custom functions
+* The basics of iteration with the tidyverse *purrr* package
+* How to use iteration in a GIS context
+* How to use the *tmap* package to quickly create static and interactive plots
+
+*Note: Please continue to ignore references to the folder structure from our data science class.*
+
+## Module overview
+
+* **4.1 The function in focus**: This written tutorial reviews the concept of functions, will help you understand how they are constructed, and gives you the tools to create your own functions.
+* **4.2 Introduction to iteration**: This video lesson (runtime: 24:48) and written tutorial will introduce the basics of iteration with the tidyverse packages *purrr* and *dplyr*.
+* **4.3 Applying iteration to GIS in R**: In this video lesson (runtime: 23:39), we review iteration with `purrr::map()` functions through applications to common spatial data processing tasks. There are a lot of challenges in this lecture (it is mostly challenges) - you may want to allocate a pretty big time block to complete it!
+* **4.4 Introduction to tmap**: Cannot get enough of iteration (and spatial/non-spatial joins)? Well then this video lesson (runtime: 34:02) will not disappoint! Here, we will review iterations and joins in the context of generating choropleth maps with the *tmap* package.
+
+**Problem Set** (due 17 Nov): District crime
+
+## Getting started
+
+Please complete the following steps *prior* to beginning this week's lessons:
+
+* Download [module_4_files.zip]{.mono} and:
+    * Place the folder [lanternfly_tmap]{.mono} inside of the folder [data/processed]{.mono}. *Note: Please place the folder itself in that location, not the data within the folder. Additionally, please do not change the name of the folder!*
+    * Place [osm_basemap.rds]{.mono} and [populations_co2.rds]{.mono} in [data/processed]{.mono}
+    * Place [earley_works.csv]{.mono} in [data/raw]{.mono}
+    * Place the R script files ([*.R]) inside of the [scripts]{.mono} folder 
+* Run the following to install several new packages (*Note: It will suggest that you install the development version of an update of the package. Please do not do so!*):
+
+```{r, eval = FALSE}
+install.packages(
+  c(
+    "geosphere",
+    "gifski",
+    "shiny",
+    "shinyjs",
+    "tmap",
+    "tmaptools",
+    "rgeos"
+  )
+)
+```
+
+## About this week's data
+
+There are lots of files that we are going to use this week, so we have reduced this to a button ...
+
+<button class="accordion">Please click on the button below to explore the data that we will use in this module!</button>
+
+::: panel
+
+This week we will use the following data files in our exercises:
+
+[**capital_bike_share_locations.csv**]{.mono}: This is a tabular dataset that provides information (and coordinates) associated with bike share docking stations from the Capital Bikeshare DC group. Location data were recorded in a geodetic CRS (EPSG:4326). The data were downloaded from [Open Data DC](https://opendata.dc.gov/).
+
+[**census ([.dbf]{.mono}, [.prj]{.mono}, [.shp]{.mono}, [.shx]{.mono})**]{.mono}: This is a shapefile from the US Census Bureau that provides tract-level census data for the District of Columbia, Maryland, and Virginia. The data were downloaded using the *tigris* and *tidycensus* packages in R.
+
+[**counties.geojson**]{.mono}: This is a shapefile file of United States counties obtained from the US Census Bureau using the *tigris package*. The resolution of this file is 1:5 million. Each row in the dataset represents a US county.
+
+[**counties_low_res.geojson**]{.mono}: This is a lower resolution (1:20 million) version of the US counties shapefile above. This will be very useful if you have memory or processing limitations on your screen.
+
+[**counties_east.geojson**]{.mono}: The shapefile [counties.geojson]{.mono} subset to the Eastern United States.
+
+[**dc_census ([.dbf]{.mono}, [.prj]{.mono}, [.shp]{.mono}, [.shx]{.mono})**]{.mono}: This is a shapefile from the US Census Bureau that provides tract-level census data for the District of Columbia. The data were downloaded using the *tigris* and *tidycensus* packages in R.
+
+[**earley_works.csv**]{.mono}: A tabular dataset that provides a subset of locations in greater Washington DC where the artist/architect John Joseph Earley installed polychrome concrete mosaics.
+
+[**lanternfly_proc.rds**]{.mono}: A subset of [**spotted_lanternfly.rds**]{.mono}.
+
+[**iris.rds**]{.mono}: This is Edgar Anderson’s famous dataset that provides the measurements of flowers of three species of iris, *Iris setosa*, *I. versicolor*, and *I. virginica*. See `?iris` for more information.
+
+[**osm_basemap.rds**]{.mono}: The is an Open Street Map basemap file (a raster!) that was created using the R package *OpenStreetMap*.
+
+**[populations_co2.rds]{.mono}**: These data were compiled by the [World Bank DataBank](https://databank.worldbank.org/home.aspx){target="_blank"} and provide information on the emissions of greenhouse gases and the populations of countries around the world. I normalized these data (the original version was *extremely* untidy) and saved them as a list file
+
+[**portal.csv**]{.mono}: This data sets provides measurements taken in a long term study (the Portal project) on rodent traits in Portal, Arizona. The provided data were collected in a fixed grid established in 1977 and include when an individual was measured, where the measurement occurred, the sex and species of the individual, and their hindfoot length. You can read more about this study and the data they collected at this [link](https://portal.weecology.org/){target="_blank"}.
+
+[**sites.csv**]{.mono}: This is simple tabular dataset that contains three variables: a site name and the longitude and latitude of site locations. The sites and their locations in this file are derived from [Neighborhood Nestwatch](https://nationalzoo.si.edu/migratory-birds/neighborhood-nestwatch) data and represent the locations of banding stations in the greater Washington DC region.
+
+[**spotted_lanternfly.rds**]{.mono}: This is a tabular dataset of [iNaturalist observations of spotted lanternfly (*Lycorma delicatula*)](https://www.inaturalist.org/projects/spotted-lanternfly), an invasive pest species whose spread is of commercial and ecological concern. Each row is an observation submitted by a community science participant via a web or smartphone application.
+
+[**states ([.dbf]{.mono}, [.prj]{.mono}, [.shp]{.mono}, [.shx]{.mono})**]{.mono}{.mono}: This is shapefile of US states that I obtained from the R package *spData*.
+
+[**states_east.geojson**]{.mono}: The shapefile [states.shp]{.mono} subset to the Eastern United States.
+
+[**weather_tidy.rds**]{.mono}: These data are formatted as a list of two tibble data frames that represent the normalized (i.e., tidy data version) of messy_weather.csv.
+
+:::
+
+## Readings and resources
+
+We have now accumulated a lot of terminology in this course. As such I now provide a glossary for all terms across our course content thus far!
+
+<button class="accordion">Glossary of terms (I am a button ... click me!)</button>
+::: panel
+
+* **Aesthetic mappings**: How the data are mapped to visual attributes.
+* **Assignment (noun)**: A reference that R uses to call data from your computer’s memory (also called "name").
+* **Assignment (verb)**: The act of associating a name with an object (typically to the global environment).
+* **Atomic vector**: A one-dimensional homogenous data object.
+* **Body**: The set of instructions inside the function (determines what happens when you run a function).
+* **Bounding box**: The smallest rectangle that can be drawn around all of the points (or vertices) in a shapefile -- equivalent to spatial extent.
+* **Child**: An object whose name is stored as a reference in a parent object.
+* **Choropleth**: A thematic map where a shape's values are mapped to colors.
+* **Class**: A blueprint that describes an object's structure.
+* **Compound key** (or compound primary key): A set of variables in a data frame that, combined, represent the primary key of a table.
+* **Coordinate system** (in ggplot): Projection of data (e.g., x and y Cartesian coordinates).
+* **Coordinate system** (in GIS): A model that can be used to locate data on the surface of the Earth.
+* **Coordinate reference system (CRS)**: The reference system (may be projected or geographic) that allows us to define the location of a geometry on the surface of the Earth.
+* **Code section**:  A portion of an R script file that is delineated by a section header.
+* **Core tidyverse package** or **Core tidyverse**: Packages that are attached with `library(tidyverse)`.
+* **csv file**: A file stored in the "comma separated values" format. This describes a plain text file where commas separate values and each record (e.g., row in a data frame) is placed on a new line. 
+* **Data** (in the Grammar of Graphics): The information being plotted.
+* **Data frame**: A two-dimensional, and potentially heterogeneous data object (that is a restrictive type of list under-the-hood).
+* **Data object**: Containers for values that structure references in an ordered, predictable way.
+* **Datum**: The model used to represent the Earth's surface.
+* **Double numeric vector**: An atomic numeric vector where the values are stored as decimal numbers (essentially).
+* **Environment**: A dimensionless container that contains references (names) to data stored in memory.
+* **Environment** (of a function): The location of a function's variables.
+* **Experimental** (function): A function currently being tested for permanent distribution in a package (these functions are usually, but not always, safe to use).
+* **Extent (of a raster)**: The size of a full raster, in the X and Y dimensions.
+* **Facets**: Subsets of data within a given plot (i.e., plots are broken into subplots based on some grouping variable).
+* **Filter** (verb): Subset data by logical condition.
+* **Filtering join**: Subset a target table to only rows in which key values match (or are absent from) the keys within a source table.
+* **Foreign key**: A variable in a data frame that refers to the primary key of another data frame.
+* **Formals**: Arguments within a function.
+* **Function**: A set of instructions used to complete a given task.
+* **Geodetic** or **Geographic Coordinate Reference System**: An unprojected coordinate reference system where locations are expressed in angular units, usually decimal degrees.
+* **Geographic Information System (GIS)**: Any application, or set of applications, that is used to create, manage, analyze, and visualize geospatial data.
+* **Geometry**: The coordinates of points or vertices of an sfg object. 
+* **Grain** or **Spatial grain**: The smallest spatial sampling unit of a study.
+* **Infix function**: A function in which the name of the function is placed between the function's arguments.
+* **Install (a package)**: Download the data and functions from a package onto your computer.
+* **Integer**: A whole number, or an atomic vector of data stored as whole numbers.
+* **Iteration**: The repeating of a given process a set number of times.
+* **Key** (variable): A variable in a data frame that is used to identify unique records.
+* **Latitude**: A points angular location, in the Y-dimension, relative to the geographic center of the Earth. In decimal degrees, the latitude is always positive north of the Equator and negative south of the Equator!
+* **Layers (geometries)**: Expression of the data in the plot.
+* **Line** or **Linestring** (shapefiles): A one-dimensional geometry containing a sequence of vertices (points) connected by straight lines.
+* **List**: A one dimensional, and potentially heterogeneous, data object.
+* **List item**: A data object contained within a list.
+* **Longitude**: A points angular location, in the X-dimension, relative to the prime meridian. In decimal degrees, the longitude is always negative in the Western Hemisphere and positive in the Eastern Hemisphere!
+* **Matrix**: A two-dimensional homogeneous data object (that is an atomic vector under-the-hood).
+* **Memory (RAM)**: A temporary storage location for instructions (functions) and data.
+* **Multipoint**: A geometry that contains one or more points within a single geometry object.
+* **Metadata**: Descriptive information that provides crucial summary details about a data object. For geospatial data, this should always include the coordinate reference system!
+* **Mutating join**: Use matching keys to add columns to a target table from a source table.
+* **Mutation**: The process of adding columns to a data frame and/or modifying existing columns (or adding/modifying list items to/in a list).
+* **Name**: A reference that R uses to call data from your computer’s memory  (also called "assignment").
+* **Negated selection**: The use of the negative symbol (`-`) or, more recently, the *not* operator (`!`) to select all columns *except* the supplied column or columns.
+* **Observation**: A row within a data frame.
+* **Order**: The position of values (or child objects) within a data object.
+* **Origin** (of a raster): The X and Y location of the lower left-hand corner.
+* **Package environment**: A collection of variable names associated with objects in a package.
+* **Parent**: An object or environment that contains references to other objects.
+* **Point** (shapefiles): A zero-dimensional geometry containing a single point.
+* **Polygon** (shapefiles): Two-dimensional geometry containing a sequence of vertices (points) forming a closed ring of straight lines.
+* **Prefix function**: A function in which the name of the function precedes the target of the evaluation.
+* **Primary key**: A variable in a data frame that is used to identify unique records.
+* **Prime meridian**: The location of 0 degrees longitude.
+* **Primitive function**: A function written in C code and made available to use through the base R package.
+* **Project**: A collection of files that is referenced by a `.RProj` file.
+* **Projected Coordinate Reference System**: A coordinate reference system where the data are transformed to a projection and the locations are expressed in linear units relative to some origin point (typically in meters).
+* **Projection** (GIS): A model used to transform data and the coordinate system on a flat surface.
+* **Raster**: A continuous surface of pixels (i.e., raster cells) arranged in a grid.
+* **RDS file**: A storage format for data sets that are written in, and written for, program R.
+* **Recursive object**: Objects that are made up of references to other objects (e.g., a list).
+* **Relative file path**: The path to a file on your hard drive relative to the current working directory.
+* **Resolution**: The distance covered by each map pixel of a raster (can be expressed in one or two dimensions).
+* **Scales**: Maps from data to aesthetic space.
+* **Session**: The time spent and operations conducted since opening R.
+* **Shapefile**: A spatial object comprised of points or vertices, typically mapped to the surface of the earth via a coordinate reference system.
+* **Simple features object (sf)**: A data frame that contains the geometry, attributes, and coordinate reference system (CRS) information.
+* **Simple Features Geometry (sfg)**: The geometry of an individual simple feature.
+* **Simple Features Geometry List Column Object (sfc)**:  A list column with the geometry of all simple features in a dataset. 
+* **Source table**: In a join, this is the table that is referenced by the target table (in a mutating join, the source table provides the new variables for the target table) -- this is typically the table with the primary key.
+* **Structure**: The dimensionality and homogeneity of a data object (may also be used to describe the class of objects).
+* **Subset** (verb): The process of reducing the number of items in a list (including columns in a data frame!), rows in a data frame, or values in an atomic vector.
+* **Summarize**:  The process of calculating a summary statistic, or multiple summary statistics of a data frame and returning the resultant data as a tibble data frame. 
+* **Superseded** (function): A function for which a new function or argument has been added to a package (these functions should typically be avoided).
+* **Tab**: Each pane has a tab on the top of it. For example, I will often refer to the Environment or History tabs of the workspace pane.
+* **Target table**: In a join, the target table is the table that you wish to join data to (usually the table with the foreign key).
+* **Theme**: Styling of non-data elements in a plot.
+* **Tibble**: A type of data frame with great benefits!
+* **Tidy data** (noun): A data format developed by Hadley Wickham (based on Codd's rules) in which every row represents an observation, every column represents a variable, and every level of observation represents a table.
+* **Type**: How an object is stored in your computer.
+* **Universal Transverse Mercator (UTM)**: A common class of projected coordinate reference systems used primarily for relative small areas (e.g., for a given city).
+* **Variable**: A column in a data frame.
+* **Version history**: Changes to a package since its inception.
+* **Vertex (plural: vertices)**: A point where two or more lines (also called edges) meet.
+
+:::
+
+<button class="accordion">Functions used through the end of this module (I am a button ... click me!)</button>
+::: panel
+**Important!** Primitive functions as well as functions in the *base* and *utils* packages, are loaded by default when you start an R session. Functions in *tibble* and *tidyverse* are loaded with `library(tidyverse)`. Although the *magrittr* package is not a part of the core tidyverse, the `%>%` function is imported by the *dplyr* (core tidyverse) library.
+
+::: function_table
+
+```{r, message = FALSE, echo = FALSE}
+render_function_table("functions_through_module_4.csv", .align = c("c", "c", "l", "l"))
+```
+
+:::
+
+:::
+
+### **Required readings:**
+
+Wickham & Grolemund:
+
+-   [21: Iteration](https://r4ds.had.co.nz/iteration.html){target="_blank"}
+
+Lovelace:
+
+-   [9-9.4: Making maps with R](https://geocompr.robinlovelace.net/adv-map.html#adv-map){target="_blank"}
+
+### **Cheatsheets**:
+
+-   [purrr](https://github.com/rstudio/cheatsheets/blob/main/purrr.pdf){target="_blank"}
+-   [tmap](http://riatelab.github.io/cartography/vignettes/cheatsheet/cartography_cheatsheet.pdf){target="_blank"}
+-   [Spatial manipulation with sf](https://github.com/rstudio/cheatsheets/blob/main/sf.pdf){target="_blank"}
+

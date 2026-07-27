@@ -1,0 +1,21 @@
+Package,Function,Definition
+.Primitive,(...),Operator that evaluates the function name on the left-hand-side (LHS) of the opening parentheses using the arguments enclosed by the parentheses
+.Primitive,<-,Infix operator that assigns an object on the right-hand-side (RHS) to a name on the left-hand-side (LHS) -- this should be used for global assignments!
+.Primitive,=,Infix operator that assigns an object on the right-hand-side (RHS) to a name on the left-hand-side (LHS) -- this should not be used for global assignments!
+.Primitive,:,Infix operator that generates a regular sequence of adjacent values
+.Primitive,$,Infix operator that extracts the values associated with a name (RHS) from a recursive object (LHS)
+.Primitive,!,Prefix logical operator (not)
+.Primitive,-,Infix arithmetic operator (subtract) or prefix negative symbol operator
+.Primitive,*,Infix arithmetic operator (multiply)
+.Primitive,/,Infix arithmetic operator (divide)
+base,library,Attach the package environment for a given package to the current R session
+base,nrow,"Return the number of rows (i.e., observations) in a data frame as a one-value integer vector"
+base,table,Count the number of unique observations in an atomic vector
+dplyr,mutate,Add or modify a column in a data frame
+dplyr,na_if,Convert a value in a vector to NA
+dplyr,row_number,Generate a sequence of integer values from 1 to the number of rows in a data frame
+dplyr,select,Subset columns in a data frame by name (without quotes!)
+dplyr,transmute,Mutate a data frame while subsetting the columns to those specified in the function
+magrittr,%>%,The pipe operator passes the output of the LHS argument to the function on the right
+readr,read_rds,Read an RDS file into R
+tidyr,replace_na,Replace an NA value in a vector with a different value

@@ -1,0 +1,1659 @@
+---
+title: "5.1 Advanced sf"
+format:
+  html:
+    embed-resouces: true
+    self-contained: true
+    standalone: true
+    toc: true
+    toc-location: left
+    number-sections: false
+    search: true
+    include-in-header: ../../src/includes/header_includes.html
+    include-after-body: ../../src/includes/accordion_script.html
+    theme: 
+      - cosmo
+      - ../../src/css/custom_style.scss
+editor: source
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r, include = FALSE}
+source("../../src/r/course_functions.R")
+```
+![](../../src/images/hex_complex.png){.intro_image}
+
+In this written tutorial and *optional* video lesson (runtime: 39:30), you will learn how to:
+
+* Test for and repair invalid polygons
+* Unionize (i.e., unite) polygons
+* Create spatial buffers
+* Calculate summary variables, including:
+    * The area of a polygon
+    * The distance between features or objects
+    * The centroid of a polygon or set of points
+* Determine which spatial join is appropriate for a given use case (and a few new joins along the way!)
+
+*Note: The video is not great and frankly a bit confusing, so I made it optional!*
+
+## Data for this lesson
+
+Please click on the buttons below to explore the metadata for this lesson!
+
+<button class="accordion">Metadata for this lesson</button>
+
+::: panel
+
+In this lesson, we will explore the following files:
+
+**[census]{.mono} ([.dbf]{.mono}, [.prj]{.mono}, [.shp]{.mono}, [.shx]{.mono})**: A polygon shapefile of US Census tracts in the District of Columbia, Maryland, and Virginia. The data are in an unprojected coordinate system (datum = NAD83) with the EPSG code 4269 The data include (but are not limited to!) the following fields:
+
+* [GEOID]{.mono}, character: The **primary key** key for each census tract.
+* [STATEFP]{.mono}, character: A **foreign key** to the US state in the [states]{.mono} data.
+* [ALAND]{.mono}, numeric: The area covered by land in each census tract, in square meters.
+* [AWATER]{.mono}, numeric: The area covered by water in each census tract, in square meters.
+* [income]{.mono}, numeric: The median income of each census tract.
+* [population]{.mono}, numeric: The total population of each census tract.
+
+**[counties.geojson]{.mono}** and **[counties_low_res.geojson]{.mono}**: A polygon shapefile of all counties in the United States obtained from US Census data using the *tigris* package. The data are in a projected Coordinate Reference System with the datum NAD83 and EPSG code 5070. Fields include (but are not limited to):
+
+* [statefp]{.mono}, character: A **foreign key** to each US state in the [states]{.mono} data.
+* [countyfp]{.mono}, character: An ID assigned to a given county in a given state.
+* [geoid]{.mono}, character: The **primary key** key for each county (*Note: These values are a concatenation of [STATEFP]{.mono} and [COUNTYFP]{.mono}*).
+* [name]{.mono}, character: The name of each county.
+* [stusps]{.mono}, character: The two-letter postal code of the state each county is within.
+* [state_name]{.mono}, character: The name of the state each county is within.
+* [aland]{.mono}, numeric: The area covered by land in each census tract, in square meters.
+* [awater]{.mono}, numeric: The area covered by water in each census tract, in square meters.
+
+**[dc_census.geojson]{.mono}**: A polygon shapefile of census tracts in the District of Columbia. The data are in a projected coordinate system (datum = WGS84, projection is UTM, Zone 18N) with the EPSG code 32618. The data include the following fields:
+
+* [GEOID]{.mono}, character: The **primary key** key for each census tract.
+* [STATEFP]{.mono}, character: A **foreign key** to the US state in the [states]{.mono} data.
+* [ALAND]{.mono}, numeric: The area covered by land in each census tract, in square meters.
+* [AWATER]{.mono}, numeric: The area covered by water in each census tract, in square meters.
+* [INCOME]{.mono}, numeric: The median income of each census tract.
+* [POPULATION]{.mono}, numeric: The total population of each census tract.
+
+**[observatory_nets.geojson]{.mono}**: A point shapefile of mist net locations at our banding station at the Bird Observatory, an exhibit, research, and outreach center that is run by Tara and I (and the location of our office for Friday Q & A sessions!). The location data were collected with a handheld GPS unit set to the unprojected CRS EPSG 4326. The data include the following fields:
+
+* [net_id]{.mono}, character: The name assigned to each net location, which acts as a **primary key**.
+* [region]{.mono}, character: The banding region where each `net_id` is located.
+* [net_config]{.mono}, numeric: The number of nets associated with a given `net_id`.
+* [net_length_m]{.mono}, numeric: The total length of nets at a given net location, in meters.
+
+**[rock_creek_park.geojson]{.mono}**: This is a multipolygon shapefile (EPSG 32618; UTM Zone 18N) that represent Washington DC's Rock Creek Park, a National Park that bisects the city.  The data were obtained from [https://opendata.dc.gov/](https://opendata.dc.gov/){target="_blank"}. We do not use any of the fields from this file, but feel free to explore them!
+
+**[sick_birds.geojson]{.mono}**: This is a point shapefile that represents sick birds that were brought to City Wildlife, a wildlife rehabilitation center in the District of Columbia, in the spring of 2021. These data were obtained directly from City Wildlife staff. Location information for birds brought into the center were obtained by Brian through geocoding addresses via the Google Maps API with the R package *ggmap*. The CRS for these data is EPSG 4326.
+
+* [patient_id]{.mono}, character: The **primary key** for each patient, assigned to bird upon intake.
+* [admission_date]{.mono}, date: The date that a bird was brought to City Wildlife.
+* [common_name]{.mono}, character: The common name for the species of bird. 
+* [age]{.mono}, character: The age of a given bird. 
+* [attitude]{.mono}, character: Behavioral observations of a given bird upon intake
+
+**[states]{.mono} ([.dbf]{.mono}, [.prj]{.mono}, [.shp]{.mono}, [.shx]{.mono})**: A polygon shapefile of US states (not including Hawaii). The data are in an unprojected Coordinate Reference System with the datum NAD83 and EPSG code 4269. The data include the following fields:
+
+* [GEOID]{.mono}, character: The **primary key** key for each state.
+* [NAME]{.mono}, character: The name of each state.
+* [REGION]{.mono}, character: The region of the United States where each state is located.
+* [AREA]{.mono}, numeric: The total area of each state, in square kilometers.
+* [ttl__10]{.mono}, numeric: The total population of each state in 2010.
+* [ttl__15]{.mono}, numeric: The total population of each state in 2015.
+
+**[Waterbodies_2019.geojson]{.mono}** This is a polygon shapefile (EPSG 4326) that represents surface water in Washington DC.  The data were obtained from [https://opendata.dc.gov/](https://opendata.dc.gov/){target="_blank"}. We do not use any of the fields from this file, but feel free to explore them!
+
+:::
+
+
+## Setup
+
+1. Open R Studio and a new script file. Remember that it is best practice to start with a clean R Studio session!
+
+2. Add a new code section and call it "setup"
+
+3. After a space between your section break, include and run the following:
+
+:::{style="margin-left: 40px"}
+```{r results = 'hide', message = FALSE, warning = FALSE}
+# Attach the libraries for this session:
+
+library(sf)
+library(tmap)
+library(tidyverse)
+```
+:::
+
+4. Set the tmap mode ggplot theme for all plots in this lesson:
+
+:::{style="margin-left: 40px"}
+```{r}
+# Set the tmap_mode for our entire session:
+
+tmap_mode("view")
+
+# Set the ggplot theme for this session:
+
+theme_set(
+  theme_void()
+)
+```
+:::
+
+5. Now we will read in a number of shapefiles:
+
+* Clean the names of the objects.
+* Transform the coordinate reference system (CRS) to EPSG 5070 (projected, Conus Albers).
+* Assign the names `states`, `counties`, `dc_census`, `census`, `birds`, `observatory_nets`, and `water` to the list.
+* Assign each list item name to the global environment.
+
+:::{style="margin-left: 40px"}
+```{r}
+# Define a vector of file paths to read in:
+
+file.path(
+  "data/raw/shapefiles",
+  c(
+    "states.shp", 
+    "counties.geojson",
+    "dc_census.geojson",
+    "census.shp",
+    "sick_birds.geojson",
+    "observatory_nets.geojson",
+    "Waterbodies_2019.geojson"
+  )
+) %>% 
+  
+  # Read and pre-process files:
+  
+  map(
+    ~ st_read(.x, quiet = TRUE) %>% 
+      set_names(
+        names(.) %>% 
+          tolower()
+      ) %>% 
+      st_transform(crs = 5070)
+  ) %>% 
+  
+  # Assign names to each list item:
+  
+  set_names(
+    "states",
+    "counties",
+    "dc_census",
+    "census",
+    "birds",
+    "observatory_nets",
+    "water"
+  ) %>% 
+  list2env(.GlobalEnv)
+```
+:::
+
+## Valid and invalid polygons
+
+On occasion, polygon shapefiles contain invalid geometries. That occasion is, unfortunately, pretty frequent so we need to know how to deal with it. An invalid geometry represents a problem with the nodes (i.e., vertices or points) or the edges that connect the nodes. For example, polygons must have three or more points. Processing polygon data can remove nodes and end up creating polygons that only have two points.
+
+Trying to plot data in *tmap* is a sure-fire way to test if you have invalid polygons. For example, let's try to plot `water` with *tmap*:
+
+```{r, error = TRUE}
+tm_shape(water) +
+  tm_polygons(fill = "blue")
+```
+
+We got an error message with the above! We are told that we can fix this with `tmap_options(check.and.fix = TRUE)` ... but we should not do that! Instead, it is best to repair the file before sending it to *tmap*.
+
+Luckily, fixing invalid polygons is pretty easy. We can see which polygons are invalid with the logical *sf* function `st_is_valid`. We can use this function with `filter()` to subset the data to where the polygons are valid ...
+
+```{r}
+water %>% 
+  filter(
+    st_is_valid(.)
+  )
+```
+
+... or use negated selection to subset the data to where the polygons are not valid:
+
+```{r}
+water %>% 
+  filter(
+    !st_is_valid(.)
+  )
+```
+
+Subsetting our data to only invalid polygons, we can add the function again, with the additional argument `reason = TRUE` to explore why the polygon is invalid:
+
+```{r}
+water %>% 
+  filter(
+    !st_is_valid(.)
+  ) %>% 
+  st_is_valid(reason = TRUE)
+```
+
+The above is telling us that one of our edges is intersected with itself.
+
+Luckily, fixing invalid polygons is a breeze (if our data are projected)! We simply use the function `st_make_valid`:
+
+```{r}
+st_make_valid(water) %>% 
+  tm_shape() +
+  tm_polygons(fill = "blue")
+```
+
+## Spatial aggregation
+
+Sometimes our polygons, multipolygons, and points contain more features than are needed. To address this, we use a process called **spatial aggregation** which is a process that combines features. 
+
+### Aggregating polygons 
+
+In polygons, aggregation can also be called **dissolving** because the boundaries between features are removed. The `sf` package uses the function `st_union()` to dissolve boundaries.
+
+Let's dissolve the boundaries between multipolygons in `states` and globally assign the shapefile with the name `conterminous_us` (**conterminous** shapes share boundaries):
+
+```{r}
+conterminous_us <-
+  states %>% 
+  st_union(is_coverage = TRUE)
+```
+
+*Note: The argument `is_coverage = TRUE` uses an optimized algorithm when dissolving boundaries between non-overlapping polygons.*
+
+... and plot the output:
+
+```{r}
+conterminous_us %>% 
+  ggplot() +
+  geom_sf(fill = "#BFDFBF")
+```
+
+To dissolve the boundaries between groups of polygons in a shapefile, we can use dplyr's `summarize()` function. To do so, we:
+
+* Group the data by the feature that we want to define each polygon;
+* Combine the geometries with `st_union()`
+* Assign the new geometries to the shapefile with the name `geometry`
+
+```{r, error = TRUE}
+states_dmv <-
+  
+  # Subset counties to our states of interest:
+  
+  counties %>% 
+  filter(
+    state_name %in%
+      c("District of Columbia",
+        "Maryland",
+        "Virginia")
+  ) %>% 
+  
+  # Aggregate the counties geometry for each state:
+  
+  summarize(
+    geometry = 
+      st_union(geometry),
+    .by = state_name
+  )
+```
+
+*Note: The reason why we do not typically summarize shapefiles, is that this will also attempt to summarize the geometry, which is a slow and memory-intensive process. In this case, however, our goal is to summarize the shapefile by its geometry!*
+
+Let's have a look:
+
+```{r}
+states_dmv %>% 
+  ggplot() +
+  geom_sf(fill = "#BFDFBF")
+```
+
+The above used the `counties` layer to create a shapefile with three states. Of course, we could have just subset `states` ...
+
+```{r}
+# Subset states:
+
+states %>% 
+  filter(
+    name %in%
+      c("District of Columbia",
+        "Maryland",
+        "Virginia")
+  ) %>% 
+  
+  # Plot the data:
+  
+  ggplot() + 
+  geom_sf(fill = "#BFDFBF")
+```
+
+... but notice in the two plots above that the version created with `counties` has a much higher resolution than the version created with `states`. This can make spatial aggregation a super useful tool!
+
+### Aggregating points
+
+We can also use this aggregation to combine point features. Let's look at our shapefile `observatory_nets`, which represents the locations where Tara and I mist net birds outside of our office at the Bird Observatory:
+
+```{r}
+observatory_nets
+```
+
+We can see that this is a points shapefile where each feature is a point and there are a total of seven features.
+
+Let's see what happens when we aggregate the geometry:
+
+```{r}
+observatory_nets %>% 
+  st_union()
+```
+
+There is now a single feature in the file, but that feature has been cast to a multipoint object (i.e., a feature with multiple points).
+
+Like with polygon shapefiles, we can also aggregate points by a grouping variable. For example, each mist net is assigned to a region. We can aggregate points to mist netting regions with the following:
+
+```{r}
+observatory_nets %>% 
+  summarize(
+    geometry = 
+      st_union(geometry),
+    .by = region
+  )
+```
+
+Let's have a look. Run the below and turn the layers on and off to see the results:
+
+```{r}
+tm_basemap(
+  c(
+    "Esri.WorldImagery",
+    "Esri.WorldTopoMap"
+  )
+) +
+  
+  # Point features prior to aggregation:
+  
+  observatory_nets %>% 
+  tm_shape() +
+  tm_dots(
+    group = "Single features",
+    fill = "region",
+    fill.scale =
+      tm_scale_categorical(values = c("lightblue", "orange")),
+    size = 0.15
+  ) +
+  
+  # Aggregated point features:
+  
+  observatory_nets %>% 
+  summarize(
+    geometry = 
+      st_union(geometry),
+    .by = region
+  ) %>% 
+  tm_shape() +
+  tm_dots(
+    group = "Features aggregated by region",
+    fill = "region",
+    fill.scale =
+      tm_scale_categorical(values = c("lightblue", "orange")),
+    size = 0.15
+  )
+```
+
+You should notice in the above that nothings seems to have changed regarding how these data are plotted. As such, can this be useful? Yes! You will soon find out why ...
+
+## Geometric operations
+
+In this section I will cover the geometric calculations that I most frequently use with shapefiles. These include calculating:
+
+* The location of the center of a polygon or set of points
+* The distance between shapefiles or features
+* The area of a polygon
+
+### Centroid
+
+The **centroid** of a shapefile describes the spatial location, or locations, of the geographic centers of features within a shapefile. We can use the function `st_centroid` to calculate this location.
+
+When applied to a polygon shapefile with multiple features, `st_centroid()` returns the centroid of each feature. The code below, for example, returns the centroid of each state within `states_dmv`:
+
+```{r}
+# Add the states_dmv background layer:
+
+states_dmv %>% 
+  ggplot() +
+  geom_sf() +
+  
+  # Plot the centroid of each shape:
+  
+  geom_sf(
+    data = 
+      states_dmv %>% 
+      st_centroid()
+  )
+```
+
+Because `st_centroid()` calculates the centroid of each feature, the results of `st_centroid()` for points are less-than-interesting ...
+
+```{r}
+tm_basemap(
+  c(
+    "Esri.WorldImagery",
+    "Esri.WorldTopoMap"
+  )
+) +
+  
+  # Point features:
+  
+  observatory_nets %>% 
+  tm_shape() +
+  tm_dots(
+    group = "Single features",
+    fill = "region",
+    fill.scale =
+      tm_scale_categorical(values = c("lightblue", "orange")),
+    size = 0.15
+  ) +
+  
+  # Centroid of point features:
+  
+  observatory_nets %>% 
+  st_centroid() %>% 
+  tm_shape() +
+  tm_dots(
+    group = "Centroids",
+    fill = "region",
+    fill.scale =
+      tm_scale_categorical(values = c("lightblue", "orange")),
+    size = 0.15
+  )
+```
+
+Recall, however, that if we aggregate features with `st_union()`, we collapse point features into multipoint features:
+
+```{r}
+observatory_nets %>% 
+ st_union()
+```
+
+If we aggregate all of our points, we can calculate the centroid of all points within a shapefile:
+
+```{r}
+tm_basemap(
+  c(
+    "Esri.WorldImagery",
+    "Esri.WorldTopoMap"
+  )
+) +
+  
+  # Point features:
+  
+  observatory_nets %>% 
+  tm_shape() +
+  tm_dots(
+    group = "Single features",
+    fill = "region",
+    fill.scale =
+      tm_scale_categorical(values = c("lightblue", "orange")),
+    size = 0.15
+  ) +
+  
+  # Centroids of regions:
+  
+  observatory_nets %>% 
+  st_union() %>% 
+  st_centroid() %>% 
+  tm_shape() +
+  tm_dots(
+    group = "Region centroids",
+    fill = "red",
+    size = 0.15
+  )
+```
+
+Likewise, if we aggregate points by banding region, we can calculate the centroid of each banding region:
+
+```{r}
+tm_basemap(
+  c(
+    "Esri.WorldImagery",
+    "Esri.WorldTopoMap"
+  )
+) +
+  
+  # Point features:
+  
+  observatory_nets %>% 
+  tm_shape() +
+  tm_dots(
+    group = "Single features",
+    fill = "region",
+    fill.scale =
+      tm_scale_categorical(values = c("lightblue", "orange")),
+    size = 0.15) +
+  
+  # Centroids of regions:
+  
+  observatory_nets %>% 
+  summarize(
+    geometry = 
+      st_union(geometry),
+    .by = region
+  ) %>% 
+  st_centroid() %>% 
+  tm_shape() +
+  tm_dots(
+    group = "Region centroids",
+    fill = "red",
+    size = 0.15)
+```
+
+We will use these two points in the future, so let's assign them to names:
+
+```{r}
+# Centroid of Bird Observatory nets:
+
+observatory_centroid <-
+  observatory_nets %>% 
+  st_union() %>% 
+  st_centroid()
+
+# Centroid of Bird Observatory netting regions:
+
+observatory_regions_centroids <-
+  observatory_nets %>% 
+  summarize(
+    geometry = 
+      st_union(geometry),
+    .by = region
+  ) %>% 
+  st_centroid()
+```
+
+### Distance
+
+We can calculate the distance between shapefiles, or features within shapefiles, using the function `st_distance`. For example, we can calculate the distance between the Lincoln Memorial (lon =  -77.05016 and lat = 38.88942) and the center of our mist netting area (`observatory_centroid`):
+
+```{r}
+# Generate a point for the Lincoln Memorial:
+
+st_point(
+  c(-77.05016, 38.88942)
+) %>% 
+  st_sfc(crs = 4326) %>% 
+  
+  # Transform to the same CRS as `observatory_centroid`:
+  
+  st_transform(
+    crs = st_crs(observatory_centroid)
+  ) %>% 
+  
+  # Calculate the distance between the Lincoln Memorial and our banding area:
+  
+  st_distance(observatory_centroid)
+```
+
+The above calculated the distance, in meters, between the two points. Notice that the above produced a matrix with just one column and one row. It is pretty unparsimonious to store a single value within a two-dimensional object. We can instead return a vector by using the argument `by_element = TRUE` (the default is `FALSE`):
+
+```{r}
+# Generate a point for the Lincoln Memorial:
+
+st_point(
+  c(-77.05016, 38.88942)
+) %>% 
+  st_sfc(crs = 4326) %>% 
+  
+  # Transform to the same CRS as `observatory_centroid`:
+  
+  st_transform(
+    crs = st_crs(observatory_centroid)
+  ) %>% 
+  
+  # Calculate the distance between the Lincoln Memorial and our banding area:
+  
+  st_distance(
+    observatory_centroid,
+    by_element = TRUE
+  )
+```
+
+Notice that our numerical distance is followed by the units of distance (`[m]`). This output is what is known as a units-class object. We can verify this with `class()`:
+
+```{r}
+# Generate a point for the Lincoln Memorial:
+
+st_point(
+  c(-77.05016, 38.88942)
+) %>% 
+  st_sfc(crs = 4326) %>% 
+  
+  # Transform to the same CRS as `observatory_centroid`:
+  
+  st_transform(
+    crs = st_crs(observatory_centroid)
+  ) %>% 
+  
+  # Calculate the distance between the Lincoln Memorial and our banding area:
+  
+  st_distance(
+    observatory_centroid,
+    by_element = TRUE
+  ) %>% 
+  class()
+```
+
+This is actually a pretty handy class of object, because we can easily convert between units using `units::set_units()` (Note: We downloaded the *units* package with *tmap*). For example, let's convert our results from meters to kilometers:
+
+```{r}
+# Generate a point for the Lincoln Memorial:
+
+st_point(
+  c(-77.05016, 38.88942)
+) %>% 
+  st_sfc(crs = 4326) %>% 
+  
+  # Transform to the same CRS as `observatory_centroid`:
+  
+  st_transform(
+    crs = st_crs(observatory_centroid)
+  ) %>% 
+  
+  # Calculate the distance between the Lincoln Memorial and our banding area:
+  
+  st_distance(
+    observatory_centroid,
+    by_element = TRUE
+  ) %>% 
+  
+  # Convert to km:
+  
+  units::set_units("km")
+```
+
+I typically like to change the resultant object to numeric at the end of the process. We can do so with `units::drop_units()`:
+
+```{r}
+# Generate a point for the Lincoln Memorial:
+
+st_point(
+  c(-77.05016, 38.88942)
+) %>% 
+  st_sfc(crs = 4326) %>% 
+  
+  # Transform to the same CRS as `observatory_centroid`:
+  
+  st_transform(
+    crs = st_crs(observatory_centroid)
+  ) %>% 
+  
+  # Calculate the distance between the Lincoln Memorial and our banding area:
+  
+  st_distance(
+    observatory_centroid,
+    by_element = TRUE
+  ) %>% 
+  
+  # Convert to km:
+  
+  units::set_units("km") %>% 
+  units::drop_units()
+```
+
+... but, when converting vectors to numeric, I typically prefer `as.numeric()`:
+
+```{r}
+# Generate a point for the Lincoln Memorial:
+
+st_point(
+  c(-77.05016, 38.88942)
+) %>% 
+  st_sfc(crs = 4326) %>% 
+  
+  # Transform to the same CRS as `observatory_centroid`:
+  
+  st_transform(
+    crs = st_crs(observatory_centroid)
+  ) %>% 
+  
+  # Calculate the distance between the Lincoln Memorial and our banding area:
+  
+  st_distance(
+    observatory_centroid,
+    by_element = TRUE
+  ) %>% 
+  
+  # Convert to km:
+  
+  units::set_units("km") %>% 
+  as.numeric()
+```
+
+Just as we can measure the distance between shapefiles, we can measure the distance between a shapefile and objects within another. For example, we can measure the distance between `observatory_centroid` and each of the nets with st_distance() if we set `by_element ...` to `FALSE`:
+
+```{r}
+observatory_nets %>% 
+  
+  # Calculate the distance from each net to `observatory_centroid`:
+
+  st_distance(
+    observatory_centroid,
+    by_element = FALSE
+  )
+```
+
+As a technical description of the above, we calculated all pairwise distances by the features in `observatory_nets` and the features in `observatory_centroid`. This was achieved via the argument `by_element = FALSE`. Notice that we get an error if we set `by_element = TRUE`.
+
+```{r, error = TRUE}
+observatory_nets %>% 
+  
+  # Calculate the distance from each net to `observatory_centroid`:
+
+  st_distance(
+    observatory_centroid,
+    by_element = TRUE
+  )
+```
+
+The error occurs because each shapefile must have the same number of features when calculating distance `by_element`.
+
+A challenge to using `by_element = FALSE` is that the object returned is a matrix. If we pipe the matrix object into `as.numeric()`, however, we can convert the output to a numeric vector:
+
+```{r}
+observatory_nets %>% 
+  
+  # Calculate the distance from each net to `observatory_centroid`:
+
+  st_distance(
+    observatory_centroid,
+    by_element = FALSE
+  ) %>% 
+  as.numeric()
+```
+
+The above can give us the power to add a field (i.e., column) that describes the distance from each net and `observatory_centroid`:
+
+```{r}
+observatory_nets %>% 
+    mutate(
+    dist_to_center_m =
+      
+      # Calculate the distance from each net to `observatory_centroid`:
+
+      st_distance(
+        .,
+        observatory_centroid,
+        by_element = FALSE
+      ) %>% 
+      as.numeric()
+  )
+```
+
+Notice the use of the placeholder, `.`, in the above. This allowed us to refer to the object (here `observatory_nets`) that was passed to `st_distance()`.
+
+A common task in spatial ecology is to calculate the pairwise distances between each feature in a shapefile. This is known as a **distance matrix**. To construct a distance matrix, we simply run `st_distance()` on a single shapefile using its default arguments:
+
+```{r}
+st_distance(observatory_nets)
+```
+
+We can use `units::drop_units()` to convert this from a units matrix to a numeric matrix:
+
+```{r}
+st_distance(observatory_nets) %>% 
+  units::drop_units()
+```
+
+As a final application of distances, it is important to recognize that we can also use `st_distance()` to calculate the distances between polygon shapefiles. For example, let's calculate the distance between each state in the United States and the state of Viriginia:
+
+```{r}
+states %>% 
+  
+  # Subset to the field `name` to make it easier to interpret the output:
+  
+  select(name) %>% 
+  mutate(
+    virginia_distance_km = 
+      
+      # Calculate the distance between each state and Virginia:
+      
+      st_distance(
+        .,
+        filter(., name == "Virginia"),
+        by_element = FALSE
+      ) %>% 
+      
+      # Convert to kilometers:
+      
+      units::set_units("km") %>% 
+      as.numeric()
+  )
+```
+
+In the above, I used the placeholder, `.`, twice to insert `states` into the function.
+
+Let's arrange the output from nearest to furthest states:
+
+```{r}
+states %>% 
+  
+  # Subset to the field `name` to make it easier to interpret the output:
+  
+  select(name) %>% 
+  mutate(
+    virginia_distance_km = 
+      
+      # Calculate the distance between each state and Virginia:
+      
+      st_distance(
+        .,
+        filter(., name == "Virginia"),
+        by_element = FALSE
+      ) %>% 
+      
+      # Convert to kilometers:
+      
+      units::set_units("km") %>% 
+      as.numeric()
+  ) %>% 
+  
+  # Sort from near to far:
+  
+  arrange(virginia_distance_km)
+```
+
+Notice in the above that there are seven states with a distance of `0` from Virginia. That is because the polygons share a boundary. This illustrates that, when using `st_distance()` with polygon shapefiles, we are calculating the distance between the nearest vertices in each feature. Because adjacent polygons share vertices (optimally), the distance between those features will be zero.
+
+### Area
+
+We are commonly asked to calculate the area of a shapefile. For example, perhaps we want to generate a map of the population densities by census tracts in the District of Columbia:
+
+```{r, include = FALSE}
+dc_census %>% 
+  
+  # Calculate population density, per square km:
+  
+  mutate(
+    area = st_area(.) %>% 
+      units::set_units("km^2"),
+    population_density = population / area) %>% 
+  
+  # Add as a layer on the map:
+  
+  tm_shape() +
+  tm_polygons(
+    fill = "population_density",
+    fill.scale =
+      tm_scale(
+        values = "brewer.or_rd",
+        style = "quantile"
+      ),
+    fill.legend =
+      tm_legend(title = "Population density (per square km)")
+  )
+```
+
+To reconstruct this, we can start by calculating the area of each census tract with `st_area()` and adding these data as a new field with `mutate()`:
+
+```{r}
+dc_census %>% 
+  
+  # Subset to geoid and population (for illustration purposes):
+  
+  select(geoid, population) %>% 
+  mutate(
+    
+    # Calculate the area of each feature:
+
+    area = st_area(.)
+  )
+```
+
+Like `st_distance()`, the output is a "units" object. Here, the units are in square meters. We can convert this to square kilometers with `units::set_units()`:
+
+```{r}
+dc_census %>% 
+  
+  # Subset to geoid and population (for illustration purposes):
+  
+  select(geoid, population) %>% 
+  mutate(
+    area = 
+      
+      # Calculate the area of each feature:
+
+      st_area(.) %>% 
+      
+      # Convert to square kilometers:
+      
+      units::set_units("km^2")
+  )
+```
+
+We can then calculate the population density of each census tract by dividing the population by the area:
+
+```{r}
+dc_census %>% 
+  
+  # Subset to geoid and population (for illustration purposes):
+  
+  select(geoid, population) %>% 
+  mutate(
+    area = 
+      
+      # Calculate the area of each feature:
+
+      st_area(.) %>% 
+      
+      # Convert to square kilometers:
+      
+      units::set_units("km^2"),
+    
+    # Calculate population density per square kilometer:
+    
+    population_density = population / area
+  )
+```
+
+Let's use the above to recreate our map:
+
+```{r}
+dc_census %>% 
+  
+  # Subset to geoid and population (for illustration purposes):
+  
+  select(geoid, population) %>% 
+  mutate(
+    area = 
+      
+      # Calculate the area of each feature:
+
+      st_area(.) %>% 
+      
+      # Convert to square kilometers:
+      
+      units::set_units("km^2"),
+    
+    # Calculate population density per square kilometer:
+    
+    population_density = population / area
+  ) %>% 
+  
+  # Plot the data:
+  
+  tm_shape() +
+  tm_polygons(
+    fill = "population_density",
+    fill.scale =
+      tm_scale(
+        values = "brewer.or_rd",
+        style = "quantile"
+      ),
+    fill.legend =
+      tm_legend(title = "Population density (per square km)")
+  )
+```
+
+*Note: If you are unsatisfied with the legend title ("Population density (per km^2^)" would be a better title), see [this link](https://r.geocompx.org/adv-map#legends){target="_blank"}.*
+
+### The area of points?
+
+If we want to calculate the area taken up by a set of points, we need to calculate the **minimum convex polygon** -- the smallest polygon that contains all point features in a shapefile and does not have any angle greater than 180$^\circ$.. This is often applied in spatial ecology as a quick-and-dirty method to calculate an individual's home range (though there are much better ways).
+
+To generate a minimum convex polygon, we first aggregate points with `st_union()` and then generate our polygon with `st_convex_hull()`. For example, we can convert the Bird Observatory mist netting area to a polygon with:
+
+```{r}
+observatory_nets %>% 
+  
+  # Aggregate points:
+  
+  st_union() %>% 
+  
+  # Cast to a minimum convex polygon:
+  
+  st_convex_hull()
+```
+
+We can then use `st_area()` to calculate the size of our mist netting area:
+
+```{r}
+observatory_nets %>% 
+  
+  # Aggregate points:
+  
+  st_union() %>% 
+  
+  # Cast to a minimum convex polygon:
+  
+  st_convex_hull() %>% 
+  
+  # Calculate area:
+  
+  st_area()
+```
+
+## Spatial buffers
+
+In spatial ecology (and lots of other fields), it is often necessary to evaluate the environment around a feature. One method for doing so is creating a **spatial buffer**, which describes an area within a specified distance from a feature (i.e., points, lines, or polygons).
+
+We can create a spatial buffer polygon with the function `st_buffer()`. We simply supply the shapefile that we would like to buffer and the numeric distance from the feature. For example, let's create a circular buffer that describes the area within a 2 km radius of the Bird Observatory banding station with:
+
+```{r}
+observatory_centroid %>% 
+  st_buffer(2000) %>% 
+  tm_shape() +
+  tm_borders(lwd = 1.5)
+```
+
+*Note: In the above, I use `tm_borders()`, which is similar to `tm_polygons()` but only the boundary of the polygon(s) is drawn on the map.*
+
+We are going to use this object again, so let's globally assign our circular buffer to the name `observatory_centroid_buffer` and convert it to an sf object:
+
+```{r}
+observatory_centroid_buffer <-
+  observatory_centroid %>% 
+  st_buffer(dist = 2000) %>% 
+  
+  # Convert to an sf object:
+  
+  st_sf()
+```
+
+
+If we have multiple features, a buffer is drawn around each feature. For example, to characterize the bird community in each mist netting region, Tara will guide our team to conduct fixed radius point counts (i.e., count all birds within a given radius) at the center of each region. We will use 50 m as our radius and can help our team visualize the boundaries of that radius by generating the following map:
+
+```{r}
+# Add a basemap layer:
+
+tm_basemap(
+  c(
+    "Esri.WorldImagery",
+    "Esri.WorldTopoMap"
+  )
+) +
+  
+  # Add dots representing the centroids of each banding region:
+  
+  observatory_regions_centroids %>% 
+  tm_shape() +
+  tm_dots(
+    fill = "white",
+    size = 0.15
+  ) +
+  
+  # Add a buffer around the points:
+  
+  observatory_regions_centroids %>% 
+  st_buffer(50) %>% 
+  tm_shape() +
+  tm_borders(
+    col = "white",
+    lwd = 1.5,
+    col_alpha = 0.8
+  ) +
+  
+  # Define the zoom level of the original map:
+  
+  tm_view(set.view = 18)
+```
+
+Sometimes a single ring is not enough! During point counts, our field teams often bin their observations within distance classes. To help our crew, I develop maps with rings representing 10, 20, 30, 40, and 50 meters from the banding centroid. We start by creating a vector of values using Base R's `seq()`. We provide:
+
+* The starting value in the set with `from = ...`
+* The last value in the set with `to = ...`
+* The increments between values in the set with `by - ...`
+
+```{r}
+# Generate a series of distance values:
+
+seq(
+  from = 10,
+  to = 50,
+  by = 10
+)
+```
+
+Next, we will map across those values. The variable here will be the distance value:
+
+```{r}
+# Generate a series of distance values:
+
+seq(
+  from = 10,
+  to = 50,
+  by = 10
+) %>% 
+  
+  # Create a buffer for each distance value:
+  
+  map(
+    \(x){
+      observatory_regions_centroids %>% 
+        st_buffer(x) %>%
+        mutate(
+          buffer_distance = x
+        )
+    }
+  ) %>% 
+  
+  # Combine the list items, by row,  into a single data frame: 
+  
+  bind_rows()
+```
+
+Let's use the above to create an interactive map: 
+
+```{r}
+tm_basemap(
+  c(
+    "Esri.WorldImagery",
+    "Esri.WorldTopoMap"
+  )
+) +
+  
+  # Add dots representing the centroids of each banding region:
+  
+  observatory_regions_centroids %>% 
+  tm_shape() +
+  tm_dots(
+    fill = "white",
+    size = 0.15
+  ) +
+  
+  # Generate a series of distance values:
+  
+  seq(
+    from = 10,
+    to = 50,
+    by = 10
+  ) %>% 
+  
+  # Create a buffer for each distance value:
+  
+  map(
+    \(x){
+      observatory_regions_centroids %>% 
+        st_buffer(x) %>%
+        mutate(
+          buffer_distance = x
+        )
+    }
+  ) %>% 
+  
+  # Combine the list items, by row,  into a single data frame: 
+  
+  bind_rows() %>% 
+
+  # Add to map:
+  
+  tm_shape() +
+  tm_borders(
+    col = "white",
+    lwd = 1.5,
+    col_alpha = 0.8
+  ) +
+  tm_view(set.view = 18)
+```
+
+## Spatial joins: A grimoire
+
+A join is necessary whenever an operation requires information across more than one table or spatial object. If your data can be joined via **primary** and **foreign keys** it is always preferable to choose a non-spatial join (e.g., `left_join()`). If your data are spatial, and cannot be joined by common key values, a **spatial join** is your best hope!
+
+All joins, whether spatial or non-spatial, come in two flavors -- mutating or filtering joins:
+
+A **mutating join** describes any join in which a variable from the source table is added to the set of variables in the target table. Mutating tabular joins with `dplyr` include `left_join()`, `inner_join()`, and `full_join()`. For spatial joins, this is the realm of `st_join()` and `st_intersection()`.
+
+A **filtering join** describes any join in which data in the target table are subset to matching records in the source table *without* adding any new columns. Tabular filtering joins with `dplyr` include `semi_join()` and `anti_join()`. In `sf`, filtering joins include `st_filter()`, `st_difference()` and `st_crop()`.
+
+Two simple rules should guide your choice of joins:
+
+* Use a **mutating join** when adding a variable from your **source** object to your **target** object is a desired outcome. 
+* Use a **filtering join** when subsetting your **source** object by some condition of your **target** object.
+
+### st_join
+
+The function `st_join` is the primary mutating spatial join that is used.
+
+#### Join polygons to points 
+
+For joining data from polygons to spatial points, the function `st_join` is fairly straightforward. As long as the target point and the source polygon *share the same CRS*, you can usually join data safely. For example, let's join `states` to our `observatory_centroid` point:
+
+```{r}
+observatory_centroid %>% 
+  
+  # Convert to an sf object:
+  
+  st_sf() %>% 
+  
+  # Join to states:
+  
+  st_join(states)
+```
+
+*Note: `observatory_centroid` is an sfc object. In order to complete the join, we have to convert the sfc object (simple features column) to an sf object.
+
+:::{class="mysecret"}
+<i class="fa fa-user-secret" aria-hidden="true" style = "font-size: 150%; padding-right: 5px;"></i>
+Points near the boundaries of polygons may be assigned to the wrong shape! If this is the case, you may need to consider using a polygon shapefile that has a higher resolution.
+:::
+
+#### Join polygons to polygons
+
+Mutating spatial joins between two polygon shapefiles should be done *carefully*. To illustrate this, let's join `states`, subset to the field `name`, to the `counties` file. We will change the name of the `name` field within `states` to avoid duplicate field names (`counties` also has a `name` field, but there it describes county names). 
+
+```{r, warning = FALSE}
+counties %>% 
+  st_join(
+    states %>% 
+      select(state = name)
+  )
+```
+
+It should be immediately apparent that the some of the names in the `state_name` field (from `counties`) do not match those in the `name` field (from `states`). We can test this using `filter()`:
+
+```{r, warning = FALSE, error = TRUE}
+counties %>% 
+  st_join(
+    states %>% 
+      select(state = name)
+  ) %>% 
+  filter(state_name != state)
+```
+
+Why did this occur? Let's dig into the number of rows in the original `counties` file and those associated with the joined data:
+
+```{r, warning = FALSE, error = TRUE}
+nrow(counties)
+
+counties %>% 
+  st_join(
+    states %>% 
+      select(state = name)
+  ) %>% 
+  nrow()
+```
+
+The join added 1,265 features to the shapefile! This occurred because 1) `counties` and `states` do not share the same resolution -- thus some nodes may have been misplaced; 2) By default, all features that intersect one another are maintained.
+
+We can avoid this behavior by specifying the argument `largest = TRUE` within `st_join()` (see `?st_join`). Using this argument, if a feature in the target shapefile spans multiple features in the source shapefile, only the feature with the greatest area of overlap is maintained.
+
+```{r, warning = FALSE, error = TRUE}
+counties %>% 
+  st_join(
+    states %>% 
+      select(state = name),
+    largest = TRUE
+  )
+```
+
+We can verify if this worked by again testing for features where the `state_name` does not equal `name`:
+
+```{r, warning = FALSE, error = TRUE}
+counties %>% 
+  st_join(
+    states %>% 
+      select(state = name),
+    largest = TRUE
+  ) %>% 
+  filter(state_name != state) %>% 
+  nrow()
+```
+
+By default, `st_join()` is a left join -- all features of the target object are maintained but only information from matching features of the source object are included. Notice that there is an `NA` for each value where there was no matching feature in the source shapefile. As a consequence, the geometries of the target shapefile are not altered when using `st_join()` with its default arguments.
+
+The argument that defines this behavior is `left = TRUE` (the default). If you would like to include *only* matching features (an inner join), set `left = FALSE`:
+
+```{r}
+census %>% 
+  st_join(
+    states_dmv %>% 
+      select(state = state_name) %>% 
+      filter(state == "Maryland"),
+    left = FALSE
+  )
+```
+
+Because of this behavior, when used with `left = TRUE`, `st_join()` can add fields to *and* subset the features of the target shapefile.
+
+```{r}
+census %>% 
+  st_join(
+    states_dmv %>% 
+      select(state = state_name) %>% 
+      filter(state == "Maryland"),
+    left = FALSE
+  ) %>% 
+  ggplot() +
+  geom_sf(
+    aes(fill = population),
+    color = NA)
+```
+
+### st_filter
+
+The `st_filter` function is a true filtering join in that no columns are added from the source shapefile to the target shapefile.
+
+#### Filter points by polygons
+
+`st_filter()` works remarkably well when subsetting point data to those that are within polygon shapefiles. For example, the point shapefile `birds` contains the locations where sick birds were recovered across the District of Columbia:
+
+```{r, error = TRUE}
+# Plot locations of sick birds:
+
+tm_shape(birds) +
+  tm_dots() +
+  
+  # Add a circular buffer:
+  
+  tm_shape(observatory_centroid_buffer) + 
+  tm_borders(
+    col = "red",
+    lwd = 2
+  )
+```
+
+In the code below, I use `st_filter()` to subset `birds` to those that are within the `observatory_centroid_buffer` that we generated before:
+
+```{r, error = TRUE}
+# Plot locations of sick birds:
+
+birds %>% 
+  st_filter(observatory_centroid_buffer) %>% 
+  tm_shape() +
+  tm_dots() +
+  
+  # Add a circular buffer:
+
+  tm_shape(observatory_centroid_buffer) + 
+  tm_borders(
+    col = "red",
+    lwd = 2
+  )
+```
+
+#### Filter polygons by polygons
+
+The results are not so straightforward when attempting to subset polygons to those that are inside of another polygon shapefile:
+
+```{r}
+# Plot census tracts, with a spatial filtering join:
+
+census %>% 
+  st_filter(
+    states_dmv %>% 
+      filter(state_name == "District of Columbia")
+  ) %>% 
+  tm_shape() +
+  tm_polygons(
+    fill = "population",
+    fill.scale =
+      tm_scale(values = "viridis.viridis"),
+    fill_alpha = 0.4
+  ) +
+  
+  # Plot census tracts, with the DC border:
+  
+  states_dmv %>% 
+  filter(state_name == "District of Columbia") %>% 
+  tm_shape() + 
+  tm_borders(
+    col = "red",
+    lwd = 2
+  )
+```
+
+So what happened here? Recall that polygons are sets of nodes connected by edges. The `st_filter()` function is operating on the nodes -- any polygon in the target shapefile that shares nodes with the source shapefile are maintained by default.
+
+::: mysecret
+
+{{< fa user-secret size=2x >}} [*So many* spatial joins and so little time!]{style="font-size: 1.25em; padding-left: 0.5em;"}
+
+There are *ton* of different choices for how two geometries are related when conducting `st_join()` and `st_filter()`. For example, you can choose to join objects that are within a given distance threshold (`st_is_within_distance`) or join the nearest feature from a source frame.
+
+See Details in `?st_join`.
+At the heart of these options are a **predicate** function. A predicate is a logical test (i.e., it will return a Boolean TRUE or FALSE). 
+
+:::
+
+### Additional spatial joins
+
+#### st_intersection
+
+Another mutating join option that will subset features is `st_intersection()`. In terms of spatial subsetting, this function acts like a cookie-cutter -- all nodes outside of the source polygon are removed. To see how this works, let's take another look at `observatory_centroid_buffer`:
+
+```{r}
+tm_shape(observatory_centroid_buffer) + 
+  tm_borders(
+    col = "red",
+    lwd = 2
+  )
+```
+
+Let's see what happens when we use `st_join()` with `left = FALSE` to join the `observatory_centroid_buffer` data to `census`:
+
+```{r}
+census %>% 
+  st_join(
+    observatory_centroid_buffer, 
+    left = FALSE
+  ) %>% 
+  
+  # Add census layer to map:
+  
+  tm_shape() + 
+  tm_polygons(
+    fill = "population",
+    fill.scale =
+      tm_scale(values = "viridis.viridis"),
+    fill_alpha = 0.4
+  ) +
+  
+  # Add buffer layer as an overlay:
+  
+  tm_shape(observatory_centroid_buffer) + 
+  tm_borders(
+    col = "red",
+    lwd = 2
+  )
+```
+
+In the above, any feature in `census` that overlapped with the `observatory_centroid_buffer` was maintained.
+
+If we use `st_intersection()`, the `census` features will be clipped to the shape of `observatory_centroid_buffer`:
+
+```{r, warning = FALSE}
+census %>% 
+  st_intersection(observatory_centroid_buffer) %>% 
+  
+  # Add census layer to map:
+  
+  tm_shape() + 
+  tm_polygons(
+    fill = "population",
+    fill.scale =
+      tm_scale(values = "viridis.viridis"),
+    fill_alpha = 0.4
+  ) +
+  
+  # Add buffer layer as an overlay:
+  
+  tm_shape(observatory_centroid_buffer) + 
+  tm_borders(
+    col = "red",
+    lwd = 2
+  )
+```
+
+There are a few ways around this, but my preferred method (because I believe in using as *few functions as possible*) is just to use `st_intersection()` for this task:
+
+```{r, warning = FALSE}
+# Plot census tracts, with st_intersection:
+
+census %>% 
+  st_intersection(
+    states_dmv %>% 
+      filter(state_name == "District of Columbia")
+  ) %>% 
+  tm_shape() +
+  tm_polygons(
+    fill = "population",
+    fill.scale =
+      tm_scale(values = "viridis.viridis"),
+    fill_alpha = 0.4
+  ) +
+  
+  # Plot census tracts, with the DC border:
+  
+  states_dmv %>% 
+  filter(state_name == "District of Columbia") %>% 
+  tm_shape() + 
+  tm_borders(
+    col = "red",
+    lwd = 2
+  )
+```
+
+If you are a purist and want to turn this into a true filtering join (*hurray!*), you could always just remove all of the fields from the source shapefile:
+
+```{r, warning = FALSE}
+# Plot census tracts, with st_intersection:
+
+census %>% 
+  st_intersection(
+    states_dmv %>% 
+      filter(state_name == "District of Columbia") %>% 
+      select(
+        !everything()
+      )
+  ) %>% 
+  tm_shape() +
+  tm_polygons(
+    fill = "population",
+    fill.scale =
+      tm_scale(values = "viridis.viridis"),
+    fill_alpha = 0.4
+  ) +
+  
+  # Plot census tracts, with the DC border:
+  
+  states_dmv %>% 
+  filter(state_name == "District of Columbia") %>% 
+  tm_shape() + 
+  tm_borders(
+    col = "red",
+    lwd = 2
+  )
+```
+
+#### st_crop
+
+The function `st_crop` is used to subset an object to the bounding box of a shape. This differs from `st_intersection()` because any overlapping regions were removed -- in other words the nodes of `census` were removed if they were outside of the nodes for  `observatory_centroid_buffer`. With `st_crop()`, only the **spatial extent** of the source file is considered:
+
+```{r}
+dc_census %>% 
+  st_crop(observatory_centroid_buffer) %>% 
+  
+  # Add census layer to map:
+  
+  tm_shape() + 
+  tm_polygons(
+    fill = "population",
+    fill.scale =
+      tm_scale(values = "viridis.viridis"),
+    fill_alpha = 0.4
+  ) +
+  
+  # Add buffer layer as an overlay:
+  
+  tm_shape(observatory_centroid_buffer) + 
+  tm_borders(
+    col = "red",
+    lwd = 2
+  )
+```
+
+#### st_difference
+
+One filtering spatial join that is sometimes of great value is `st_difference()`. This allows us to remove overlapping portions features in a polygon. In this way, it's similar to `anti_join()` in tabular joins. Spatially, it is also the inverse of `st_intersection()`.
+
+For example, above we subset `census` to the census tracts within a 2 km radius spatial buffer of our banding station. Using the shapefile `dc_census` lets use `st_difference()` to return a shapefile with all census tracts *except* for those within 2 km of `observatory_centroid`.
+
+```{r}
+dc_census %>% 
+  st_difference(observatory_centroid_buffer) %>% 
+  
+  # Add census layer to map:
+  
+  tm_shape() + 
+  tm_polygons(
+    fill = "population",
+    fill.scale =
+      tm_scale(values = "viridis.viridis"),
+    fill_alpha = 0.4
+  ) +
+  
+  # Add buffer layer as an overlay:
+  
+  tm_shape(observatory_centroid_buffer) + 
+  tm_borders(
+    col = "red",
+    lwd = 2
+  )
+```
+
+I recognize that the example above is pretty silly, but if you are *brave* enough to watch the *optional* video below, you can see an example where `st_difference()` really is useful!
+
+## (Optional) Video tutorial
+
+The video below has some issues, but completing the "Now you!" challenges makes this video worth watching. A couple of things to note prior to watching the video:
+
+* I jump around the code a good bit -- my intention was to show you how a real code might look (i.e., placing elements of code where they would typically be in a script). In retrospect, this was just bad teaching for someone just learning the functions!
+* My indentation is off at several places and my video code is *very 2022*. As such, I have modified the code-along R script ([advanced_sf.R]{.mono}) and it will look a bit different than the version in the video. 
+* I have also provided a written key to the video content ([advanced_sf.R]{.mono}) with modern code styling. Please review this after you have watched the video!
+* At about 37:00, I use `by_element = TRUE`. This worked at the time that I created the video. It no longer works because `by_element = TRUE` throws an error if the number of features compared are not equal. See "Distance" above for how to fix this.
+
+{{< video https://www.youtube.com/embed/uvZAtLYjbH0 >}}
+
+## Reference
+
+<button class="accordion">Glossary</button>
+::: panel
+
+-   **Centroid**: The geographic center of a shapefile.
+-   **Conterminous**: Shapes (e.g., states in the United States or adjacent polygons) that share a boundary.
+-   **Dissolve** (shapefiles): Remove boundaries between features.
+-   **Distance matrix**: For shapefiles, this represents the pairwise distances between each feature.
+-   **Filtering join**: Subset a target table to only rows in which key values match (or are absent from) the keys within a source table.
+-   **Foreign key**: A variable in a data frame that refers to the primary key of another data frame.
+-   **Memory (RAM)**: A temporary storage location for instructions (functions) and data.
+-   **Minimum convex polygon**: The smallest polygon that contains all point features in a shapefile and does not have any angle is greater than 180$^\circ$.
+-   **Mutating join**: Use matching keys to add columns to a target table from a source table.
+-   **Predicate** (function): A logical test (i.e., it will return a Boolean TRUE or FALSE).
+-   **Primary key**: A variable in a data frame that is used to identify unique records.
+-   **Resolution** (shapefiles): The smallest distance between adjacent nodes.
+-   **Spatial aggregation**: Combine features in a shapefile.
+-   **Spatial buffer**: An area within a specified distance from a feature (i.e., points, lines, or polygons).
+-   **Spatial join**: A join conducted between two shapefile objects based on overlapping or non-overlapping geometries.
+:::
+
+<button class="accordion">Functions</button>
+::: panel
+**Important!** Primitive functions as well as functions in the *base* and *utils* packages, are loaded by default when you start an R session. Functions in *dplyr*, *readr*, *tibble*, *tidyr*, and *tidyverse* are loaded with `library(tidyverse)`.
+
+::: function_table
+
+```{r, message = FALSE, echo = FALSE}
+render_function_table("functions_5.1_advanced_sf.csv")
+```
+
+:::
+
+:::
+
+
+<button class="accordion">Keyboard shortcuts</button>
+::: panel
+
+{{< include ../../src/includes/keyboard_shortcuts.qmd >}}
+:::
+
+<button class="accordion">R Studio panes</button>
+::: panel
+{{< include ../../src/includes/rstudio_panes.qmd >}}
+:::
+

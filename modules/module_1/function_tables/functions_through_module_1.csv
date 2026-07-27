@@ -1,0 +1,87 @@
+Package,Function,First lesson used,Definition
+.Primitive,(...),0.1-intro_to_r_and_rstudio,Operator that evaluates the function name on the left-hand-side (LHS) of the opening parentheses using the arguments enclosed by the parentheses
+.Primitive,<-,0.1-intro_to_r_and_rstudio,Infix operator that assigns an object on the right-hand-side (RHS) to a name on the left-hand-side (LHS) -- this should be used for global assignments!
+.Primitive,=,0.1-intro_to_r_and_rstudio,Infix operator that assigns an object on the right-hand-side (RHS) to a name on the left-hand-side (LHS) -- this should not be used for global assignments!
+.Primitive,~,1.3_objects,The formula operator separates the left- and right-hand sides (LHS and RHS) in a formula.
+.Primitive,:,0.2-values,Infix operator that generates a regular sequence of adjacent values
+.Primitive,::,1.3_objects,Infix operator that can be used to access a package environment without attaching the whole package environment to your current session
+.Primitive,[…],0.4-indexing,Extraction operator used to index multiple values from a data object (LHS) based on the position or values specified inside the brackets
+.Primitive,[[…]],0.4-indexing,Extraction operator used to index a single value from a data object (LHS) based on the position or values specified inside the brackets
+.Primitive,$,0.4-indexing,Infix operator that extracts the values associated with a name (RHS) from a recursive object (LHS)
+.Primitive,==,0.2-values,Infix relational operator (is equal to)
+.Primitive,!=,0.2-values,Infix relational operator (is not equal to)
+.Primitive,!,1.3_objects,Prefix logical operator (not)
+.Primitive,&,0.2-values,Prefix logical operator (and)
+.Primitive,|,0.2-values,Prefix logical operator (or)
+.Primitive,>,0.2-values,Infix relational operator (greater than)
+.Primitive,<,0.2-values,Infix relational operator (less than)
+.Primitive,<=,0.2-values,Infix relational operator (less than or equal to)
+.Primitive,+,0.1-intro_to_r_and_rstudio,Infix arithmetic operator (addition)
+.Primitive,-,0.2-values,Infix arithmetic operator (subtract) or prefix negative symbol operator
+.Primitive,/,0.3-objects,Infix arithmetic operator (divide)
+.Primitive,as.character,0.2-values,Transform an atomic vector to a character vector
+.Primitive,as.integer,0.2-values,Transform an atomic vector to an integer vector
+.Primitive,as.numeric,0.2-values,"Transform an atomic vector to an double numeric vector (i.e., decimal numbers)"
+.Primitive,attributes,0.3-objects,Generate and print a list that represents the attributes of a data object
+.Primitive,c,0.1-intro_to_r_and_rstudio,Combine values to form an atomic vector
+.Primitive,class,0.2-values,Print the class of an object as a one-value character vector
+.Primitive,dim,0.3-objects,Return the number of dimensions of an object as an integer vector
+.Primitive,length,0.3-objects,Return the number of values in an atomic vector or the number of list items in a list (or data frame!) as a one-value integer vector
+.Primitive,list,0.3-objects,"Combine multiple objects of any type into a single, recursive, data object"
+.Primitive,max,1.4_importing_exploring_exporting,Return the highest value in a numeric vector (integer or double) as a one-value numeric or integer vector (depending on input)
+.Primitive,min,1.4_importing_exploring_exporting,Return the lowest value in a numeric vector (integer or double) as a one-value numeric or integer vector (depending on input)
+.Primitive,names,0.3-objects,Retrieve the names (or names attribute) assigned to an R object (generates a character vector)
+.Primitive,sum,0.2-values,Calculate the sum of the values in a vector
+base,%in%,0.2-values,Infix relational operator that tests whether the vector on the left-hand-side (LHS) is within the vector on the right
+base,data.frame,0.3-objects,Create a data frame
+base,environment,1.3_objects,Print the environment of a given function
+base,factor,0.2-values,Convert a character vector to a factor
+base,file.remove,1.4_importing_exploring_exporting,Delete a file from your hard drive
+base,levels,1.4_importing_exploring_exporting,Generate a character vector of factor levels in a factor variable
+base,library,0.1-intro_to_r_and_rstudio,Attach the package environment for a given package to the current R session
+base,list.files,1.4_importing_exploring_exporting,List files in a specified folder on your computer's hard drive
+base,ls,0.1-intro_to_r_and_rstudio,Generate a character vector of names in a specified environment (default is the global environment)
+base,matrix,0.3-objects,Generate a matrix object by adding dimensional attributes to an atomic vector
+base,mean,0.1-intro_to_r_and_rstudio,Generate a one-value double numeric vector that describes the mean of a vector
+base,ncol,0.3-objects,"Return the number of columns (i.e., variables or list items) in a data frame as a one-value integer vector"
+base,nrow,0.3-objects,"Return the number of rows (i.e., observations) in a data frame as a one-value integer vector"
+base,rm,0.1-intro_to_r_and_rstudio,Remove a name from a specified environment (default is the global environment)
+base,search,1.3_objects,Print a character vector of attached objects associated with your current R session
+base,summary,1.4_importing_exploring_exporting,Print summary stats for a data object
+base,tolower,1.5_assignments,Convert a character vector to lowercase
+base,table,1.4_importing_exploring_exporting,Count the number of unique observations in an atomic vector
+base,typeof,0.2-values,Print a one-value character vector that represents how a data object is stored on our computer
+base,unique,1.4_importing_exploring_exporting,Subset an atomic vector to the unique values in the set
+dplyr,arrange,1.4_importing_exploring_exporting,Sort the rows of a data frame by the values in a variable or variables
+dplyr,bind_cols,1.3_objects,Combine two variables or columns of two tibbles to create a new tibble
+dplyr,desc,1.4_importing_exploring_exporting,"When used with `arrange()`, this sorts the rows of a data frame by the values of a variable in descending order"
+dplyr,n,1.6_course_style_guide_part_1,Calculate the number of observations (rows)
+dplyr,rename,1.5_assignments,Change the name assigned to a column in a data frame
+dplyr,select,1.6_course_style_guide_part_1,Subset columns in a data frame by name (without quotes!)
+dplyr,slice_head,1.4_importing_exploring_exporting,Subset a data frame to the first row (default) or rows
+dplyr,slice_tail,1.4_importing_exploring_exporting,Subset a data frame to the last row (default) or rows
+dplyr,summarize,1.6_course_style_guide_part_1,Calculate one or more summary statistics on a variable or variables in a data frame (often used in conjunction with `group_by()` but may also be used with `.by = ...`)
+lobstr,ref,1.5_assignments,View the structure of an object in your computer's memory
+magrittr,%>%,1.5_assignments,The pipe operator passes the output of the LHS argument to the function on the right
+readr,read_csv,0.3-objects,Read a tabular csv file into R as a tibble data frame
+readr,read_lines,0.3-objects,Read an atomic vector into R
+readr,read_rds,0.3-objects,Read an RDS file into R
+readr,write_csv,0.3-objects,Write a data frame to your hard drive as a csv file
+readr,write_lines,0.3-objects,Write an atomic vector to your hard drive as a txt file
+readr,write_rds,0.3-objects,Write a data object to your hard drive as an RDS file
+readxl,excel_sheets,1.4_importing_exploring_exporting,Return the names of worksheets in an Excel file
+readxl,read_excel,1.4_importing_exploring_exporting,Read an Excel worksheet into R
+rlang,set_names,1.5_assignments,Assign names to values in a vector or items in a list
+stats,median,1.4_importing_exploring_exporting,Calculate the median value of a numeric vector and return as a one-value double numeric or integer vector
+stats,sd,1.4_importing_exploring_exporting,Calculate the standard deviation of a numeric vector and return as a one-value double numeric vector
+stats,var,1.4_importing_exploring_exporting,Calculate the variance of a numeric vector and return as a one-value double numeric vector
+stringr,str_c,0.1-intro_to_r_and_rstudio,"Concatenate strings, with or without (default) a separator"
+terra,plot,0.2-values,Apply a base R-style plot to a terra raster object
+tibble,tibble,0.3-objects,Column-wise creation of a tibble data frame
+tibble,tribble,1.3_objects,Row-wise creation of a tibble data frame
+tidyverse,tidyverse_packages,1.3_objects,Generate a character vector of package names in the tidyverse metapackage
+tidyverse,tidyverse_update,1.2_getting_started,Update packages in the tidyverse metapackage
+utils,?,0.1-intro_to_r_and_rstudio,Prefix operator to retrieve the help file for a function
+utils,install.packages,0.1-intro_to_r_and_rstudio,Download and install one or more packages onto your computer
+utils,news,1.2_getting_started,View the version history of a package
+utils,str,0.4-indexing,View the structure of a data object

@@ -1,0 +1,1531 @@
+---
+title: "6.2 Factors are forcats"
+format:
+  html:
+    embed-resouces: true
+    self-contained: true
+    standalone: true
+    toc: true
+    toc-location: left
+    toc-depth: 4
+    number-sections: false
+    search: true
+    include-in-header: ../../src/includes/header_includes.html
+    include-after-body: ../../src/includes/accordion_script.html
+    theme: 
+      - cosmo
+      - ../../src/css/custom_style.scss
+editor: source
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r, include = FALSE}
+source("src/r/course_functions.R")
+```
+```{r setup, include=FALSE}
+library(tidyverse)
+
+knitr::opts_chunk$set(
+  echo = TRUE,
+  eval = TRUE,
+  error = TRUE)
+
+rm(has_annotations)
+```
+
+<hr>
+
+<div>
+![](../../src/images/hex_complex.png){.intro_image}
+
+I am going to admit that I spent years avoiding factors in my R coding. Working with factors can be a bear in base R because they are so restrictive, modifying factor variables in base R sometimes generates unexpected results, and their necessity is largely a myth (e.g., many functions that *require* them actually convert characters to factors on-the-fly). As such, unless a factor variable was absolutely necessary, I avoided working with them by converting them to character class objects (which I found more straightforward, due to regex). This all changed when the tidyverse released the *forcats* package in 2016. This is a *super* useful package that has taken the pain out of working with factors! In this video lesson (24:30) and compendium tutorial (reference only -- with the exception of ***Reclassifying factors with forcats, Re-level factors***), you will:
+
+* Develop a deeper understanding of the structure of factors;
+* Modify the levels and labels of factors;
+* Use factors in meaningful ways!
+
+*Note: If you are struggling to understand how to use `case_when()`, you may want to visit the compendium section **Reclassifying before `factor()`, Using dplyr: `case_when()`.***
+
+**Important!** Before starting this tutorial, be sure that you have completed all preliminary and previous lessons!
+
+</div>
+
+## Data for this lesson
+
+<button class="accordion">Please click this button to explore the metadata for this lesson!
+</button>
+::: panel
+In this lesson, we will explore the file [forcats_data.rds]{.mono}. The data are formatted as a list of the following tibble data frame and three character vectors:
+
+**[bird_measures]{.mono}**: A subset of records from the Smithsonian Migratory Bird Center's [Neighborhood Nestwatch](https://nationalzoo.si.edu/migratory-birds/neighborhood-nestwatch) (NN) program. The data are formatted as a tibble data frame object comprised of the following variables:
+
+* [visit_id]{.mono}, character: The primary key for a unique visit record.
+* [month]{.mono}, character: The month in which a visit occurred. 
+* [common_name]{.mono}, character: The common names for each species, as used in the United States.
+* [age]{.mono}, character: A code representing the age of a bird, where: "AHY" is an adult, "ASY" is an adult that is more than two years old, "HY" is a juvenile, "SY" is two years old, and "U" is unknown.
+* [sex]{.mono}, character: A code representing the sex of a bird, where: "F" is female, "M" is male, and "U" is unknown.
+* [wing]{.mono}, numeric: The length of a bird's wing (unflattened wing chord), in millimeters.
+* [mass]{.mono}, numeric: The weight of a bird, in grams.
+
+**[age]{.mono}**: A character vector of ages.
+
+**[bad_age]{.mono}**: A character vector of ages that contain varied values for the same age class.
+
+**[spring]{.mono}**: A character vector of spring months.
+:::
+
+## Set up your video session
+
+Please do the following to ensure that you are working in a clean session:
+
+1. In the *Environment* tab of your *workspace pane*, ensure that your *Global Environment* is empty. If it is not, click the *broom* to remove all objects. *Note: Conversely, you can remove all items with `rm(list = ls())`*.
+2. In the *History* tab of your *workspace pane*, ensure that your history is empty. If it is not, click the *broom* to remove your history.
+3. Open the script file [factors_are_forcats.R]{.mono} (Windows: [Ctrl + O]{.mono}; Mac: [Cmd + O]{.mono}).
+
+## Video content
+
+{{< video https://www.youtube.com/watch?v=8QaWgP3Zo8Q >}}
+
+## Compendium tutorial
+
+In this written portion of the tutorial, we will again attach the core packages in the tidyverse to our current session and read in and globally assign each of the list items in  [forcats_data.rds]{.mono}:
+
+```{r}
+# R script for the factors are forcats compendium
+
+# setup -------------------------------------------------------------------
+
+library(tidyverse)
+
+# Read in the data for this lesson and assign the name of each list item
+# to the global environment:
+
+read_rds("data/raw/forcats_data.rds") %>% 
+  list2env(.GlobalEnv)
+```
+
+### Review of factors
+
+In base R, we can convert a character vector to a factor vector using the function `factor`:
+
+```{r}
+c(
+  "small",
+  "medium",
+  "large"
+) %>% 
+  factor()
+```
+
+We can verify that we have generated a factor with `class()`:
+
+```{r}
+c(
+  "small",
+  "small",
+  "medium",
+  "large"
+) %>% 
+  factor() %>% 
+  class()
+```
+
+A factor is stored as an integer in your computer's memory. We can verify this with `typeof()`:
+
+```{r}
+c(
+  "small",
+  "small",
+  "medium",
+  "large"
+) %>% 
+  factor() %>% 
+  typeof()
+```
+
+We can explore the structure of a factor object with `str()`:
+
+```{r}
+c(
+  "small",
+  "small",
+  "medium",
+  "large"
+) %>% 
+  factor() %>% 
+  str()
+```
+
+The above shows us that each factor level is mapped to an integer value and the character values are converted to integers.
+
+Because the printed output of `str()` truncates the factor levels, it is often useful to explore a factor by using `levels()` to generate (and print) a character vector of factor levels:
+
+```{r}
+c(
+  "small",
+  "small",
+  "medium",
+  "large"
+) %>% 
+  factor() %>% 
+  levels()
+```
+
+We can see that, although the character vector that we converted to a factor starts with "small", the levels are arranged as "large", "medium", then "small". That is because levels are assigned alphabetically by default. That is most likely an issue with this factor, as it is clearly an **ordinal variable**, or a variable that is represented as categorical ordered levels. We can address this by specifying the order of the levels with the `levels = ...` argument of `factor()`:
+
+```{r}
+c(
+  "small",
+  "small",
+  "medium",
+  "large"
+) %>% 
+  factor(
+    levels = 
+      c(
+        "small",
+        "medium",
+        "large"
+      )
+  ) %>% 
+  levels()
+```
+
+A factor's levels are mapped to the values in the data. We can map labels to the levels using the `labels = ...` argument of `factor()`:
+
+```{r}
+c(
+  "small",
+  "small",
+  "medium",
+  "large"
+) %>% 
+  factor(
+    levels = 
+      c(
+        "small",
+        "medium",
+        "large"
+      ),
+    labels = 
+      c(
+        "Tiny",
+        "Middling",
+        "Huge"
+      )
+  ) %>% 
+  levels()
+```
+
+Let's look again at our factor itself:
+
+```{r}
+c(
+  "small",
+  "small",
+  "medium",
+  "large"
+) %>% 
+  factor(
+    levels = 
+      c(
+        "small",
+        "medium",
+        "large"
+      ),
+    labels = 
+      c(
+        "Tiny",
+        "Middling",
+        "Huge"
+      )
+  )
+```
+
+We need to take great care when assigning labels to levels -- ensure that the order of your labels matches your levels! For example, notice what happens if we *do not* match the levels and labels:
+
+```{r}
+c(
+  "small",
+  "small",
+  "medium",
+  "large"
+) %>% 
+  factor(
+    labels = 
+      c(
+        "Tiny",
+        "Middling",
+        "Huge"
+      )
+  )
+```
+
+It is pretty clear that the above does not match our intended outcome!
+
+### Reclassifying before `factor()`
+
+When creating a factor variable, we often need to repair misspellings or reclassify character values. We can do so before *or* during factor creation. For now, we will focus on conducting these operations prior to creating the factor.
+
+#### Using *stringr*
+
+Regex and *stringr* provide a convenient method for reclassifying before converting a character vector. Consider the character vector `age`, below:
+
+```{r}
+age
+```
+
+We might be able to see the potential values for `age` more easily by subsetting the data to a character vector of unique values:
+
+```{r}
+unique(age)
+```
+
+The `age` value "unk" was used as a shorthand for "unknown". We can modify this with `str_replace()`, but literal characters do not do the trick:
+
+```{r}
+unique(age) %>% 
+  str_replace("unk", "unknown")
+```
+
+By including the anchor metacharacter, `$`, to signify the end of a string, we are able to successfully replace the problem value:
+
+```{r}
+unique(age) %>% 
+  str_replace("unk$", "unknown")
+```
+
+... and, if we wish, to convert the data to a factor variable:
+
+```{r}
+age %>% 
+  str_replace("unk$", "unknown") %>% 
+  factor()
+```
+
+Let's apply this to a more complex case -- combining classes. Let's generate a unique vector of `age` values in the tibble `bird_measures`:
+
+```{r}
+bird_measures %>% 
+  pull(age) %>% 
+  unique()
+```
+
+In the above, `"AHY"` (After Hatch Year), `"SY"` (Second Year), and `"ASY` (After Second Year) are all adult birds, `"HY"` (Hatch Year) is a juvenile bird, and `"U"` is unknown. 
+
+We can use `str_replace()` and regex to replace `"AHY"`, `"SY"`, and `"ASY` with "adult":
+
+```{r}
+bird_measures %>% 
+  pull(age) %>% 
+  unique() %>% 
+  str_replace("AHY|A?SY", "adult")
+```
+
+... continue the chained analysis to replace `"HY"` with "juvenile":
+
+```{r}
+bird_measures %>% 
+  pull(age) %>% 
+  unique() %>% 
+  str_replace("AHY|A?SY", "adult") %>% 
+  str_replace("HY", "juvenile")
+```
+
+... and, if `"U"` represents missing data, use `na_if()` to convert those values to `NA`:
+
+```{r}
+bird_measures %>% 
+  pull(age) %>% 
+  unique() %>% 
+  str_replace("AHY|A?SY", "adult") %>% 
+  str_replace("HY", "juvenile") %>% 
+  na_if("U")
+```
+
+We can now convert these data to a factor variable:
+
+```{r}
+bird_measures %>% 
+  pull(age) %>% 
+  unique() %>% 
+  str_replace("AHY|A?SY", "adult") %>% 
+  str_replace("HY", "juvenile") %>% 
+  na_if("U") %>% 
+  factor()
+```
+
+... and apply this operation to an application that utilizes the full dataset:
+
+```{r}
+bird_measures %>% 
+  
+  # Reclassify age:
+  
+  mutate(
+    age =
+      age %>% 
+      str_replace("AHY|A?SY", "adult") %>% 
+      str_replace("HY", "juvenile") %>% 
+      na_if("U") %>% 
+      factor()
+  ) %>% 
+  
+  # Tabulate age values:
+  
+  count(age)
+```
+
+Since [NA]{.mono} values represent missing data, we *may* not want to include [NA]{.mono} in our counts. We can remove [NA]{.mono} `age` values from the data frame with `drop_na()`:
+
+```{r}
+bird_measures %>% 
+  
+  # Reclassify age:
+  
+  mutate(
+    age =
+      age %>% 
+      str_replace("AHY|A?SY", "adult") %>% 
+      str_replace("HY", "juvenile") %>% 
+      na_if("U") %>% 
+      factor()
+  ) %>% 
+  
+  # Remove NA and tabulate age values:
+  
+  drop_na(age) %>% 
+  count(age)
+```
+
+If we plot the resultant data, we might notice that the `age` variable, which should probably be an ordinal factor, is arranged alphabetically:
+
+```{r}
+bird_measures %>% 
+  
+  # Reclassify age:
+  
+  mutate(
+    age =
+      age %>% 
+      str_replace("AHY|A?SY", "adult") %>% 
+      str_replace("HY", "juvenile") %>% 
+      na_if("U") %>% 
+      factor()
+  ) %>% 
+  
+  # Remove NA and tabulate age values:
+  
+  drop_na(age) %>% 
+  count(age) %>% 
+  
+  # Plot the data:
+  
+  ggplot() +
+  aes(
+    x = age, 
+    y = n
+  ) +
+  geom_bar(stat = "identity") +
+  theme_bw()
+```
+
+We can rearrange these data by setting our factor levels:
+
+```{r}
+bird_measures %>% 
+  
+  # Reclassify age:
+  
+  mutate(
+    age =
+      age %>% 
+      str_replace("AHY|A?SY", "adult") %>% 
+      str_replace("HY", "juvenile") %>% 
+      na_if("U") %>% 
+      factor(
+        levels = c("juvenile", "adult")
+      )
+  ) %>% 
+  
+  # Remove NA and tabulate age values:
+  
+  drop_na(age) %>% 
+  count(age) %>% 
+  
+  # Plot the data:
+  
+  ggplot() +
+  aes(
+    x = age, 
+    y = n
+  ) +
+  geom_bar(stat = "identity") +
+  theme_bw()
+```
+
+Not crazy about the lowercase labels? We can add a `labels = ...` argument inside of `factor()` to change our x-axis labels and `labs(...)` to change the axis titles:
+
+```{r}
+bird_measures %>% 
+  
+  # Reclassify age:
+  
+  mutate(
+    age =
+      age %>% 
+      str_replace("AHY|A?SY", "adult") %>% 
+      str_replace("HY", "juvenile") %>% 
+      na_if("U") %>% 
+      factor(
+        levels = c("juvenile", "adult"),
+        labels = c("Juvenile", "Adult")
+      )
+  ) %>% 
+  
+  # Remove NA and tabulate age values:
+  
+  drop_na(age) %>% 
+  count(age) %>% 
+  
+  # Plot the data:
+  
+  ggplot() +
+  aes(
+    x = age, 
+    y = n
+  ) +
+  geom_bar(stat = "identity") +
+  labs(
+    x = "Age",
+    y = "Number of birds banded"
+  ) +
+  theme_bw()
+```
+
+#### Using *dplyr*: `if_else()`
+
+We can also tackle the challenges above using the *dplyr* tools `if_else()` and `case_when()`.
+
+Let's look again at our unique age vector:
+
+```{r}
+unique(age)
+```
+
+If we simply wish to change age from "unk" to "unknown", we can use `if_else()`.
+
+```{r}
+if_else(
+  age == "unk",
+  "unknown",
+  age
+)
+```
+
+... and then convert the resultant vector into a factor:
+
+```{r}
+if_else(
+  age == "unk",
+  "unknown",
+  age
+) %>% 
+  factor()
+```
+
+Again, to convert those "unknown" values to [NA]{.mono}, we can modify them with `na_if()` prior to converting the data to a factor:
+
+```{r}
+if_else(
+  age == "unk",
+  "unknown",
+  age
+) %>% 
+  na_if("unknown") %>% 
+  factor()
+```
+
+More parsimoniously, we can combine *stringr* (with regex) and our `if_else()` statement:
+
+```{r}
+if_else(
+  str_detect(age, "^unk"),
+  NA,
+  age
+) %>% 
+  factor()
+```
+
+Let's apply the above to provide a summary table of observations by `sex`:
+
+```{r}
+bird_measures %>% 
+  
+  # Reclassify age:
+  
+  mutate(
+    sex =
+      if_else(
+        sex == "U",
+        NA,
+        sex
+      ) %>% 
+      factor(
+        labels = c("Female", "Male")
+      )
+  ) %>% 
+  
+  # Remove NA and tabulate age values:
+  
+  drop_na(sex) %>% 
+  count(sex)
+```
+
+#### Using *dplyr*: `case_when()`
+
+When you need to manipulate more than one level, `case_when()` is the best choice. The primary arguments of `case_when()` are a series of logic tests and values to assign if the test evaluates to `TRUE`. For example, let's look at the distribution of values in `bad_age`:
+
+```{r}
+table(bad_age)
+```
+
+For this vector, we may want to maintain the values "juvenile", "adult", and "unknown", but modify "juv" and "unk". We can generate a test for each value:
+
+```{r}
+case_when(
+  bad_age == "adult" ~ "adult",
+  bad_age == "juvenile" ~ "juvenile",
+  bad_age == "juv" ~ "juvenile",
+  bad_age == "unknown" ~ "unknown",
+  bad_age == "unk" ~ "unknown"
+) %>% 
+  table()
+```
+
+... or use the logical test `%in%` to compare sets of values (for greater parsimony):
+
+```{r}
+case_when(
+  bad_age == "adult" ~ "adult",
+  bad_age %in% c("juv", "juvenile") ~ "juvenile",
+  bad_age %in% c("unk", "unknown") ~ "unknown"
+) %>% 
+  table()
+```
+
+... or (still more parsimonious) use `str_detect()` and regex to search for strings that start with "j" or "u":
+
+```{r}
+case_when(
+  bad_age == "adult" ~ "adult",
+  str_detect(bad_age, "^j") ~ "juvenile",
+  str_detect(bad_age, "^u") ~ "unknown"
+) %>% 
+  table()
+```
+
+We can, however, continue to simplify this. Because we have not modified the "adult" values, we can more simply supply the original vector for those values:
+
+```{r}
+case_when(
+  bad_age == "adult" ~ age,
+  str_detect(bad_age, "^j") ~ "juvenile",
+  str_detect(bad_age, "^u") ~ "unknown"
+) %>% 
+  table()
+```
+
+Likewise, the last test was not necessary because `case_when()` arguments are evaluated in order and *all* remaining values were assigned to "unknown". As such, this could be simplified as:
+
+```{r}
+case_when(
+  bad_age == "adult" ~ age,
+  str_detect(bad_age, "^j") ~ "juvenile",
+  TRUE ~ "unknown"
+) %>% 
+  table()
+```
+
+... or:
+
+```{r}
+case_when(
+  bad_age == "adult" ~ age,
+  str_detect(bad_age, "^j") ~ "juvenile",
+  .default = "unknown"
+) %>% 
+  table()
+```
+
+As such, another option would be to modify *only* the problem values:
+
+```{r}
+case_when(
+  bad_age == "juv" ~ "juvenile",
+  bad_age == "unk" ~ "unknown",
+  .default = age
+) %>% 
+  table()
+```
+
+That last example is, by far, my choice for modifying this problem. It is the most parsimonious of the methods that we used above and does a great job of communicating which values in the character vector are being modified.
+
+Let's convert the character vector to an ordinal factor and count the number of observations:
+
+```{r}
+case_when(
+  bad_age == "juv" ~ "juvenile",
+  bad_age == "unk" ~ "unknown",
+  .default = age
+) %>%
+  factor(
+    levels = 
+      c(
+        "juvenile",
+        "adult", 
+        "unknown"
+      ),
+    labels =
+      c(
+        "Juvenile",
+        "Adult", 
+        "Unknown"
+      )
+  ) %>% 
+  table()
+```
+
+What if, however, we wanted to convert "unknown" values to [NA]{.mono}? Let's go back to the distribution of unique values in our original vector:
+
+```{r}
+table(bad_age)
+```
+
+We *could* pass the results of `case_when()` to `na_if()`:
+
+```{r}
+case_when(
+  bad_age == "juv" ~ "juvenile",
+  bad_age == "unk" ~ "unknown",
+  .default = age
+) %>%
+  na_if("unknown") %>% 
+  table() 
+```
+
+... or explicitly define which values to transform to [NA]{.mono}: 
+
+```{r}
+case_when(
+  bad_age %in% c("adult", "juvenile") ~ age,
+  bad_age == "juv" ~ "juvenile",
+  .default = NA
+) %>% 
+  table()
+```
+
+However, any values without a match in our `case_when()` statement are assigned to the value [NULL]{.mono}. As such, this could be written more simply as:
+
+```{r}
+case_when(
+  bad_age %in% c("adult", "juvenile") ~ age,
+  bad_age == "juv" ~ "juvenile"
+) %>% 
+  table()
+```
+
+Let's apply this to an ordinal factor and count the number of observations:
+
+```{r}
+case_when(
+  bad_age %in% c("adult", "juvenile") ~ age,
+  bad_age == "juv" ~ "juvenile"
+) %>% 
+  factor(
+    levels = c("juvenile", "adult"),
+    labels = c("Juvenile", "Adult")
+  ) %>% 
+  table()
+```
+
+Let's now apply this to real data. We previously used *stringr* and regex to reclassify the age of birds in `bird_measures`, converted the character vector to an ordinal factor, and plotted the data.
+
+```{r}
+bird_measures %>% 
+  
+  # Reclassify age:
+  
+  mutate(
+    age =
+      age %>% 
+      str_replace("AHY|A?SY", "adult") %>% 
+      str_replace("HY", "juvenile") %>% 
+      na_if("U") %>% 
+      factor(
+        levels = c("juvenile", "adult"),
+        labels = c("Juvenile", "Adult")
+      )
+  ) %>% 
+  
+  # Remove NA and tabulate age values:
+  
+  drop_na(age) %>% 
+  count(age) %>% 
+  
+  # Plot the data:
+  
+  ggplot() +
+  aes(
+    x = age, 
+    y = n
+  ) +
+  geom_bar(stat = "identity") +
+  labs(
+    x = "Age",
+    y = "Number of birds banded"
+  ) +
+  theme_bw()
+```
+
+The above can more simply be completed with `case_when()`:
+
+```{r}
+bird_measures %>% 
+  
+  # Reclassify age:
+  
+  mutate(
+    age =
+      case_when(
+        str_detect(age, "AHY|A?SY") ~ "adult",
+        age == "HY" ~ "juvenile"
+      ) %>% 
+      factor(
+        levels = c("juvenile", "adult"),
+        labels = c("Juvenile", "Adult")
+      )
+  ) %>% 
+  
+  # Remove NA and tabulate age values:
+  
+  drop_na(age) %>% 
+  count(age) %>% 
+  
+  # Plot the data:
+  
+  ggplot() +
+  aes(
+    x = age, 
+    y = n
+  ) +
+  geom_bar(stat = "identity") +
+  labs(
+    x = "Age",
+    y = "Number of birds banded"
+  ) +
+  theme_bw()
+
+```
+
+### Reclassifying factors with *forcats*
+
+While I still often modify character vector values *before* converting the vector to a factor, the  *forcats* package has given us super powerful tools to do so *while* we create a factor (or on an existing factor).
+
+#### Recode factors by hand
+
+If there are not a lot of values in a variable, the *forcats* function `fct_recode()` provides you with the tools to create a factor.
+
+Let's look again at the distribution of values in `age`:
+
+```{r}
+table(age)
+```
+
+If we just want to change one of the unique values and generate a factor, we can do this in one step:
+
+```{r}
+age %>% 
+  fct_recode(unknown = "unk") %>% 
+  table()
+```
+
+If we wish to assign multiple unique character values to a single level, we add the additional value as a separate argument:
+
+```{r}
+age %>% 
+  fct_recode(
+    Juvenile = "juvenile",
+    Adult = "adult",
+    Unknown = "unk",
+    Unknown = "unknown"
+  ) %>% 
+  table()
+```
+
+Notice in the above that I assigned new factor labels *while* modifying the values and generating a factor (+1 for parsimony!).
+
+If we want to convert a value or values to [NA]{.mono}, we assign those values to `NULL`:
+
+```{r}
+age %>% 
+  fct_recode(
+    Juvenile = "juvenile",
+    Adult = "adult",
+    NULL = "unk",
+    NULL = "unknown"
+  ) %>% 
+  table()
+```
+
+The above is a great option if your resultant object has only a few factor levels *and* if the original data has only a few factor levels to convert:
+
+```{r}
+bird_measures %>% 
+  
+  # Reclassify sex:
+  
+  mutate(
+    sex = 
+      sex %>% 
+      fct_recode(
+        Female = "F",
+        Male = "M",
+        NULL = "U"
+      )
+  ) %>% 
+  
+  # Remove NA and tabulate sex values:
+  
+  drop_na(sex) %>% 
+  count(sex) %>% 
+  
+  # Plot the data:
+  
+  ggplot() +
+  aes(
+    x = sex, 
+    y = n
+  ) +
+  geom_bar(stat = "identity") +
+  labs(
+    x = "Sex",
+    y = "Number of birds banded"
+  ) +
+  theme_bw()
+```
+
+However, it is not the most parsimonious option when there are lots of factor levels in the resultant object or a lot of levels to convert:
+
+```{r}
+bird_measures %>% 
+  
+  # Reclassify age:
+  
+  mutate(
+    age = 
+      age %>% 
+      fct_recode(
+        Juvenile = "HY",
+        Adult = "AHY",
+        Adult = "ASY",
+        Adult = "SY",
+        NULL = "U"
+      )
+  ) %>% 
+  
+  # Remove NA and tabulate age values:
+  
+  drop_na(age) %>% 
+  count(age) %>% 
+  
+  # Plot the data:
+  
+  ggplot() +
+  aes(
+    x = age, 
+    y = n
+  ) +
+  geom_bar(stat = "identity") +
+  labs(
+    x = "Age",
+    y = "Number of birds banded"
+  ) +
+  theme_bw()
+```
+
+#### Collapse factor levels
+
+When there are multiple values to transform to factor levels, your best option is to use `fct_collapse()`.
+
+We will start by again looking at the distribution of `age` in `bird_measures`:
+
+```{r}
+bird_measures %>% 
+  count(age)
+```
+
+We can again collapse "AHY", "ASY", and "SY" into "Adult", specify "HY" as "Juvenile", and convert "U" to "Unknown" with:
+
+```{r}
+bird_measures %>% 
+  mutate(
+    age = 
+      age %>% 
+      fct_collapse(
+        Adult = 
+          c(
+            "AHY",
+            "ASY",
+            "SY"
+          ),
+        Juvenile = "HY",
+        Unknown = "U"
+      )
+  ) %>% 
+  count(age)
+```
+
+If you have a strong sense of the data that you are modifying, you can simplify the above by collapsing *all* of the unique values *not* specified. For this, use the `other_level = ...` argument:
+
+```{r}
+bird_measures %>% 
+  mutate(
+    age = 
+      age %>% 
+      fct_collapse(
+        Juvenile = "HY",
+        Unknown = "U",
+        other_level = "Adult"
+      )
+  ) %>% 
+  count(age)
+```
+
+You might notice that the `other_level` is assigned to the last level. We can change this ...
+
+#### New content: Re-level factors
+
+With base R methods, we had the opportunity to change the levels of a factor variable while creating the factor variable. This could have also been completed using ye olde assignment method (which I have not demonstrated because it is lame and super dated). Luckily, *forcats* has provided us with a great alternative!
+
+We can supply factor levels *while* creating a factor by simply providing the factor levels in the specified order:
+
+```{r}
+# Reclassify age:
+
+if_else(
+  age == "unk",
+  "unknown",
+  age
+) %>% 
+  
+  # Define the order of factor levels:
+  
+  fct_relevel(
+    "juvenile",
+    "adult",
+    "unknown"
+  ) %>% 
+  table()
+```
+
+We can also pipe in a factor to specify factor levels after they have been created:
+
+```{r}
+bird_measures %>% 
+  mutate(
+    age = 
+      age %>% 
+      
+      # Combine unique character values into reduced factor classes:
+      
+      fct_collapse(
+        Juvenile = "HY",
+        Adult = 
+          c(
+            "AHY",
+            "ASY",
+            "SY"
+          ),
+        Unknown = "U"
+      ) %>%
+      
+      # Define the order of factor levels:
+      
+      fct_relevel(
+        "Juvenile",
+        "Adult",
+        "Unknown"
+      )
+  ) %>% 
+  count(age)
+```
+
+As you might imagine, the above is especially useful for plotting:
+
+```{r}
+bird_measures %>% 
+  mutate(
+    age = 
+      age %>% 
+      
+      # Combine unique character values into reduced factor classes:
+      
+      fct_collapse(
+        Juvenile = "HY",
+        Adult = 
+          c(
+            "AHY",
+            "ASY",
+            "SY"
+          ),
+      ) %>%  
+      
+      # Convert "U" to NA:
+      
+      fct_recode(NULL = "U") %>% 
+      
+      # Define the order of factor levels:
+      
+      fct_relevel(
+        "Juvenile", 
+        "Adult"
+      )
+  ) %>%
+  
+  # Remove NA age values and tabulate age values:
+  
+  drop_na(age) %>% 
+  count(age) %>% 
+  
+  # Plot the data:
+  
+  ggplot() +
+  aes(
+    x = age, 
+    y = n
+  ) +
+  geom_bar(stat = "identity") +
+  labs(
+    x = "Age",
+    y = "Number of birds banded"
+  ) +
+  theme_bw()
+```
+
+#### Reverse factor order
+
+Recall that, by default, factors are ordered alphabetically:
+
+```{r}
+c(
+  "a",
+  "b",
+  "c"
+) %>% 
+  factor()
+```
+
+We can generate a factor variable in reverse alphabetical order using `fct_rev()` from the *forcats* package. This one is really straightforward!
+
+```{r}
+c(
+  "a",
+  "b",
+  "c"
+) %>% 
+  fct_rev()
+```
+
+We can see that the levels are reversed in the above. 
+
+To better see how these levels are mapped to the data, let's take a peak under the hood. Factor data are stored as integer values and thus level "a" is mapped to 1, "b" is mapped to 2, and "c" is mapped to 3:
+
+```{r}
+c(
+  "a",
+  "b",
+  "c"
+) %>% 
+  factor() %>% 
+  as.integer()
+```
+
+Have a look at how the integer values are mapped with `fct_rev()`:
+
+```{r}
+c(
+  "a",
+  "b",
+  "c"
+) %>% 
+  fct_rev() %>% 
+  as.integer()
+```
+
+Let's apply this to real data. To generate the plot below, I subset the data to species (`common_name`) with at least 100 observations, count the number of observations per species, and plot the data:
+
+```{r}
+bird_measures %>% 
+  
+  # Subset to species with at least 100 captures:
+  
+  filter(
+    n() > 100,
+    .by = common_name
+  ) %>% 
+  
+  # Tabulate the number of observations per species:
+  
+  count(common_name) %>% 
+  
+  # Plot the data:
+  
+  ggplot() +
+  aes(
+    x = common_name,
+    y = n
+  ) +
+  geom_bar(stat = "identity") +
+  coord_flip() +
+  theme_bw()
+```
+
+Note that I assigned the x aesthetic to the vertical axis of the plot and the y aesthetic to the horizontal axis. The problem with the above is that research has shown that people typically look at the upper-left-hand corner of a plot first. As such, the plot is difficult to read because the vertical axis appears to be in reverse alphabetical order. The plot is drawn this way because axis labels are, by default, drawn from the lowest to highest values -- with factors this means that they are drawn from the lowest to highest integer values.
+
+Let's reverse the order of those values with `fct_rev()`:
+
+```{r}
+
+bird_measures %>% 
+  
+  # Subset to species with at least 100 captures:
+  
+  filter(
+    n() > 100,
+    .by = common_name
+  ) %>% 
+  
+  # Tabulate the number of observations per species:
+  
+  count(common_name) %>% 
+  
+  # Convert `common_name` to a factor and reverse the order of factor
+  # levels:
+  
+  mutate(
+    common_name = fct_rev(common_name)
+  ) %>% 
+  
+  # Plot the data:
+  
+  ggplot() +
+  aes(
+    x = common_name, 
+    y = n
+  ) +
+  geom_bar(stat = "identity") +
+  coord_flip() +
+  theme_bw()
+```
+
+I might be belaboring the point, but the above worked because we reversed the mapping of factor levels to integer values!
+
+We could have also completed the above *inside of* the aesthetic argument:
+
+```{r}
+bird_measures %>% 
+  
+  # Subset to species with at least 100 captures:
+  
+  filter(
+    n() > 100,
+    .by = common_name
+  ) %>% 
+  
+  # Tabulate the number of observations per species:
+  
+  count(common_name) %>% 
+  
+  # Plot the data:
+  
+  ggplot() +
+  aes(
+    x = fct_rev(common_name), 
+    y = n
+  ) +
+  geom_bar(stat = "identity") +
+  coord_flip() +
+  theme_bw()
+```
+
+Although the above is more parsimonious, my preference is to conduct such operations *before* piping the data into `ggplot()`. This is because publication-ready ggplot code is often quite long. As much as possible, I like to reserve data operations to the data being piped into the plotting portion of a code block.
+
+#### Reorder factors by a variable
+
+Finally, we can also reorder factors in a tibble based on the values of another variable using `fct_reorder()`.
+
+Let's do a very simple example first where we create a new variable `z` that represents the variable `x` converted to a factor using `mutate()` and `factor()`. 
+
+```{r}
+# Generate a two-column tibble:
+
+tibble(
+  x = c("boy", "howdy"),
+  y = 2:1
+) %>% 
+  
+  # Add a new column, z, which represents x, converted to a factor:
+  
+  mutate(
+    z = factor(x)
+  ) %>% 
+  
+  # Extract the variable z and return the associated integer values:
+  
+  pull(z) %>% 
+  as.integer()
+```
+
+As we might expect, the levels are mapped to their integer values in alphabetical order ("boy" = 1 and "howdy" = 2).
+
+We can reorder `x` by the values in `y` using `fct_reorder()`.  We specify:
+
+* The character or factor vector that will be reordered
+* The variable that specifies the order of the resultant factor vector
+
+Let's create a variable `z` that represents the values in the variable `x` converted to a factor, and map the factor levels to the integer values in variable `y`:
+
+```{r}
+# Generate a two-column tibble:
+
+tibble(
+  x = c("boy", "howdy"),
+  y = 2:1
+) %>% 
+  
+  # Add a new column, z, which represents x, converted to a factor:
+  
+  mutate(
+    z = fct_reorder(x, y)
+  ) %>% 
+  
+  # Extract the variable z and return the associated integer values:
+  
+  pull(z) %>% 
+  as.integer()
+```
+
+Now our levels correspond to the integer values contained in the variable `y` ("boy" = 2 and "howdy" = 1)!
+
+Let's apply this to our most recent plot in which we plotted the counts of the species with the most observations, with the vertical axis in reverse alphabetical order:
+
+```{r}
+bird_measures %>% 
+  
+  # Subset to species with at least 100 captures:
+  
+  filter(
+    n() > 100,
+    .by = common_name
+  ) %>% 
+  
+  # Tabulate the number of observations per species:
+  
+  count(common_name) %>% 
+  
+  # Plot the data:
+  
+  ggplot() +
+  aes(
+    x = fct_rev(common_name), 
+    y = n
+  ) +
+  geom_bar(stat = "identity") +
+  coord_flip() +
+  theme_bw()
+```
+
+This plot is *just okay*. It is pretty easy to distinguish the species that were encountered the most often, but does not do a great job at visualizing the distribution of encounters. Instead of using `fct_rev()` to arrange the levels in reverse alphabetical order, we can use `fct_reorder()` to arrange the levels by the count column, `n`:
+
+```{r}
+bird_measures %>% 
+  
+  # Subset to species with at least 100 captures:
+  
+  filter(
+    n() > 100,
+    .by = common_name
+  ) %>% 
+  
+  # Tabulate the number of observations per species:
+  
+  count(common_name) %>% 
+  
+  # Arrange factor levels by the number of observations:
+  
+  mutate(
+    common_name = 
+      fct_reorder(common_name, n)
+  ) %>% 
+  
+  # Plot the data:
+  
+  ggplot() +
+  aes(
+    x = common_name, 
+    y = n
+  ) +
+  geom_bar(stat = "identity") +
+  coord_flip() +
+  theme_bw()
+```
+
+A case could be made that, because people tend to look at the upper-left-hand corner of a plot first, we should reverse the order of the vertical axis. We can do so by piping our resultant factor into `fct_rev()`:
+
+```{r}
+bird_measures %>% 
+  
+  # Subset to species with at least 100 captures:
+  
+  filter(
+    n() > 100,
+    .by = common_name
+  ) %>% 
+  
+  # Tabulate the number of observations per species:
+  
+  count(common_name) %>% 
+  
+  # Arrange factor levels from the lowest to highest number of
+  # observations:
+  
+  mutate(
+    common_name = 
+      common_name %>% 
+      fct_reorder(n) %>% 
+      fct_rev()
+  ) %>% 
+  
+  # Plot the data:
+  
+  ggplot() +
+  aes(
+    x = common_name, 
+    y = n
+  ) +
+  geom_bar(stat = "identity") +
+  coord_flip() +
+  theme_bw()
+```
+
+We could also increase the parsimony of the above by changing the order inside of `fct_reorder()` (see `?fct_reorder`). The function contains the argument `.desc = ...` which is `FALSE` by default. Let's change this argument to `TRUE`:
+
+```{r}
+bird_measures %>% 
+  
+  # Subset to species with at least 100 captures:
+  
+  filter(
+    n() > 100,
+    .by = common_name
+  ) %>% 
+  
+  # Tabulate the number of observations per species:
+  
+  count(common_name) %>% 
+  
+  # Arrange factor levels from the lowest to highest number of
+  # observations:
+  
+  mutate(
+    common_name = 
+      fct_reorder(
+        common_name,
+        n,
+        .desc = TRUE
+      )
+  ) %>% 
+  
+  # Plot the data:
+  
+  ggplot() +
+  aes(
+    x = common_name, 
+    y = n
+  ) +
+  geom_bar(stat = "identity") +
+  coord_flip() +
+  theme_bw()
+```
+
+Fin!
+
+## Reference
+
+<button class="accordion">Glossary</button>
+::: panel
+* **Literal character**: In regex, this is used to search for exact character matches in the case (i.e., lower vs. upper) and order of characters.
+* **Metacharacter**: Special characters used to modify the conditions of a regex search string (such as a choice of letters or position of literal characters in a string). Note: Metacharacters are not R functions!
+* **Regular expressions (regex)**: An algorithm used to search strings (character values).
+:::
+
+<button class="accordion">Functions</button>
+::: panel
+
+::: mysecret
+
+{{< fa user-secret size=2x >}} [**Important!**]{style="font-size: 1.25em; padding-left: 0.5em;"}
+
+* Primitive functions, as well as functions in the *base*, *stats*, and *utils* packages, are loaded by default when you start an R session. Functions in *dplyr*, *ggplot2*, *lubridate*, *purrr*, *readr*, *stringr*, *tibble*, *tidyr*, and *tidyverse* are loaded with `library(tidyverse)`.
+* I do not include functions that I recommend avoiding.
+* Regular expressions metacharacters are not functions!
+:::
+
+::: function_table
+
+```{r, message = FALSE, echo = FALSE}
+render_function_table("functions_5.3_factors_are_forcats.csv")
+```
+
+:::
+
+:::
+
+<button class="accordion">Metacharacters in regex</button>
+::: panel
+
+::: mysecret
+{{< fa user-secret size=2x >}} [Metacharacters are not R functions!]{style="font-size: 1.25em; padding-left: 0.5em;"}
+
+When you are given a list of functions that you may use in a given problem set, recall that regex metacharacters are not functions. As such, they will not be included in your function list. You may use *any* metacharacter to address a given problem!
+:::
+
+* **Alternation constraint**, `(...)`: Constrains the use of a metacharacter to just the symbols inside of parentheses
+* **Anchor**, `^...`: Specify the start of a string
+* **Anchor**, `...$`: Specify the end of a string
+* **Character class**, `[...]`: Define a *set* of symbols that you would like to match
+* **Metacharacter escape**, `\\`: Treat a metacharacter as a literal character
+* **Optional match**, `?`: Specify that the preceding symbol is optional
+* **Range** (in a character class), `[...-...]`: Define a *range* of symbols that you would like to match in a given position
+* **Or**, `...|...`: Specify a match of one string "or" another string
+* **Repetition**, `...*`: Specify that a symbol can appear no times or an unlimited number of times
+* **Repetition**, `...+`: Specify that a symbol appears at least once or an unlimited number of times
+* **Repetition**, `{...}`: Specify the number of times a symbol should appear
+* **Repetition**, `{...,...}`: Specify that a symbol may appear within a range of repetitions
+* **Wild card**, `.`: Specify that a character value at a given location can be any symbol
+:::
+
+
+<button class="accordion">Keyboard shortcuts</button>
+::: panel
+
+{{< include ../../src/includes/keyboard_shortcuts.qmd >}}
+:::
+
+<button class="accordion">R Studio panes</button>
+::: panel
+{{< include ../../src/includes/rstudio_panes.qmd >}}
+:::
+

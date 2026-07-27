@@ -1,0 +1,963 @@
+---
+title: "4.2 Introduction to iteration"
+format:
+  html:
+    embed-resouces: true
+    self-contained: true
+    standalone: true
+    toc: true
+    toc-location: left
+    number-sections: false
+    search: true
+    include-in-header: ../../src/includes/header_includes.html
+    include-after-body: ../../src/includes/accordion_script.html
+    theme: 
+      - cosmo
+      - ../../src/css/custom_style.scss
+editor: source
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r, include = FALSE}
+source("src/r/course_functions.R")
+```
+```{r setup, include=FALSE}
+library(tidyverse)
+library(DT)
+
+knitr::opts_chunk$set(
+  echo = TRUE,
+  eval = TRUE,
+  error = TRUE)
+
+rm(has_annotations)
+```
+
+<hr>
+
+<div>
+![](../../src/images/hex_complex.png){.intro_image}
+
+When we first learn R, our code rarely includes iteration (*at least knowingly*). We often end up copying and pasting the same functions over and over. This leads to code that is *way* longer than it needs to be, hard to read, and prone to errors. If you have to remember where to put your comma 100 times in a single script, chances are you are going to get it wrong more than a few times along the way. **Iteration**, which describes writing and executing code that will repeat a given process a set number of times, will get you past this!
+
+This tutorial, which includes a video (runtime: 24:48), will guide you through the often daunting process of **iteration** in R. Without iteration, our code is often repetitive -- learning how to develop code that includes iteration is a crucial skill for your R toolkit. Here, we will focus most of our attention on **split-apply-combine** operations. These are operations in which we split a data set into multiple parts, apply a function to each part, and then recombine the data at the end. In successfully completing this tutorial, you will learn:
+
+* **The need for iteration**: A quick look at why iteration is necessary.
+* **Iteration with purrr**: Historically, iteration in R was the domain of the *for loop*. The purrr package makes iteration easy!
+* **Iteration with dplyr**: Secretly, you have already conducted iterations with `group_by()` and `summarize()` (and `summarize(..., .by = ...)`). In this portion of the lesson we will stretch our use of *dplyr* and split-apply-combine operations to other *dplyr* functions!
+
+**Important!** Before starting this tutorial, be sure that you have completed all preliminary and previous lessons!
+
+</div>
+
+## Data for this lesson
+
+Please click on the buttons below to explore the metadata for this lesson!
+
+<button class="accordion">Metadata: Video lesson</button>
+::: panel
+In the video portion of this lesson, we will explore:
+
+**[counties.geojson]{.mono}** and **[counties_low_res.geojson]{.mono}**: A polygon shapefile of all counties in the United States. The data are in an unprojected Coordinate Reference System with the datum NAD83 and EPSG code 4269. Relevant fields include:
+
+* [STATEFP]{.mono}, character: A **foreign key** to each US state in the [states]{.mono} data.
+* [COUNTYFP]{.mono}, character: An ID assigned to a given county in a given state.
+* [GEOID]{.mono}, character: The **primary key** key for each county (*Note: These values are a concatenation of [STATEFP]{.mono} and [COUNTYFP]{.mono}*).
+* [NAME]{.mono}, character: The name of each county.
+* [STUSPS]{.mono}, character: The two-letter postal code of the state each county is within.
+* [STATE_NAME]{.mono}, character: The name of the state each county is within.
+* [ALAND]{.mono}, numeric: The area covered by land in each census tract, in square meters.
+* [AWATER]{.mono}, numeric: The area covered by water in each census tract, in square meters.
+
+**[iris.rds]{.mono}**: A modified version of the `iris` dataset that is provided with the *datasets* package in the base R distribution. This is a tibble data frame in which each row represents observations of an individual plant (*Note: There is no primary key for the data frame* ).
+
+* [species]{.mono}, character: The species of iris that was measured (*Note: There are three species in the dataset* ).
+* [sepal_length]{.mono}, double numeric: The sepal length of a measured flower, in centimeters.
+* [sepal_width]{.mono}, double numeric: The sepal width of a measured flower, in centimeters.
+* [petal_length]{.mono}, double numeric: The petal length of a measured flower, in centimeters.
+* [petal_width]{.mono}, double numeric: The petal width of a measured flower, in centimeters.
+
+**[states]{.mono} ([.dbf]{.mono}, [.prj]{.mono}, [.shp]{.mono}, [.shx]{.mono})**: A polygon shapefile of US states (not including Hawaii). The data are in an unprojected Coordinate Reference System with the datum NAD83 and EPSG code 4269. The data include the following fields:
+
+* [GEOID]{.mono}, character: The **primary key** key for each state.
+* [NAME]{.mono}, character: The name of each state.
+* [REGION]{.mono}, character: The region of the United States where each state is located.
+* [AREA]{.mono}, numeric: The total area of each state, in square kilometers.
+* [ttl__10]{.mono}, numeric: The total population of each state in 2010.
+* [ttl__15]{.mono}, numeric: The total population of each state in 2015.
+
+:::
+
+<button class="accordion">Metadata: Written lesson</button>
+::: panel
+In the written portion of this lesson, we will explore:
+
+**[census.shp]{.mono}**: A polygon shapefile of US Census tracts in the District of Columbia, Maryland, and Virginia. The data are in an unprojected Coordinate Reference System with the datum NAD83 and EPSG code 4269. The dataset includes *a lot* of fields, so here I will just describe a few of them that may be relevant (now or in the future):
+
+* [STATEFP]{.mono}, character: A **foreign key** to each US state in the [states]{.mono} data.
+* [COUNTYFP]{.mono}, character: An ID assigned to a given county in a given state. *Note: When [STATEFP]{.mono} and [COUNTYFP]{.mono} are concatenated, this represents a **foreign key** to each county in the [counties]{.mono} data.
+* [GEOID]{.mono}, character: The **primary key** key for each census tract.
+* [ALAND]{.mono}, numeric: The area covered by land in each census tract, in square meters.
+* [AWATER]{.mono}, numeric: The area covered by water in each census tract, in square meters.
+* [edu]{.mono}, numeric: The proportion of the population in each census tract with at least an Associate's degree.
+* [income]{.mono}, numeric: The median income of each census tract.
+* [population]{.mono}, numeric: The total population of each census tract.
+* [state_name]{.mono}, character: The name of each state (spelled out for Maryland and Virginia, but abbreviated as "DC" for the District of Columbia).
+
+**[dc_census.shp]{.mono}**: A polygon shapefile of census tracts in the District of Columbia. The data are in a projected coordinate system (datum = WGS84, projection is UTM, Zone 18N) with the EPSG code 32618. The data include the following fields:
+
+* [GEOID]{.mono}, character: The **primary key** key for each census tract.
+* [STATEFP]{.mono}, character: A **foreign key** to the US state in the [states]{.mono} data.
+* [ALAND]{.mono}, numeric: The area covered by land in each census tract, in square meters.
+* [AWATER]{.mono}, numeric: The area covered by water in each census tract, in square meters.
+* [INCOME]{.mono}, numeric: The median income of each census tract.
+* [POPULATION]{.mono}, numeric: The total population of each census tract.
+
+**[portal.csv]{.mono}**: A tabular dataset describing measurements taken in a long term study (the Portal project) on rodent traits in Portal, Arizona.
+
+* [record_id]{.mono}, double numeric: A unique identifier for each row (but not a good one!)
+* [date]{.mono}, date: The date in which a rodent was captured
+* [plot_id]{.mono}, character: The plot in which the rodent was captured
+* [sex]{.mono}, character: The sex of the rodent
+* [hindfoot_length]{.mono}, double numeric: The hindfoot length of the rodent, in mm
+* [species]{.mono}, character: The species of rodent observed
+
+**[spotted_lanternfly.rds]{.mono}**. The data are formatted as a tibble data frame object. Location data are recorded in an unprojected Coordinate Reference System (CRS) with the datum WGS84 and EPSG code 4326. The dataset includes the following variables:
+
+* [datetime]{.mono}, datetime: The date and time in which an observation took place.
+* [user]{.mono}, character: The user id for a given iNaturalist user (*Note: In combination with `datetime`, this variable represents the **compound key** for this table -- a compound key is a set of variables in a data frame that, combined, represent the primary key of the data frame.*).
+* [state]{.mono}, character: The state in which an observation was made.
+* [place_guess]{.mono}, character: The location in which an observation was made (based on the coordinates of the observation).
+* [longitude]{.mono}, numeric: The longitudinal coordinates of an observation, in decimal degrees.
+* [latitude]{.mono}, numeric: The latitudinal coordinates of an observation, in decimal degrees.
+* [image_url]{.mono}, character: The web address of the picture submitted with an observation.
+* [quality_grade]{.mono}, character: Whether the observation was verified by experts ("research" grade) or has not been able to be verified ("casual" grade).
+* [description]{.mono}, character: A notes column where users can input comments about their observation
+
+**[weather_tidy.rds]{.mono}**: The data are formatted as a list object comprised of the following tibble data frames and variables:
+
+[stations]{.mono}
+
+* [station]{.mono}, character: The **primary key** for each weather station -- recall that a primary key is a unique identifier for a row (i.e., observation) in a data frame.
+* [longitude]{.mono}, numeric: The longitudinal coordinates of a weather station, in decimal degrees.
+* [latitude]{.mono}, numeric: The latitudinal coordinates of a weather station, in decimal degrees.
+* [elevation]{.mono}, numeric: The elevation of a weather station, in meters above sea level.
+* [state]{.mono}, character: The state where a weather station is located
+* [name]{.mono}, character: The name of a weather station
+
+[observations]{.mono}
+
+* [station]{.mono}, character: The **foreign key** key to each weather station -- recall that a foreign key is a variable that refers to the primary key of another data frame.
+* [date]{.mono}, character: The date of an observation. Note that the [station]{.mono} and [date]{.mono} columns comprise the **compound key** for this table -- a compound key is a set of variables in a data frame that, combined, represent the primary key of the data frame.
+* [precip]{.mono}, character: The daily precipitation at a weather station, in millimeters.
+* [snow]{.mono}, character: The daily snowfall at a weather station, in millimeters.
+* [temperature_min]{.mono}, character: The daily minimum temperature ($^\circ$C) at a weather station.
+* [temperature_max]{.mono}, character: The daily maximum temperature ($^\circ$C) at a weather station.
+
+:::
+
+## Video: Introduction to iteration with *purrr*
+
+For the video portion of this lesson you will use the script file [purrr.R]{.mono}!
+
+Some notes on the content:
+
+* Your [purrr.R]{.mono} file may look slightly different than the one used in the video tutorial. Your version of the file has been updated to adhere to the course style guide.
+* I use single quotes (`'Boy howdy!'`) rather than double quotes (`"Boy howdy!"`). The latter is my current preference by far.
+* I currently prefer to use exploded parentheses, especially for the end of nested code blocks.
+* I include a space between the closing parenthesis and opening curly brace of function (`function() {`). This does not impact the output of the code and goes against the course style guide (it should be `function(){`).
+
+{{< video https://www.youtube.com/embed/KVuVZmlEKs0?si=uOW2QXqWv_0-xUA1>}}
+
+## Set up your session (written tutorial)
+
+Please do the following to ensure that you are working in a clean session:
+
+1. In the *Environment* tab of your *workspace pane*, ensure that your *Global Environment* is empty. If it is not, click the *broom* to remove all objects. *Note: Conversely, you can remove all items with `rm(list = ls())`*.
+2. In the *History* tab of your *workspace pane*, ensure that your history is empty. If it is not, click the *broom* to remove your history.
+
+Now that we are working in a clean session:
+
+1. Create a script file (Windows: [Ctrl + Shift + N]{.mono}; Mac: [Cmd + Shift + N]{.mono}).
+2. Save your script file as "[scripts/iteration.R]{.mono}".
+3. Add metadata as a comment on the top of the file (e.g., `# My code for the iteration tutorial`).
+4. Following your metadata, create a new **code section** (Windows: [Ctrl + Shift + R]{.mono}; Mac: [Cmd + Shift + R]{.mono}) and call it "`setup`".
+5. Following your section header, attach the `sf` package and the packages that comprise the **core tidyverse** (`library(tidyverse)`).
+6. Read in the `portal.csv` dataset, the `spotted_lanternfly.rds` dataset, and the `observations` data frame from the list file `weather_tidy.rds`.
+
+At this point, your script should look something like:
+
+```{r eval = TRUE, results = 'hide', message = FALSE}
+# My code for the iteration tutorial
+
+# setup --------------------------------------------------------
+
+library(sf)
+library(tidyverse)
+
+# Read in the portal data:
+
+portal <- 
+  read_csv('data/raw/portal.csv')
+
+# Read in the weather data:
+
+weather_observations <-
+  read_rds("data/processed/weather_tidy.rds") %>% 
+  pluck("observations")
+
+# Read in the spotted lanternfly data:
+
+spotted_lanternfly <- 
+  read_rds("data/raw/spotted_lanternfly.rds")
+```
+
+## Iteration with *purrr*
+
+The `map()` family of functions, in the tidyverse package `purrr`, are functions that allow you to iterate across vectors (i.e., lists and atomic vectors). They are written to be easy to read and efficient to process. In other words, they will typically not use a lot of memory or require long processing times.
+
+When writing a `map()` function you need to provide:
+
+* Input variable: A *vector* of values upon which the iteration will run;
+* Body: What happens in each iteration ... in other words, the instructions for what will occur during each iteration of the loop.
+
+### `map()` by index
+
+We can map by position (i.e., index) in a vector. Below, I `map()` across the vector `portal_spp` and apply a function to each value in that vector to generate a tibble data frame of mean hindfoot length by species -- this will be followed by an explanation.
+
+```{r}
+# Target vector:
+
+portal_spp <-
+  unique(portal$species)
+
+map(
+  
+  # Vector of values:
+  
+  1:length(portal_spp),
+  
+  # Body:
+  
+  function(i){
+    tibble(
+      species = portal_spp[[i]],
+      hindfeet =
+        portal %>% 
+        
+        # Split the data:
+        
+        filter(species == portal$species[[i]]) %>% 
+        pull(hindfoot_length) %>% 
+        
+        # Apply a function:
+        
+        mean(na.rm = TRUE)
+    )
+  }
+) %>% 
+  
+  # Combine the output:
+  
+  bind_rows()
+```
+
+Let's look into what happened here.
+
+The portion of the code that is recreated below created a vector of indices, which are integer values:
+
+```{r}
+1:length(portal_spp)
+```
+
+Each integer value represents a position in the vector `portal_spp`:
+
+```{r}
+portal_spp[[3]]
+```
+
+The map function iterates across the sequence of provided values. That means it will run the body of the loop once for each of the provided values in the sequence. 
+
+For example, the third value in the sequence is the integer `3`. Let's set `i` equal to `3`:
+
+```{r}
+i <- 3
+
+portal_spp[[i]]
+```
+
+In the body of `map()`, I first subset the data (split):
+
+```{r}
+portal %>% 
+  filter(species == portal$species[[i]])
+```
+
+And then applied a function to the subset:
+
+```{r}
+portal %>% 
+  filter(species == portal$species[[i]]) %>% 
+  pull(hindfoot_length) %>% 
+  mean(na.rm = TRUE)
+```
+
+Outside of the loop, I combined the output of each position value to generate a single data frame object with `bind_rows()`.
+
+### Map by values in a variable
+
+Things get even nicer when we specify the variables themselves, rather than an index of positions in a variable.
+
+```{r}
+# Target vector: (and sequence statement!)
+
+unique(portal$species) %>% 
+  map(
+    
+    # Body:
+    
+    function(x){
+      tibble(
+        species = x,
+        hindfeet =
+          portal %>% 
+          
+          # Split the data:
+          
+          filter(species == x) %>% 
+          pull(hindfoot_length) %>% 
+          
+          # Apply a function:
+          
+          mean(na.rm = TRUE)
+      )
+    }
+  ) %>% 
+  
+  # Combine the output:
+  
+  bind_rows()
+```
+
+Notice in the above that instead of specifying species by position, I can just specify the species as the variable `x` in my formula. Here, for each iteration, `x` is replaced by each species in `portal_spp`.
+
+### Specifying your formula
+
+There are three ways to specify the formula in a purrr. Above, we specified the formula with `function(x)`. 
+
+A 2021 update of base R allows us to use `\(x)` as a shorthand for `function(x)`:
+
+```{r}
+# Target vector: (and sequence statement!)
+
+unique(portal$species) %>% 
+  map(
+    
+    # Body:
+    
+    \(x){
+      tibble(
+        species = x,
+        hindfeet =
+          portal %>% 
+          
+          # Split the data:
+          
+          filter(species == x) %>% 
+          pull(hindfoot_length) %>% 
+          
+          # Apply a function:
+          
+          mean(na.rm = TRUE)
+      )
+    }
+  ) %>% 
+  
+  # Combine the output:
+  
+  bind_rows()
+```
+
+Another option is to use the operator `~` in place of `function(x)` (or `\(x)`). In doing so, we must replace `x` with `.x` and remove the curly braces:
+
+```{r}
+# Target vector: (and sequence statement!)
+
+unique(portal$species) %>% 
+  map(
+    
+    # Body:
+    
+    ~ tibble(
+      species = .x,
+      hindfeet =
+        portal %>% 
+        
+        # Split the data:
+        
+        filter(species == .x) %>% 
+        pull(hindfoot_length) %>% 
+        
+        # Apply a function:
+        
+        mean(na.rm = TRUE)
+    )
+  ) %>% 
+  
+  # Combine the output:
+  
+  bind_rows()
+```
+
+### Map without `bind_rows()`
+
+In the above we used `purrr::map()` to iterate across the code and then used `dplyr::bind_rows()` to combine the data. An alternative option is to use `map_dfr()`. With this function we can iterate across a vector and then combine the resultant object into a data frame in a single step.
+
+```{r}
+unique(portal$species) %>% 
+  map_dfr(
+    
+    # Body:
+    
+    ~ tibble(
+      species = .x,
+      hindfeet =
+        portal %>% 
+        
+        # Split the data:
+        
+        filter(species == .x) %>% 
+        pull(hindfoot_length) %>% 
+        
+        # Apply a function:
+        
+        mean(na.rm = TRUE)
+    )
+  )
+```
+
+*Note: `map_dfr()` has been **superseded** (see `?map_dfr`) but I still use it often!*
+
+As with the video content, the above could have been completed with a split-apply-combine operation that we are very used to ... `summarize()` with `group_by()` or `.by = ...`:
+
+```{r}
+# Split-apply-combine with `group_by()` and `summarize()`:
+
+portal %>% 
+  group_by(species) %>% 
+  summarize(
+    hindfeet = mean(hindfoot_length, na.rm = TRUE)
+  )
+
+# Split-apply-combine with `summarize()` and `.by = ...`:
+
+portal %>% 
+  summarize(
+    hindfeet = mean(hindfoot_length, na.rm = TRUE),
+    .by = species
+  )
+```
+
+I used a `purrr::map()` for this operation to both reinforce what is happening when you conduct a grouped `summarize()` and to use a new function for a process that we are already familiar with. This is obviously not how I would do this in the real world ...
+
+::: mysecret
+
+{{< fa user-secret size=2x >}} [What the heck is `NaN`?]{style="font-size: 1.25em; padding-left: 0.5em;"}
+
+`NaN` stands for "not a number". Here, we have `NaN` values for species that did not have any recorded hindfoot measurement values. 
+
+Notice that without the argument `na.rm = TRUE`, the mean of the three `NA` values  below *is* `NA`:
+
+```{r}
+mean(
+  c(NA, NA, NA)
+)
+```
+
+However, if we include `na.rm = TRUE`, there are not any values to calculate the mean of, so the output is "not a number":
+
+```{r}
+mean(
+  c(NA, NA, NA), 
+  na.rm = TRUE
+)
+```
+:::
+
+### Useful maps
+
+Let's now focus our attention on how we might apply a `purrr::map()` to reading in spatial data. Here, I will use the same data and operation that I used in the video, but with an additional twist.
+
+Consider the following operations:
+
+```{r, eval = FALSE}
+census <-
+  st_read("data/raw/shapefiles/census.shp") %>% 
+  st_transform(5070)
+
+dc_census <- 
+  st_read("data/raw/shapefiles/dc_census.shp") %>% 
+  st_transform(5070)
+
+states <-
+  st_read("data/raw/shapefiles/states.shp") %>% 
+  st_transform(5070)
+```
+
+We have read in and transformed the CRS of the three files using the same process. The only things that change in the above are the file being read in and the names the we assign to the global environment. This is a great case for iteration!
+
+Let's remove those three files (there is a better way):
+
+```{r, eval = FALSE}
+rm(
+  census,
+  dc_census,
+  states
+)
+```
+
+To address this iteratively, we start by generating a character vector of ESRI-formatted shapefiles using the function `list.files`:
+
+```{r}
+list.files(path = "data/raw/shapefiles")
+```
+
+The `st_read` function only requires the `.shp` file (the others are read in by default), so we can subset the data to those that contain the characters "shp":
+
+```{r}
+list.files(
+  path = "data/raw/shapefiles", 
+  pattern = "shp"
+)
+```
+
+The above searches for files in [data/raw/shapefiles]{.mono} that contain the pattern [shp]{.mono} and returns a character vector of file names that match the pattern. 
+
+We can add the **relative file path** to each file by adding the argument `full.names = TRUE` (`FALSE` is the default, see `?list.files`):
+
+```{r}
+list.files(
+  path = "data/raw/shapefiles", 
+  pattern = "shp",
+  full.names = TRUE
+)
+```
+
+Using the above, we *could* extract one of the files by position ...
+
+```{r}
+list.files(
+  path = "data/raw/shapefiles", 
+  pattern = "shp",
+  full.names = TRUE
+) %>% 
+  pluck(1)
+```
+
+... and read in and transform the data:
+
+```{r, eval = FALSE}
+list.files(
+  path = "data/raw/shapefiles", 
+  pattern = "shp",
+  full.names = TRUE
+) %>% 
+  pluck(1) %>% 
+  st_read() %>% 
+  st_transform(5070)
+```
+
+*But*, it is no longer necessary to read in the individual files! We now have a vector of values upon which to iterate!
+
+```{r, eval = FALSE}
+list.files(
+  path = "data/raw/shapefiles", 
+  pattern = "shp",
+  full.names = TRUE
+) %>% 
+  map(
+    ~ st_read(.x) %>% 
+      st_transform(5070)
+  )
+```
+
+You will notice when you run the above, however, that the resultant object is a list, but none of the list items are named. Because of this, we cannot pass the list items to the global environment:
+
+```{r}
+list.files(
+  path = "data/raw/shapefiles", 
+  pattern = "shp",
+  full.names = TRUE
+) %>% 
+  map(
+    ~ st_read(.x) %>% 
+      st_transform(5070)
+  ) %>% 
+  list2env(.GlobalEnv)
+```
+
+To address this, we can name the list items with `set_names()` (and character values associated with names) prior to passing the objects to the global environment:
+
+```{r}
+list.files(
+  path = "data/raw/shapefiles", 
+  pattern = "shp",
+  full.names = TRUE
+) %>% 
+  map(
+    ~ st_read(.x) %>% 
+      st_transform(5070)
+  ) %>% 
+  set_names(
+    "census",
+    "dc_census",
+    "states"
+  ) %>% 
+  list2env(.GlobalEnv)
+```
+
+Conversely, we can achieve the same result if we name our vector going into `map()`:
+
+```{r}
+list.files(
+  path = "data/raw/shapefiles", 
+  pattern = "shp",
+  full.names = TRUE
+) %>% 
+  set_names(
+    "census",
+    "dc_census",
+    "states"
+  ) %>% 
+  map(
+    ~ st_read(.x) %>% 
+      st_transform(5070)
+  ) %>% 
+  list2env(.GlobalEnv)
+```
+
+*Note: I prefer the method above because there are a few tricks that we can do to specify names programmatically. Unfortunately, such tricks are outside of the content of this course (but, as a shameless plug, if you sign up for our Data Management course you will learn them!).*
+
+### Before we leave this section ...
+
+It is important to recognize that *any* vector can be iterated across with `map()`! Additionally, there are a lot of different mapping functions out there -- I focused this introductory content on the mapping functions that I use the most within GIS applications. We will explore a few before the end of this course (e.g., we used `map_dbl()` in the video), but you may want to check `?map` to have a look at your options.
+
+## Column-wise iteration with `mutate()`
+
+As of 2020, the *dplyr* package provides us with tools for iterating a process across multiple variables in a data frame -- this is known as **column-wise iteration** (often referred to as colwise iteration, in short). In this portion of the tutorial we will explore some new *dplyr* tools and you will learn how to:
+
+* Conduct column-wise mutation with `across()`;
+* Subset columns with `mutate()` (a replacement for `transmute()`);
+* Use `.by = ...` during mutation and summarizing (review).
+
+The tibble globally assigned to `weather_observations` conforms to the rules of **tidy data**, but that does not mean that it is easy to work with! Let's look at the **structure** of the tibble:
+
+```{r}
+str(weather_observations)
+```
+
+We can see that the variables `precip`, `snow`, `temperature_min`, and `temperature_max` are all character vectors. Based on the description of these variables (above), it is safe to assume that these variables should instead be numeric. To do so, we must apply a **mutation**, and in fact the *same* mutation, to each of these variables ...
+
+### Mutation can be repetitive!
+
+We are often called to repeat the same mutation on multiple variables in a dataset. We have a number of (ill-advised) ways that we can do this. For example, we *could* chain together multiple mutate statements with a pipe and apply the function `as.numeric()` to convert the class of the character vector:
+
+```{r}
+weather_observations %>% 
+  mutate(
+    precip = as.numeric(precip)
+  ) %>% 
+  mutate(
+    snow = as.numeric(snow)
+  ) %>% 
+  mutate(
+    temperature_min = as.numeric(temperature_min)
+  ) %>% 
+  mutate(
+    temperature_max = as.numeric(temperature_max)
+  )
+```
+
+The above works, but is *super* unparsimonious. You rarely need to chain together separate mutate statements. Instead, you could mutate each variable within the *same* mutate statement:
+
+```{r}
+weather_observations %>% 
+  mutate(
+    precip = as.numeric(precip),
+    snow = as.numeric(snow),
+    temperature_min = as.numeric(temperature_min),
+    temperature_max = as.numeric(temperature_max)
+  )
+```
+
+It should be obvious that the above is still not very parsimonious -- there is a lot of repetition in this code. There *must* be a better way ...
+
+### Colwise mutation basics with `across()`
+
+We can modify multiple variables at once by nesting the function `across` inside of `mutate()`. Inside of `across()`, we supply (at least) two arguments:
+
+* `.cols`: A selection of column names to modify (quotes are not necessary because this function uses tidy selection).
+* `.fns`: The function or functions to apply to each variable, often specifying a formula with `~` and the variable to modify with `.x`. 
+
+For example, to apply `as.numeric()` to each of the weather variables in `weather_observations`, we would write:
+
+```{r}
+weather_observations %>% 
+  mutate(
+    across(
+      .cols = precip:temperature_max,
+      .fns = ~ as.numeric(.x)
+    )
+  )
+```
+
+The above can be considered to be an iteration. You might describe this operation as: "For each variable in precipitation through temperature_max, apply the function `as.numeric()` to each variable". Adding in the components of the process this would be described as: "For each (`across`) variable (`.cols = ...`) in `precip:temperature_max`, apply (`.fns = ~ ...`) the function `as.numeric()` to each variable (`.x`)".
+
+Because the first argument of `across()` is the selection of columns and the second argument is the function to apply to each variable, the names of each argument are rarely written out. Instead, I would typically write this as:
+
+```{r, eval = FALSE}
+weather_observations %>% 
+  mutate(
+    across(
+      precip:temperature_max,
+      ~ as.numeric(.x)
+    )
+  )
+```
+
+Before moving on, let's globally assign the resultant object to our global environment to reduce the amount of repeated code!
+
+```{r}
+weather_numeric <-
+  weather_observations %>% 
+  mutate(
+    across(
+      !station:date,
+      ~ as.numeric(.x)
+    )
+  )
+```
+
+### Summarize and `across()`
+
+You can use `across()` to generate statistical summaries of your data with the `summarize` function. For example, we can calculate the mean of `temperature_min` and `temperature_max` at each weather station in `weather_numeric`:
+
+```{r}
+weather_numeric %>% 
+  summarize(
+    across(
+      temperature_min:temperature_max,
+      ~ mean(.x, na.rm = TRUE)
+    ),
+    .by = station
+  )
+```
+
+If we are *only* interested in the mean of the two temperature variables from the original dataset (`weather_observations`), we can avoid using the intermediate assignment (`weather_numeric`):
+
+```{r}
+weather_observations %>% 
+  summarize(
+    across(
+      temperature_min:temperature_max,
+      ~ as.numeric(.x) %>% 
+        mean(na.rm = TRUE)
+    ),
+    .by = station
+  )
+```
+
+### `across()` with multiple functions
+
+We can supply multiple functions within a single `across()`. To do so, we supply a list of the functions that we would like to execute and the name to assign to each. I find this most useful when summarizing data:
+
+```{r}
+weather_numeric %>% 
+  summarize(
+    across(
+      precip:snow,
+      list(
+        min = ~ min(.x, na.rm = TRUE),
+        max = ~ max(.x, na.rm = TRUE)
+      )
+    ),
+    .by = station
+  )
+```
+
+In the above, we can see that the names assigned to each function are included within the column names. This is because when functions are provided as a named list, the column names are assigned with the convention `{.col}_{.fn}` (see `.names = ...` in `?across`).
+
+We can also apply `across()` to multiple variables *while* applying a single function to other variables. For example, in the below, I use `as_date()` to convert the character vector `date` to a date class object *while* converting all of the weather variables to numeric in the original `weather_observations` dataset.
+
+```{r}
+weather_observations %>% 
+  mutate(
+    date = as_date(date),
+    across(
+      precip:temperature_max,
+      ~ as.numeric(.x)
+    )
+  )
+```
+
+### Tidy selection and `across()`
+
+Because `across()` uses tidy selection, we have all of the tidy selection tools at our disposal when selecting the columns.
+
+In our original application of `across()`, we provided the names of the columns that we wished to modify:
+
+```{r, eval = FALSE}
+weather_observations %>% 
+  mutate(
+    across(
+      precip:temperature_max,
+      ~ as.numeric(.x)
+    )
+  )
+```
+
+... but we could have also used negated selection (`!`) to select the columns the we *do not* want to modify:
+
+```{r}
+weather_observations %>% 
+  mutate(
+    across(
+      !station:date,
+      ~ as.numeric(.x)
+    )
+  )
+```
+
+We can use `matches()` to select our columns of interest by matching part of a column name. In the code below, I calculate the `mean()` of variables whose name contains the pattern `"temp"`.
+
+```{r}
+weather_numeric %>% 
+  group_by(station) %>% 
+  summarize(
+    across(
+      matches("temp"),
+      ~ mean(.x, na.rm = TRUE)
+    )
+  )
+```
+
+#### `where()` and `across()`
+
+We can use the *tidyselect* function `where()` to select columns by class. Let's look at the structure of the tibble assigned to `weather_numeric`:
+
+```{r}
+str(weather_numeric)
+```
+
+We can see that the data contains two character vector columns and four numeric vectors. We can subset the data to where the variables are numeric:
+
+```{r}
+weather_numeric %>% 
+  select(
+    where(is.numeric)
+  )
+```
+
+... or to variables that are *not* character (using negated selection):
+
+```{r}
+weather_numeric %>% 
+  select(
+    !where(is.character)
+  )
+```
+
+Because `across()` uses tidy selection, we can use `where()` while specifying the variables to run a given function on. Below, I calculate the `mean()` of all variables that are numeric:
+
+```{r}
+weather_numeric %>% 
+  group_by(station) %>% 
+  summarize(
+    across(
+      where(is.numeric),
+      ~ mean(.x, na.rm = TRUE)
+    )
+  )
+```
+
+## Iteration and `filter()`
+
+We can apply filters to grouped data -- this is a *super* powerful tool for exploring your data.
+
+For example, let's subset the data to the first observation (the first `datetime`) in each state in `spotted_lanternfly` by using `filter()`, `min(datetime)`, and `.by = ...`:
+
+```{r}
+spotted_lanternfly %>% 
+  filter(
+    datetime == min(datetime),
+    .by = state
+  )
+```
+
+It is important to note that we cannot perform any calculations with `.by = ...`. For example, we get an error if we try to calculate the first observation in each year with `.by = ...`:
+
+```{r}
+spotted_lanternfly %>% 
+  filter(
+    datetime == min(datetime),
+    .by = year(datetime)
+  )
+```
+
+The `group_by` function is much more flexible (and is, therefore, not likely to go away any time soon):
+
+```{r}
+spotted_lanternfly %>% 
+  group_by(
+    year(datetime)
+  ) %>% 
+  filter(
+    datetime == min(datetime)
+  ) %>% 
+  ungroup()
+```
+
+When conducting repetitive filtering tasks, the use of iteration can greatly simplify your code:
+
+* Iterate across vectors with *purrr* (`map()`) 
+* Iterate `mutate()` or `summarize()` across variables in a data frame with `across()`
+* Iterate `summarize()`, `mutate()`, or `filter()` across a grouping variable with `.by = ...` or `group_by()`
+
+## Reference
+
+<button class="accordion">Glossary</button>
+::: panel
+* **Iteration**: The repeating of a given process a set number of times.
+* **Mutation**: The process of adding columns to a data frame and/or modifying existing columns (or adding/modifying list items to/in a list).
+* **NA** (value): A missing data value in an atomic vector.
+* **Structure**: The dimensionality and homogeneity of a data object (may also be used to describe the class of objects).
+* **Superseded** (function): A function for which a new function or argument has been added to a package (these functions should typically be avoided).
+:::
+
+<button class="accordion">Functions</button>
+::: panel
+**Important!** Primitive functions as well as functions in the *base* and *utils* packages, are loaded by default when you start an R session. Functions in *dplyr*, *readr*, *tibble*, *tidyr*, and *tidyverse* are loaded with `library(tidyverse)`.
+
+::: function_table
+
+```{r, message = FALSE, echo = FALSE}
+render_function_table("functions_4.2_iteration.csv")
+```
+
+:::
+
+:::
+
+
+<button class="accordion">Keyboard shortcuts</button>
+::: panel
+
+{{< include ../../src/includes/keyboard_shortcuts.qmd >}}
+:::
+
+<button class="accordion">R Studio panes</button>
+::: panel
+{{< include ../../src/includes/rstudio_panes.qmd >}}
+:::
+

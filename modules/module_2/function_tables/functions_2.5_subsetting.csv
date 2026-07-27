@@ -1,0 +1,42 @@
+Package,Function,Definition
+.Primitive,(...),Operator that evaluates the function name on the left-hand-side (LHS) of the opening parentheses using the arguments enclosed by the parentheses
+.Primitive,<-,Infix operator that assigns an object on the right-hand-side (RHS) to a name on the left-hand-side (LHS) -- this should be used for global assignments!
+.Primitive,=,Infix operator that assigns an object on the right-hand-side (RHS) to a name on the left-hand-side (LHS) -- this should not be used for global assignments!
+.Primitive,:,Infix operator that generates a regular sequence of adjacent values
+.Primitive,$,Infix operator that extracts the values associated with a name (RHS) from a recursive object (LHS)
+.Primitive,==,Infix relational operator (is equal to)
+.Primitive,!=,Infix relational operator (is not equal to)
+.Primitive,!,Prefix logical operator (not)
+.Primitive,&,Prefix logical operator (and)
+.Primitive,|,Prefix logical operator (or)
+.Primitive,>,Infix relational operator (greater than)
+.Primitive,<,Infix relational operator (less than)
+.Primitive,>=,Infix relational operator (greater than or equal to)
+.Primitive,/,Infix arithmetic operator (divide)
+.Primitive,c,Combine values to form an atomic vector
+.Primitive,is.na,A logical test of whether a value in a vector is [NA]
+.Primitive,max,Return the highest value in a numeric vector (integer or double) as a one-value numeric or integer vector (depending on input)
+.Primitive,min,Return the lowest value in a numeric vector (integer or double) as a one-value numeric or integer vector (depending on input)
+base,%in%,Infix relational operator that tests whether the vector on the left-hand-side (LHS) is within the vector on the right
+base,library,Attach the package environment for a given package to the current R session
+base,list2env,Assign the items in a list to a specified environment
+base,rm,Remove a name from a specified environment (default is the global environment)
+base,unique,Subset an atomic vector to the unique values in the set
+dplyr,arrange,Sort the rows of a data frame by the values in a variable or variables
+dplyr,distinct,Subset a data frame by removing duplicate rows
+dplyr,filter,Subset a data frame by logical condition
+dplyr,pull,Extract a column from a data frame as a vector
+dplyr,rename,Change the name assigned to a column in a data frame
+dplyr,select,Subset columns in a data frame by name (without quotes!)
+dplyr,slice,Subset a data frame by row or rows using the row position(s)
+dplyr,slice_head,Subset a data frame to the first row (default) or rows
+dplyr,slice_tail,Subset a data frame to the last row (default) or rows
+dplyr,slice_min,Sort a data frame by a variable and subset to the rows associated with the lowest values of that variable
+dplyr,slice_max,Sort a data frame by a variable and subset to the rows associated with the highest values of that variable
+lubridate,year,Extract the year from a properly formatted date value
+magrittr,%>%,The pipe operator passes the output of the LHS argument to the function on the right
+purrr,pluck,Extract a list item from a list
+readr,read_rds,Read an RDS file into R
+tidyr,drop_na,Remove rows that contain NA values
+tidyselect,everything,"Used in combination with select, this selects all but the specified columns."
+tidyselect,where,Select a variable with a function that returns `TRUE` or `FALSE`

@@ -1,0 +1,940 @@
+---
+title: "3.2 Introduction to shapefiles"
+format:
+  html:
+    embed-resouces: true
+    self-contained: true
+    standalone: true
+    toc: true
+    toc-location: left
+    number-sections: false
+    search: true
+    include-in-header: ../../src/includes/header_includes.html
+    include-after-body: ../../src/includes/accordion_script.html
+    theme: 
+      - cosmo
+      - ../../src/css/custom_style.scss
+editor: source
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r, include = FALSE}
+source("src/r/course_functions.R")
+```
+<hr>
+
+## Overview
+
+![](../../src/images/hex_complex.png){.intro_image}
+
+This video and written tutorial is our first foray into using R as a GIS! In this tutorial, we will explore how to read in and pre-process shapefiles. Material covered in this lesson will include:
+
+* Reading in shapefiles -- a suggested workflow 
+* Transforming a CRS 
+* Source scripts! 
+* Spatial and non-spatial joins -- a review 
+* Functions for data exploration 
+* Saving shapefiles 
+
+**Important!** Before starting this tutorial, be sure that you have completed all of the previous lessons in this course!
+
+## Data for this lesson
+
+Please click on the buttons below to explore the metadata for this lesson!
+
+<button class="accordion">Metadata: Video lesson</button>
+::: panel
+In the video portion of this lesson, we will explore:
+
+**[dc_census]{.mono} ([.dbf]{.mono}, [.prj]{.mono}, [.shp]{.mono}, [.shx]{.mono})**: A polygon shapefile of census tracts in the District of Columbia. The data are in a projected coordinate system (datum = WGS84, projection is UTM, Zone 18N) with the EPSG code 32618. The data include the following fields:
+
+* [GEOID]{.mono}, character: The **primary key** key for each census tract.
+* [STATEFP]{.mono}, character: A **foreign key** to the US state in the [states]{.mono} data.
+* [ALAND]{.mono}, numeric: The area covered by land in each census tract, in square meters.
+* [AWATER]{.mono}, numeric: The area covered by water in each census tract, in square meters.
+* [INCOME]{.mono}, numeric: The median income of each census tract.
+* [POPULATION]{.mono}, numeric: The total population of each census tract.
+
+**[sites.csv]{.mono}**: Locations of Neighborhood Nestwatch sampling sites, provided as a tabular dataset. Locations were  recorded with a handheld GPS unit set to the unprojected Coordinate Reference System (CRS) with the datum WGS84 and EPSG code 4326. The data include the following variables:
+
+* [site]{.mono}, character: The **primary key** for each site, which here is a fruit name assigned to each site.
+* [lon]{.mono}, numeric: The longitudinal coordinates of each site, in decimal degrees. 
+* [lat]{.mono}, numeric: The latitudinal coordinates of each site, in decimal degrees.
+
+**[states]{.mono} ([.dbf]{.mono}, [.prj]{.mono}, [.shp]{.mono}, [.shx]{.mono})**: A polygon shapefile of US states (not including Hawaii). The data are in an unprojected Coordinate Reference System with the datum NAD83 and EPSG code 4269. The data include the following fields:
+
+* [GEOID]{.mono}, character: The **primary key** key for each state.
+* [NAME]{.mono}, character: The name of each state.
+* [REGION]{.mono}, character: The region of the United States where each state is located.
+* [AREA]{.mono}, numeric: The total area of each state, in square kilometers.
+* [ttl__10]{.mono}, numeric: The total population of each state in 2010.
+* [ttl__15]{.mono}, numeric: The total population of each state in 2015.
+:::
+
+<button class="accordion">Metadata: Written lesson</button>
+::: panel
+In the written portion of this lesson, we will explore:
+
+**[capital_bike_share_locations.csv]{.mono}**: Locations of public "bike sharing" stations in the District of Columbia, provided as a tabular dataset. Locations were recorded with a handheld GPS unit set to the unprojected Coordinate Reference System (CRS) with the datum WGS84 and EPSG code 4326. The only relevant fields (i.e., variables) in this dataset are:
+
+* [OBJECTID]{.mono}, numeric: The **primary key** for each bike station.
+* [LATITUDE]{.mono}, numeric: The latitudinal coordinates of each bike station, in decimal degrees.
+* [LONGITUDE]{.mono}, numeric: The longitudinal coordinates of each bike station, in decimal degrees. 
+* [NAME]{.mono}, character: The name of each bike station. 
+* [REGION_NAME]{.mono}, character: The part of the city in which each bike station is located.
+
+**[census]{.mono} ([.dbf]{.mono}, [.prj]{.mono}, [.shp]{.mono}, [.shx]{.mono})**: A polygon shapefile of US Census tracts in the District of Columbia, Maryland, and Virginia. The data are in an unprojected Coordinate Reference System with the datum NAD83 and EPSG code 4269. The dataset includes *a lot* of fields, so here I will just describe a few of them that may be relevant (now or in the future):
+
+* [STATEFP]{.mono}, character: A **foreign key** to each US state in the [states]{.mono} data.
+* [COUNTYFP]{.mono}, character: An ID assigned to a given county in a given state. *Note: When [STATEFP]{.mono} and [COUNTYFP]{.mono} are concatenated, this represents a **foreign key** to each county in the [counties]{.mono} data.
+* [GEOID]{.mono}, character: The **primary key** key for each census tract.
+* [ALAND]{.mono}, numeric: The area covered by land in each census tract, in square meters.
+* [AWATER]{.mono}, numeric: The area covered by water in each census tract, in square meters.
+* [edu]{.mono}, numeric: The proportion of the population in each census tract with at least an Associate's degree.
+* [income]{.mono}, numeric: The median income of each census tract.
+* [population]{.mono}, numeric: The total population of each census tract.
+* [state_name]{.mono}, character: The name of each state (spelled out for Maryland and Virginia, but abbreviated as "DC" for the District of Columbia).
+
+**[counties.geojson]{.mono}** and **[counties_low_res.geojson]{.mono}**: A polygon shapefile of all counties in the United States. The data are in an unprojected Coordinate Reference System with the datum NAD83 and EPSG code 4269. Relevant fields include:
+
+* [STATEFP]{.mono}, character: A **foreign key** to each US state in the [states]{.mono} data.
+* [COUNTYFP]{.mono}, character: An ID assigned to a given county in a given state.
+* [GEOID]{.mono}, character: The **primary key** key for each county (*Note: These values are a concatenation of [STATEFP]{.mono} and [COUNTYFP]{.mono}*).
+* [NAME]{.mono}, character: The name of each county.
+* [STUSPS]{.mono}, character: The two-letter postal code of the state each county is within.
+* [STATE_NAME]{.mono}, character: The name of the state each county is within.
+* [ALAND]{.mono}, numeric: The area covered by land in each census tract, in square meters.
+* [AWATER]{.mono}, numeric: The area covered by water in each census tract, in square meters.
+:::
+
+## Video tutorial
+
+This video tutorial will help you get started with introductory concepts of shapefile processing. 
+
+*Please note that not all of the code in this video follows the course style guide!*
+
+{{< video https://www.youtube.com/embed/osdvmt-swG4?si=z9Etxf2CXskRAwZp >}}
+
+## Written tutorial
+
+### Setup
+
+1. Open R Studio and a new script file. Remember that it is best practice to start with a clean R Studio session!
+
+2. Add a new code section and call it "setup"
+
+3. After a space between your section break, include and run the following:
+
+:::{style="margin-left: 40px"}
+```{r results = 'hide', message = FALSE}
+library(sf)
+library(tidyverse)
+```
+:::
+
+:::{class="mysecret" style="margin-left: 40px;"}
+<i class="fa fa-user-secret" aria-hidden="true" style = "font-size: 150%; padding-right: 5px;"></i>Notice that I always load the tidyverse last -- this ensures that tidyverse functions (that I rely on heavily!) will not be overwritten by functions in other packages.
+:::
+
+4. **Load a source script!**
+
+::::{style="margin-left: 40px"}
+You've seen a few mentions of the file "source_script.R" throughout this course thus far ... now we are actually going to use it! A **source script** is an R file that typically contains functions that are used often enough that writing out the functions during each coding session would be cumbersome. Sometimes source scripts are also used for preliminary data processing if repetitive data loading and processing steps are run across multiple scripts. We run a source script using the function `source()`. 
+
+Before we add and run the source script, however, have a look at your global environment (the environment pane). You should see no function names currently stored in the environment.
+
+Now copy-and-paste the following line of code at the end of your setup section:
+
+```{r}
+source("modules/module_3/scripts/source_script.R")
+```
+
+... and run the line of code.
+
+You should notice that your environment now contains some new functions ... we will use a couple of these later in the tutorial.
+
+Before moving on, I should note that I normally load libraries and source scripts in a section that I call "setup". The top of my script would look something like:
+
+```{r, eval = FALSE}
+
+# Script to accompany the Introduction to shapefiles compendium
+
+# setup -------------------------------------------------------------------
+
+library(sf)
+library(tidyverse)
+
+source("modules/module_3/scripts/source_script.R")
+```
+
+:::
+
+### Read shapefiles
+
+
+The primary function for reading in a shapefile is `st_read()` from the *sf* package. Let's read in the `census` shapefile:
+
+```{r}
+census <-
+  st_read("data/raw/shapefiles/census.shp")
+```
+
+The above extension, `.shp`, tells us that the object is an ESRI-formatted shapefile. ESRI shapefiles consist of multiple files, but the `sf::st_read()` function only requires specifying the file that ends with `.shp` -- the remaining files are loaded by default. 
+
+We can also read in geojson files using `sf::st_read()`:
+
+```{r}
+counties <-
+  st_read("data/raw/shapefiles/counties.geojson")
+```
+
+*Note: geojson, GEOgraphic JavaScript Object Notation, is my preference for storing shapefiles!*
+
+In the two operations above, executing `sf::st_read()` prints a lot of metadata about the file that you are reading in. We are given:
+
+* The number of features (geometries present); 
+* The number of fields (data columns);
+* The type of geometry (here POLYGON and MULTIPOLYGON);
+* Dimensions (almost always XY);
+* The bounding box (the coordinates of the smallest box that can be drawn around all features);
+* The coordinate reference system (CRS)
+
+:::{class="mysecret"}
+<i class="fa fa-user-secret" aria-hidden="true" style = "font-size: 150%; padding-right: 5px;"></i>We should always read the metadata carefully! The last bit of metadata, the CRS, is the most important. When working with shapefiles, we need to ensure that the CRS of all objects are equivalent. If not, we must transform them.
+:::
+
+If we would prefer *not* to print the metadata, we can suppress this when we read in the data by adding the argument `quiet = TRUE`:
+
+```{r}
+census <-
+  st_read(
+    "data/raw/shapefiles/census.shp",
+    quiet = TRUE
+  )
+```
+
+:::{class="mysecret"}
+<i class="fa fa-user-secret" aria-hidden="true" style = "font-size: 150%; padding-right: 5px;"></i>
+Because it is so important to read the metadata when you access a file, I do not recommend initially setting `quiet = TRUE`!
+:::
+
+### Data frames to shapefiles
+
+
+To convert a data frame (that has coordinates!) to a shapefile, we use the `sf::st_as_sf()` function. We need to supply:
+
+* A vector of column names associated with the coordinates, in longitude, latitude (X, Y) order (`coords = c("long", "lat")`);
+* The coordinate reference system (CRS) that the data **were collected in**.
+
+Below, I am reading in bike share locations in the District of Columbia downloaded from <a href = "https://opendata.dc.gov/" target = "_blank">Open Data DC</a>. I first read in the data frame using `readr::read_csv()` and then convert the data to an sf object. The data contain `LONGITUDE` and `LATITUDE` coordinates for each location and the CRS of the records is EPSG 4326 (*Note: This was determined from the metadata on the website*).
+
+```{r, message = FALSE}
+dc_bikes <-
+  read_csv("data/raw/capital_bike_share_locations.csv") %>% 
+  st_as_sf(
+    coords = c("LONGITUDE", "LATITUDE"),
+    crs = 4326
+  )
+```
+
+:::{class="mysecret"}
+<i class="fa fa-user-secret" aria-hidden="true" style = "font-size: 150%; padding-right: 5px;"></i>
+Always read in the data in the CRS in which it was recorded!
+:::
+
+Let's have a look at the file:
+
+```{r}
+dc_bikes
+```
+
+Before moving on, I should note that it is almost always best practice to read in your data near the top of your scripts. I either read in shapefiles in the "setup" section, or in a section I call "read and pre-process data". Here, I'll choose the latter and the top of my script would look something like:
+
+```{r, eval = FALSE}
+
+# Script to accompany the Introduction to shapefiles compendium
+
+# setup -------------------------------------------------------------------
+
+library(sf)
+library(tidyverse)
+
+source("modules/module_3/scripts/source_script.R")
+
+# read and pre-process data -----------------------------------------------
+
+# Census data:
+
+census <-
+  st_read("data/raw/shapefiles/census.shp")
+
+# Counties:
+
+counties <-
+  st_read("data/raw/shapefiles/counties.geojson")
+
+# Bike share locations:
+
+dc_bikes <- 
+  read_csv("data/raw/capital_bike_share_locations.csv") %>% 
+  st_as_sf(
+    coords = c("LONGITUDE", "LATITUDE"),
+    crs = 4326
+  )
+```
+
+### Pre-processing steps
+
+I typically like to do a lot of pre-processing as I read in my shapefiles. Typical pre-processing steps include (usually in this order):
+
+1. Changing the format of field (i.e., column) names;
+2. Subsetting to features of interest (e.g., filtering rows of the data frame);
+3. Subsetting to fields of interest;
+4. Transforming each shape to a common CRS.
+
+#### Change field names
+
+Let's see what our field names are for the `census` file:
+
+```{r}
+names(census)
+```
+
+We can see that *most* of the names are in all uppercase. This is common for shapefiles that were created with ESRI products. It is, however, considered to be *very* bad practice in R. 
+
+In the past, we have dealt with poorly formatted column names using:
+
+```{r}
+census %>% 
+  set_names(
+    tolower(
+      names(.)
+    )
+  ) %>% 
+  
+  # Extracting just the names for illustration purposes:
+  
+  names()
+```
+
+This works, but it is a lot to add each time. This is where the source script comes in! I have included a function called `clean_names()` in the source script that will do it for us in one step. Let's just run it and make sure that it works:
+
+```{r}
+census %>% 
+  clean_names() %>% 
+  
+  # Extracting just the names for illustration purposes:
+  
+  names()
+```
+
+I typically clean the field names as I read in an object: 
+
+```{r}
+census <-
+  st_read("data/raw/shapefiles/census.shp") %>% 
+  clean_names()
+```
+
+Let's modify our code setup section to clean the field names of the other objects as they are read in as well:
+
+```{r, eval = FALSE}
+
+# Script to accompany the Introduction to shapefiles compendium
+
+# setup -------------------------------------------------------------------
+
+library(sf)
+library(tidyverse)
+
+source("modules/module_3/scripts/source_script.R")
+
+# read and pre-process data -----------------------------------------------
+
+# Census data:
+
+census <-
+  st_read("data/raw/shapefiles/census.shp") %>% 
+  clean_names()
+
+# Counties:
+
+counties <-
+  st_read("data/raw/shapefiles/counties.geojson") %>% 
+  clean_names()
+
+# Bike share locations:
+
+dc_bikes <- 
+  read_csv("data/raw/capital_bike_share_locations.csv") %>% 
+  clean_names() %>% 
+  st_as_sf(
+    coords = c("longitude", "latitude"),
+    crs = 4326
+  )
+```
+
+*Note: I also modified the `coords =` argument in `st_as_sf()` to account for the modified names.*
+
+#### Subset features
+
+Our next step will be to select only the features that we expect to use during our session.
+
+Let's look again at the `census` data:
+
+```{r}
+census
+```
+
+If we are only interested in exploring `census` data associated with the District of Columbia, we'll want to remove any other features from the dataset. Let's see if other states are present in the data.
+
+```{r}
+census %>% 
+  pull(state_name) %>% 
+  unique()
+```
+
+Because `state_name` is a field in the data, we can use `dplyr::filter()` to subset the `census` data to just the District of Columbia. I do this as I read in a file:
+
+```{r}
+# Census data:
+
+census <-
+  st_read("data/raw/shapefiles/census.shp") %>% 
+  clean_names() %>% 
+  filter(state_name == "DC")
+```
+
+
+:::{class="mysecret"}
+<i class="fa fa-user-secret" aria-hidden="true" style = "font-size: 150%; padding-right: 5px;"></i>
+It is important to recognize that the printed output of `sf::st_read()` represents the metadata *before* any subsequent step in a chained analysis -- this is often a source of confusion for early `sf` users. 
+:::
+
+Above we can see that the simple feature collection contains 3,492 features. Let's see how many there are now:
+
+```{r}
+nrow(census)
+```
+
+Because the printed output after our chained analysis is no longer representative of the resultant object, this is a great time to use `quiet = TRUE`:
+
+```{r}
+# Census data:
+
+census <-
+  st_read(
+    "data/raw/shapefiles/census.shp",
+    quiet = TRUE
+  ) %>% 
+  clean_names() %>% 
+  filter(state_name == "DC")
+```
+
+We can (and should) repeat the above for our `counties` dataset (which also has a `state_name` column, but here it is spelled out as "District of Columbia"):
+
+```{r}
+# Census data:
+
+counties <-
+  st_read(
+    "data/raw/shapefiles/counties.geojson",
+    quiet = TRUE
+  ) %>% 
+  clean_names() %>% 
+  filter(state_name == "District of Columbia")
+```
+
+The code above, of course, would not be added *after* reading in the data. We would instead augment our existing data reading and pre-processing code:
+
+```{r, eval = TRUE}
+
+# Script to accompany the Introduction to shapefiles compendium
+
+# setup -------------------------------------------------------------------
+
+library(sf)
+library(tidyverse)
+
+source("modules/module_3/scripts/source_script.R")
+
+# read and pre-process data -----------------------------------------------
+
+# Census data:
+
+census <-
+  st_read(
+    "data/raw/shapefiles/census.shp",
+    quiet = TRUE
+  ) %>% 
+  clean_names() %>% 
+  filter(state_name == "DC")
+
+# Counties:
+
+counties <-
+  st_read(
+    "data/raw/shapefiles/counties.geojson",
+    quiet = TRUE
+  ) %>% 
+  clean_names() %>% 
+  filter(state_name == "District of Columbia")
+
+# Bike share locations:
+
+dc_bikes <- 
+  read_csv("data/raw/capital_bike_share_locations.csv") %>% 
+  clean_names() %>% 
+  st_as_sf(
+    coords = c("longitude", "latitude"),
+    crs = 4326
+  )
+```
+
+*Note: We are also interested in subsetting `dc_bikes` to just bike share locations in the District of Columbia ... unfortunately, there is no "state" field in the data. We'll deal with this soon!*
+
+#### Subset fields
+
+With our features selected, let's now reduce the fields in the data to just those that we are interested in exploring during our session. 
+
+Some fields should obviously be removed -- for example, we subset `census` to `state_name == "DC"` thus there is no need to maintain columns that refer to the state:
+
+```{r}
+census %>% 
+  select(
+    !c(statefp, state_name)
+  )
+```
+
+... for example, some further data exploration can also yield clues of variables that could be removed:
+
+```{r}
+census %>% 
+  pull(countyfp) %>% 
+  unique()
+```
+
+The data are telling us that the District of Columbia only has one county, so maintaining that variable does not offer any information:
+
+```{r}
+census %>% 
+  select(
+    !c(
+      statefp, 
+      countyfp, 
+      state_name
+    )
+  )
+```
+
+Such exploration is certainly useful, and removing columns that don't provide additional information is optimal, but it can also be time-consuming. We should really let our interest in the data dictate the columns we maintain -- because we will rarely write shapefiles, we lose nothing by adding or removing columns later!
+
+For the census data, I am currently interested in the land area (`aland`), `income`, and `population.` I typically also maintain any `geoid` column, because this serves as a primary key for the data:
+
+```{r}
+census %>% 
+  select(
+    geoid, 
+    aland, 
+    income,
+    population
+  )
+```
+
+Notice in the above that the `geometry` columns stayed! I call this a "sticky" column because most tidyverse functions will not remove it unless the data are formatted as a tibble. *Also notice that the `geometry` column is not counted among the "fields" of the sf object.* 
+
+How about the columns in the `counties` file?
+
+```{r}
+counties
+```
+
+After we filtered the data to just the District of Columbia, we were only left with one feature. As such, it makes little sense to maintain *any* of the fields. We can use a neat function `everything()` to select all columns:
+
+```{r}
+counties %>% 
+  select(
+    !everything()
+  )
+```
+
+For `dc_bikes`, I'll choose to include just the fields `objectid` (a primary key), `name`, and `region_name`:
+
+```{r}
+dc_bikes %>% 
+  select(
+    objectid, 
+    name, 
+    region_name
+  )
+```
+
+Once again, all of this pre-processing is done during the data reading process:
+
+```{r}
+
+# Script to accompany the Introduction to shapefiles compendium
+
+# setup -------------------------------------------------------------------
+
+library(sf)
+library(tidyverse)
+
+source("modules/module_3/scripts/source_script.R")
+
+# read and pre-process data -----------------------------------------------
+
+# Census data:
+
+census <-
+  st_read(
+    "data/raw/shapefiles/census.shp",
+    quiet = TRUE
+  ) %>% 
+  clean_names() %>% 
+  filter(state_name == "DC") %>% 
+  select(
+    geoid, 
+    aland, 
+    income,
+    population
+  )
+
+# Counties:
+
+counties <-
+  st_read(
+    "data/raw/shapefiles/counties.geojson",
+    quiet = TRUE
+  ) %>% 
+  clean_names() %>% 
+  filter(state_name == "District of Columbia") %>% 
+  select(
+    !everything()
+  )
+
+# Bike share locations:
+
+dc_bikes <- 
+  read_csv("data/raw/capital_bike_share_locations.csv") %>% 
+  clean_names() %>% 
+  st_as_sf(
+    coords = c("longitude", "latitude"),
+    crs = 4326
+  ) %>% 
+  select(
+    objectid, 
+    name, 
+    region_name
+  )
+```
+
+:::{class="mysecret"}
+<i class="fa fa-user-secret" aria-hidden="true" style = "font-size: 150%; padding-right: 5px;"></i>
+You might be tempted to write your transformed data to your hard disk, but I would advise against it. Even if transforming the CRS was the only modification you made to your object, it *no longer represents raw data*. That's because modifying the CRS can lead to minor changes in the locations of points or vertices. With further transformations of an object, those minor changes can start to add up to major changes in point/vertices locations. It is better to store the raw data and modify the CRS as needed for a given task/session.
+:::
+
+#### Transform the CRS
+
+As our final pre-processing step, our goal will be to transform the coordinate reference system of our shapefiles such that they share *the same CRS*. 
+
+Recall that we can view the CRS of a shapefile using the function `st_crs()`:
+
+```{r}
+st_crs(census)
+```
+
+The above is the modern format for displaying CRS information. It is an WKT (Well-known text) object, which is a type of markup language developed to represent shapefiles. This is the current international standard for representing geometries (Wikipedia has a nice <a href="https://en.wikipedia.org/wiki/Well-known_text_representation_of_geometry" target="_blank">description</a>).
+
+I am typically only interested in seeing the EPSG (European Petroleum Survey Group) code, which is a quick reference to the most commonly used CRSs. We can extract the EPSG code with:
+
+```{r}
+st_crs(census)$srid
+```
+
+Let's look at the EPSG code for each of our objects:
+
+```{r}
+st_crs(census)$srid
+
+st_crs(counties)$srid
+
+st_crs(dc_bikes)$srid
+```
+
+##### Choosing a CRS
+
+We can choose the CRS of an existing shapefile or choose to transform all shapefiles to a new CRS. There are a couple of rules of thumb you can follow to help with the decision of which CRS to choose during pre-processing:
+
+* If you plan to do a lot of spatial operations between shapes (e.g., spatial joins and filters), use a projected CRS -- spatial operations will require less memory and processing time;
+* Given the above, choose the CRS of the most complex shapefile.
+
+Let's look at this second point a bit deeper (see **CRS addendum** for the former). We can look at the number of features present in each of our shapes using `nrow()`:
+
+```{r}
+nrow(census)
+
+nrow(counties)
+
+nrow(dc_bikes)
+```
+
+Given that `census` and `counties` shares the same CRS, we may be more interested in the total features that might be transformed:
+
+```{r}
+nrow(census) + nrow(counties)
+
+nrow(dc_bikes)
+```
+
+On the surface, it may seem that `dc_bikes` *still* has more features and thus should be the target CRS. Recall, however, that `dc_bikes` is a `POINT` object. Let's print just the geometry and CRS of `dc_bikes` using the function `st_geometry()`:
+
+```{r}
+st_geometry(dc_bikes)
+```
+
+Conversely, notice that the geometries of the `census` and `counties` data are `MULTIPOLYGON`:
+
+```{r}
+st_geometry(census)
+
+st_geometry(counties)
+```
+
+To figure out which object is the most complex, we need to see how many vertices are present in the polygons. We can do so by converting the polygons to points and then determining the number of point features. 
+
+The function `st_cast` is used to transform shapefiles from one type to another. We supply the shapefile we wish to transform and the class of object (a one value character vector, in all caps) of the resultant object. Below, I use `st_cast()` to convert the polygon shapefiles `census` and `counties` to points and then use `nrow()` to count the number of vertices in each object.
+
+```{r, warning = FALSE}
+census %>% 
+  st_cast("POINT") %>% 
+  nrow()
+
+counties %>% 
+  st_cast("POINT") %>% 
+  nrow()
+```
+
+We can see that the `counties` shapefile has less vertices than the number of features in `dc_bikes` ... the `census` shapefile has *way* more though! As such, the `census` file makes a nice model CRS for the our data (but see **CRS addendum**, below).
+
+*Note: We will cover `st_cast()` in more depth in our next lesson!*
+
+##### Transforming a CRS
+
+We use the `st_transform()` function to transform a shapefile from one CRS to another. There are a couple of options for doing so. We could choose to transform the CRS of `dc_bikes` by specifying the EPSG code that we determined above:
+
+```{r}
+dc_bikes %>% 
+  st_transform(crs = 4269)
+```
+
+Another option is to provide the target CRS using `st_crs(census)`. Thus:
+
+```{r}
+dc_bikes %>% 
+  st_transform(
+    st_crs(census)
+  )
+```
+
+:::{class="mysecret"}
+<i class="fa fa-user-secret" aria-hidden="true" style = "font-size: 150%; padding-right: 5px;"></i>
+Despite the nested function, I find the method that uses `st_crs(census)` to be much more straightforward. It can be used even if the target CRS has no EPSG code, requires less exploration of the data, and, in my opinion, does a better job of communicating the transformation.
+:::
+
+I typically complete all pre-processing transformations in the same code blocks that I read in my data. For example, here is how my (now complete) code would look for my setup, reading, and pre-processing steps:
+
+```{r}
+
+# Script to accompany the Introduction to shapefiles compendium
+
+# setup -------------------------------------------------------------------
+
+library(sf)
+library(tidyverse)
+
+source("modules/module_3/scripts/source_script.R")
+
+# read and pre-process data -----------------------------------------------
+
+# Census data:
+
+census <-
+  st_read(
+    "data/raw/shapefiles/census.shp",
+    quiet = TRUE
+  ) %>% 
+  clean_names() %>% 
+  filter(state_name == "DC") %>% 
+  select(
+    geoid, 
+    aland, 
+    income,
+    population
+  )
+
+# Counties:
+
+counties <-
+  st_read(
+    "data/raw/shapefiles/counties.geojson",
+    quiet = TRUE
+  ) %>% 
+  clean_names() %>% 
+  filter(state_name == "District of Columbia") %>% 
+  select(
+    !everything()
+  )
+
+# Bike share locations:
+
+dc_bikes <- 
+  read_csv("data/raw/capital_bike_share_locations.csv") %>% 
+  clean_names() %>% 
+  st_as_sf(
+    coords = c("longitude", "latitude"),
+    crs = 4326
+  ) %>% 
+  select(
+    objectid, 
+    name, 
+    region_name
+  ) %>% 
+  st_transform(
+    st_crs(census)
+  )
+```
+
+### CRS addendum
+
+
+When assisting colleagues and students with their spatial data, one of the most common questions I get is "*which CRS should I choose?*". This is a reasonable question (see [a handy function](https://r.geocompx.org/reproj-geo-data.html?q=utm#which-crs){target="_blank"}), because the number of choices can be overwhelming (e.g., you can see suggested coordinate systems for your study area at <a href="https://jjimenezshaw.github.io/crs-explorer/" target = "_blank">this website</a>). Regardless of which CRS you choose, it is important to not get “stuck” to one projection or geodetic CRS -- each comes with trade-offs!
+
+#### Using a geodetic CRS
+
+A geodetic CRS has distinct advantages. They can provide accurate measurements (e.g., distance), and longitudinal and latitudinal coordinates are easy to transfer across mapping platforms. Additionally, when mapping, shapefiles are drawn along straight longitudinal and latitudinal axes, which can be a desirable behavior at relatively small spatial extents. Challenges to using a geodetic CRS include: 
+
+* Calculating measurements often comes at the cost of long processing times;
+* Spatial operations such as joins and filtering can be memory hungry and prohibitively slow;
+* Maps that utilize a geodetic CRS are often distorted, especially at large spatial extents. 
+
+Personally, I prefer to keep my shapefile data in a geodetic CRS as long as possible. The one exception to this is in instances in which the spatial extent of my study area is very small (see **UTM**, below).
+
+#### Using a projected CRS
+
+There are also trade-offs associated with projected coordinate systems. Projected coordinate systems flatten the curvature of the Earth's surface and allow us to express spatial objects in two dimensions. Because of this, spatial operations such as calculating measurements and joining or filtering data are much faster with projected data. However, the method used to flatten the Earth can generate distortions in measurements and different projections are better for different things. Projections may minimize distortions associated with the shape of objects (conformal projections), area calculations (equal-area), distance calculations (equidistant), and direction (azimuthal) -- no projections minimize all four measures (but see **UTM**, below)! Because of this, we often need to transform our data to the CRS which is best for a given calculation. <a href="https://www.arcgis.com/sharing/rest/content/items/e8b85d508d2c4f21a3dec4e52dc7d9c4/data" target = "_blank">This table (ESRI)</a> can be very useful to determine which coordinate system is appropriate for different measurements.
+
+##### UTM
+
+The **Universal Transverse Mercator (UTM)** projection system is a special type of projected CRS that divides the Earth into longitudinal zones (see [this link](https://gisgeography.com/utm-universal-transverse-mercator-projection/){target="_blank"} for more information). If you are working in a relatively small spatial extent (e.g., a city or county), this can be a great CRS to choose because it minimizes distortion across measures and aligns maps along straight longitudinal and latitudinal axes. 
+
+:::{class="mysecret"}
+<i class="fa fa-user-secret" aria-hidden="true" style = "font-size: 150%; padding-right: 5px;"></i>
+UTM projections should *only* be used when working in a single UTM zone and at a small spatial extent. Otherwise, distortions can get extreme!
+:::
+
+When using a UTM CRS, the longitude and latitude values are described as **false eastings** (X, longitude) and **false northings** (Y, latitude). **False eastings** represent the location of a coordinate, in meters, relative to an arbitrary central meridian (longitudinal line) for each UTM zone. These values *should* always be positive and distortion increases with distance from the central meridian. **False northings** represent the distance from the equator, in meters. These values *should* also always be positive -- in the Northern Hemisphere, the **false northing** starts at a value of zero at the Equator and, in the Southern Hemisphere, the **false northing** starts at a value of 10,000,000 (latitudinal distances are subtracted from this number). 
+
+:::{class="mysecret"}
+<i class="fa fa-user-secret" aria-hidden="true" style = "font-size: 150%; padding-right: 5px;"></i>
+False eastings and northings can be handy when using a handheld GPS unit in the field! If I am attempting to locate a set of coordinates and my GPS unit is set to degrees, a glance at the target coordinates gives me a sense of the direction to travel, but not a clear sense of the distance. Conversely, when I attempt to do so with a GPS unit set to UTM, I know the distance to travel in the X direction *and* the distance to travel in the Y direction!
+:::
+
+Probably the biggest challenge associated with using a UTM CRS is in determining which UTM zone you are in and how to convert your CRS to that projection.
+
+**To find your UTM zone**: The central meridians are divided into 6&deg; longitudinal zones and start at a western boundary of -180&deg; longitude. You can calculate your UTM zone number using the following steps:
+
+1. Add 180 to your your target longitude;
+2. Divide the resultant value by 6;
+3. Round up to the nearest whole number (here, I am using the `ceiling()` function to round up)
+
+```{r}
+my_utm_zone <-
+  function(lon) {
+    ceiling(
+      (180 + lon) / 6
+    )
+  }
+```
+
+For example, the longitudinal center of the District of Columbia is approximately, -77&deg; -- we can calculate the UTM zone number of the city with:
+
+```{r}
+my_utm_zone(-77)
+```
+
+*Note: The full UTM zone would be described as `18N` because it is north of the Equator. If the city were south of the Equator, this would be `18S`.*
+
+Knowing the UTM zone is only part of the battle though -- we need to know the CRS associated with that zone. Luckily, the author's of our textbook have created [a handy function](https://r.geocompx.org/reproj-geo-data.html?q=utm#which-crs){target="_blank"}, `lonlat_to_utm()`, to determine the EPSG code associated with our target UTM zone! Although the details of this function are outside of our current set of R tools, we can apply it to determine our EPSG code by supplying a vector of coordinates (x, y):
+
+```{r}
+lonlat_to_utm(
+  c(-77, 38)
+)
+```
+
+**Why use UTM?** Using a projected coordinate system has many benefits (especially in regards to processing time), but different projections should generally be used for different tasks and maps of local areas may be distorted by the type of flattening used.
+
+For example, the Conus Albers projection is a great choice (EPSG 5070) for mapping the US, but notice what happens when we apply that projection to our `counties` shapefile:
+
+```{r}
+counties %>% 
+  st_transform(crs = 5070) %>% 
+  ggplot() +
+  geom_sf()
+```
+
+The above may provide many of the benefits associated with a projected CRS, but it certainly looks askew on the map! Applying a UTM projection aligns the shape along the longitudinal and latitudinal axes:
+
+```{r}
+counties %>% 
+  st_transform(crs = 32618) %>% 
+  ggplot() +
+  geom_sf()
+```
+
+With the above we get the benefits of using a projected CRS, we have minimized distortions *across* measures, *and* the map no longer looks crazy!
+
+## Reference
+
+<button class="accordion">Glossary</button>
+::: panel
+* **Coordinate reference system (CRS)**: The reference system (may be projected or geographic) that allows us to define the location of a geometry on the surface of the Earth.
+* **Geometry**: The coordinates of points or vertices of an sfg object. 
+* **Linestring**: A one-dimensional geometry containing a sequence of vertices (points) connected by straight lines.
+* **Multipoint**: A geometry that contains one or more points within a single geometry object
+* **Point**: A zero-dimensional geometry containing a single point.
+* **Polygon**: Two-dimensional geometry containing a sequence of vertices (points) forming a closed ring of straight lines.
+* **Simple features object (sf)**: A data frame that contains the geometry, attributes, and coordinate reference system (CRS) information.
+* **Simple Features Geometry (sfg)**: The geometry of an individual simple feature.
+* **Simple Features Geometry List Column Object (sfc)**:  list column with the geometry of all simple features in a dataset. 
+* **Tab**: Each pane has a tab on the top of it. For example, I will often refer to the Environment or History tabs of the workspace pane.
+* **Vertex (plural: vertices)**: A point where two or more lines (also called edges) meet.
+:::
+
+<button class="accordion">Functions</button>
+::: panel
+**Important!** Primitive functions as well as functions in the *base* and *utils* packages, are loaded by default when you start an R session. Functions in *dplyr*, *ggplot2*, *lubridate*, *purrr*, *readr*, *tibble*, *tidyr*, and *tidyverse* are loaded with `library(tidyverse)`.
+
+::: function_table
+
+```{r, message = FALSE, echo = FALSE}
+render_function_table("functions_3.2_introduction_to_shapefiles.csv")
+```
+
+:::
+
+:::
+
+<button class="accordion">Keyboard shortcuts</button>
+::: panel
+
+{{< include ../../src/includes/keyboard_shortcuts.qmd >}}
+:::
+
+<button class="accordion">R Studio panes</button>
+::: panel
+{{< include ../../src/includes/rstudio_panes.qmd >}}
+:::
+

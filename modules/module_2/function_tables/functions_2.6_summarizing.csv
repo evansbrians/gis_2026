@@ -1,0 +1,28 @@
+Package,Function,Definition
+.Primitive,(...),Operator that evaluates the function name on the left-hand-side (LHS) of the opening parentheses using the arguments enclosed by the parentheses
+.Primitive,<-,Infix operator that assigns an object on the right-hand-side (RHS) to a name on the left-hand-side (LHS) -- this should be used for global assignments!
+.Primitive,=,Infix operator that assigns an object on the right-hand-side (RHS) to a name on the left-hand-side (LHS) -- this should not be used for global assignments!
+.Primitive,:,Infix operator that generates a regular sequence of adjacent values
+.Primitive,==,Infix relational operator (is equal to)
+.Primitive,!=,Infix relational operator (is not equal to)
+.Primitive,!,Prefix logical operator (not)
+.Primitive,-,Infix arithmetic operator (subtract) or prefix negative symbol operator
+.Primitive,/,Infix arithmetic operator (divide)
+.Primitive,c,Combine values to form an atomic vector
+.Primitive,is.na,A logical test of whether a value in a vector is [NA]
+base,library,Attach the package environment for a given package to the current R session
+base,mean,Generate a one-value double numeric vector that describes the mean of a vector
+dplyr,distinct,Subset a data frame by removing duplicate rows
+dplyr,filter,Subset a data frame by logical condition
+dplyr,group_by,Group the data in a data frame by a given variable such that one or more subsequent analyses are run separately on each group
+dplyr,mutate,Add or modify a column in a data frame
+dplyr,n,Calculate the number of observations (rows)
+dplyr,select,Subset columns in a data frame by name (without quotes!)
+dplyr,summarize,Calculate one or more summary statistics on a variable or variables in a data frame (often used in conjunction with `group_by()` but may also be used with `.by = ...`)
+dplyr,ungroup,Remove any grouping on a data frame
+magrittr,%>%,The pipe operator passes the output of the LHS argument to the function on the right
+purrr,pluck,Extract a list item from a list
+readr,read_rds,Read an RDS file into R
+tidyr,drop_na,Remove rows that contain NA values
+tidyr,pivot_wider,Convert a data frame from long to wide format
+tidyr,replace_na,Replace an NA value in a vector with a different value

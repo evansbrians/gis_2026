@@ -1,0 +1,56 @@
+Package,Function,Definition
+.Primitive,(...),Operator that evaluates the function name on the left-hand-side (LHS) of the opening parentheses using the arguments enclosed by the parentheses
+.Primitive,<-,Infix operator that assigns an object on the right-hand-side (RHS) to a name on the left-hand-side (LHS) -- this should be used for global assignments!
+.Primitive,=,Infix operator that assigns an object on the right-hand-side (RHS) to a name on the left-hand-side (LHS) -- this should not be used for global assignments!
+.Primitive,~,The formula operator separates the left- and right-hand sides (LHS and RHS) in a formula.
+.Primitive,:,Infix operator that generates a regular sequence of adjacent values
+.Primitive,::,Infix operator that can be used to access a package environment without attaching the whole package environment to your current session
+.Primitive,$,Infix operator that extracts the values associated with a name (RHS) from a recursive object (LHS)
+.Primitive,==,Infix relational operator (is equal to)
+.Primitive,!,Prefix logical operator (not)
+.Primitive,+,Infix arithmetic operator (addition)
+.Primitive,-,Infix arithmetic operator (subtract) or prefix negative symbol operator
+.Primitive,/,Infix arithmetic operator (divide)
+.Primitive,c,Combine values to form an atomic vector
+.Primitive,names,Retrieve the names (or names attribute) assigned to an R object (generates a character vector)
+.Primitive,sum,Calculate the sum of the values in a vector
+base,%in%,Infix relational operator that tests whether the vector on the left-hand-side (LHS) is within the vector on the right
+base,file.path,Create a file path by concatenating strings
+base,library,Attach the package environment for a given package to the current R session
+base,ls,Generate a character vector of names in a specified environment (default is the global environment)
+base,nrow,"Return the number of rows (i.e., observations) in a data frame as a one-value integer vector"
+base,rm,Remove a name from a specified environment (default is the global environment)
+base,source,Execute a source script (in its entirety)
+bench,mark,Benchmark an operation (processing time and memory used)
+dplyr,bind_rows,Combine rows of two or more tibbles to create a new tibble
+dplyr,distinct,Subset a data frame by removing duplicate rows
+dplyr,filter,Subset a data frame by logical condition
+dplyr,group_by,Group the data in a data frame by a given variable such that one or more subsequent analyses are run separately on each group
+dplyr,mutate,Add or modify a column in a data frame
+dplyr,pull,Extract a column from a data frame as a vector
+dplyr,select,Subset columns in a data frame by name (without quotes!)
+dplyr,summarize,Calculate one or more summary statistics on a variable or variables in a data frame (often used in conjunction with `group_by()` but may also be used with `.by = ...`)
+ggplot2,+,ggplot's pipe operator (adds a layer to a plot)
+ggplot2,facet_wrap,Split plot into facets
+ggplot2,geom_sf,Add an sf layer to a ggplot
+ggplot2,ggplot,"Set the data and, potentially, the aesthetics of a plot"
+ggplot2,theme_set,Set the ggplot theme for an entire session
+ggplot2,theme_void,A ggplot theme that contains no axes or panel background
+lobstr,obj_size,View the amount of memory allocated to an object in your computer's memory
+magrittr,%>%,The pipe operator passes the output of the LHS argument to the function on the right
+mapview,npts,"Determine the number of vertices (i.e., nodes or points) in a polygon"
+purrr,map,Iterate across a vector and return a list
+rlang,set_names,Assign names to values in a vector or items in a list
+rmapshaper,ms_simplify,Reduce the number of nodes in a polygon by a set proportion
+sf,st_as_sf,Convert a data frame to an sf object
+sf,st_drop_geometry,Remove the geometry column from an sf file and (thus) convert to a data frame
+sf,st_geometry_type,Return the type of geometry present in an sf object
+sf,st_intersection,A type of mutating *or* filtering spatial join in which you maintain only portions of a target shapefile that overlap with a source shapefile
+sf,st_join,Conduct a mutating join of a target table relative to the geometry of a source table
+sf,st_read,Read in a simple features or other GIS shapefile
+sf,st_simplify,Increase the resolution of a shapefile by removing nodes that are within a given distance
+sf,st_transform,Transform the CRS of a shapefile to a different CRS
+sf,st_union,Dissolve boundaries between polygons
+tibble,as_tibble,Convert a data frame (and some other non-tibble objects!) to a tibble data frame
+tibble,tibble,Column-wise creation of a tibble data frame
+tmap,tmap_mode,"Set a tmap to either ""plot"" (static map) or ""view"" (interactive map)"

@@ -1,0 +1,255 @@
+/*-- scss:defaults --*/
+
+hr {
+  margin-top: 0em;
+  margin-bottom: 15em;
+}
+
+p {
+  font-size: 1rem;
+}
+
+ul {
+  padding-bottom: 0.25rem;
+}
+
+ol {
+  padding-bottom: 0.25rem;
+}
+
+
+li {
+  padding-bottom: 0.25rem;
+}
+
+h1, h2 {
+  margin-bottom: 4px;
+}
+
+h1 {
+  font-size: 5em;
+}
+
+pre {
+  background-color: #efefef !important;
+  border: 1px solid #999999 !important;
+  border-style: solid; 
+  border-radius: 5px;
+}
+
+code {
+  margin: 0.25em;
+  font-size: 0.9em !important;
+}
+
+/*-- scss:classes --*/
+
+.mysecret {
+  border: 1px solid #999999;
+  border-style: solid; 
+  background-color: #FFF8DC;
+  padding: 20px; 
+  border-radius: 25px;
+  margin-top: 15px;
+  margin-bottom: 15px;
+}
+
+.intro_image {
+  float: right; 
+  padding-left: 2em; 
+  padding-bottom: 2em; 
+  padding-right: 0em; 
+  width: 40%; 
+  height: auto;
+}
+
+.gis_logo {
+  float: right; 
+  padding-left: 1em; 
+  padding-bottom: 1em; 
+  padding-right: 0em; 
+  width: 50%; 
+  height: auto;
+}
+
+.little_left_icon {
+  float: left; 
+  padding-left: 0em; 
+  padding-bottom: 0em; 
+  padding-right: 1em; 
+  width: 10%; 
+  height: auto;
+}
+
+.now_you {
+  border-left: 8px solid #292093;
+  background-color: #e6ffff;
+  padding: 16px;
+  margin-top: 15px;
+  margin-bottom: 15px;
+}
+
+/* Indent webexercises answer widgets (radio options and dropdowns) to align with the question text above */
+
+.now_you .webex-radiogroup,
+.now_you .webex-select {
+  margin-left: 2rem;
+}
+
+/* Accordion style */
+
+.accordion {
+  background-color: #e6f0ff;
+  color: #000000;
+  cursor: pointer;
+  padding: 18px;
+  width: 100%;
+  border-style: solid;
+  border-width: 2px;
+  border-color: #ffffff;
+  text-align: left;
+  outline: none;
+  font-size: 15px;
+  transition: 0.4s;
+}
+
+/* When you hover your mouse over the accordion button, it changes color. */
+
+.active, .accordion:hover {
+  background-color: #80b3ff; 
+  color: #ffffff;
+  font-weight: bold;
+}
+
+/* This is where the content of the accordion is placed. */
+
+.panel {
+  padding: 18px 18px;
+  display: none;
+  background-color: #eeffff;
+  overflow: hidden;
+}
+
+.function_table {
+  background-color: #ffffff;
+}
+
+/* For monospace fonts*/
+
+.mono {
+  font-family: monospace;
+}
+
+/* Bad and good,  bolded*/
+
+.bad {
+ color: red; 
+ font-weight: bold
+}
+
+.good {
+ color: blue; 
+ font-weight: bold
+}
+
+/* Bullet points */
+
+.bulls {
+  font-size: 0.5em !important;
+  vertical-align: middle !important;
+  padding-right: 0.5em !important;
+  margin-left: 0em !important;
+}
+
+/* Indentation for bullet points */
+
+.indent_bb {
+  margin-left: 1.9em; 
+  text-indent: -0.7em;
+}
+
+.indent_wb {
+  margin-left: 3em; 
+  text-indent: -0.95em;
+}
+
+.indent_sb {
+  margin-left: 3.85em; 
+  text-indent: -0.95em;
+}
+
+/* Indentation for code and text below bullet points */
+
+.indent_code_wb {
+  padding-left: 3em;
+}
+
+.indent_code_bb {
+  margin-left: 2.15em;
+}
+
+.indent_code_sb {
+  margin-left: 3.85em;
+}
+
+/* Problem sets */
+
+.score {
+  font-weight: bold;
+  color: red;
+  background-color: #ffff80;
+}
+
+.subscore {
+  font-size: 14px;
+  color: red;
+}
+
+/* Final exam memos */
+
+.hr_memo {
+  height:1.5px;
+  border-width:0;
+  background-color:black; 
+  margin-top: 30px; 
+  margin-bottom: 30px
+}
+
+.memo {
+  font-family: monospace;
+  border-radius: 10px;
+  background: #efefef;
+  border: 1px solid #bebebe;
+  padding: 20px;
+  margin-top: 20px;
+}
+
+/* Parsons drag-and-drop problems (js-parsons, see src/lib/js-parsons/) */
+
+.parsons-problem {
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+.parsons-problem .sortable-code {
+  width: 46%;
+}
+
+.parsons-problem-label {
+  font-weight: bold;
+  margin-bottom: 4px;
+}
+
+.parsons-feedback {
+  clear: both;
+  padding-top: 12px;
+  font-weight: bold;
+}
+
+.parsons-feedback-correct {
+  color: #2e7d32;
+}
+
+.parsons-feedback-incorrect {
+  color: #b00020;
+}

@@ -1,0 +1,1328 @@
+---
+title: "Preliminary Lesson 4: Objects"
+format: live-html
+---
+
+```{r}
+#| include: false
+
+source("src/r/course_functions.R")
+```
+```{r}
+#| label: setup
+#| include: false
+
+library(webexercises)
+
+knitr::opts_chunk$set(
+  echo = TRUE,
+  eval = TRUE,
+  error = TRUE
+)
+```
+
+{{< include ../../_extensions/r-wasm/live/_knitr.qmd >}}
+
+<hr>
+
+<div>
+
+![](../../src/images/hex_complex.png){.intro_image}
+
+Objects are containers that hold instructions for code execution, functions, values, or other objects. Recall that *everything that exists in R is an object* (John Chambers). Data within objects may be structured in different ways and these differences define when and how we work with them.
+
+In this lesson we'll address what I will call "data objects", which I define here as containers used to organize values within an environment.
+
+In this lesson, you will learn:
+
+* The two traits -- dimensions and homogeneity -- that distinguish atomic vectors, matrices, lists, and data frames
+* How to construct atomic vectors and describe, assign, and remove their attributes
+* How to construct and describe matrices
+* How to construct and describe lists, including how lists can be used to inform other functions
+* How to construct data frames and tibbles
+* How to read and write data objects with the *readr* package
+
+[{{< fa exclamation-triangle size=2x >}} Important!]{style="color: red;"} This lesson assumes that you have completed [Preliminary Lesson 3: Values](0.3_values.qmd){target="_blank"}. As the material covered herein will build on the content in that lesson, please do not proceed until its completion.
+
+</div>
+
+## Before you begin
+
+To get the most out of this lesson, please:
+
+* Open RStudio in a clean session;
+* Open a new, blank script file and save it as "lesson_0.4.R";
+* Code along with the content!
+
+## 1. Types of objects
+
+Data objects can be defined by the number of dimensions and classes of values (e.g., integers or decimal numbers) that they contain.
+
+::: {style="width: 40%; margin-left: 0px"}
+|  Dimensions  |  Homogeneous  |  Heterogeneous  |
+|:------------:|:-------------:|:---------------:|
+| 1-D          | Atomic vector | List            |
+| 2-D          | Matrix        | Data frame      |
+:::
+
+**Dimensions** describe the arrangement of values within an object:
+
+* **One-dimensional** objects are also known as **vectors** and data are arranged in a single line.
+* Data in **two-dimensional** objects are arranged as rows and columns.
+
+**Homogeneity** describes whether the object may contain one or more than one class of object:
+
+* **Homogeneous** objects may only contain a single class of data.
+* **Heterogeneous** objects may contain more than one class of data.
+
+*Note: Recall that the **class** of a data object pertains to the kind of values represented (e.g., numbers, characters, factors, and logicals).*
+
+::: now_you
+{{< fa user-circle size=2x >}} [Which data object is two-dimensional AND heterogeneous (able to hold more than one class of value)?]{style="padding-left: 0.5em;"}
+
+`r longmcq(c(answer = "Data frame", "Matrix", "Atomic vector", "List"))`
+:::
+
+## 2. Atomic vectors
+
+An **atomic vector** is a **one-dimensional** collection of values (but recall that a single value is, by default, also an atomic vector). Values in an atomic vector are homogeneous -- all values must be of the same class.
+
+![](../../src/images/atomic_cats.png){style="width: 100%;"}
+
+We've already learned how to create an atomic vector -- this is the type of object that we created using the combine function, `c()`:
+
+```{webr}
+#| autorun: true
+
+my_object <-
+  c(1, 1, 2, 3)
+```
+
+### 2.1 The structure of atomic vectors
+
+The **structure** of an object describes the class of object, an object's dimensions, how the data are stored, and metadata that describe the object. In the previous lesson we used `class()` and `typeof()` to observe an object's class and type.
+
+::: now_you
+{{< fa user-circle size=2x >}} [Determine the class and type of the atomic vector `my_object`.]{style="padding-left: 0.5em;"}
+
+```{webr}
+#| edit: true
+#| min-lines: 5
+
+```
+:::
+
+<button class="accordion" style="margin-bottom: 1em;">Solution</button>
+::: panel
+
+```{r}
+class(my_object)
+
+typeof(my_object)
+```
+:::
+
+We can use `length()` to determine the number of values that make up the atomic vector:
+
+```{webr}
+length(my_object)
+```
+
+#### 2.1.1 Attributes of atomic vectors
+
+The **attributes** of an object provides information about the values (i.e., metadata) not contained in the values themselves. You can print the attributes of an object using the function `attributes()`:
+
+```{webr}
+attributes(my_object)
+```
+
+As we can see, atomic vectors do not have any attributes by default -- we have to add them. For example, values in a vector may contain a "names" attribute. We can assign names to the components of an object using the `names` function.
+
+The argument of `names()` is the name of the parent object (which, in this case, is an atomic vector). We then use the `<-` operator and providing a character vector of names:
+
+```{webr}
+names(my_object) <-
+  c("orange",
+    "pear",
+    "apple",
+    "grape"
+  )
+```
+
+Conversely, we can also add names during the creation of an atomic vector using the assignment operator `=`:
+
+```{webr}
+#| autorun: true
+
+my_object <-
+  c(orange = 1,
+    pear = 1,
+    apple = 2,
+    grape = 3
+  )
+```
+
+To view the names assigned to each value we can use `names()` to print the names attribute:
+
+```{webr}
+names(my_object)
+```
+
+... view the names with `attributes()`:
+
+```{webr}
+attributes(my_object)
+```
+
+... or view the names just by printing the object itself:
+
+```{webr}
+my_object
+```
+
+::: mysecret
+{{< fa user-secret size=2x >}} [What's in a name?]{style="font-size: 1.25em; padding-left: 0.5em;"}
+
+We've previously addressed assignment as it relates to the global environment. Names assigned to the global environment (e.g., `my_object`) and those assigned to the "children" of "parent" objects (e.g., "apple" assigned to the value 2 in `my_object`) are very different!
+
+When we assign a name to the global environment, R can access the data directly with the assigned name:
+
+```{r}
+my_object
+```
+
+When we assign names to the children of a parent object, the assigned names are an attribute of the object -- they don't live in the global environment!
+
+```{r}
+#| error: true
+
+apple
+```
+
+We might visualize this as:
+
+![](../../src/images/named_fruit.png){style="width: 100%;"}
+
+In the above, we see that neither the data nor the names assigned to the individual values live in the global environment (the gray box) -- the global environment contains only the name `my_object`. We'll learn how to use the names associated with child objects in our next preliminary lesson.
+:::
+
+We can remove the `names` attribute from an integer vector by setting the attribute to `NULL`:
+
+```{webr}
+#| autorun: true
+
+names(my_object) <- NULL
+
+attributes(my_object)
+```
+
+The above might seem a little strange. Why can't you write `NULL <- names(my_object)`? It's because NULL is actually a value (a list of length zero) whereas the names of `my_object` represents an assignment.
+
+Unlike removing a name assigned to an environment, the data associated with the object are maintained:
+
+```{webr}
+my_object
+```
+
+### 2.3 Exercise
+
+::: now_you
+{{< fa user-circle size=2x >}} [Test your atomic vector skills ... let's form a rock band! Without assigning a name to your global environment, generate a character vector with the values "vocals", "guitar", "bass", and "drums".]{style="padding-left: 0.5em;"}
+
+```{webr}
+#| edit: true
+#| min-lines: 4
+
+```
+:::
+
+<button class="accordion" style="margin-bottom: 1em;">Solution</button>
+::: panel
+
+```{r}
+c("vocals",
+  "guitar",
+  "bass",
+  "drums"
+)
+```
+:::
+
+::: now_you
+{{< fa user-circle size=2x >}} [Repeat the above, using the `=` operator to assign band members to their instruments. Assign roger to vocals, pete to guitar, john to bass, and keith to drums.]{style="padding-left: 0.5em;"}
+
+```{webr}
+#| edit: true
+#| min-lines: 4
+
+```
+:::
+
+<button class="accordion" style="margin-bottom: 1em;">Solution</button>
+::: panel
+
+```{r}
+c(roger = "vocals",
+  pete = "guitar",
+  john = "bass",
+  keith = "drums"
+)
+```
+:::
+
+::: now_you
+{{< fa user-circle size=2x >}} [Repeat the above and print the attributes of the resultant object.]{style="padding-left: 0.5em;"}
+
+```{webr}
+#| edit: true
+#| min-lines: 4
+
+```
+:::
+
+<button class="accordion" style="margin-bottom: 1em;">Solution</button>
+::: panel
+
+```{r}
+attributes(
+  c(roger = "vocals",
+    pete = "guitar",
+    john = "bass",
+    keith = "drums"
+  )
+)
+```
+:::
+
+## 3. Matrix objects
+
+A **matrix** is an atomic vector that has been arranged into rows and columns (i.e., matrices are two-dimensional). Because the data in a matrix *is* an atomic vector, all matrices must be homogeneous.
+
+![](../../src/images/matrix_cats_and_dogs.png){style="width: 100%;"}
+
+### 3.1 Constructing a matrix
+
+You can use the function `matrix()` to create a matrix. This function contains the following arguments:
+
+* `x = {atomic vector}`: The atomic vector you would like to convert to a matrix
+* `nrow = {number}`: The number of rows in the matrix (optional).
+* `ncol = {number}`: The number of columns in the matrix (optional).
+* `byrow = {logical}`: Whether the matrix is filled by column (FALSE, the default) or row (TRUE)
+
+Let's start with the default options and convert `my_object` to a matrix (*Note: this is the same `my_object` that you worked with above*):
+
+```{webr}
+matrix(my_object)
+```
+
+This converted `my_object` to a two-dimensional object, a table with four rows and one column. The data are arranged in a single column.
+
+If we want to change the dimensional structure of the data (i.e., number of rows or columns) we can explicitly set the number of rows or columns:
+
+```{webr}
+matrix(
+  my_object,
+  nrow = 1
+)
+```
+
+By explicitly setting the number of rows to 1, the number of columns used to express the data was increased to 4. We could have also rearranged the data as such by setting the number columns to 4:
+
+```{webr}
+matrix(
+  my_object,
+  ncol = 4
+)
+```
+
+This makes `matrix()` a pretty smart function (you only need to set the number of rows *or* columns)!
+
+There is rarely a need for a matrix with just a single column or row (atomic vectors are much easier to use)! Let's see what happens if we set the number of rows to 2:
+
+```{webr}
+matrix(
+  my_object,
+  ncol = 2
+)
+```
+
+This restructured the dimensions of the data to a 2 x 2 square -- the number of rows was determined by the number of columns in the `ncol` argument.
+
+Notice the order of the values. They are filled column-wise by default -- from top-to-bottom. To understand how this works, watch what happens when we specify `byrow = TRUE`:
+
+```{webr}
+matrix(
+  my_object,
+  ncol = 2,
+  byrow = TRUE
+)
+```
+
+In the above, `matrix(..., byrow = TRUE)` filled in the values from left-to-right.
+
+::: now_you
+{{< fa user-circle size=2x >}} [True or false: By default, `matrix()` fills its values row by row, completing the first row before moving to the next.]{style="padding-left: 0.5em;"}
+
+`r torf(FALSE)`
+:::
+
+::: mysecret
+{{< fa user-secret size=2x >}} [Know your data!]{style="font-size: 1.25em; padding-left: 0.5em;"}
+
+When building a matrix, it's super important to have a good sense of the data going in. For example, notice what happens when we generate a 4-column matrix with an atomic vector that contains only three values:
+
+```{r}
+matrix(
+  c("hello",
+    "world",
+    "howdy"
+  ),
+  ncol = 4
+)
+```
+
+We can see that `matrix()` recycled the first value in the set! Thankfully, R also provided us with a warning message ({{< fa user-secret >}} Always pay attention to warning messages!).
+:::
+
+### 3.2 The structure of matrices
+
+#### 3.2.1 Matrix dimensions
+
+We can evaluate the dimensional structure of the data using the functions `nrow` and `ncol`, which represent the number of rows and columns, respectively:
+
+```{webr}
+nrow(
+  matrix(my_object)
+)
+
+ncol(
+  matrix(my_object)
+)
+```
+
+The function `dim` will return the number of rows *and* columns:
+
+```{webr}
+dim(
+  matrix(my_object)
+)
+```
+
+This returned an integer vector with two values, where the first value is the number of rows and the second value is the number of columns.
+
+We can use `length()` to determine the number of values in the matrix:
+
+```{webr}
+length(
+  matrix(my_object)
+)
+```
+
+#### 3.2.2 Matrix class and type
+
+Recall that when we use the `class()` function, the class of object is returned:
+
+```{webr}
+class(
+  matrix(my_object)
+)
+```
+
+Here we see that the object is *both* a matrix and an array. An **array** is a more general term -- it describes an atomic vector with an additional attribute (`dim`) that provides the dimensions (thus a matrix is a two-dimensional array). This highlights what a matrix is -- it is an atomic vector with attributes describing the dimensions of the object.
+
+```{webr}
+attributes(
+  matrix(my_object)
+)
+```
+
+Because a matrix *is* an atomic vector, the function `typeof` shows us how the values are stored in our computer:
+
+```{webr}
+typeof(
+  matrix(my_object)
+)
+```
+
+::: mysecret
+{{< fa user-secret size=2x >}} [Don't forget that matrices are homogeneous!]{style="font-size: 1.25em; padding-left: 0.5em;"}
+
+Because matrices *secretly* are atomic vectors all values in a matrix must be of the same type. If they are not, they are coerced into characters (the most general of classes):
+
+```{r}
+matrix(
+  c(1, "one", 2, 3)
+)
+```
+
+The above is still a matrix, and therefore homogeneous, but the number values (`1`, `2`, and `3`) have been coerced into characters!
+:::
+
+::: now_you
+{{< fa user-circle size=2x >}} [True or false: Because a matrix has rows and columns, it can hold different classes of values in different columns, the way a data frame can.]{style="padding-left: 0.5em;"}
+
+`r torf(FALSE)`
+:::
+
+#### 3.2.3 Row and column names of a matrix
+
+We've seen that matrices have one attribute by default -- the dimensions of the matrix. Additional attributes, such as row and column names, can be added during matrix construction.
+
+Let's generate a simple two-column matrix:
+
+```{webr}
+matrix(
+  my_object,
+  ncol = 2
+)
+```
+
+We can assign names to rows after a matrix has been assigned with the `row.names` function:
+
+```{webr}
+#| autorun: true
+
+my_matrix <-
+  matrix(
+    my_object,
+    ncol = 2
+  )
+
+row.names(my_matrix) <-
+  c("a", "b")
+
+my_matrix
+```
+
+... and assign column names with the `colnames` function:
+
+```{webr}
+#| autorun: true
+
+colnames(my_matrix) <-
+  c("x", "y")
+
+my_matrix
+```
+
+::: mysecret
+{{< fa user-secret size=2x >}} [Attributes are metadata!]{style="font-size: 1.25em; padding-left: 0.5em;"}
+
+The row and column names that we added above haven't altered the data, they've altered attributes that describe the data!
+
+```{r}
+attributes(my_matrix)
+```
+:::
+
+### 3.3 Exercise
+
+::: now_you
+{{< fa user-circle size=2x >}} [Test your matrix skills! The object `bunnies` is assigned to a numeric vector. Convert `bunnies` to a two-column matrix where the values are filled by row, save the object to memory by assigning the name `bunny_matrix` to global environment, and assign the names "hello" and "world" to the columns of the matrix (*Note: To ensure that your code worked, call `bunny_matrix` after completing this problem*).]{style="padding-left: 0.5em;"}
+
+```{webr}
+#| autorun: true
+#| edit: false
+
+bunnies <-
+  c(1, 1, 2, 3, 5, 8)
+```
+
+```{webr}
+#| edit: true
+#| min-lines: 8
+
+```
+:::
+
+<button class="accordion" style="margin-bottom: 1em;">Solution</button>
+::: panel
+
+```{r}
+bunny_matrix <-
+  matrix(
+    bunnies,
+    ncol = 2,
+    byrow = TRUE
+  )
+
+colnames(bunny_matrix) <-
+  c("hello", "world")
+
+bunny_matrix
+```
+:::
+
+::: now_you
+{{< fa user-circle size=2x >}} [Parsons Problem: Reorder the lines below to build `bunny_matrix` from `bunnies` (a two-column matrix filled by row), name its columns "hello" and "world", then print it. Two lines don't belong -- leave them in the trash.]{style="padding-left: 0.5em;"}
+
+<div class="parsons-problem">
+<div id="p-0-4-01-trash" class="sortable-code"></div>
+<div id="p-0-4-01-sortable" class="sortable-code"></div>
+<div style="clear: both;"></div>
+<button id="p-0-4-01-check" class="btn btn-outline-dark btn-sm" type="button">Check My Order</button>
+<button id="p-0-4-01-reset" class="btn btn-outline-dark btn-sm" type="button">Shuffle Again</button>
+<p id="p-0-4-01-feedback" class="parsons-feedback"></p>
+</div>
+
+<script>
+window.parsonsProblems = window.parsonsProblems || [];
+window.parsonsProblems.push({
+  id: "p-0-4-01",
+  maxDistractors: 2,
+  code: "bunny_matrix &lt;-\n  matrix(\n    bunnies,\n    ncol = 2,\n    byrow = TRUE\n  )\ncolnames(bunny_matrix) &lt;-\n  c(\"hello\", \"world\")\nbunny_matrix\n    byrow = FALSE #distractor\nrownames(bunny_matrix) &lt;- c(\"hello\", \"world\") #distractor"
+});
+</script>
+:::
+
+## 4. List objects
+
+A **list** is a one-dimensional object constructed by combining ANY objects with ANY dimensionality. Because of their flexibility, lists can be very powerful (and often challenging!).
+
+![](../../src/images/list_cats_and_dogs.png){style="width: 100%;"}
+
+### 4.1 Constructing a list
+
+A list is created using `list()`. The arguments of the `list` function are the items contained within the list. We can generate lists that contain:
+
+A homogeneous list of values:
+
+```{webr}
+list(1, 1, 2, 3)
+```
+
+A heterogeneous list of values:
+
+```{webr}
+list(1, "one", 2)
+```
+
+A list of multidimensional objects:
+
+```{webr}
+list(my_object, my_matrix)
+```
+
+As with all objects, we can access the data in the future if we assign a name to the list:
+
+```{webr}
+#| autorun: true
+
+my_list <-
+  list(
+    vector = my_object,
+    matrix = my_matrix
+  )
+```
+
+### 4.2 The structure of lists
+
+Lists are vectors -- just heterogeneous ones. We can view the structure of list objects in a similar way to atomic vectors.
+
+The class of a list and how the data are stored are both "list":
+
+```{webr}
+class(my_list)
+
+typeof(my_list)
+```
+
+The function `length` can be used to return the number of list objects:
+
+```{webr}
+length(my_list)
+```
+
+Notice in the above that this returns the number of list items, not the number of values. For example, the list items of `my_list` are the objects `my_object` and `my_matrix`. Each object is comprised of four values. There's currently 8 values in the list but the values are stored within two separate list items.
+
+#### 4.2.1 Assigning names
+
+Like atomic vectors, a list has no attributes by default:
+
+```{webr}
+attributes(
+  list(my_object, my_matrix)
+)
+```
+
+When we create a list, we can assign name attributes to the component objects using the `=` operator:
+
+```{webr}
+list(
+  vector = my_object,
+  matrix = my_matrix
+)
+```
+
+With our list assigned to the global environment, we can assign names using the function `names`:
+
+```{webr}
+#| autorun: true
+
+names(my_list) <-
+  c("vector", "matrix")
+```
+
+... or use `names()` to print the names assigned to each component object:
+
+```{webr}
+names(my_list)
+```
+
+### 4.3 List application: Object attibutes
+
+#### 4.3.1 Adding names to a matrix
+
+Lists are often used to inform functions. For example, the matrix function contains an optional `dimnames =` argument (the default is `NULL`). We supply the names in a list where the first list item is a character vector of row names and the second list item is a character vector of column names:
+
+```{webr}
+matrix(
+  my_object,
+  ncol = 2,
+  dimnames =
+    list(
+      c("a", "b"),
+      c("x", "y")
+    )
+)
+```
+
+If we wanted column names but no row names, we can set the row names to `NULL`:
+
+```{webr}
+matrix(
+  my_object,
+  ncol = 2,
+  dimnames =
+    list(
+      NULL,
+      c("x", "y")
+    )
+)
+```
+
+Likewise, if we wanted row names and no column names, we can set the column names to `NULL`:
+
+```{webr}
+matrix(
+  my_object,
+  ncol = 2,
+  dimnames =
+    list(
+      c("a", "b"),
+      NULL
+    )
+)
+```
+
+::: now_you
+{{< fa user-circle size=2x >}} [Parsons Problem: Reorder and nest the lines below into a call that turns `my_object` into a two-column matrix with row names "a", "b" and column names "x", "y". The two-item list must end up inside `dimnames =`, with row names first. One line doesn't belong -- leave it in the trash.]{style="padding-left: 0.5em;"}
+
+<div class="parsons-problem">
+<div id="p-0-4-02-trash" class="sortable-code"></div>
+<div id="p-0-4-02-sortable" class="sortable-code"></div>
+<div style="clear: both;"></div>
+<button id="p-0-4-02-check" class="btn btn-outline-dark btn-sm" type="button">Check My Order</button>
+<button id="p-0-4-02-reset" class="btn btn-outline-dark btn-sm" type="button">Shuffle Again</button>
+<p id="p-0-4-02-feedback" class="parsons-feedback"></p>
+</div>
+
+<script>
+window.parsonsProblems = window.parsonsProblems || [];
+window.parsonsProblems.push({
+  id: "p-0-4-02",
+  maxDistractors: 1,
+  code: "matrix(\n  my_object,\n  ncol = 2,\n  dimnames =\n    list(\n      c(\"a\", \"b\"),\n      c(\"x\", \"y\")\n    )\n)\n  dimnames = c(\"a\", \"b\"), #distractor"
+});
+</script>
+:::
+
+::: mysecret
+{{< fa user-secret size=2x >}} [Avoid unnecessary functions!]{style="font-size: 1.25em; padding-left: 0.5em;"}
+
+Defining the matrix names with a list is my preferred method. If we are aware of the arguments in the `matrix` function, using `row.names()` or `colnames()` after a matrix has been created is rarely necessary. Moreover, bringing in a new function into our code requires us to:
+
+1. Find out the function exists (which can sometimes be challenging!)
+2. Read the help documentation for the function to find out how to use it
+
+My coding philosophy is that, for a given task, we should strive to code with as few functions as possible. Understanding the functions that we're using helps us achieve this goal.
+
+{{< fa user-secret >}} Read the documentation (`?function`) for every function you use!
+
+![](../../src/images/dogbert_tech_support.gif){style="width: 100%;"}
+:::
+
+#### 4.3.2 Adding attributes to an existing matrix
+
+We have thus far used `attributes()` to view the attributes of an object:
+
+```{webr}
+attributes(my_matrix)
+```
+
+We've seen the above before, but what sort of object is this?
+
+```{webr}
+class(
+  attributes(my_matrix)
+)
+```
+
+The attributes themselves are a list!
+
+We can also use `attributes()` to assign attributes to an object. This is a very powerful and flexible method for adding informative metadata to an object!
+
+```{webr}
+attributes(my_matrix) <-
+  list(
+    colnames = c("hello", "world"),
+    author = "Brian",
+    reason = "To show attribute lists"
+  )
+
+attributes(my_matrix)
+```
+
+::: now_you
+{{< fa user-circle size=2x >}} [Parsons Problem: Reorder the lines below to assign a `colnames`, `author`, and `reason` attribute to `my_matrix` all at once via `attributes()<-`, then print the result. Two lines don't belong -- leave them in the trash.]{style="padding-left: 0.5em;"}
+
+<div class="parsons-problem">
+<div id="p-0-4-03-trash" class="sortable-code"></div>
+<div id="p-0-4-03-sortable" class="sortable-code"></div>
+<div style="clear: both;"></div>
+<button id="p-0-4-03-check" class="btn btn-outline-dark btn-sm" type="button">Check My Order</button>
+<button id="p-0-4-03-reset" class="btn btn-outline-dark btn-sm" type="button">Shuffle Again</button>
+<p id="p-0-4-03-feedback" class="parsons-feedback"></p>
+</div>
+
+<script>
+window.parsonsProblems = window.parsonsProblems || [];
+window.parsonsProblems.push({
+  id: "p-0-4-03",
+  maxDistractors: 2,
+  code: "attributes(my_matrix) &lt;-\n  list(\n    colnames = c(\"hello\", \"world\"),\n    author = \"Brian\",\n    reason = \"To show attribute lists\"\n  )\nattributes(my_matrix)\ncolnames(my_matrix) &lt;- c(\"hello\", \"world\") #distractor\nattributes(my_matrix) &lt;- c(\"hello\", \"world\") #distractor"
+});
+</script>
+:::
+
+### 4.4 Exercise
+
+::: now_you
+{{< fa user-circle size=2x >}} [Test your list skills! Recall that we generated an atomic vector and assigned the name `my_object` to the data. Use the `attributes` function and `list()` to assign the names "orange", "pear", "apple", and "grape" to the values in `my_object` (*Note: To ensure that your code worked, call `my_object` after completing this problem*).]{style="padding-left: 0.5em;"}
+
+```{webr}
+#| autorun: true
+#| edit: false
+
+my_object <-
+  c(1, 1, 2, 3)
+```
+
+```{webr}
+#| edit: true
+#| min-lines: 8
+
+```
+:::
+
+<button class="accordion" style="margin-bottom: 1em;">Solution</button>
+::: panel
+
+```{r}
+attributes(my_object) <-
+  list(
+    names =
+      c("orange",
+        "pear",
+        "apple",
+        "grape"
+      )
+  )
+
+my_object
+```
+:::
+
+## 5. Data frames
+
+A **data frame** is the object class that is most often used for storing data. Like a matrix, a data frame has two dimensions with data arranged into rows and columns. This is where the similarity between data frames and matrices ends -- a data frame is a heterogeneous data structure that is actually a restrictive type of list.
+
+![](../../src/images/df_cats_and_dogs.png){style="width: 100%;"}
+
+### 5.1 Constructing a data frame
+
+Data frames are created by assembling list items into columns where:
+
+* The length of each list item is equal;
+* Each list item is a vector (*almost* always an atomic vector)
+
+One method for arranging values into data frames is to use the `data.frame()` function. The arguments of this function are the vectors that make up the object (`data.frame({vector_1}, {vector_2})`):
+
+```{webr}
+data.frame(
+  c("hello",
+    "hello",
+    "world",
+    "world"
+  ),
+  1:4
+)
+```
+
+This created a data frame successfully, though the names are a bit of a mess. Because of that, let's head straight to the "attributes" section ...
+
+### 5.2 The attributes of a data frame
+
+As we have with the other objects, we can use `attibutes()` to see important metadata about the object:
+
+```{webr}
+attributes(
+  data.frame(
+    c("hello",
+      "hello",
+      "world",
+      "world"
+    ),
+    1:4
+  )
+)
+```
+
+Here, we see that there are three sets of attributes associated with a data frame upon creation:
+
+* A vector of names (albeit terrible ones)
+* The class of the object
+* A vector of row names
+
+Why does `attributes()` return the class of a data frame? That's because a data frame *is* a list where the list items are arranged as columns -- this structure applied to the data is defined by the object's class.
+
+We can verify this by looking at how the data are stored:
+
+```{webr}
+typeof(
+  data.frame(
+    c("hello",
+      "hello",
+      "world",
+      "world"
+    ),
+    1:4
+  )
+)
+```
+
+We get another clue into the true nature of a data frame as we start digging into the dimensions. First, let's look at the dimensions of the object:
+
+```{webr}
+dim(
+  data.frame(
+    c("hello",
+      "hello",
+      "world",
+      "world"
+    ),
+    1:4
+  )
+)
+```
+
+This returned an integer vector and the results are what we may have expected -- the data are arranged into four rows (the first value) and two columns (the second value). But watch what happens when we ask the `length` of the object:
+
+```{webr}
+length(
+  data.frame(
+    c("hello",
+      "hello",
+      "world",
+      "world"
+    ),
+    1:4
+  )
+)
+```
+
+Perhaps surprisingly, we see that the length of the data frame is 2! This value represents the number of list items in the data frame. Not to beleaguer the point but ... a data frame is a list!
+
+::: now_you
+{{< fa user-circle size=2x >}} [Test your knowledge!]{style="padding-left: 0.5em;"}
+
+1. For a data frame with 4 rows and 2 columns, what does `length()` return?
+
+`r longmcq(c(answer = "2 -- the number of columns (list items)", "4 -- the number of rows", "8 -- the number of values", "1"))`
+
+2. True or false: A data frame's underlying type, revealed by `typeof()`, is `"list"`, and `length()` of a data frame returns its number of columns (list items), not its number of rows.
+
+`r torf(TRUE)`
+:::
+
+*Note: Like matrices, you can also use* `nrow()` *and* `ncol()` *to explore a data frame's dimensions.*
+
+#### 5.2.1 Assigning names to a data frame
+
+Finally! We can assign names to the list items that comprise a data frame during the construction of the object:
+
+```{webr}
+data.frame(
+  greetings =
+    c("hello",
+      "hello",
+      "world",
+      "world"
+    ),
+  numbers = 1:4
+)
+```
+
+If a name for our data frame has been assigned to the global environment, we can use `names()` to assign names to the list items:
+
+```{webr}
+#| autorun: true
+
+my_data_frame <-
+  data.frame(
+    c("hello",
+      "hello",
+      "world",
+      "world"
+    ),
+    1:4
+  )
+
+names(my_data_frame) <-
+  c("hello", "world")
+
+my_data_frame
+```
+
+Why do we not have to specify column names? Because a data frame is a list and each column is a list item, `names()` is associated with the columns of the object.
+
+Similar to matrices, we can also assign names to the rows:
+
+```{webr}
+row.names(my_data_frame) <-
+  c("a", "b", "c", "d")
+
+my_data_frame
+```
+
+*I would caution against the above, however ... though there's rarely a need for naming rows!*
+
+We can assign names to columns and rows using `attributes`:
+
+```{webr}
+#| autorun: true
+
+attributes(my_data_frame) <-
+  list(
+    names = c("hello", "world"),
+    row.names = c("a", "b", "c", "d")
+  )
+
+my_data_frame
+```
+
+**Note**: If names are already assigned to component vectors, the columns of the data frame will use the assigned names by default:
+
+```{webr}
+boy <- 1:4
+howdy <- 5:8
+
+data.frame(boy, howdy)
+```
+
+### 5.3 The tibble: A very special data frame
+
+If we have the tidyverse loaded onto our computers, we have access to a special kind of data frame called a **tibble**. The construction of a tibble is largely equivalent to that of a data frame (except we use the `tibble` function):
+
+```{webr}
+#| autorun: true
+
+my_tibble <-
+  tibble(
+    greetings =
+      c("hello",
+        "hello",
+        "world",
+        "world"
+      ),
+    numbers = 1:4
+  )
+```
+
+The magic of a tibble (or at least *part* of the magic of a tibble) is the output that is printed:
+
+```{webr}
+my_tibble
+```
+
+In the above we can see the dimensions of the data frame (`a tibble: 4 x 2`), the class of values associated with each of the columns, and the data!
+
+As useful as tibbles are, some functions require traditional data frames as an input. To address this we can use the `data.frame` function:
+
+```{webr}
+data.frame(my_tibble)
+```
+
+Likewise, we can use `tibble()` to convert a traditional data frame to a tibble:
+
+```{webr}
+tibble(my_data_frame)
+```
+
+::: mysecret
+{{< fa user-secret size=2x >}} [Use tibbles!]{style="font-size: 1.25em; padding-left: 0.5em;"}
+
+Because tibbles are so informative, I almost never use traditional data frames. I highly recommend making the tibble your default data frame.
+:::
+
+### 5.4 Exercise
+
+::: now_you
+{{< fa user-circle size=2x >}} [A rock band data frame! Our rock band can be defined by the musicians and the instruments that they play. Use `tibble()` to combine generate a two-column data frame where the first column is the musician and the second column is their role in the band.]{style="padding-left: 0.5em;"}
+
+```{webr}
+#| autorun: true
+#| edit: false
+
+musicians <-
+  c("roger",
+    "pete",
+    "john",
+    "keith"
+  )
+
+role <-
+  c("vocals",
+    "guitar",
+    "bass",
+    "drums"
+  )
+```
+
+```{webr}
+#| edit: true
+#| min-lines: 5
+
+```
+:::
+
+<button class="accordion" style="margin-bottom: 1em;">Solution</button>
+::: panel
+
+```{r}
+tibble(musicians, role)
+```
+:::
+
+## 6. Read & write objects
+
+As a final step in our objects lesson, let's look at how we might read objects into R and save objects to our hard disk. For these tasks, I do not use base R functions. Instead, I primarily use the `readr` package, which is a part of the `tidyverse` metapackage.
+
+To use `readr`, we must start by loading the `tidyverse` library in our current session:
+
+```{webr}
+library(tidyverse)
+```
+
+### 6.1 Read and write atomic vectors
+
+To read in an atomic vector we use `read_lines()` and supply the path to the file inside of the parentheses (*Note: This is an example only. You have not been given `my_object.txt` and the file path in the example is specific to my own folder structure.*):
+
+```{r}
+#| eval: false
+
+read_lines("intro_material/data/my_object.txt")
+```
+
+To use the object, we need to assign a name to the object in our global environment:
+
+```{r}
+#| eval: false
+
+my_object <-
+  read_lines("intro_material/data/my_object.txt")
+```
+
+This produces an atomic vector:
+
+```{webr}
+my_object
+```
+
+To write an atomic vector to your hard disk, use `write_lines()`. Here you supply the atomic vector and the path to the file:
+
+```{r}
+#| eval: false
+
+write_lines(
+  c(1, 1, 2, 3),
+  "intro_material/data/my_object.txt"
+)
+```
+
+... or the name assigned to the atomic vector and the path to the file:
+
+```{r}
+#| eval: false
+
+write_lines(
+  my_object,
+  "intro_material/data/my_object.txt"
+)
+```
+
+### 6.2 Read and write tabular data
+
+To read in tabular data, we use `read_csv()` and supply the path to the file inside of the parentheses:
+
+```{r}
+#| eval: false
+
+my_tibble <-
+  read_csv("intro_material/data/my_tibble.csv")
+```
+
+This produces a tibble:
+
+```{webr}
+my_tibble
+```
+
+**Note**: "csv" stands for comma separated values. This is the preferred method for storing spreadsheet data because it is not platform-specific. When using Microsoft Excel, you can create a *csv* file by using the "Save as ..." option.
+
+To write a data frame to your hard disk, use `write_csv()`. Here you supply the data frame and the path to the file:
+
+```{r}
+#| eval: false
+
+write_csv(
+  tibble(musicians, role),
+  "intro_material/data/my_tibble.csv"
+)
+```
+
+... or the name assigned to the data frame and the path to the file:
+
+```{r}
+#| eval: false
+
+write_csv(
+  my_tibble,
+  "intro_material/data/my_tibble.csv"
+)
+```
+
+### 6.3 Read and write R objects
+
+One of my favorite ways for reading and writing data is with rds files. I'm not quite sure what "rds" stands for (I've found a few different definitions -- "R dataset", "R data serialized", and "R data singular"). Regardless of what those initials mean, rds files are incredibly useful because the class and type of the object and the object's attributes are maintained.
+
+We can read in any class of object using `read_rds()` by supplying the path to the file inside of the parentheses.
+
+Read in an atomic vector:
+
+```{r}
+#| eval: false
+
+my_object <-
+  read_rds("intro_material/data/my_object.rds")
+```
+
+Read in a tibble:
+
+```{r}
+#| eval: false
+
+my_tibble <-
+  read_rds("intro_material/data/my_tibble.rds")
+```
+
+Of course, you have to save an rds file to your hard disk before you can use them. You can do so with the function `write_rds()`. Here you supply the object and the path to the file:
+
+```{r}
+#| eval: false
+
+write_rds(
+  tibble(musicians, role),
+  "intro_material/data/my_tibble.rds"
+)
+```
+
+... or the name assigned to the data frame and the path to the file:
+
+```{r}
+#| eval: false
+
+write_rds(
+  my_tibble,
+  "intro_material/data/my_tibble.rds"
+)
+```
+
+**Note**: A disadvantage of rds files is that they can only be used in R. That's not a problem if you have an all-R workflow, but might be an issue if your working across multiple programs (e.g., Microsoft Excel and R) or collaborating with people who are not R users.
+
+::: now_you
+{{< fa user-circle size=2x >}} [Which readr function saves an R object so that its class, type, and attributes are preserved when it is read back?]{style="padding-left: 0.5em;"}
+
+`r longmcq(c(answer = "write_rds()", "write_csv()", "write_lines()", "save.image()"))`
+:::
+
+## Take-home points
+
+Here are the big ideas to carry forward from our tour of data objects:
+
+* Every data object can be pinned down by two traits: its **dimensions** (1-D versus 2-D) and its **homogeneity** (whether it holds one class of value or many). Those two traits give us four objects -- the atomic vector (1-D, homogeneous), the matrix (2-D, homogeneous), the list (1-D, heterogeneous), and the data frame (2-D, heterogeneous).
+* **Attributes** are metadata -- information about an object that isn't stored in the values themselves. Names are a common example, and adding or removing them (setting `names()` to `NULL`) changes the metadata, not the underlying data.
+* A matrix is secretly just an atomic vector with a `dim` attribute, which is why it's homogeneous: mix classes and everything gets coerced to character. Remember this "matrices are homogeneous" secret whenever your numbers turn into text!
+* A matrix fills **column-wise by default** (top to bottom); set `byrow = TRUE` to fill left to right by row. And if your vector doesn't have enough values to fill the shape, R recycles values -- but it warns you, so always read those warnings.
+* A **list** is the most flexible container -- it can hold any objects of any dimensionality. Note that `length()` on a list counts the number of list items, not the total number of values tucked inside them.
+* A **data frame** is really a restrictive type of list made of equal-length columns. That's why `typeof()` reports `"list"` and `length()` returns the number of columns, not the number of rows.
+* Make the **tibble** your default data frame. Its informative printing shows you the dimensions and each column's class right away, which is why I almost never reach for a plain data frame.
+* Read and write with *readr*: use `read_csv()`/`write_csv()` for portable, cross-program data, and `read_rds()`/`write_rds()` when you want an R-only file that preserves an object's class, type, and attributes.
+
+## Reference
+
+<button class="accordion">Glossary</button>
+::: panel
+* **Atomic vector**: A set of values of the same class (*homogeneous*) arranged in one dimension
+* **Attributes**: Information about the values of an object that is not contained in the values themselves
+* **Data frame**: A special type of list that is comprised of equal-length vectors; data frames are *heterogeneous* and have two dimensions.
+* **Dimensions**: The arrangement of values in an object; may also refer to the number of values or child objects within a given dimension (i.e., rows or columns)
+* **Heterogeneous object**: A container that holds values of one or more object classes
+* **Homogeneity**: Whether an object may contain one or more than one class of object
+* **Homogeneous object**: a container that holds values of only one class
+* **Indexing**: Subsetting an object by the location of a value or values within an object
+* **List**: A storage container that holds objects of any class; lists are *heterogenous* and have one dimension
+* **Matrix**: An atomic vector that is arranged into rows and columns. Matrices are *homogeneous* and have two dimensions.
+* **One-dimensional object**: Objects where data are arranged in a single line
+* **Structure**: The class of data, how the data are stored, dimensions, and metadata describing the object
+* **Tibble**: A type of data frame with unique properties that make them super useful!
+* **Two-dimensional object**: An object where data are arranged as rows and columns
+* **Vector**: A one-dimensional object
+:::
+
+<button class="accordion">Functions</button>
+::: panel
+**Important!** Primitive functions as well as functions in the *base* and *graphics* packages are loaded by default when you start an R session.
+
+::: function_table
+
+```{r}
+#| echo: false
+#| message: false
+
+render_function_table("functions_0.4_objects.csv")
+```
+
+:::
+:::
+
+<button class="accordion">Keyboard shortcuts</button>
+::: panel
+
+{{< include ../../src/includes/keyboard_shortcuts.qmd >}}
+:::
+
+<button class="accordion">R Studio panes</button>
+::: panel
+{{< include ../../src/includes/rstudio_panes.qmd >}}
+:::

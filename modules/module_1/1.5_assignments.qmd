@@ -1,0 +1,889 @@
+---
+title: "1.5 Assignments"
+format:
+  html:
+    embed-resouces: true
+    self-contained: true
+    standalone: true
+    toc: true
+    toc-location: left
+    number-sections: false
+    search: true
+    include-in-header: ../../src/includes/header_includes.html
+    include-after-body: ../../src/includes/accordion_script.html
+    theme: 
+      - cosmo
+      - ../../src/css/custom_style.scss
+editor: source
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r, include = FALSE}
+source("../../src/r/course_functions.R")
+```
+```{r setup, include=FALSE}
+# library(tidyverse)
+
+knitr::opts_chunk$set(
+  echo = TRUE,
+  eval = TRUE,
+  error = TRUE)
+
+rm(has_annotations)
+
+rm(.main)
+```
+
+<hr>
+
+<div>
+![](../../src/images/hex_complex.png){.intro_image}
+
+We have used assignments in our previous lessons, but I have held back on the urge to explain or describe how and why to manage them. In this lesson we will take a deeper dive into the assignment process. You will learn:
+
+* What global assignments are (mostly review)
+* Assignment in recursive objects
+* Naming conventions for assignments
+* The pros and cons of nested and non-nested functions
+* How to avoid global assignments with the pipe operator 
+* How to manage global assignments with `rm()`
+
+
+[{{< fa exclamation-triangle size=2x >}} Important!]{style="color: red;"} This lesson assumes that you have completed the "Core R concepts" section of [Preliminary Lesson 1: R & RStudio](../module_0/0.1_intro_to_r_and_rstudio.qmd){target="_blank"}, [Preliminary Lesson 2: Environment & Functions](../module_0/0.2_environment_and_functions.qmd){target="_blank"}, [Preliminary Lesson 4: Objects](../module_0/0.4_objects.qmd){target="_blank"}, and [Preliminary Lesson 5: Indexing](../module_0/0.5_indexing.qmd){target="_blank"}. As the material covered herein will build on the content in those lessons, please do not proceed until their completion.
+
+</div>
+
+## Setup
+
+Please open the script file "scripts/lesson_1.5.R" and run the following line to attach the core tidyverse packages:
+
+```{r, message = FALSE}
+library(tidyverse)
+```
+
+Before starting this activity, please visit "Global Options/Code" and ensure that the checkbox "Use native pipe operator ..." is **Not checked**.
+
+## Global assignments
+
+Recall that when we **assign** (verb) an object to a name, R typically stores the name in the global environment. As we covered in ***Lesson 1.3 R Objects***, this tells our computer to store the data in our computer's memory during our R session and provides a reference point to the object.
+
+```{r}
+nerdy_greeting <- "hello world"
+```
+
+We can use `ls()` to generate and print a character vector of assignments in the global environment:
+
+```{r}
+ls()
+```
+
+*Note: If my goal of an operation is only to print some output, I typically complete the operation in the console pane.*
+
+The reference point provides us with a means to retrieve the data by typing the name stored in our global environment:
+
+```{r}
+nerdy_greeting
+```
+
+Remember, however, that the name is stored in our global environment, but the values themselves are stored in our computer's memory. We can view this explicitly using the function `ref` from the *lobstr* package:
+
+```{r}
+lobstr::ref(nerdy_greeting)
+```
+
+The above shows the address of the object in our computer's memory (yours will be different than mine) and the class of the object (`<chr>`).
+
+If we run `lobstr::ref()` and specify the target object as the global environment (with `.GlobalEnv`), we can get a glimpse of the how the data are stored: 
+
+```{r}
+lobstr::ref(.GlobalEnv)
+```
+
+The above shows a **reference tree**, which is a visualization of the storage locations and names of parent and child objects. Here, the global environment (`<env>`) is an object that is stored in memory with a specified address. The global environment contains the name `nerdy_greeting`, and the data associated with that object is itself stored in memory.
+
+It is *super important* to recognize that, on the user-end, an assigned name and the assigned object can be used interchangeably. 
+
+Let's create another one-value character vector and assign it to the name `southern_saying`:
+
+```{r}
+southern_saying <- "boy howdy!"
+```
+
+We can use the *stringr* (core tidyverse) function `str_c` to paste together strings with some separator (`sep = ...`):
+
+```{r}
+str_c(
+  nerdy_greeting,
+  southern_saying, 
+  sep = ", ")
+```
+
+Notice in the above that R used the name to access the data in each character vector -- R found the name in the global environment, searched for the data in our computer's memory, and substituted the name for the data upon execution. Because of this, the following code all yields equivalent results:
+
+```{r}
+str_c(
+  "hello world",
+  "boy howdy!", 
+  sep = ", ")
+
+str_c(
+  nerdy_greeting,
+  "boy howdy!", 
+  sep = ", ")
+
+str_c(
+  "hello world",
+  southern_saying, 
+  sep = ", ")
+```
+
+The power of this process for generating easy-to-write and human-readable code becomes readily apparent with increased complexity. Let's generate a numeric vector and extract the third value in the set with the extraction function (`[[x]]`):
+
+```{r}
+c(0, 1, 1, 2)[[3]]
+```
+
+The above works, but is definitely hard to read. Let's assign the vector `c(0, 1, 1, 2)` to the name `fibo_numbers`: 
+
+```{r}
+fibo_numbers <- c(0, 1, 1, 2)
+```
+
+... and reference the name to extract the third value from the set:
+
+```{r}
+fibo_numbers[[3]]
+```
+
+We can see that assigning the object to a name makes life much easier!
+
+In both instances, R stores the vector in memory. With `c(0, 1, 1, 2)[[3]]`, the output of `c(0, 1, 1, 2)` is passed to the `[[x]]` function and then released the memory allocated to the object. With the assignment version, the numeric vector `c(0, 1, 1, 2)` is stored in memory,  we reference the vector by supplying the name `fibo_numbers`, and again extract the data by index with `[[x]]`.
+
+::: mysecret
+{{< fa screwdriver-wrench size=2x >}} [Assign "a name to an object" or "an object to a name"?]{style="font-size: 1.25em; padding-left: 0.5em;"}
+
+We often informally say "assign `name` to `object x`". Recall from ***Preliminary Lesson 2: Environment & Functions***, however, that a single object can have multiple names. As such, the correct way to describe this is "assign `object x` to `name`.
+
+To explore this further (and perhaps start to see *why* this matters), let's assign the name `temp` to `nerdy_greeding`:
+
+```{r}
+temp <- nerdy_greeting
+```
+
+... and have another look at the reference tree of the global environment:
+
+```{r}
+lobstr::ref(.GlobalEnv)
+```
+
+In the above we can see that, although they have different names, the address of `temp` and `nerdy_greeting` in our memory is the same! This illustrates why "names have objects" rather than "objects have names". We will explore this in some depth in ***Module 6: Programming***.
+:::
+
+### Removing names
+
+Assignment is very useful, and assigning objects to names is a necessary skill, but it is important to recognize that the number of assigned names can impact your computer's performance during an R session. Especially as data get big (as they tend to do in ecology), having your computer store a bunch of data objects in its memory is really inefficient. Because of this (and a few other reasons that we'll discuss over the course of the semester), I *strongly* recommend managing your global environment with care!
+
+In practice, that means that you should:
+
+* Limit the number of assigned names;
+* Remove assigned names when they are no longer needed. 
+
+We'll address the first bullet point in later in this lesson (the Pipe Operator). For now, we'll focus our attention on the second bullet point -- removing assigned names.
+
+Let's start by adding a few more names to our global environment:
+
+```{r}
+ordered_numbers <- 1:20
+
+musicians <-
+  c("roger",
+    "pete",
+    "john",
+    "keith")
+
+four_instruments <-
+  c("vocals",
+    "guitar",
+    "bass",
+    "drums")
+
+ls()
+```
+
+#### Single names
+
+We can remove a name assigned to the global environment with the remove function, `rm`. We supply the name of the function (`rm`), followed by parentheses, and then the name that we would like to remove from the global environment:
+
+```{r}
+rm(temp)
+
+ls()
+```
+
+Notice what happens when we type `temp` now:
+
+```{r}
+temp
+```
+
+Because we removed the name, R cannot retrieve the data that it is associated with. Under-the-hood, the data are still there (R will delete it when more space is needed), but we have no name with which we can reference the data.
+
+::: mysecret
+{{< fa user-secret size=2x >}} [What about `rm("temp")`?]{style="font-size: 1.25em; padding-left: 0.5em;"}
+
+An area of confusion among many students is when quotes are, and are not, necessary. Quotes are not necessary when:
+
+* Referencing a name assigned to your global environment;
+* The name when assigning an object to a name (e.g., `name <- "hello world"`).
+
+Because `temp` was a name assigned to the global environment, the quotes are not necessary. As such, `rm("temp")` should be written more parsimoniously as `rm(temp)`.
+
+The exception to the above is instances in which a given name breaks R's variable naming rules (e.g. `1howdy`).
+:::
+
+#### Multiple names
+
+If we want to remove multiple names from our global environment, we use `rm()` and separate each name with a comma:
+
+```{r}
+rm(ordered_numbers, fibo_numbers)
+```
+
+If we want to remove *all* of the objects in our global environment, we need to supply a new argument to `rm()`. Have a look at the help file for the function (`?rm`). Note that:
+
+* In the *Usage* section of the help file, we can see that the second argument of the function is `list = character()`. 
+* In the *Arguments* section of the help file, we see that the input for that argument is "a character vector (or NULL) naming objects to be removed".
+
+You might have noticed that the `ls()` function returned a character vector of names assigned to our global environment:
+
+```{r}
+ls()
+```
+
+The above can be verified with the `class()` function, which will tell us the class of the resultant object:
+
+```{r}
+class(
+  ls()
+)
+```
+
+Because `ls()` returns a character vector where each value is a name assigned to the global environment, we can remove all the assignments with:
+
+```{r}
+rm(
+  list = ls()
+)
+
+ls()
+```
+
+::: mysecret
+{{< fa user-secret size=2x >}} [Use `rm()` from within your script file!]{style="padding-left: 1em; font-size: 1.25em;"}
+
+Removing a name from your global environment can have downstream effects (i.e., impacts code run later in a script). If `rm()` removes a name that was assigned to your global environment in your script file, avoid conducting this operation in the console pane.
+:::
+
+## Recursive assignments
+
+Recall that **recursive objects** are objects that are made up of references to other objects. Examples include lists and data frames (which, of course, *are* lists).
+
+Let's generate a list that contains the names `nerdy_greeting` and `southern_saying` and assign the list to the name `my_list`:
+
+```{r}
+my_list <- 
+  list("hello world", "boy howdy!")
+
+my_list
+```
+
+Our list currently does not contain any assignments (i.e., names), just reference points to the list items in our computer's memory:
+
+```{r}
+lobstr::ref(my_list)
+```
+
+Notice that the stucture for a list is quite different than the vectors it contains. This can become even more apparent by combining the values into a character vector rather than a list and observing how the data are stored:
+
+```{r}
+my_sayings <- 
+  c("hello world", "boy howdy!")
+
+lobstr::ref(my_sayings)
+```
+
+We can see that an atomic vector has a single reference point in our computer's memory whereas our recursive object has a reference point for each list item. Because a list is a recursive object, we can assign names to each list item using the `=` assignment operator:
+
+```{r}
+my_list_named <- 
+  list(
+    nerdy_greeting = "hello world", 
+    southern_saying = "boy howdy!")
+
+lobstr::ref(my_list_named)
+```
+
+The above works because each list item in `my_list_named` contains a reference point in our computer's memory and each reference point can be associated with a name. In this class I will call names within a data object (list or data frame) **recursive assignments**.
+
+We can generate and print a character vector of the recursive assignments themselves using the primitive `names` function:
+
+```{r}
+names(my_list_named)
+```
+
+Recursive assignments do not directly live within the global environment:
+
+```{r}
+nerdy_greeting
+```
+
+To access the data associated with the assignment, we need to call the child object from within the parent object. 
+
+We can extract data from a list object by name using the extraction operator `[[x]]`:
+
+```{r}
+my_list_named[["southern_saying"]]
+```
+
+The above works because the value of each list item is the list item's name.
+
+We can also use the use the extraction operator `$` to extract a named list element:
+
+```{r}
+my_list_named$southern_saying
+```
+
+We can add an assignment to a list (or data frame!) by assigning a new name and associating that name with some data:
+
+```{r}
+my_list_named$salutations <- c("good day", "fare thee well")
+
+lobstr::ref(my_list_named)
+```
+
+We can change the data associated with a name by assigning a name to different data object:
+
+```{r}
+my_list_named$salutations <- 
+  factor(my_list_named$salutations)
+
+lobstr::ref(my_list_named)
+```
+
+Similarly, we can remove a recursive name by assigning the value `NULL` to the name:
+
+```{r}
+my_list_named$salutations <- NULL
+
+lobstr::ref(my_list_named)
+```
+
+
+::: mysecret
+{{< fa user-secret size=2x >}} [Can I use `$` for named atomic vectors? No!]{style="font-size: 1.25em; padding-left: 0.5em;"}
+
+Students have often asked me why they cannot use `$` for atomic vectors. Notice what happens if we try to name the values in an atomic vector:
+
+```{r}
+my_sayings_named <- 
+  c(nerdy_greeting = "hello world", 
+    southern_saying = "boy howdy!")
+
+lobstr::ref(my_sayings_named)
+```
+
+It still only occupies a single location in memory! Because a name refers to a reference point in your computer's memory, the `$` operator cannot be used to extract an item by name:
+
+```{r}
+my_sayings_named$southern_saying
+```
+:::
+
+## Naming conventions
+
+A consistent naming convention, both for names in the global environment and recursive names, will save you time and make your code and output more readable.
+
+Let's read in the file `badNameDataFrame.csv`, assign the object to the name `bad_df` and print the data to see what the data frame looks like:
+
+```{r, message = FALSE}
+bad_df <-
+  read_csv("data/raw/badNameDataFrame.csv")
+
+bad_df
+```
+
+We can see that the naming convention in this object is *all over the place*. In working with these data, you are going to struggle to remember the naming convention used for each of the variables were when referencing the columns. Remember column names is hard enough!
+
+Modern R coding conventions suggest using the "snake_case" naming convention for all names (global and recursive assignments). With the **snake_case** naming convention all letters are lowercase and all words are separated with an underscore (`_`).
+
+We can see in the printout about that two of the variables, `plant/mushroom` and `Event date` are surrounded by backtick quotes. That is because the are **non-syntactic variable name**, which describes an invalid variable name (e.g., one that starts with a number or includes unusual characters). Neither the symbol `/` nor spaces are allowed in variable names. To make it possible to reference these variables, all non-syntactic variable names are surrounded in backtick quotes.
+
+Notice that attemting to use a non-syntactic variable name without backtick quotes produces a warning message and an error:
+
+```{r}
+unique(bad_df$plant/mushroom)
+```
+
+We have to continue to use backtick quotes whenever we reference the column:
+
+```{r}
+unique(bad_df$`plant/mushroom`)
+```
+
+Clearly it is in our best interest to rename these variables!
+
+### Rename with `rename()`
+
+One option for renaming variables is the *dplyr* (core tidyverse package) function `rename`. We supply the name of the data frame and then, after a comma, `new_variable_name = old_variable_name`. For example, let's change `BED` to lowercase `bed`:
+
+```{r}
+rename(bad_df, bed = BED)
+```
+
+The variable `LightAccess` is in **PascalCase** (also called UpperCamelCase), a naming convention in which the first letter of each word is capitalized. We can change multiple names by separating additional `new_variable_name = old_variable_name` with a comma:
+
+```{r}
+rename(
+  bad_df, 
+  bed = BED,
+  light_access = LightAccess)
+```
+
+To rename our non-syntactic variable names, we need to ensure that we include the backtick quotes when referencing them:
+
+```{r}
+rename(
+  bad_df, 
+  bed = BED,
+  light_access = LightAccess,
+  plant_mushroom = `plant/mushroom`,
+  event_date = `Event date`)
+```
+
+Our last problem column is in **camelCase**, a naming convention in which the first word is not capitalized and the first letter of subsequent words *are* capitalized. Before the snake_case naming convention rose to prominence, camelCase was the preferred convention in R. Let's change `gardenEvent` to snake_case:
+
+```{r}
+rename(
+  bad_df, 
+  bed = BED,
+  light_access = LightAccess,
+  plant_mushroom = `plant/mushroom`,
+  event_date = `Event date`,
+  garden_event = gardenEvent)
+```
+
+### `set_names()`
+
+The `rename` function is great but only works for data frame objects ... it does not work for lists or atomic vectors! The `set_names` function is a part of the *rlang* package and made available with `library(tidyverse)` through the *purrr* package (part of the core tidyverse).
+
+We can use `set_names()` to assign names to an object. We supply the object that we would like to assign names to and an atomic character vector of names:
+
+```{r}
+my_list_add_names <- 
+  set_names(
+    my_list, 
+    c("Nerdy", "Southern"))
+
+my_list_add_names
+```
+
+Notice in the above that I did not follow our snake_case naming convention. To change this, we can refer to the original names assigned to the object and convert those names to lowercase with base R's `tolower` function. I will show this in a single step and then break it down:
+
+```{r}
+set_names(
+  my_list_add_names, 
+  tolower(
+    names(my_list_add_names)
+  )
+)
+```
+
+The above worked because `names()` generates a character vector of names:
+
+```{r}
+names(my_list_add_names)
+```
+
+... and `tolower()` converts a character vector to lowercase:
+
+```{r}
+tolower(
+  names(my_list_add_names)
+)
+```
+
+## Nested and non-nested objects
+
+You may have noticed that the above was a little hard to read. As we covered in ***Preliminary Lesson 2: Environment & Functions***, it is what is known as a "nested function". A **nested function** is a function whose output is passed to another function. 
+
+Let's look again out our nested operation above:
+
+```{r, eval = FALSE}
+set_names(
+  my_list_add_names, 
+  tolower(
+    names(my_list_add_names)
+  )
+)
+```
+
+This describes a **chained analysis**, an operation in which the output of one function is used as the input of another. Reviewing the operation again, the chained analysis was evaluated in the following order:
+
+1. The `names` function generated a character vector of names in `my_list_add_names`.
+2. The `tolower` function converted the character vector above to lowercase and returned a character vector.
+3. The `set_names` function converted `my_list_add_names` (the first argument in the function) based on the character vector of names supplied in step 2.
+
+Because nested functions are evaluated from the innermost to the outermost function, they are very hard to read. **I do not recommend nesting functions more than two layers deep** (and have only done so above for illustration purposes).
+
+An alternative to nesting functions is to make your code more legible by using assignments. It might look something like:
+
+```{r, eval = FALSE}
+original_names <- names(my_list_add_names)
+
+lowercase_names <- tolower(original_names)
+
+set_names(my_list_add_names, lowercase_names)
+```
+
+The above is certainly more human readable, but can lead to a lot of names unnecessarily clogging up your global environment. If we use these assignments again, we will have to remember what they called them, which can be challenging and lead to a lot of backtracking your code (thus a time-consuming and messy workflow). If we are not going to use the assignments again, it is considered best practice to remove them:
+
+```{r, eval = FALSE}
+rm(original_names, lowercase_names)
+```
+
+Once we get to real data, it will be clear that processes like this might improve code readability, but at a big expense to your R script length and workflow.
+
+*Note: You can also reduce names in your global environment by reusing them, but you should should typically avoid overwriting assigned objects.* 
+
+As a review of the strengths and weaknesses of the two approaches:
+
+**Nested code**:
+
+* Strengths: Concise and no new names to manage;
+* Weaknessess: It can be difficult to read at even modest levels of complexity.
+
+**Non-nested code using assignments**:
+
+* Strength: Easy to read.
+* Weaknesses: It takes up a lot of script space and includes assignments that require additional management.
+
+## The pipe operator
+
+An alternative to hard-to-read nested code and hard-to-manage non-nested code with assignments is the pipe operator. A pipe operator is a infix function that passes the data object on left-hand-side (LHS) to the function on the right-hand-side (RHS). In this class we will use the `%>%` pipe operator, which is in the *magrittr* package and made available to us with `library(tidyverse)` (*Note: magrittr is not, however, a package in the core tidyverse*). 
+
+To see how a pipe operator works, let's return to the non-nested assignment version of our list-naming process:
+
+```{r, eval = FALSE}
+original_names <- names(my_list_add_names)
+
+lowercase_names <- tolower(original_names)
+
+set_names(my_list_add_names, lowercase_names)
+```
+
+Our first operation was to extract a character vector of names from `my_list_add_names`. By default, the pipe operator passes the LHS object to the first argument of RHS function. This could therefore be written as:
+
+```{r}
+my_list_add_names %>% 
+  names()
+```
+
+*Note: The pipe operator can, and should, be inserted using the keyboard shortcut Ctrl or Command + Shift + M.*
+
+The above produced a character vector of names. We can continue the chain, using the character vector returned by `names()` as the object input (LHS) of `tolower()` (RHS):
+
+```{r}
+my_list_add_names %>% 
+  names() %>% 
+  tolower()
+```
+
+Note that this is operationally equivalent to the nested version of the code:
+
+```{r}
+tolower(
+  names(my_list_add_names)
+)
+```
+
+The difference is that the steps in the chained analysis written in the same order as they are executed. That make piped code *way* easier to read!
+
+For our last step, we have a choice to make. Notice that the vector of new names is the second argument of `set_names()` (see `?set_names`):
+
+```{r, eval = FALSE}
+set_names(my_list_add_names, lowercase_names)
+```
+
+*Note: I did not run the above because we have removed `lowercase_names` from the global environment.*
+
+Because the end of our chained operation is a character vector of names, we *could* nest that operation inside of `set_names()`:
+
+```{r}
+set_names(
+  my_list_add_names, 
+  my_list_add_names %>% 
+    names() %>% 
+    tolower()
+)
+```
+
+This is a reasonably easy to read operation because, though the code is nested, it is still only nested two levels deep.
+
+Another option is to use a **placeholder symbol** -- in the context of piping, this defines the location in the RHS function where the data will be piped into. The placeholder for the *magrittr* pipe is a period:
+
+```{r}
+my_list_add_names %>% 
+  names() %>% 
+  tolower() %>% 
+  set_names(my_list_add_names, .)
+```
+
+The above works because the pipe passed the data to the location of the period.
+
+At this level of simplicity, either method is acceptable (but my preference is the placeholder method). As our data puzzles become more complex throughout this course, we will find opportunities to use both.
+
+::: mysecret
+{{< fa user-secret size=2x >}} [But doesn't base R have its own pipe?]{style="font-size: 1.25em; padding-left: 0.5em;"}
+
+Base R released its own pipe operator in 2021 (R release 4.1.0) -- the `|>` symbol. As of this writing, there are still a couple of tricks that I regularly use with *magrittr's* pipe that cannot be replicated with the base R pipe. As such, I have decided to use the `%>%` throughout this course.
+:::
+
+### Reduce assignments with pipes
+
+Let's consider our reading and re-naming operation with the tabular dataset "data/raw/badNameDataFrame.csv". Previously, we read in the file, assigned the object, and then renamed the columns (not evaluated):
+
+```{r, eval = FALSE}
+bad_df <-
+  read_csv("data/raw/badNameDataFrame.csv")
+
+rename(
+  bad_df, 
+  bed = BED,
+  light_access = LightAccess,
+  plant_mushroom = `plant/mushroom`,
+  event_date = `Event date`,
+  garden_event = gardenEvent)
+```
+
+Chances are, we will *never* use the version of `bad_df` with the non-standard column names after renaming them. Notice that the first argument of `rename()` is the target data frame. As such, the above could be rewritten as:
+
+```{r}
+read_csv("data/raw/badNameDataFrame.csv") %>% 
+  rename(
+    bed = BED,
+    light_access = LightAccess,
+    plant_mushroom = `plant/mushroom`,
+    event_date = `Event date`,
+    garden_event = gardenEvent)
+```
+
+Notice in that the first argument was left blank, because the pipe filled in the data for that argument.
+
+This piped version is equivalent to a nested version of the code (not evaluated):
+
+```{r, eval = FALSE}
+rename(
+  read_csv("data/raw/badNameDataFrame.csv"),
+  bed = BED,
+  light_access = LightAccess,
+  plant_mushroom = `plant/mushroom`,
+  event_date = `Event date`,
+  garden_event = gardenEvent)
+```
+
+Although the above is not too deeply nested, I prefer the piped version because it allows us to focus our attention on only the renaming process.
+
+Before moving on, let's bring `set_names` back into the picture. Notice that we have changed *all* of the names in our data frame. The `rename` function is great for changing one or two names -- when changing all of the names, `set_names()` is my preference because we can simply provide a vector of new names.
+
+Written with the assignment version, this might look like (not evaluated):
+
+```{r, eval = FALSE}
+my_df <- read_csv("data/raw/badNameDataFrame.csv")
+
+set_names(
+  my_df, 
+  c("bed",
+    "light_access",
+    "plant_mushroom",
+    "event_date",
+    "garden_event")
+  )
+```
+
+With the nested version of the process, this would be written as:
+
+```{r}
+set_names(
+  read_csv("data/raw/badNameDataFrame.csv"), 
+  c("bed",
+    "light_access",
+    "plant_mushroom",
+    "event_date",
+    "garden_event")
+)
+```
+
+... of course, because the data frame is the first argument of `set_names()`, the operation could be written more simply using piping with:
+
+```{r}
+read_csv("data/raw/badNameDataFrame.csv") %>% 
+  set_names(
+    c("bed",
+      "light_access",
+      "plant_mushroom",
+      "event_date",
+      "garden_event")
+  )
+```
+
+#### Reducing assignments with the placeholder method
+
+The placeholder method, when used with Magrittr's pipe, can offer a lot of flexibility in how we code. For example, perhaps we want to subset the garden to beds that are in full sun. Without pipes (or placeholders), this is a multistep process.
+
+First we'll read in the data and repair the names:
+
+```{r}
+garden_names_repaired <-
+  read_csv("data/raw/badNameDataFrame.csv") %>% 
+  set_names(
+    c("bed",
+      "light_access",
+      "plant_mushroom",
+      "event_date",
+      "garden_event")
+  )
+```
+
+And then use the extraction operator `[]` to subset the data to just garden beds that are classified as "full sun" (see ***Preliminary Lesson 5: Indexing***):
+
+```{r}
+garden_sunny <-
+  garden_names_repaired[garden_names_repaired$light_access == "full sun", ]
+```
+
+Notice, however, that the left-hand-side (LHS) arguments of the extraction functions above, `[]` and `$`, are the data that you wish to subset. As such, you can use the placeholder (`.`) to pipe the data into these positions:
+
+```{r}
+# Read in the data:
+
+read_csv("data/raw/badNameDataFrame.csv") %>% 
+  
+  # Change the variable naming convention:
+  
+  set_names(
+    c("bed",
+      "light_access",
+      "plant_mushroom",
+      "event_date",
+      "garden_event")
+  ) %>% 
+  .[.$light_access == "full sun", ]
+```
+
+We can take this a step further. Perhaps we want to generate a character vector of unique plants in our full sun beds. We can continue with the above with:
+
+```{r}
+# Read in the data:
+
+read_csv("data/raw/badNameDataFrame.csv") %>% 
+  
+  # Change the variable naming convention:
+  
+  set_names(
+    c("bed",
+      "light_access",
+      "plant_mushroom",
+      "event_date",
+      "garden_event")
+  ) %>% 
+  .[.$light_access == "full sun", ] %>% 
+  
+  # Subset to the variable plant_mushroom:
+  
+  .$plant_mushroom %>% 
+  
+  # Subset the character vector to unique values:
+  
+  unique()
+```
+
+::: mysecret
+{{< fa user-secret size=2x >}} [To assign or not to assign?]{style="font-size: 1.25em; padding-left: 0.5em;"}
+
+*Almost* all of my codes contain global assignments, but I do not assign objects very often. Some rules to help you:
+
+* If you only use an assigned name once or twice, opt for a pipe operator instead
+* If the assignment represents a data object that took a long time to process (on the computer end), use an assignment
+* If the assignment represents a data object that took a ton of code to create, and *not* assigning the object would require that code to be replicated, use an assignment
+:::
+
+### Piping around your code
+
+Piped code can be readily explored! In this video, I demonstrate a process that I call "piping around your code":
+
+{{< video https://www.youtube.com/embed/ZIeL0lp83rY?si=bnKZgXlk5_Dl04X7 >}}
+
+
+## Reference
+
+<button class="accordion">Glossary</button>
+::: panel
+* **Assignment (noun)**: A reference that R uses to call data from your computer’s memory (also called "name").
+* **Assignment (verb)**: The act of associating a name with an object (typically to the global environment).
+* **Atomic vector**: A one-dimensional homogenous data object.
+* **Child**: An object whose name is stored as a reference in a parent object.
+* **Class**: A blueprint that describes an object's structure.
+* **Core tidyverse package** or **Core tidyverse**: Packages that are attached with `library(tidyverse)`.
+* **Data frame**: A two-dimensional, and potentially heterogeneous data object (that is a restrictive type of list under-the-hood).
+* **Data object**: Containers for values that structure references in an ordered, predictable way.
+* **Double numeric vector**: An atomic numeric vector where the values are stored as decimal numbers (essentially).
+* **Environment**: A dimensionless container that contains references (names) to data stored in memory.
+* **Function**: A set of instructions used to complete a given task.
+* **Global environment**: A collection of names assigned during an R session.
+* **Infix function**: A function in which the name of the function is placed between the function's arguments.
+* **Integer**: A whole number, or an atomic vector of data stored as whole numbers.
+* **List**: A one dimensional, and potentially heterogeneous, data object.
+* **List item**: A data object contained within a list.
+* **Matrix**: A two-dimensional homogenous data object (that is an atomic vector under-the-hood).
+* **Memory (RAM)**: A temporary storage location for instructions (functions) and data.
+* **Name**: A reference that R uses to call data from your computer’s memory  (also called "assignment").
+* **Observation**: A row within a data frame.
+* **Order**: The position of values (or child objects) within a data object.
+* **Package environment**: A collection of variable names associated with objects in a package.
+* **Parent**: An object or environment that contains references to other objects.
+* **Prefix function**: A function in which the name of the function precedes the target of the evaluation.
+* **Primitive functions**: Functions written in C code and made available to use through the base R package.
+* **Recursive object**: Objects that are made up of references to other objects (e.g., a list).
+* **Structure**: The dimensionality and homogeneity of a data object (may also be used to describe the class of objects).
+* **Tibble**: A type of data frame with great benefits!
+* **Type**: How an object is stored in your computer.
+* **Variable**: A column in a data frame.
+:::
+
+<button class="accordion">Functions</button>
+::: panel
+**Important!** Primitive functions as well as functions in the *base* and *utils* packages, are loaded by default when you start an R session. Functions in *tibble* and *tidyverse* are loaded with `library(tidyverse)`. Although the *magrittr* package is not a part of the core tidyverse, the `%>%` function is imported by the *dplyr* (core tidyverse) library.
+
+::: function_table
+
+```{r, message = FALSE, echo = FALSE}
+render_function_table("functions_1.5_assignments.csv")
+```
+
+:::
+
+:::
+
+
+<button class="accordion">Keyboard shortcuts</button>
+::: panel
+
+{{< include ../../src/includes/keyboard_shortcuts.qmd >}}
+:::
+
+<button class="accordion">R Studio panes</button>
+::: panel
+{{< include ../../src/includes/rstudio_panes.qmd >}}
+:::
+

@@ -1,0 +1,21 @@
+Package,Function,Definition
+.Primitive,c,Combine values to form an atomic vector
+.Primitive,class,Print the class of an object as a one-value character vector
+.Primitive,:,Infix operator that generates a regular sequence of adjacent values
+.Primitive,as.integer,Transform an atomic vector to an integer vector (truncates decimal values)
+.Primitive,as.numeric,"Transform an atomic vector to a double numeric vector (i.e., decimal numbers)"
+.Primitive,as.character,Transform an atomic vector to a character vector
+.Primitive,==,Infix relational operator (is equal to)
+.Primitive,!=,Infix relational operator (is not equal to)
+.Primitive,!,Prefix logical operator (not)
+.Primitive,|,Infix logical operator (or)
+.Primitive,&,Infix logical operator (and)
+.Primitive,<,Infix relational operator (less than)
+.Primitive,<=,Infix relational operator (less than or equal to)
+.Primitive,>,Infix relational operator (greater than)
+.Primitive,>=,Infix relational operator (greater than or equal to)
+base,%in%,Infix relational operator that tests whether the values on the left-hand-side (LHS) are found within the vector on the right-hand-side (RHS)
+base,typeof,Print a one-value character vector that represents how a data object is stored on your computer
+base,factor,Convert a character vector to a factor
+base,mean,Calculate the average of a numeric or integer vector
+graphics,plot,Generate a basic plot of a data object

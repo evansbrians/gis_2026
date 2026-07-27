@@ -1,0 +1,47 @@
+Package,Function,Definition
+.Primitive,(...),Operator that evaluates the function name on the left-hand-side (LHS) of the opening parentheses using the arguments enclosed by the parentheses
+.Primitive,<-,Infix operator that assigns an object on the right-hand-side (RHS) to a name on the left-hand-side (LHS) -- this should be used for global assignments!
+.Primitive,=,Infix operator that assigns an object on the right-hand-side (RHS) to a name on the left-hand-side (LHS) -- this should not be used for global assignments!
+.Primitive,~,The formula operator separates the left- and right-hand sides (LHS and RHS) in a formula.
+.Primitive,:,Infix operator that generates a regular sequence of adjacent values
+.Primitive,$,Infix operator that extracts the values associated with a name (RHS) from a recursive object (LHS)
+.Primitive,+,Infix arithmetic operator (addition)
+.Primitive,-,Infix arithmetic operator (subtract) or prefix negative symbol operator
+.Primitive,/,Infix arithmetic operator (divide)
+.Primitive,c,Combine values to form an atomic vector
+base,factor,Convert a character vector to a factor
+base,library,Attach the package environment for a given package to the current R session
+base,list2env,Assign the items in a list to a specified environment
+base,rm,Remove a name from a specified environment (default is the global environment)
+base,summary,Print summary stats for a data object
+base,table,Count the number of unique observations in an atomic vector
+base,unit,Set or create a unit object
+dplyr,group_by,Group the data in a data frame by a given variable such that one or more subsequent analyses are run separately on each group
+dplyr,left_join,"A mutating join that joins a source table to a target table and maintains all records found in the target table, regardless of matching key values"
+dplyr,n,Calculate the number of observations (rows)
+dplyr,select,Subset columns in a data frame by name (without quotes!)
+dplyr,slice_max,Sort a data frame by a variable and subset to the rows associated with the highest values of that variable
+dplyr,summarize,Calculate one or more summary statistics on a variable or variables in a data frame (often used in conjunction with `group_by()` but may also be used with `.by = ...`)
+ggplot2,+,ggplot's pipe operator (adds a layer to a plot)
+ggplot2,aes,Define aesthetics
+ggplot2,coord_flip,Switch the mapping to the horizontal and vertical coordinates
+ggplot2,element_line,Set the theme for a line element
+ggplot2,element_rect,Set the theme for a shape element
+ggplot2,element_text,Set the theme for a text element
+ggplot2,expansion,Set upper and lower values or proportions to expand an axis by
+ggplot2,facet_wrap,Split plot into facets
+ggplot2,geom_bar,Create a bar geometry
+ggplot2,geom_point,Create a point geometry
+ggplot2,geom_smooth,Add a line-of-best-fit geometry
+ggplot2,ggplot,"Set the data and, potentially, the aesthetics of a plot"
+ggplot2,ggsave,Save a ggplot to your computer
+ggplot2,labs,Add or modify the labels of a plot
+ggplot2,scale_color_manual,Manually define the colors of a geometry
+ggplot2,scale_fill_brewer,Fill a geometry with colors from a RColorBrewer palette
+ggplot2,scale_x_continuous,Set the scale of the x axis
+ggplot2,scale_y_continuous,Set the scale of the y axis
+ggplot2,theme,Define the theme elements of a plot
+ggplot2,theme_bw,Generate a pre-packaged light background theme for a plot
+magrittr,%>%,The pipe operator passes the output of the LHS argument to the function on the right
+readr,read_csv,Read a tabular csv file into R as a tibble data frame
+readr,read_rds,Read an RDS file into R

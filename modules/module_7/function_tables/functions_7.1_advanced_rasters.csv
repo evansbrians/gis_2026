@@ -1,0 +1,56 @@
+Package,Function,Definition
+.Primitive,(...),Operator that evaluates the function name on the left-hand-side (LHS) of the opening parentheses using the arguments enclosed by the parentheses
+.Primitive,<-,Infix operator that assigns an object on the right-hand-side (RHS) to a name on the left-hand-side (LHS) -- this should be used for global assignments!
+.Primitive,=,Infix operator that assigns an object on the right-hand-side (RHS) to a name on the left-hand-side (LHS) -- this should not be used for global assignments!
+.Primitive,~,The formula operator separates the left- and right-hand sides (LHS and RHS) in a formula.
+.Primitive,::,Infix operator that can be used to access a package environment without attaching the whole package environment to your current session
+.Primitive,[…],Extraction operator used to index multiple values from a data object (LHS) based on the position or values specified inside the brackets
+.Primitive,$,Infix operator that extracts the values associated with a name (RHS) from a recursive object (LHS)
+.Primitive,!,Prefix logical operator (not)
+.Primitive,+,Infix arithmetic operator (addition)
+.Primitive,-,Infix arithmetic operator (subtract) or prefix negative symbol operator
+.Primitive,*,Infix arithmetic operator (multiply)
+.Primitive,/,Infix arithmetic operator (divide)
+.Primitive,^,Infix arithmetic operator (to the power of)
+.Primitive,class,Print the class of an object as a one-value character vector
+.Primitive,dim,Return the number of dimensions of an object as an integer vector
+base,as.matrix,Convert a data frame to a matrix
+base,library,Attach the package environment for a given package to the current R session
+base,list.files,List files in a specified folder on your computer's hard drive
+base,list2env,Assign the items in a list to a specified environment
+dplyr,if_else,Classify or reclassify a vector into two classes by applying a logical test and assigning one value if the test evaluates to `TRUE` and another if it evaluates to `FALSE`
+dplyr,mutate,Add or modify a column in a data frame
+dplyr,select,Subset columns in a data frame by name (without quotes!)
+grDevices,gray.colors,Generate a color palette of gray colors
+grDevices,terrain.colors,Generate a color palette of terrain colors
+magrittr,%>%,The pipe operator passes the output of the LHS argument to the function on the right
+purrr,map,Iterate across a vector and return a list
+readr,read_csv,Read a tabular csv file into R as a tibble data frame
+rlang,set_names,Assign names to values in a vector or items in a list
+sf,st_as_sf,Convert a data frame to an sf object
+sf,st_coordinates,Extract coordinates from an sf object as a matrix
+sf,st_read,Read in a simple features or other GIS shapefile
+sf,st_set_crs,Set the CRS for a spatial object in which it is absent
+sf,st_transform,Transform the CRS of a shapefile to a different CRS
+spatstat.geom,as.owin,Determine the observation window for a point pattern object
+spatstat.geom,ppp,Generate a point pattern object
+stars,st_as_stars,Convert an object which is not stars to one which is
+stats,density,Calculate the probability density of values in a set
+stringr,str_detect,Logical test of whether a pattern (string) is contained within a character value
+terra,classify,Classify or reclassify a raster
+terra,crop,"Subset a raster to a new spatial extent (e.g., a bounding box)"
+terra,distance,Calculate the distance from a shapefile or cells in a raster that are not NA
+terra,mask,"A type of join in which you convert all cells in a target raster to NA if they are outside of a source object (e.g., a polygon shapefile or SpatVector)"
+terra,rast,"Read in a raster object, create a raster object from scratch, or convert a list of raster objects to a raster stack"
+terra,rasterize,Convert a shapefile to a raster
+terra,resample,Resample the cells of a raster to fit the same resolution and extent of another
+terra,shade,Generate a hillshade raster
+terra,spatSample,Generate random or regular sampling points within a raster
+terra,terrain,Calculate the slope and aspect (and more!) for an elevation raster
+tmap,tm_basemap,Add a basemap layer to an interactive tmap
+tmap,tm_dots,Add a points layer to a tmap
+tmap,tm_polygons,Add a polygon layer to a tmap
+tmap,tm_raster,Add a raster layer to a tmap
+tmap,tm_shape,Define the shape that is the source of a tmap layer
+tmap,tmap_mode,"Set a tmap to either ""plot"" (static map) or ""view"" (interactive map)"
+base,head,Return the first 6 rows of a data frame (by default)

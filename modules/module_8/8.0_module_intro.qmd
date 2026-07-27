@@ -1,0 +1,80 @@
+---
+title: "Module 8 (optional): Communicating data"
+format:
+  html:
+    embed-resouces: true
+    self-contained: true
+    standalone: true
+    toc: false
+    number-sections: false
+    search: true
+    include-in-header: ../../src/includes/header_includes.html
+    include-after-body: ../../src/includes/accordion_script.html
+    theme: 
+      - cosmo
+      - ../../src/css/custom_style.scss
+editor: source
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r, include = FALSE}
+source("src/r/course_functions.R")
+```
+<hr>
+
+![](../../src/images/hex_complex.png){.intro_image}
+
+We are finally there! The last module of the course! In this module we will explore how to communicate data. We will start with an introduction to creating static webpages, then learn some tips that will be very useful for generating interactive webpages, and end with how to create interactive webpages themselves.  Specifically, you will learn:
+
+-   How to create static webpages with RMarkdown;
+-   How to use `if(TRUE) {this} else {that}` control flow operations;
+-   A simple (but a little dated) exploration of memory usage;
+-   The basics on creating interactive web pages with the *shiny* package;
+-   How to create pretty slick dashboard webpages with *shiny* and *shinydashboard*.
+
+## Module overview
+
+* **8.1 Introduction to RMarkdown**: This video (runtime: 26:09) describes what markup language is and how to use RMarkdown to create static webpages. The methods shown here can also be applied to generating static webpages in Quarto.
+* **8.2 Control flow with if else**: We have previously used control flow operations (like `purrr::map()` and `dplyr::across()`) to reduce repetition in code. In this video lesson (runtime: 22:47), you will learn a new control flow operation -- `if else`. This operation does not just reduce code repetition, it is crucial for building shiny apps that react to user input!
+* **8.3 Memory and time**: In this video lesson (runtime: 19:58) we will take another foray into how to make our scripts less memory and time intensive. This will help ensure that our interactive web applications run smoothly.
+* **8.4 Introduction to shiny apps**: In this video lesson (runtime: 29:16) and (long) written tutorial (see zip file covid_app_guide.zip) you will learn how to build interactive web applications with the *shiny* package. I use shiny apps for all sorts of things, from acting as a graphic user interface to one of my databases to providing interactive content to students of all ages (like the written portion of the lesson and the pre-course materials!).
+* **8.5 Introduction to tmap version 4** (*coming soon*): In this written tutorial, I will provide you with the tools to transform the tmap code that we covered in this class to Version 4.
+
+
+## Getting started
+
+Please complete the following steps *prior* to beginning this week's lessons:
+
+1. **Place** [control_flow_if_else.R]{.mono} and [memory_and_time.R]{.mono} inside of the [scripts]{.mono} folder 
+2. **Create** a new folder in the top level of your project called "[output]{.mono}".
+3. **Download** [trout_app.zip]{.mono} and unzip the contents (not the parent folder) to the [output]{.mono} folder. This is the app that we will use/create during the video portion of ***8.4 Introduction to shiny apps***.
+4. **Download** [covid_app_guide.zip]{.mono} and unzip the contents (not the parent folder) to the output folder. This contains a tutorial that will walk you through making a shiny dashboard (and cover the basics of shiny app development). The tutorial is also available via a provided link in ***8.4 Introduction to shiny apps***.
+5. Run the following to install several new packages!
+
+```{r, eval = FALSE}
+install.packages(
+  c(
+    "RCurl",
+    "shiny",
+    "shinydashboard",
+    "remotes"
+  )
+)
+```
+
+6. The package *ShinySky* (aka *shinysky*) is not on CRAN. Please install the package from the developer's GitHub account:
+
+```{r, eval = FALSE}
+remotes::install_github("AnalytixWare/ShinySky")
+```
+
+7. Note: For the tutorial portion of ***8.4 Introduction to shiny apps***, you may need to reset the "Evaluate Chunks in directory" (Global Options/R Markdown).
+
+## Readings (optional)
+
+-   [Wickham, Advanced R; Chapter 23. Measuring performance](https://adv-r.hadley.nz/perf-measure.html){target="_blank"}
+-   [Wickham, Mastering Shiny](https://mastering-shiny.org/){target="_blank"}
+-   [Shiny for R cheatsheet](https://shiny.posit.co/r/articles/start/cheatsheet/){target="_blank"}
+
+

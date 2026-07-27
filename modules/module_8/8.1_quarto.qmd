@@ -1,0 +1,749 @@
+---
+title: "8.1 Building web documents with Quarto"
+format:
+  html:
+    embed-resouces: true
+    self-contained: true
+    standalone: true
+    toc: true
+    toc-location: left
+    number-sections: false
+    search: true
+    include-in-header: ../../src/includes/header_includes.html
+    include-after-body: ../../src/includes/accordion_script.html
+    theme: 
+      - cosmo
+      - ../../src/css/custom_style.scss
+editor: source
+---
+
+```{r, include = FALSE}
+source("src/r/course_functions.R")
+```
+<hr>
+
+![](../../src/images/hex_complex.png){.intro_image}
+
+**What is Quarto?** Quarto provides us with the ability to create documents and embed the output of code, or the code itself, within the document. This allows us to quickly generate and share reports (e.g., websites, manuscripts, newsletters) with our data without having to leave the comfort of RStudio! Examples of what Quarto can do include [this link](https://rpubs.com/bsevansunc/guest_counts){target="_blank"}, which provides an overview of guest visits to an exhibit that Tara and I manage at the National Zoo, and [here is a field notebook](https://rpubs.com/bsevansunc/cicada_notebook){target="_blank"} that I created during my study on cicadas. Of course, you have interacted with a lot of Quarto-generated documents already -- all of the content for this course was created using Quarto.
+
+This lesson will include:
+
+-   Introduction to the Markdown language
+-   How to create a Quarto document
+-   Some introductory Quarto techniques
+
+## Introduction to Markdown
+
+Computer languages allow us to write instructions that control our computers behavior. Quarto documents are written in the Markdown language. 
+
+### What is Markdown?
+
+Markdown was created in 2004 and is a type of "markup" language. Markup language is a structured combination of literal characters and other elements (e.g., images) where the style is determined by annotations called tags. While the term may seem unfamiliar to you, I am willing to guess that you have been working with markup languages for years. For example, when we type in a Word document we are using a "What you see is what you get" (WYSIWYG) markup language.
+
+Consider, for example, the following sentence as it would be typed in Microsoft Word:
+
+[Here is an example sentence with some *italic* and **bold** text.]{.quarto_box}
+
+To create the above, you would use keyboard shortcuts or buttons to define the *italic* and **bold** text. Behind-the-scenes, you are assigning tags to those literal symbols that define how the words are presented. For WYSIWYG markup like Microsoft Word documents, all of the code is hidden from the user by default.
+
+Advantages of WYSIWYG markup include:
+
+-   Little expertise is needed to get started
+-   Quick to learn the basics
+-   Easy to create simple products
+
+There are also several disadvantages to WYSIWYG markup:
+
+-   It can often be difficult and time consuming to bypass the default formatting of document elements
+-   It typically takes a long time to develop the advanced skills required to generate professional output
+-   It is often time consuming to maintain consistent formatting of elements within a document and replicate elements (e.g., styling) across documents
+
+Let's have a look at our sentence written using the hypertext markup language (HTML), the standard markup language for web documents:
+
+```        
+<p>Here is an example sentence with some <i>italic</i> and <b>bold</b> text.</p>
+```
+
+In the above:
+
+-   The opening tag `<p>` starts the paragraph and the closing tag `</p>` ends the paragraph
+-   The *italic* text is defined by the opening tag `<i>` and closing tag `</i>`
+-   The **bold** text is defined by the opening tag `<b>` and closing tag `</b>`
+
+On a user's web browser, the HTML is then converted to:
+
+[Here is an example sentence with some *italic* and **bold** text.]{.quarto_box}
+
+Advantages of HTML include:
+
+-   Total control over output
+-   Once you learn the basics, creating professional output can be quite fast
+-   High reproducibility across documents
+
+Disadvantages to HTML:
+
+-   There is a very steep early learning curve
+-   It can be difficult to read the content prior to loading it into a web browser
+
+Now let's look at how our sentence is written in markdown language.
+
+```
+Here is an example sentence with some *italic* and **bold** text.
+```
+
+In the above, the italic text is defined by `*italic*`, the bold text is defined by `**bold**` and the rest of the text is written just like the Word version. This is nearly as simple to read as the Word version but has all of the fine-tuning advantages as the HTML version! 
+
+When generating web pages with Markdown (including with RMarkdown and Quarto), you **render** the document. Rendering converts the Markdown to HTML. As you might imagine, rendering the above returns:
+
+[Here is an example sentence with some *italic* and **bold** text.]{.quarto_box}
+
+Advantages of using the markdown language are the same as the HTML version but the learning curve is *much* less steep!
+
+## Getting started
+
+Quarto is the next generation of the program "R Markdown". While it is not currently intended to replace R Markdown, Quarto has additional flexibility that is beneficial (e.g., you can provide and execute code in multiple languages, such as Python).
+
+To get started with building a Quarto document, navigate to the "File" menu, select "New File", and "Quarto Document ...":
+
+![](open_quarto.gif)
+
+This opens a new window. Select "Empty document":
+
+![](new_quarto.gif)
+
+And choose "Source" (the other editor is WYSIWYG):
+
+![](not_visual_editor.gif)
+
+Before proceeding, please save the file with the name of your choosing with Control (Windows) or command (Mac) + shift + S:
+
+![](name_file_boy_howdy.gif)
+
+## The Quarto document
+
+Now that we have created a Quarto document, let's start to make some content. A basic Quarto document contains three types of content:
+
+* A YAML header
+* Markdown text
+* Code Chunks
+
+### The YAML header
+
+The first part of the document has been written for us. The content between the two `---` is what is known as a "YAML" header. YAML stands for "YAML Ain't Markup Language" (though it was originally named "Yet Another Markup Language"). It is where you provide metadata for the document as well as instructions for how the whole document will be structured and styled.
+
+```
+---
+title: "Untitled"
+format: html
+editor: visual
+---
+```
+
+The above provides the title of the document, defines that the format of the document is a web page, and that the document will open in the Visual (WYSIWYG) editor by default. Notice in the above that, though we clicked the "Source" button when we set up the document, it is still listed as `editor: visual`, unfortunately. Let's change that:
+
+```
+---
+title: "Untitled"
+format: html
+editor: source
+---
+```
+
+### Rendering your Quarto document
+
+After our YAML header, we are now ready to add the content of our web page!
+
+```
+---
+title: "Untitled"
+format: html
+editor: source
+---
+
+Here is an example sentence with some *italic* and **bold** text.
+```
+
+To convert the Quarto document to HTML, we need to knit the document. Knitting the document, also called "rendering", means to create and view the web output. There are a few options for this.
+
+You *could* click the "Render" button (but I do not advise this method):
+
+![](render_button.gif)
+
+Alternatively, hitting the keyboard shortcut Control (Windows) or command (Mac) + shift + K will knit the document:
+
+![](render_shortcut.gif)
+
+Typically, though, I often click the checkbox "Render on Save" and then knit the document with the keyboard shortcut Control (Windows) or command (Mac) + S:
+
+![](render_on_save.gif)
+
+### Markdown elements
+
+#### Headings
+
+Headings are hierarchical titles for sections of your document. Headings are designated by hashtags (`#`), with the number of hashtags representing the level of the heading.
+
+For example:
+
+```
+# Top heading
+## Second-level heading
+### Third-level heading
+#### Fourth-level heading
+```
+
+Rendering converts the Markdown to HTML:
+
+```
+<h1>Top heading</h1>
+<h2>Second-level heading</h2>
+<h3>Third-level heading</h3>
+<h4>Fourth-level heading</h4>
+```
+
+The end-user will see:
+
+::: quarto_box
+# Top heading {.unnumbered .unlisted}
+## Second-level heading {.unnumbered .unlisted}
+### Third-level heading {.unnumbered .unlisted}
+#### Fourth-level heading {.unnumbered .unlisted}
+:::
+
+#### Lists
+
+Lists come in two primary flavors:
+
+* **Ordered lists** should be used when the sequence of events matters and list items are preceded by numbers or letters. For example, you might use an ordered list to describe the steps in a process or the rank of list items.
+* **Unordered lists** (like this one!) are used to communicate conceptual groupings in situations in which their sequence is not important and are typically preceded by bullet points. Unordered lists are useful for communicating information quickly and sorting or displaying the hierarchy of list items.
+
+##### Ordered lists
+
+You can create an ordered list by preceding a list item with a number followed by a period symbol.
+
+```
+1. git pull
+2. modify content
+3. git add
+4. git commit -m "commit message"
+5. git push
+```
+In rendering, this is converted to HTML, where the tag `<ol>` represents the list itself and `<li>` represents a list item:
+
+```
+<ol>
+<li>git pull</li>
+<li>modify content</li>
+<li>git add</li>
+<li>git commit -m "commit message"</li>
+<li>git push</li>
+</ol>
+```
+Your readers will see:
+
+::: quarto_box
+1. git pull
+2. modify content
+3. git add
+4. git commit -m "commit message"
+5. git push
+:::
+
+Because the HTML for each list item does not include the number assigned, you do not have to provide the correct number for each list item:
+
+```
+1. git pull
+1. modify content
+2. git add
+3. git commit -m "commit message"
+5. git push
+```
+
+... the above produces:
+
+::: quarto_box
+1. git pull
+1. modify content
+2. git add
+3. git commit -m "commit message"
+5. git push
+:::
+
+One thing to note is that a list *must* be preceded by a blank line. For example, the following code ...
+
+```
+Basic git workflow:
+1. git pull
+2. modify content
+3. git add
+4. git commit -m "commit message"
+5. git push
+```
+... does not produce a numbered list:
+
+::: quarto_box
+Basic git workflow:
+1. git pull
+2. modify content
+3. git add
+4. git commit -m "commit message"
+5. git push
+:::
+
+But this ...
+
+```
+Basic git workflow:
+
+1. git pull
+2. modify content
+3. git add
+4. git commit -m "commit message"
+5. git push
+```
+
+... does:
+
+::: quarto_box
+Basic git workflow:
+
+1. git pull
+2. modify content
+3. git add
+4. git commit -m "commit message"
+5. git push
+:::
+
+##### Unordered lists
+
+Unordered (bulleted) lists are created by preceding the list item with an asterisk ...
+
+```
+Brian's silly examples:
+
+* hello
+* world
+* boy
+* howdy
+```
+... or a dash:
+
+```
+Brian's silly examples:
+
+- hello
+- world
+- boy
+- howdy
+```
+
+In rendering, this is converted to HTML, where the tag `<ul>` represents the list itself and `<li>` represents a list item:
+
+```
+<p>Brian's silly examples:</p>
+
+<ul>
+<li>hello</li>
+<li>world</li>
+<li>boy</li>
+<li>howdy</li>
+</ul>
+```
+
+Your readers will see:
+
+::: quarto_box
+Brian's silly examples:
+
+* hello
+* world
+* boy
+* howdy
+:::
+
+##### Multi-level lists
+
+To create a hierarchical unordered list, you simply indent the lower-level list items by one tab stop:
+
+```
+Brian's silly examples:
+
+* Phrase one:
+  * Hello
+  * World
+* Phrase two:
+  * Boy
+  * Howdy
+```
+
+::: quarto_box
+Brian's silly examples:
+
+* Phrase one:
+  * Hello
+  * World
+* Phrase two:
+  * Boy
+  * Howdy
+:::
+  
+To make the document more readable prior to knitting, I like to use a different symbol for the lower-level list:
+
+```
+Brian's silly examples:
+
+* Phrase one:
+  - Hello
+  - World
+* Phrase two:
+  - Boy
+  - Howdy
+```
+
+::: quarto_box
+Brian's silly examples:
+
+* Phrase one:
+  - Hello
+  - World
+* Phrase two:
+  - Boy
+  - Howdy
+:::
+
+Note that, in the above, the sub-bullets are stored in their own lists. The HTML to create this would be written as:
+
+```
+<p>Brian's silly examples:</p>
+
+<ul>
+  <li>Phrase one:
+    <ul>
+      <li>Hello</li>
+      <li>World</li>
+    </ul>
+  </li>
+  <li>Phrase two:
+    <ul>
+      <li>Boy</li>
+      <li>Howdy</li>
+    </ul>
+  </li>
+</ul>
+```
+
+::: mysecret
+{{< fa user-secret size=2x >}} [Surprise, surprise, Brian has opinions about lists]{style="font-size: 1.25em; padding-left: 0.5em;"}
+
+Lists are very useful but knowing when *not* to use lists is important! Avoid using a list when:
+
+* You only have one list item: There is no organizational benefit to a list of one.
+* You end up writing a lot for each list item: If you find yourself writing two or three sentences for each list item, you are probably better off writing paragraphs.
+:::
+
+#### Images
+
+You can add an image to your Quarto document by using the structure `![](image address)`. The following Markdown code inserts an image from an online location:
+
+```
+![](https://clip.cafe/16x9/for-me-will-always-be-glorious-birds.jpg)
+```
+
+![](https://clip.cafe/16x9/for-me-will-always-be-glorious-birds.jpg)
+
+*Note that you can also specify a location on your computer. In doing so, ensure that the image address is provided relative to the location of the folder that the Quarto document is stored in.*
+
+If you would like to add a caption to an image, place the caption inside of the square brackets:
+
+```
+![Figure 1. This is the scene in which Maude says "For me they will always be glorious birds"](https://clip.cafe/16x9/for-me-will-always-be-glorious-birds.jpg)
+```
+
+![Figure 1. For me they will always be glorious birds](https://clip.cafe/16x9/for-me-will-always-be-glorious-birds.jpg)
+
+### Adding code blocks and output
+
+The power of Quarto (and it's predecessor, R Markdown) is that you can include code and output within a document.
+
+If we want to include our code and its output, we insert what is known as a **code chunk**. A code chunk can be used to execute code in a specified language. In the below, three backtick symbols at the start and end define the boundaries of the chunk and `{}` defines the program or language to use when executing the chunk:
+
+````
+```{{r}}
+library(tidyverse)
+```
+````
+
+This will render as:
+
+```{r}
+library(tidyverse)
+```
+
+You can add instructions to the execution of the code block. For example, to remove the printed messages after attaching the tidyverse packages, you can use `message = FALSE` (please add to your document and knit):
+
+````
+```{{r message = FALSE}}
+library(tidyverse)
+```
+````
+
+Let's add a tibble to our code block:
+
+````
+```{{r message = FALSE}}
+library(tidyverse)
+
+tibble(
+  boy = c(1, 1),
+  howdy = 2:3
+)
+```
+````
+
+Once rendered, this returns: 
+
+```{r message = FALSE}
+library(tidyverse)
+
+tibble(
+  boy = c(1, 1),
+  howdy = 2:3
+)
+```
+
+We can see that, while `message = FALSE` suppressed the printed output of `library(tidyverse)`, knitting the code block still returned the output of the code and the code used to generate the output.
+
+Sometimes we want to include only the output (e.g., for public reports or when showing your data to non-R-savvy advisors). To include only the output of our code, but not the code itself, specify `{r echo = FALSE}`:
+
+````
+```{{r echo = FALSE}}
+library(tidyverse)
+
+tibble(
+  boy = c(1, 1),
+  howdy = 2:3
+)
+```
+````
+
+In the rendered document, this produces:
+
+```{r echo = FALSE}
+library(tidyverse)
+
+tibble(
+  boy = c(1, 1),
+  howdy = 2:3
+)
+```
+
+To display the code itself, without running it, we can specify `{r eval = FALSE}`:
+
+````
+```{{r eval = FALSE}}
+library(tidyverse)
+
+tibble(
+  boy = c(1, 1),
+  howdy = 2:3
+)
+```
+````
+
+Which returns, when rendered:
+
+```{r eval = FALSE}
+library(tidyverse)
+
+tibble(
+  boy = c(1, 1),
+  howdy = 2:3
+)
+```
+
+#### Inline code output
+
+You can also include the output of code within the text of your document. This is known as **inline code**. To create inline code that will be evaluated in program R, add "r" followed by a space, write some R code, and place this statement within backtick quotes.
+
+For example, typing the following into Markdown ...
+
+```{eval = FALSE}
+The mean of the numbers 1 through 5 is `r mean(1:5)`.
+```
+
+... produces:
+
+::: quarto_box
+The mean of the numbers 1 through 5 is `r mean(1:5)`.
+:::
+
+The above is super useful if you are writing a report and want to include code output within the text! If a value in your text changes often, but the code that calculates that value does not, it is much more time efficient to use inline code.
+
+### Styling your Quarto documents
+
+To modify the style of your Quarto document, or elements within your Quarto document, you use Cascading Style Sheets (CSS). Luckily, you have a head start on using CSS because the theme elements you add with `ggplot2::theme()` are modeled after CSS!
+
+#### Add styling to sections
+
+Web pages are divided into sections that act as invisible containers for HTML elements. Sections can have their own style and behavior. Below, I created a section for my sentence about Tara's font preference and defined the font-family of the section as Times New Roman. 
+
+:::{class=quarto_box style="font-family: Times;"}
+Tara prefers to write documents in Times New Roman.
+:::
+
+In HTML, such sections can be created by the `<div>` tag, which stands for division:
+
+```
+<div style = "font-family: Times;">
+<p>Tara prefers to write documents in Times New Roman.</p>
+</div>
+```
+
+Notice in the above that I defined the font-family for the entire section of the document.
+
+With Quarto, you can define a section by wrapping it inside of `:::` and, if desired, apply styling to the section inside of curly braces:
+
+```
+::: {style="font-family: Trebuchet MS;"}
+Because he is old and problematically font-opinionated, Brian remembers when Times New Roman was the default font for Microsoft Word and prefers sans-serif fonts.
+:::
+```
+
+The above produces:
+
+::: {class=quarto_box style="font-family: Trebuchet MS;"}
+Because he is old and problematically font-opinionated, Brian remembers when Times New Roman was the default font for Microsoft Word and prefers sans-serif fonts.
+:::
+
+#### Add styling to spans
+
+We often want to change an element within a document without adding a new line. For example, we can change the word "green" in the sentence below to the color green:
+
+::: quarto_box
+It's not easy being [green]{style="color: green;"}.
+:::
+
+To replicate this with HTML, we use the `<span>` tag:
+
+```
+<p>It's not easy being <span style="color: green;">green</span>.</p>
+```
+
+To replicate this with Quarto, we define elements of the span inside square brackets and add the styling within curly braces:
+
+```
+It's not easy being [green]{style="color: green;"}.
+```
+
+Note that you can add multiple style elements to a span or div by separating each with a semi-colon:
+
+```
+It's not easy being [green]{style="color: green; font-family: Times;"}.
+```
+
+::: quarto_box
+It's not easy being [green]{style="color: green; font-family: Times;"}.
+:::
+
+#### Applying styles across a document
+
+We can define a style across our entire document by adding a CSS code chunk. Because this modifies the CSS of the entire document, I always do this at the beginning of my script. Similar to adding an R code chunk, the chunk is defined by opening and closing triple backtick quotes. Inside of curly braces, you specify that you are adding CSS.
+
+````
+```{{css, echo = FALSE}}
+.tara_style {
+  font-family: Times;
+}
+```
+````
+*Note on the above: We used* `echo = FALSE` *because we do not want show the reader our CSS! Also note that the period in* `.tara_style` *defines a uniquely identified class.*
+
+```{css, echo = FALSE}
+.tara_style {
+  font-family: Times;
+}
+```
+
+In the above, I defined a style class called `.tara_style` and added my style parameters inside of curly braces.
+
+Now, I can refer to my custom style class using:
+
+```
+::: {class=tara_style}
+Tara prefers to write documents in Times New Roman.
+:::
+```
+
+... or, more simply:
+
+```
+::: tara_style
+Tara prefers to write documents in Times New Roman.
+:::
+```
+
+... both of which produce:
+
+::: quarto_box
+::: tara_style
+Tara prefers to write documents in Times New Roman.
+:::
+:::
+
+You can also add a style to a predefined class:
+
+```
+::: {class=tara_style style="color: green;"}
+Tara prefers to write documents in Times New Roman.
+:::
+```
+
+::: quarto_box
+::: {class=tara_style style="color: green;"}
+Tara prefers to write documents in Times New Roman.
+:::
+:::
+
+If you intend to apply additional styles across `tara_style` content, you can add it to your CSS, separating each style element with a semi-colon:
+
+```{css}
+.tara_style_green {
+  font-family: Times;
+  color: green;
+}
+```
+
+```
+::: tara_style_green
+Tara prefers to write documents in Times New Roman.
+:::
+```
+
+Which produces:
+
+::: quarto_box
+::: tara_style_green
+Tara prefers to write documents in Times New Roman.
+:::
+:::
+
+::: mysecret
+{{< fa user-secret size=2x >}} [Code chunks are evaluated before Markdown content!]{style="font-size: 1.25em; padding-left: 0.5em;"}
+
+While I prefer to place my CSS code chunk near the top of a document, you can actually place it anywhere. Styles defined by a CSS code chunk are applied across the whole document, regardless of the position of that chunk. For example, executing the following at any place in in the document ...
+
+````
+```{{css, echo = FALSE}}
+p {
+  font-family: Times;
+}
+```
+````
+
+... will convert all of the paragraph text to Times New Roman!
+
+:::
+
+<hr>
+
+We have just barely scratched the surface of what you can do with Quarto. For the sake of brevity, we have only included the basic elements to get you started with using Quarto. For example, we typically define our CSS with an external file and also tend to include JavaScript and HTML within each Quarto document that we produce! We strongly recommend reading the Quarto documentation at [this link](https://quarto.org/docs/guide/){target="_blank"} ... you will even learn how to create hyperlinks (`[this link](https://quarto.org/docs/guide/){target="_blank"}`)!

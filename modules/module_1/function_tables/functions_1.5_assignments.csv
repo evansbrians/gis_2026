@@ -1,0 +1,28 @@
+Package,Function,Definition
+.Primitive,(...),Operator that evaluates the function name on the left-hand-side (LHS) of the opening parentheses using the arguments enclosed by the parentheses
+.Primitive,<-,Infix operator that assigns an object on the right-hand-side (RHS) to a name on the left-hand-side (LHS) -- this should be used for global assignments!
+.Primitive,=,Infix operator that assigns an object on the right-hand-side (RHS) to a name on the left-hand-side (LHS) -- this should not be used for global assignments!
+.Primitive,:,Infix operator that generates a regular sequence of adjacent values
+.Primitive,::,Infix operator that can be used to access a package environment without attaching the whole package environment to your current session
+.Primitive,[…],Extraction operator used to index multiple values from a data object (LHS) based on the position or values specified inside the brackets
+.Primitive,[[…]],Extraction operator used to index a single value from a data object (LHS) based on the position or values specified inside the brackets
+.Primitive,$,Infix operator that extracts the values associated with a name (RHS) from a recursive object (LHS)
+.Primitive,==,Infix relational operator (is equal to)
+.Primitive,!,Prefix logical operator (not)
+.Primitive,/,Infix arithmetic operator (divide)
+.Primitive,c,Combine values to form an atomic vector
+.Primitive,class,Print the class of an object as a one-value character vector
+.Primitive,list,"Combine multiple objects of any type into a single, recursive, data object"
+.Primitive,names,Retrieve the names (or names attribute) assigned to an R object (generates a character vector)
+base,factor,Convert a character vector to a factor
+base,library,Attach the package environment for a given package to the current R session
+base,ls,Generate a character vector of names in a specified environment (default is the global environment)
+base,rm,Remove a name from a specified environment (default is the global environment)
+base,tolower,Convert a character vector to lowercase
+base,unique,Subset an atomic vector to the unique values in the set
+dplyr,rename,Change the name assigned to a column in a data frame
+lobstr,ref,View the structure of an object in your computer's memory
+magrittr,%>%,The pipe operator passes the output of the LHS argument to the function on the right
+readr,read_csv,Read a tabular csv file into R as a tibble data frame
+rlang,set_names,Assign names to values in a vector or items in a list
+stringr,str_c,"Concatenate strings, with or without (default) a separator"

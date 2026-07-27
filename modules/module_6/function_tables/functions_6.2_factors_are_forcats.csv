@@ -1,0 +1,51 @@
+Package,Function,Definition
+.Primitive,(...),Operator that evaluates the function name on the left-hand-side (LHS) of the opening parentheses using the arguments enclosed by the parentheses
+.Primitive,=,Infix operator that assigns an object on the right-hand-side (RHS) to a name on the left-hand-side (LHS) -- this should not be used for global assignments!
+.Primitive,~,The formula operator separates the left- and right-hand sides (LHS and RHS) in a formula.
+.Primitive,:,Infix operator that generates a regular sequence of adjacent values
+.Primitive,$,Infix operator that extracts the values associated with a name (RHS) from a recursive object (LHS)
+.Primitive,==,Infix relational operator (is equal to)
+.Primitive,|,Prefix logical operator (or)
+.Primitive,>,Infix relational operator (greater than)
+.Primitive,+,Infix arithmetic operator (addition)
+.Primitive,/,Infix arithmetic operator (divide)
+.Primitive,^,Infix arithmetic operator (to the power of)
+.Primitive,as.integer,Transform an atomic vector to an integer vector
+.Primitive,c,Combine values to form an atomic vector
+.Primitive,class,Print the class of an object as a one-value character vector
+base,%in%,Infix relational operator that tests whether the vector on the left-hand-side (LHS) is within the vector on the right
+base,factor,Convert a character vector to a factor
+base,levels,Generate a character vector of factor levels in a factor variable
+base,library,Attach the package environment for a given package to the current R session
+base,list2env,Assign the items in a list to a specified environment
+base,table,Count the number of unique observations in an atomic vector
+base,typeof,Print a one-value character vector that represents how a data object is stored on our computer
+base,unique,Subset an atomic vector to the unique values in the set
+dplyr,case_when,Classify or reclassify a vector into two or more  classes based on a series of logical tests
+dplyr,count,Tabulate the number of observations of each unique value of a column in a data frame and return as a long format tibble
+dplyr,filter,Subset a data frame by logical condition
+dplyr,if_else,Classify or reclassify a vector into two classes by applying a logical test and assigning one value if the test evaluates to `TRUE` and another if it evaluates to `FALSE`
+dplyr,mutate,Add or modify a column in a data frame
+dplyr,n,Calculate the number of observations (rows)
+dplyr,na_if,Convert a value in a vector to NA
+dplyr,pull,Extract a column from a data frame as a vector
+forcats,fct_collapse,Collapse factor levels into manually defined groups
+forcats,fct_recode,Change factor levels by hand (specify a new factor level or modify an existing level)
+forcats,fct_relevel,Reorder factor levels by hand
+forcats,fct_reorder,Reorder factor levels by another variable
+forcats,fct_rev,Reverse the order of factor levels
+ggplot2,+,ggplot's pipe operator (adds a layer to a plot)
+ggplot2,aes,Define aesthetics
+ggplot2,coord_flip,Switch the mapping to the horizontal and vertical coordinates
+ggplot2,geom_bar,Create a bar geometry
+ggplot2,ggplot,"Set the data and, potentially, the aesthetics of a plot"
+ggplot2,labs,Add or modify the labels of a plot
+ggplot2,theme_bw,Generate a pre-packaged light background theme for a plot
+magrittr,%>%,The pipe operator passes the output of the LHS argument to the function on the right
+readr,read_rds,Read an RDS file into R
+stringr,str_detect,Logical test of whether a pattern (string) is contained within a character value
+stringr,str_replace,Replace a given pattern in a string with a new pattern
+tibble,tibble,Column-wise creation of a tibble data frame
+tidyr,drop_na,Remove rows that contain NA values
+utils,?,Prefix operator to retrieve the help file for a function
+utils,str,View the structure of a data object

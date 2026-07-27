@@ -1,0 +1,35 @@
+Package,Function,Definition
+.Primitive,(...),Operator that evaluates the function name on the left-hand-side (LHS) of the opening parentheses using the arguments enclosed by the parentheses
+.Primitive,<-,Infix operator that assigns an object on the right-hand-side (RHS) to a name on the left-hand-side (LHS) -- this should be used for global assignments!
+.Primitive,=,Infix operator that assigns an object on the right-hand-side (RHS) to a name on the left-hand-side (LHS) -- this should not be used for global assignments!
+.Primitive,~,The formula operator separates the left- and right-hand sides (LHS and RHS) in a formula.
+.Primitive,:,Infix operator that generates a regular sequence of adjacent values
+.Primitive,::,Infix operator that can be used to access a package environment without attaching the whole package environment to your current session
+.Primitive,[…],Extraction operator used to index multiple values from a data object (LHS) based on the position or values specified inside the brackets
+.Primitive,[[…]],Extraction operator used to index a single value from a data object (LHS) based on the position or values specified inside the brackets
+.Primitive,$,Infix operator that extracts the values associated with a name (RHS) from a recursive object (LHS)
+.Primitive,==,Infix relational operator (is equal to)
+.Primitive,!,Prefix logical operator (not)
+.Primitive,|,Prefix logical operator (or)
+.Primitive,-,Infix arithmetic operator (subtract) or prefix negative symbol operator
+.Primitive,as.integer,Transform an atomic vector to an integer vector
+.Primitive,as.numeric,"Transform an atomic vector to an double numeric vector (i.e., decimal numbers)"
+.Primitive,attributes,Generate and print a list that represents the attributes of a data object
+.Primitive,c,Combine values to form an atomic vector
+.Primitive,class,Print the class of an object as a one-value character vector
+.Primitive,list,"Combine multiple objects of any type into a single, recursive, data object"
+base,%in%,Infix relational operator that tests whether the vector on the left-hand-side (LHS) is within the vector on the right
+base,data.frame,Create a data frame
+base,environment,Print the environment of a given function
+base,factor,Convert a character vector to a factor
+base,library,Attach the package environment for a given package to the current R session
+base,ls,Generate a character vector of names in a specified environment (default is the global environment)
+base,matrix,Generate a matrix object by adding dimensional attributes to an atomic vector
+base,search,Print a character vector of attached objects associated with your current R session
+base,typeof,Print a one-value character vector that represents how a data object is stored on our computer
+dplyr,bind_cols,Combine two variables or columns of two tibbles to create a new tibble
+tibble,tibble,Column-wise creation of a tibble data frame
+tibble,tribble,Row-wise creation of a tibble data frame
+tidyverse,tidyverse_packages,Generate a character vector of package names in the tidyverse metapackage
+utils,?,Prefix operator to retrieve the help file for a function
+utils,str,View the structure of a data object

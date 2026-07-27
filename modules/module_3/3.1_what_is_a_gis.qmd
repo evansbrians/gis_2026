@@ -1,0 +1,42 @@
+---
+title: "3.1 What is a GIS?"
+format:
+  html:
+    embed-resouces: true
+    self-contained: true
+    standalone: true
+    toc: true
+    toc-location: left
+    number-sections: false
+    search: true
+    include-in-header: ../../src/includes/header_includes.html
+    include-after-body: ../../src/includes/accordion_script.html
+    theme: 
+      - cosmo
+      - ../../src/css/custom_style.scss
+editor: source
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r, include = FALSE}
+source("src/r/course_functions.R")
+```
+<hr>
+
+![](../../src/images/hex_complex.png){.intro_image}
+
+R is a GIS ... or at least it can be! In this video lesson, which is a lecture rather than a code-along-video, I cover:
+
+* What a GIS is
+* Coordinate Reference Systems (CRSs) ... this is super important
+* Types of shapefiles -- points, lines, and polygons
+* What a raster file is
+* Core GIS concepts such as spatial grain and spatial extent (we will explore these concepts in depth in the future!)
+
+:::{style="padding-top: 2em;"}
+
+{{< video https://www.youtube.com/embed/NKvQxiwRBds?si=iyiAjEsqPj8Lav1I >}}
+
+:::
+

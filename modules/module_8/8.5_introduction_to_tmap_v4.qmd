@@ -1,0 +1,907 @@
+---
+title: "8.5 Introduction to tmap version 4"
+format:
+  html:
+    embed-resouces: true
+    self-contained: true
+    standalone: true
+    toc: true
+    toc-location: left
+    number-sections: false
+    search: true
+    include-in-header: ../../src/includes/header_includes.html
+    include-after-body: ../../src/includes/accordion_script.html
+    theme: 
+      - cosmo
+      - ../../src/css/custom_style.scss
+editor: source
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r, include = FALSE}
+source("src/r/course_functions.R")
+```
+```{r setup, include=FALSE}
+library(tidyverse)
+library(DT)
+
+knitr::opts_chunk$set(
+  echo = TRUE,
+  eval = TRUE,
+  error = TRUE
+)
+
+tmap::tmap_options(
+  component.autoscale = FALSE
+)
+
+rm(has_annotations)
+```
+
+<hr>
+
+<div>
+![](../../src/images/hex_complex.png){.intro_image}
+
+The version of tmap (Version 4) provides a lot more flexibility than previous versions. While the author has stated that the new version is backwards-compatable, this is not necessarily the case. Several functions produce considerably different results. In this written tutorial, you will explore key difference between the previous versions and Version 4. Specifically, you will look at changes in how:
+
+* Fill colors are added to polygons
+* Legends are produced and altered
+* To produce basemaps for static maps (new and exciting!)
+* To add titles to a plot
+* Color scales are defined for polygons
+
+**Important!** Before starting this tutorial, be sure that you have completed all preliminary and  previous lessons.
+
+</div>
+
+## Data for this lesson
+
+Please click on the buttons below to explore the metadata for this lesson!
+
+<button class="accordion">Metadata</button>
+
+::: panel
+
+**[lanternfly_proc.rds]{.mono}**. These data represent a subset of our larger [spotted_lanternfly.rds]{.mono} file. The data are formatted as a tibble data frame object. Location data are recorded in an unprojected Coordinate Reference System (CRS) with the datum WGS84 and EPSG code 4326. The dataset includes the following variables:
+
+* [datetime]{.mono}, datetime: The date and time in which an observation took place.
+* [longitude]{.mono}, numeric: The longitudinal coordinates of an observation, in decimal degrees.
+* [latitude]{.mono}, numeric: The latitudinal coordinates of an observation, in decimal degrees.
+
+[**states_east.geojson**]{.mono}: A polygon shapefile of states in the Eastern US. The data are in a projected Coordinate Reference System with the datum NAD83 and EPSG code 5070. Fields include:
+
+* [geoid]{.mono}, character: The **primary key** key for each state.
+* [name]{.mono}, character: The name of each state.
+* [region]{.mono}, character: The region of the United States where each state is located.
+* [area]{.mono}, numeric: The total area of each state, in square kilometers.
+* [ttl__10]{.mono}, numeric: The total population of each state in 2010.
+* [ttl__15]{.mono}, numeric: The total population of each state in 2015.
+
+:::
+
+## Set up your session
+
+**Important!** Before continuing, please save and close [tmap_lanternfly.R]{.mono}.
+
+Please do the following to ensure that you are working in a clean session:
+
+1. Download and open the script file `tmap_lanternfly_version_4_key.R`.
+2. In the *Environment* tab of your *workspace pane*, ensure that your *Global Environment* is empty. If it is not, click the *broom* to remove all objects. *Note: Conversely, you can remove all items with `rm(list = ls())`*.
+3. In the *History* tab of your *workspace pane*, ensure that your history is empty. If it is not, click the *broom* to remove your history.
+
+4. Please run the following in your console pane to load required packages:
+
+```{r, eval = FALSE}
+install.packages(
+  c(
+    "colorblindcheck",
+    "plotly",
+    "tmap",
+    "tmaptools"
+  )
+)
+```
+
+5. Run the setup section of the script.
+
+```{r eval = TRUE, message = FALSE, warning = FALSE}
+
+# setup -------------------------------------------------------------------
+
+library(sf)
+library(tmap)
+library(tmaptools)
+library(tidyverse)
+
+# Set the tmap mode:
+
+tmap_mode("plot")
+
+# Load iNaturalist observations of spotted lanternflies and convert to EPSG 5070
+# (Note:  These data were recorded in EPSG 4326):
+
+spotted_lanternfly <-
+  read_rds("data/processed/lanternfly_tmap/lanternfly_proc.rds") %>% 
+  
+  # Convert to an sf point shapefile: 
+  
+  st_as_sf(
+    coords = c("longitude", "latitude"),
+    crs = 4326
+  ) %>% 
+  
+  # Transform the CRS:
+  
+  st_transform(crs = 5070)
+
+# Read in and pre-process the polygon shapefile we will use in this lesson:
+
+states_raw <- 
+  st_read(
+    "data/processed/lanternfly_tmap/states_east.geojson", 
+    quiet = TRUE
+  )
+
+
+
+# Add counts of spotted lanternflies per shape:
+
+states <- 
+  spotted_lanternfly %>% 
+  
+  # Add the geoids for each shape to the spotted lanternfly dataset:
+  
+  st_join(
+    select(states_raw, geoid)
+  ) %>% 
+  
+  # Count the number of spotted lanternflies per shape:
+  
+  st_drop_geometry() %>% 
+  summarize(
+    n = n(),
+    .by = geoid
+  ) %>% 
+  
+  # Join to the shapefile:
+  
+  left_join(
+    states_raw, 
+    .,
+    by = "geoid"
+  )
+
+# Remove states_raw:
+
+rm(states_raw)
+```
+
+## Adding fill colors to polygons
+
+Basic map-making in tmap Version 4 is the same as earlier versions. We start with the file that we would like to plot, invoke tmap with `tm_shape()` and then specify how to visualize the data.
+
+Below, I pass the data assigned to the name `states` in `shapes` to `tm_shape()` and the use `tm_polygons()` to display the data:
+
+```{r}
+states %>% 
+  tm_shape() +
+  tm_polygons()
+```
+
+While making a basic map is the same, one of the biggest changes in version 4 relates to how to specify the fill colors of a choropleth map. In earlier versions of tmap, we used the `tm_polygons()` argument `col = ...` to specify a fill color ...
+
+```{r}
+states %>% 
+  tm_shape() +
+  tm_polygons(col = "n")
+```
+
+... but this now produces a border color! It seems the goal here was to better align the language used in tmap with the language of ggplot2.
+
+The fill color in Version 4 is defined by the `fill = ...` argument:
+
+```{r}
+states %>% 
+  tm_shape() +
+  tm_polygons(fill = "n")
+```
+
+This allows us to specify the border with the `col = ...` argument:
+
+```{r}
+states %>% 
+  tm_shape() +
+  tm_polygons(
+    fill = "n",
+    col = "#999999"
+  )
+```
+
+## The legend
+
+Let's now turn our attention to the legend, which has also seen some major changes. 
+
+Previously, we modified the title of a legend with the `title = ...` argument of `tm_polygons()`:
+
+```{r}
+states %>% 
+  tm_shape() +
+  tm_polygons(
+    fill = "n",
+    title = "Observations"
+  )
+```
+
+The above worked, but notice that we get a warning message (`tmap v3 code detected`)! In the new version, we specify the title as a function of the visual element of a legend item and use the function `tm_legend()` to modify the legend defaults. 
+
+Below, I specify the visual element as "fill" with the argument `fill.legend = ...` and use `tm_legend(title = ...)` to change the title from variable name, "n", to "Observations":
+
+```{r}
+states %>% 
+  tm_shape() +
+  tm_polygons(
+    fill = "n",
+    fill.legend = 
+      tm_legend(title = "Observations")
+  )
+```
+
+Notice another change here. In the earlier versions of tmap, the title was placed inside of the map frame by default. Here, the title is placed outside of the map frame. We can move the legend inside the plot with the `position = ...` argument of `tm_legend()` and the function `tm_pos_in()`:
+
+```{r}
+states %>% 
+  tm_shape() +
+  tm_polygons(
+    fill = "n",
+    fill.legend  = 
+      tm_legend(
+        title = "Observations",
+        position = tm_pos_in()
+      )
+  )
+```
+
+I am sure that you noticed that the overlap is very annoying. We can adjust this by:
+
+* Adding the `tm_layout()` function 
+* Specifying the inner margins of the plot with the argument `inner.margins = ...`
+* Defining the margins with `c()` and a vector of four values representing the bottom, left, and top (in device units)
+
+```{r}
+states %>% 
+  tm_shape() +
+  tm_polygons(
+    fill = "n",
+    fill.legend  = 
+      tm_legend(
+        title = "Observations",
+        position = tm_pos_in()
+      )
+  ) +
+  tm_layout(
+    inner.margins = 
+      c(0.02, 0.50, 0.02, 0.02)
+  )
+```
+
+Notice that the default position of the legend is the upper-left corner of the plot. This is the default position of a legend placed inside of a plot.
+
+We can move the legend in the horizontal dimension by specifying the `pos.h = ...` argument of `tm_pos_in()`:
+
+```{r}
+states %>% 
+  tm_shape() +
+  tm_polygons(
+    fill = "n",
+    fill.legend  = 
+      tm_legend(
+        title = "Observations",
+        position = 
+          tm_pos_in(pos.h = "right")
+      )
+  ) +
+  tm_layout(
+    inner.margins = 
+      c(0.02, 0.02, 0.02, 0.50)
+  )
+```
+
+*Note that I moved the inner margin as well!*
+
+We can move the legend in the vertical dimension by specifying the horizontal position as "right":
+
+```{r}
+states %>% 
+  tm_shape() +
+  tm_polygons(
+    fill = "n",
+    fill.legend  = 
+      tm_legend(
+        title = "Observations",
+        position = 
+          tm_pos_in(pos.v = "bottom")
+      )
+  ) +
+  tm_layout(
+    inner.margins = 
+      c(0.02, 0.50, 0.02, 0.02)
+  )
+```
+
+... or move the legend horizontally *and* vertically:
+
+```{r}
+states %>% 
+  tm_shape() +
+  tm_polygons(
+    fill = "n",
+    fill.legend  = 
+      tm_legend(
+        title = "Observations",
+        position = 
+          tm_pos_in(
+            pos.h = "right", 
+            pos.v = "bottom"
+          )
+      )
+  ) +
+  tm_layout(
+    inner.margins = 
+      c(0.02, 0.02, 0.02, 0.25)
+  )
+```
+
+Although the default position of the legend is outside, we can use `tm_pos_out()` to specify the location outside of the map window:
+
+```{r}
+states %>% 
+  tm_shape() +
+  tm_polygons(
+    fill = "n",
+    fill.legend  = 
+      tm_legend(
+        title = "Observations",
+        position = tm_pos_out("left")
+      )
+  )
+```
+
+We can move it horizontally and vertically:
+
+```{r}
+states %>% 
+  tm_shape() +
+  tm_polygons(
+    fill = "n",
+    fill.legend  = 
+      tm_legend(
+        title = "Observations",
+        position = tm_pos_out("center", "bottom")
+      )
+  )
+```
+
+... and even change it to landscape orientation with `orientation = "landscape"`:
+
+```{r}
+states %>% 
+  tm_shape() +
+  tm_polygons(
+    fill = "n",
+    fill.legend  = 
+      tm_legend(
+        title = "Observations",
+        orientation = "landscape",
+        position = tm_pos_out("center", "bottom")
+      )
+  )
+```
+
+The `tm_legend` function is feature-rich and can allow you to do things like remove the legend frame with `frame = FALSE`:
+
+```{r}
+states %>% 
+  tm_shape() +
+  tm_polygons(
+    fill = "n",
+    fill.legend  = 
+      tm_legend(
+        title = "Observations",
+        orientation = "landscape",
+        position = tm_pos_out("center", "bottom"),
+        frame = FALSE
+      )
+  )
+```
+
+... or change the background color:
+
+```{r}
+states %>% 
+  tm_shape() +
+  tm_polygons(
+    fill = "n",
+    fill.legend  = 
+      tm_legend(
+        title = "Observations",
+        orientation = "landscape",
+        position = tm_pos_out("center", "bottom"),
+        frame = FALSE,
+        bg.color = "#dcdcdc"
+      )
+  )
+```
+
+It also gives you a lot of (potentially dangerous) control over the font. Below, I make some *very questionable* font choices:
+
+```{r}
+states %>% 
+  tm_shape() +
+  tm_polygons(
+    fill = "n",
+    fill.legend  = 
+      tm_legend(
+        title = "Observations",
+        frame = FALSE,
+        title.fontface = "bold",
+        title.fontfamily = "times",
+        title.size = 0.75,
+        text.color = "#aa32ff",
+        text.size = 2
+      )
+  )
+```
+
+## The basemap
+
+In previous versions of tmap, it was challenging to add basemaps when working in plot mode (so much so that I did not teach it). Now it is super straightforward and a major improvment!
+
+Let's add the "Esri.WorldGrayCanvas" basemap to our static plot:
+
+```{r}
+tm_basemap("Esri.WorldGrayCanvas") +
+  states %>% 
+  tm_shape() +
+  tm_polygons(
+    fill = "n",
+    fill.legend  = 
+      tm_legend(
+        title = "Observations",
+        frame = FALSE
+      )
+  ) +
+  tm_layout(
+    inner.margins = rep(0.20, 4)
+  )
+```
+
+*Note: I used* `inner.margins = rep(0.20, 4)` *to provide a broader geographic context in all directions.*
+
+We can also add "OpenStreetMap":
+
+```{r}
+tm_basemap("OpenStreetMap") +
+  states %>%
+  tm_shape() +
+  tm_polygons(
+    fill = "n",
+    fill.legend  = 
+      tm_legend(
+        title = "Observations",
+        frame = FALSE
+      )
+  ) +
+  tm_layout(
+    inner.margins = rep(0.20, 4)
+  )
+```
+
+... and many other of our basemap favorites!
+
+```{r}
+tm_basemap("Esri.WorldImagery") +
+  states %>% 
+  tm_shape() +
+  tm_polygons(
+    fill = "n",
+    fill.legend  = 
+      tm_legend(
+        title = "Observations",
+        frame = FALSE
+      )
+  ) +
+  tm_layout(
+    inner.margins = rep(0.20, 4)
+  )
+```
+
+You can see the available basemaps with:
+
+```{r}
+tmap_providers()
+```
+
+*Note: Some basemaps require an API key.*
+
+## Adding a title to your plot
+
+In the previous versions of tmap, we added a title to a plot with `tm_layout(title = ...)`:
+
+```{r}
+tm_basemap("OpenStreetMap") +
+  states %>% 
+  tm_shape() +
+  tm_polygons(
+    fill = "n",
+    fill.legend  = 
+      tm_legend(
+        title = "Observations",
+        frame = FALSE
+      )
+  ) +
+  tm_layout(
+    title = "iNaturalist observations of Spotted Lanterfly",
+    inner.margins = rep(0.20, 4)
+  )
+```
+
+We now get a warning message and the title is in an awful spot! In Version 4, we use `tm_title()`:
+
+```{r}
+tm_basemap("Esri.WorldImagery") +
+  states %>% 
+  tm_shape() +
+  tm_polygons(
+    fill = "n",
+    fill.legend  = 
+      tm_legend(
+        title = "Observations",
+        frame = FALSE
+      )
+  ) +
+  tm_title("iNaturalist observations of Spotted Lanterfly") +
+  tm_layout(
+    inner.margins = rep(0.20, 4)
+  )
+```
+
+We have plenty of control over the title element with `tm_title()` (see `?tm_title`):
+
+```{r}
+tm_basemap("Esri.WorldImagery") +
+  states %>% 
+  tm_shape() +
+  tm_polygons(
+    fill = "n",
+    fill.legend  = 
+      tm_legend(
+        title = "Observations",
+        frame = FALSE
+      )
+  ) +
+  tm_title(
+    text = "iNaturalist observations of Spotted Lanterfly",
+    size = 1.75,
+    fontfamily = "times"
+  ) +
+  tm_layout(
+    inner.margins = rep(0.20, 4)
+  )
+```
+
+Although we no longer use `tm_layout()` to generate the title of the plot, it is important to consider when to use it. For example, in the plot below, I set the font family of the title inside of `tm_title()` and the font family of the legend text inside of `tm_legend()`:
+
+```{r}
+tm_basemap("OpenStreetMap") +
+  states %>% 
+  tm_shape() +
+  tm_polygons(
+    fill = "n",
+    fill.legend  = 
+      tm_legend(
+        title = "Observations",
+        frame = FALSE,
+        text.fontfamily = "times",
+        title.fontfamily = "times"
+      )
+  ) +
+  tm_title(
+    text = "iNaturalist observations of Spotted Lanterfly",
+    size = 1.75,
+    fontfamily = "times"
+  )
+```
+
+We can simplify this by specifying the font family across all elements inside
+of `tm_layout()`:
+
+```{r}
+tm_basemap("OpenStreetMap") +
+  states %>% 
+  tm_shape() +
+  tm_polygons(
+    fill = "n",
+    fill.legend  = 
+      tm_legend(
+        title = "Observations",
+        frame = FALSE
+      )
+  ) +
+  tm_title(
+    text = "iNaturalist observations of Spotted Lanterfly",
+    size = 1.75
+  ) +
+  tm_layout(text.fontfamily = "times")
+```
+
+*Note:* `tm_layout()` *still has loads of uses. See* `?tm_layout`*!*
+
+## Color scales
+
+Color scales have been the biggest change in Version 4.
+
+In the previous versions of tmap we specified a color scale using the `palette` argument:
+
+```{r}
+tm_basemap("OpenStreetMap") +
+  states %>% 
+  tm_shape() +
+  tm_polygons(
+    fill = "n",
+    palette = "blues",
+    fill.legend  = 
+      tm_legend(
+        title = "Observations",
+        frame = FALSE
+      )
+  )
+```
+
+It added a color scale to the plot but we now get a useful (and long) warning message -- `tmap v3 code detected`. The message might be a little confusing, so let's break it down. We need to specify:
+
+* The visual variable that we are targeting, which here is `fill`
+* The scale of that variable with `fill.scale = ...`
+* Define the fill scale itself with the function `tm_scale()`
+* The argument of `tm_scale()`, which is now `values = ...`
+* The palette from which we are drawing the scale with `[palette name].x`
+
+That is a lot ... and a *big* change! Here's how our plotting *should* look in Version 4:
+
+```{r}
+tm_basemap("OpenStreetMap") +
+  states %>% 
+  tm_shape() +
+  tm_polygons(
+    fill = "n",
+    fill.scale = 
+      tm_scale(values = "brewer.blues"),
+    fill.legend  = 
+      tm_legend(
+        title = "Observations",
+        frame = FALSE
+      )
+  )
+```
+
+I imagine that you are a little annoyed -- so am I. The change, however, is a good one. Although it might make our bread-and-butter tmap code a little less parsimonious, it provides us with a lot of flexibility and makes grammatical sense (in terms of the grammar of graphics). For example, we previously defined the palette and number of breaks in two separate arguments of `tm_polygons()`:
+
+```{r}
+tm_basemap("OpenStreetMap") +
+  states %>%
+  tm_shape() +
+  tm_polygons(
+    fill = "n",
+    fill.scale = 
+      tm_scale(values = "brewer.blues"),
+    fill.legend  = 
+      tm_legend(
+        title = "Observations",
+        frame = FALSE
+      ),
+    breaks = 
+      c(
+        0, 
+        100,
+        1000,
+        5000,
+        10000
+      )
+  )
+```
+
+We now get a warning message (`tmap v3 code detected`), and it provides insight into why the author made the change -- "migrate the argument(s) related to the scale of the visual variable ...". Because both the number of breaks and the color palette are related to scale they *should* be coded as such!
+
+Here is how we would do this in Version 4:
+
+```{r}
+tm_basemap("OpenStreetMap") +
+  states %>%
+  tm_shape() +
+  tm_polygons(
+    fill = "n",
+    fill.scale = 
+      tm_scale(
+        values = "brewer.blues",
+        breaks = 
+          c(
+            0, 
+            100,
+            1000,
+            5000,
+            10000
+          )
+      ),
+    fill.legend  = 
+      tm_legend(
+        title = "Observations",
+        frame = FALSE
+      )
+  )
+```
+
+Likewise, we can specify the number of scale intervals in `tm_scale()`:
+
+```{r}
+tm_basemap("OpenStreetMap") +
+  states %>%
+  tm_shape() +
+  tm_polygons(
+    fill = "n",
+    fill.scale = 
+      tm_scale(
+        values = "brewer.blues",
+        n = 7
+      ),
+    fill.legend  = 
+      tm_legend(
+        title = "Observations",
+        frame = FALSE
+      )
+  )
+```
+
+... the method ("style") used to define the breaks:
+
+```{r}
+tm_basemap("OpenStreetMap") +
+  states %>%
+  tm_shape() +
+  tm_polygons(
+    fill = "n",
+    fill.scale = 
+      tm_scale(
+        values = "brewer.blues",
+        n = 7,
+        style = "fisher"
+      ),
+    fill.legend  = 
+      tm_legend(
+        title = "Observations",
+        frame = FALSE
+      )
+  )
+```
+
+... and change the style to continuous:
+
+```{r}
+tm_basemap("OpenStreetMap") +
+  states %>%
+  tm_shape() +
+  tm_polygons(
+    fill = "n",
+    fill.scale = 
+      tm_scale(
+        values = "brewer.blues",
+        n = 7,
+        style = "fisher",
+        label.style = "continuous"
+      ),
+    fill.legend  = 
+      tm_legend(
+        title = "Observations",
+        frame = FALSE
+      )
+  )
+```
+
+Notice in the above that the scale is *both* continuous *and* binned. If we want the scale to be a color ramp of continuous values, we can use `fill.scale = tm_scale_continuous()`:
+
+```{r}
+tm_basemap("OpenStreetMap") +
+  states %>%
+  tm_shape() +
+  tm_polygons(
+    fill = "n",
+    fill.scale = tm_scale_continuous(values = "brewer.blues"),
+    fill.legend  = 
+      tm_legend(
+        title = "Observations",
+        frame = FALSE
+      )
+  )
+```
+
+Finally, let's take a moment to look at the colors themselves. Recall that we get a warning message if we do not define the color palette:
+
+```{r}
+tm_basemap("OpenStreetMap") +
+  states %>%
+  tm_shape() +
+  tm_polygons(
+    fill = "n",
+    fill.scale = tm_scale(values = "yl_or_rd"),
+    fill.legend  = 
+      tm_legend(
+        title = "Observations",
+        frame = FALSE
+      )
+  )
+```
+
+... and avoiding that warning message requires us to define the color palette:
+
+```{r}
+tm_basemap("OpenStreetMap") +
+  states %>%
+  tm_shape() +
+  tm_polygons(
+    fill = "n",
+    fill.scale = tm_scale(values = "brewer.yl_or_rd"),
+    fill.legend  = 
+      tm_legend(
+        title = "Observations",
+        frame = FALSE
+      )
+  )
+```
+
+Although the warning message might seem annoying at first, it reveals something cool -- we have more choices! Under-the-hood, Version 4 now uses the cols4all package to specify color palettes. Previously we used `tmaptools::palette_explorer()` to search for the ideal palette. We now have `cols4all::c4a_gui()`:
+
+```{r, eval = FALSE}
+cols4all::c4a_gui()
+```
+
+If you run the line above, you will find a load of different color palettes to choose from and some helpful information on how to make the choice.
+
+For example, you can subset to color-blind friendly palettes and choose from a wide array of options to find your preferred colors:
+
+```{r}
+tm_basemap("OpenStreetMap") +
+  states %>%
+  tm_shape() +
+  tm_polygons(
+    fill = "n",
+    fill.scale = 
+      tm_scale(values = "gmt.panoply"),
+    fill.legend  = 
+      tm_legend(
+        title = "Observations",
+        frame = FALSE
+      )
+  )
+```
+
+## Quick reference: *tmap* v3 → v4
+
+::: callout-note
+This table summarizes how common v3 patterns translate into v4 syntax.  
+(Left column = **what you want to do**, middle = **old v3 way**, right = **new v4 way**.)
+:::
+
+| Task / goal                            | tmap v3 syntax                                         | tmap v4 syntax                                                                 |
+|:---------------------------------------|:--------------------------------------------------------|:-------------------------------------------------------------------------------|
+| Fill polygons by a variable            | `tm_polygons(col = "n")`                               | `tm_polygons(fill = "n")`                                                     |
+| Set polygon border color               | `tm_polygons(border.col = "#999999")`                  | `tm_polygons(fill = "n", col = "#999999")`                                    |
+| Change legend title                    | `tm_polygons(col = "n", title = "Observations")`       | `tm_polygons(fill = "n", fill.legend = tm_legend(title = "Observations"))`    |
+| Put legend inside the map              | `tm_layout(legend.position = c("left", "top"))`        | `fill.legend = tm_legend(position = tm_pos_in(pos.h = "left", pos.v = "top"))`|
+| Put legend outside the map             | `tm_layout(legend.outside = TRUE, legend.outside.position = "right")` | `fill.legend = tm_legend(position = tm_pos_out("right"))`          |
+| Set discrete palette                   | `tm_polygons(col = "n", palette = "Blues")`            | `tm_polygons(fill = "n", fill.scale = tm_scale(values = "brewer.blues"))`     |
+| Control breaks / number of classes     | `tm_polygons(col = "n", style = "fisher", n = 7)`      | `tm_polygons(fill = "n", fill.scale = tm_scale(values = "brewer.blues", style = "fisher", n = 7))` |
+| Manually set breaks                    | `tm_polygons(col = "n", breaks = c(0,100,1000,5000))`  | `tm_polygons(fill = "n", fill.scale = tm_scale(values = "brewer.blues", breaks = c(0,100,1000,5000)))` |
+| Continuous color ramp                  | `tm_polygons(col = "n", palette = "Blues", style = "cont")` | `tm_polygons(fill = "n", fill.scale = tm_scale_continuous(values = "brewer.blues"))` |
+| Map title                              | `tm_layout(title = "My map title")`                    | `tm_title("My map title")`                                                    |
+| Global font family                     | `tm_layout(fontfamily = "times")` (various args)       | `tm_layout(text.fontfamily = "times")`                                        |
+

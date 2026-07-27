@@ -1,0 +1,866 @@
+---
+title: "3.3 Constructing and converting shapefiles"
+format:
+  html:
+    embed-resouces: true
+    self-contained: true
+    standalone: true
+    toc: true
+    toc-location: left
+    number-sections: false
+    search: true
+    include-in-header: ../../src/includes/header_includes.html
+    include-after-body: ../../src/includes/accordion_script.html
+    theme: 
+      - cosmo
+      - ../../src/css/custom_style.scss
+editor: source
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r, include = FALSE}
+source("src/r/course_functions.R")
+```
+<hr>
+
+## Overview
+
+![](../../src/images/hex_complex.png){.intro_image}
+
+Simple features (sf) are a formal, international standard ([ISO 19125-1](https://committee.iso.org/sites/tc211/home/projects/projects---complete-list/iso-19125-1.html)) for representing the spatial location of objects on computers. With this standard, simple features are represented by:
+
+* An **sf** object: A data frame that contains the geometry, attributes, and coordinate reference system (CRS) information.
+* **Simple Features Geometry (sfg)**: The geometry of an individual simple feature.
+* **Simple Features Geometry List Column Object (sfc)**: A list column with the geometry of all simple features in a dataset. *Note: sfc objects may contain CRS information.*
+
+In this lesson, we will take a peak under the hood by exploring how to build sf objects and convert between object classes. Although I do not typically make many shapefiles from scratch (sometimes I do!), doing so is a useful exercise so that we might better understand *the anatomy of an sf object*.
+
+## Data for this lesson
+
+Please click on the button below to explore the metadata for this lesson!
+
+<button class="accordion">Metadata</button>
+::: panel
+In this lesson, we will explore:
+
+**[states]{.mono} ([.dbf]{.mono}, [.prj]{.mono}, [.shp]{.mono}, [.shx]{.mono})**: A polygon shapefile of US states (not including Hawaii). The data are in an unprojected Coordinate Reference System with the datum NAD83 and EPSG code 4269. The data include the following fields:
+
+* [GEOID]{.mono}, character: The **primary key** key for each state.
+* [NAME]{.mono}, character: The name of each state.
+* [REGION]{.mono}, character: The region of the United States where each state is located.
+* [AREA]{.mono}, numeric: The total area of each state, in square kilometers.
+* [ttl__10]{.mono}, numeric: The total population of each state in 2010.
+* [ttl__15]{.mono}, numeric: The total population of each state in 2015.
+:::
+
+## Setup
+
+
+1. Open R Studio and a new script file. Remember that it is best practice to start with a clean R Studio session!
+
+2. Add a new code section and call it "setup"
+
+3. After a space following your section break, include and run the following:
+
+:::{style="margin-left: 40px"}
+```{r results = 'hide', message = FALSE}
+library(sf)
+library(tidyverse)
+```
+:::
+
+4. We will use the `states.shp` file from our previous lesson as a background for the shapefiles that we create. We will read in the file and subset to states in the Northeastern and Southern US:
+
+:::{style="margin-left: 40px"}
+```{r}
+states <-
+  st_read("data/raw/shapefiles/states.shp") %>% 
+  filter(
+    REGION %in% c("Norteast", "South")
+  )
+```
+
+
+Note that the above produced a lot of output we may not be interested in. We can suppress that by adding the argument `quiet = TRUE`:
+:::
+
+:::{style="margin-left: 40px"}
+```{r}
+states <-
+  st_read(
+    "data/raw/shapefiles/states.shp",
+    quiet = TRUE
+  ) %>% 
+  filter(
+    REGION %in% c("Norteast", "South")
+  )
+```
+:::
+
+5. Let's also set the theme across our plots to `theme_void`:
+
+:::{style="margin-left: 40px"}
+```{r}
+theme_set(
+  new = theme_void()
+)
+```
+:::
+
+## Simple Features Anatomy
+
+
+### sfg
+
+The coordinates of a location represent the location's **geometry**. In simple features parlance, this is known as a **simple features geometry (sfg)** file. We can create an sfg for a location by supplying a vector of X and Y coordinates to the `st_point()` function:
+
+```{r}
+c(-90.0216, 33.65646) %>% 
+  st_point()
+```
+
+:::{class="mysecret"}
+<i class="fa fa-user-secret" aria-hidden="true" style = "font-size: 150%; padding-right: 5px;"></i>Although many GIS applications, such as Google Earth, specify latitude before longitude (i.e., Y before X), the formal standard is to denote coordinates as longitude before latitude (X, Y).
+:::
+
+Let's look at the object class:
+
+```{r}
+c(-90.0216, 33.65646) %>% 
+  st_point() %>% 
+  class()
+```
+
+This is an `sfg` object that represents a `POINT` object with `XY` coordinates. Importantly, an sfg file does not contain any data other than the geometry. In fact, we should not even really map it because it does not contain the Coordinate Reference System (CRS) that allows us to locate a point on the surface of the Earth (*Note: If an object does not have a CRS, `geom_sf()` will assume that the CRS is EPSG 4326, which represents WGS 1984.*).
+
+### sfc
+
+An sfg object can only contain a single geometry (e.g., a single point). Objects that contain multiple geometries store those geometries in a **simple feature geometry list column (sfc)**. We can transform a geometry to an sfc object with `st_sfc()`:
+
+```{r}
+c(-90.0216, 33.65646) %>% 
+  st_point() %>% 
+  st_sfc()
+```
+
+Notice in the printed output, above, that an sfc object can include a CRS (which is `NA` here). We can provide a CRS with the `crs = ` argument of the `st_sfc()` function. Here, I am using the CRS of the states file, which is EPSG 4269 (North America Datum 1983):
+
+```{r}
+c(-90.0216, 33.65646) %>% 
+  st_point() %>% 
+  st_sfc(crs = 4269)
+```
+
+Exploring the class of the object gives a clue of its structure:
+
+```{r}
+c(-90.0216, 33.65646) %>% 
+  st_point() %>% 
+  st_sfc(crs = 4269) %>% 
+  class()
+```
+
+This object is an `sfc` object because the location of the point is stored in a column that contains our point geometry (`sfc_POINT`).
+
+Given that this *is* a spatial object (i.e., it contains a geometry *and* CRS), we are safe to map the point. We will use the `states` layer to provide geographic context:
+
+```{r}
+states %>% 
+  ggplot() +
+  
+  # Map state layer:
+  
+  geom_sf() + 
+  
+  # Map point:
+  
+  geom_sf(
+    data = 
+      c(-90.0216, 33.65646) %>% 
+      st_point() %>% 
+      st_sfc(crs = 4269),
+    size = 3
+  )
+```
+
+*Note: The top layer on the map, created with a second call of `geom_sf()`, used a different data layer than the one that was passed to `ggplot()`. Because of this, we had to specify a data argument for that layer (`data = ...`).*
+
+:::{class="mysecret"}
+<i class="fa fa-user-secret" aria-hidden="true" style = "font-size: 150%; padding-right: 5px;"></i>Notice in the above that we added the states layer first to the map -- that is because `ggplot()` positions the layers in the order that they were created. If we had added states *after* our point, our point would not show up on the map!
+:::
+
+### sf
+
+An sfc object contains location information (geometry and CRS), but it does not contain any other data. This is where a **simple features (sf)** object comes in -- it is a container that stores data and location information. Let's look again at our sfc object:
+
+```{r}
+c(-90.0216, 33.65646) %>% 
+  st_point() %>% 
+  st_sfc(crs = 4269)
+```
+
+We can convert an sfc object to an sf object with the function `st_sf`:
+
+```{r}
+c(-90.0216, 33.65646) %>% 
+  st_point() %>% 
+  st_sfc(crs = 4269) %>% 
+  st_sf()
+```
+
+Notice in the two examples above that the sfc object is defined as a "Geometry set for 1 feature" whereas the sf object is defined as a "Simple feature collection with 1 feature and 0 fields". We can dig into this a bit by exploring the class of the sf object:
+
+```{r}
+c(-90.0216, 33.65646) %>% 
+  st_point() %>% 
+  st_sfc(crs = 4269) %>% 
+  st_sf() %>% 
+  class()
+```
+
+Here, we see that the class of the object is an `sf` file *and* a data frame. The *features* are the geometries in the object, and each feature occupies a row in the data frame. The *fields* are the variables associated with each feature and are represented by columns in the data frame. Because an sf object is a data frame, we can work with these objects just as we would with traditional data frames. These coordinates represent the location of John Hurt's home in Avalon, Mississippi. Let's add this information to our data:
+
+```{r}
+c(-90.0216, 33.65646) %>% 
+  st_point() %>% 
+  st_sfc(crs = 4269) %>% 
+  st_sf() %>% 
+  mutate(Landmark = "Avalon")
+```
+
+... and plot the output:
+
+```{r}
+states %>%  
+  ggplot() +
+  geom_sf() +
+  geom_sf(
+    data = 
+      c(-90.0216, 33.65646) %>% 
+      st_point() %>% 
+      st_sfc(crs = 4269) %>% 
+      st_sf() %>% 
+      mutate(Landmark = "Avalon"),
+    aes(color = Landmark),
+    size = 3
+  )
+```
+
+## Interlude: Tibbles and Tribbles
+
+
+For the remainder of this exercise, we will use a set of locations and generate the data table for these locations by hand. Typically, data frames are created by column, where each column is generated by supplying a vector of values:
+
+```{r}
+tibble(
+  Landmark = 
+    c(
+      "Avalon",
+      "Train station",
+      "Smithsonian-Mason",
+      "Gaslight Cafe",
+      "Newport"
+    ),
+  x = 
+    c(
+      -90.0216, 
+      -79.07005, 
+      -78.16464,
+      -74.00044, 
+      -71.33749
+    ),
+  y = 
+    c(
+      33.65646,
+      35.91097,
+      38.88697,
+      40.72979, 
+      41.47934
+    )
+)
+```
+
+When I generate a small data frame like this, I think that it is much more straightforward (and more communicative) to generate a tibble with the row-wise function `tribble()` (see `?tribble`). Here, we specify the column headers with tilde (`~`) and separate the columns with a comma:
+
+```{r}
+landmarks_df <-
+  tribble(
+    ~ Landmark,         ~ x,        ~ y,
+    "Avalon",            -90.02160, 33.65646,
+    "Train station",     -79.07005, 35.91097,
+    "Smithsonian-Mason", -78.16464, 38.88697,
+    "Gaslight Cafe",     -74.00044, 40.72979,
+    "Newport",           -71.33749, 41.47934
+  ) 
+```
+
+I really like the above method because the data you input *looks like* the table that you are creating!
+
+:::{class="mysecret"}
+<i class="fa fa-user-secret" aria-hidden="true" style = "font-size: 150%; padding-right: 5px;"></i>Why did I capitalize "Landmark" ... doesn't that go against my "snake_case" rules for variables? It certainly does! I capitalize variable names *only* when that variable will become the title of a plot legend. There are other ways around this, but I find this method to be the most straightforward.
+:::
+
+## Geometry types
+
+
+There are a number of different simple feature geometry types (see [`vignette("sf1")`, *Simple feature geometry types*](https://r-spatial.github.io/sf/articles/sf1.html#simple-feature-geometry-types){target="_blank"}), but the most common are:
+
+* **Points**: Zero-dimensional geometry containing a single point
+* **Linestrings**: One-dimensional geometry containing a sequence of points connected by straight lines
+* **Polygons**: Two-dimensional geometry containing a sequence of points forming a closed ring of straight lines
+
+:::{class="mysecret"}
+<i class="fa fa-user-secret" aria-hidden="true" style = "font-size: 150%; padding-right: 5px;"></i>In the context of linestrings and polygons, points are also known as **vertices** -- a vertex is a point where two or more lines (also called edges) meet.
+:::
+
+### Points
+
+We covered how to generate a single point above. The method used was meant to illustrate the anatomy of an sf file, and is a bit cumbersome in practice. It is much simpler to use the `st_as_sf()` function. We supply a data frame with longitude and latitude columns, then provide the names of the coordinate columns and the CRS of the object:
+
+```{r}
+tibble(
+  Landmark = "Avalon",
+  x = -90.0216,
+  y = 33.65646
+) %>% 
+  st_as_sf(
+    coords = c("x", "y"),
+    crs = 4269
+  )
+```
+
+This method is especially preferable when constructing objects that contain lots of points:
+
+```{r}
+landmarks <- 
+  landmarks_df %>% 
+  st_as_sf(
+    coords = c("x", "y"),
+    crs = 4269
+  )
+
+landmarks
+```
+
+Let's have a look:
+
+```{r}
+states %>%  
+  ggplot() +
+  geom_sf() +
+  geom_sf(
+    data = landmarks,
+    aes(color = Landmark),
+    size = 3
+  )
+```
+
+### Linestrings
+
+To generate a linestring, you must supply a matrix of points. Here, we will use our `landmarks_df` data frame as the basis for our line and conduct the following operations:
+
+1. Use `select()` to remove all columns except for longitude and latitude (in that order)
+2. Convert the data frame to a matrix of coordinates with `as.matrix()`
+3. Create a linestring geometry with `st_linestring()`
+4. Convert the geometry to a simple features column with `st_sfc()`
+5. Convert the object to sf with `st_sf()`
+
+```{r}
+my_pilgrimage <- 
+  landmarks_df %>% 
+  select(!Landmark) %>% 
+  as.matrix() %>% 
+  st_linestring() %>% 
+  st_sfc(crs = 4269) %>% 
+  st_sf()
+```
+
+Let's have a look:
+
+```{r}
+states %>%  
+  ggplot() +
+  geom_sf() +
+  geom_sf(data = my_pilgrimage) +
+  geom_sf(
+    data = landmarks,
+    aes(color = Landmark),
+    size = 3
+  )
+```
+
+**The order of the rows in your matrix matters!** Lines are drawn between points in the order of the rows. For example, watch what happens when I sort the data frame alphabetically by `Landmark`:
+
+```{r}
+confused_pilgrimage <-
+  landmarks_df %>%
+  arrange(Landmark) %>% 
+  select(!Landmark) %>% 
+  as.matrix() %>% 
+  st_linestring() %>% 
+  st_sfc(crs = 4269) %>% 
+  st_sf()
+
+states %>%  
+  ggplot() +
+  geom_sf() +
+  geom_sf(data = confused_pilgrimage) +
+  geom_sf(
+    data = landmarks,
+    aes(color = Landmark),
+    size = 3
+  )
+```
+
+### Polygons
+
+Polygons require a much different type of input than points and lines. To create a polygon, you must supply your points as a list, where each list item is a numeric vector representing the longitude and latitude. What's crucial here, though, is that the polygon needs to be **closed** -- in other words, you *must* repeat your starting point!
+
+```{r}
+my_poly_list <-
+  tribble(
+    ~ Landmark,          ~ x,       ~ y,
+    "Avalon",            -90.02160, 33.65646,
+    "Train station",     -79.07005, 35.91097,
+    "Newport",           -71.33749, 41.47934,
+    "Gaslight Cafe",     -74.00044, 40.72979,
+    "Smithsonian-Mason", -78.16464, 38.88697,
+    "Avalon",            -90.02160, 33.65646
+  ) %>% 
+  select(!Landmark) %>% 
+  as.matrix() %>% 
+  list()
+```
+
+*Note: In the above I added the `Landmark` column only so you could observe the points that will define the resultant object.*
+
+We can then follow a similar chained process to the above:
+
+1. Create a polygon geometry with `st_polygon()`
+2. Convert the geometry to a simple features column with `st_sfc()`
+3. Convert the object to sf with `st_sf()`
+
+```{r}
+my_poly <- 
+  my_poly_list %>% 
+  st_polygon() %>% 
+  st_sfc(crs = 4269) %>% 
+  st_sf()
+
+states %>%  
+  ggplot() +
+  geom_sf() +
+  geom_sf(
+    data = my_poly,
+    fill = "#33eeff",
+    alpha = 0.5
+  ) +
+  geom_sf(
+    data = landmarks,
+    aes(color = Landmark),
+    size = 3
+  )
+```
+
+As an astute observer, you probably noticed that I sneakily switched the order of points in the dataset. **The order of points really matters when creating a polygon!** Let's see what happens when we use the original point order:
+
+```{r}
+messy_poly <-
+  landmarks_df %>% 
+  bind_rows(
+    slice(landmarks_df, 1)
+  ) %>% 
+  select(!Landmark) %>% 
+  as.matrix() %>% 
+  list() %>% 
+  st_polygon() %>% 
+  st_sfc(crs = 4269) %>% 
+  st_sf()
+```
+
+:::{class="mysecret"}
+<i class="fa fa-user-secret" aria-hidden="true" style = "font-size: 150%; padding-right: 5px;"></i>The use of `bind_rows()` and `slice()` above was a bit of a sneaky way to ensure that the start and end of the polygon is at the same point. The `bind_rows()` function combines two data frames by row. The `slice()` function subset the data (in this case) to just the first row.
+:::
+
+Let's have a look:
+
+```{r}
+states %>%  
+  ggplot() +
+  geom_sf() +
+  geom_sf(
+    data = messy_poly,
+    fill = "#33eeff",
+    alpha = 0.5
+  ) +
+  geom_sf(
+    data = landmarks,
+    aes(color = Landmark),
+    size = 3
+  )
+```
+
+The above shows that you really have to consider the order of points when creating a polygon from scratch!
+
+## Converting geometries
+
+
+Converting between geometries is a fairly common task and is a good bit more straightforward than generating geometries from scratch (at least once you get a trick or two up your sleeve). 
+
+### From lines & polygons to points
+
+The primary `sf` tool for converting between geometries is the function `st_cast()`. We supply the object that we would like to convert (a.k.a. "cast") and the type of geometry that we would like to convert to, in all caps. For example, let's cast our linestring `my_pilgrimage` back to points:
+
+```{r}
+my_pilgrimage %>% 
+  st_cast("POINT")
+```
+
+... and plot the results:
+
+```{r}
+states %>%  
+  ggplot() +
+  geom_sf() +
+  geom_sf(
+    data = 
+      my_pilgrimage %>% 
+      st_cast("POINT"),
+    size = 3
+  )
+```
+
+The above might not be very surprising -- `st_cast()` returned the vertices of the linestring. 
+
+Because we used these same points to generate our polygon `my_poly`, casting the polygon to points yields equivalent point locations:
+
+```{r}
+states %>%  
+  ggplot() +
+  geom_sf() +
+  geom_sf(
+    data = 
+      my_poly %>% 
+      st_cast("POINT"),
+    size = 3
+  )
+```
+
+What is worth considering, however, is the number of vertices it takes to generate a shape. Let's look at North Carolina:
+
+```{r}
+states %>%  
+  filter(NAME == "North Carolina") %>% 
+  ggplot() +
+  geom_sf()
+```
+
+We can see in the above that the northern boundary of the state (the border between North Carolina and Virginia) is nearly a straight line and follows a latitudinal band. The southern border of the state (the North Carolina-Georgia and North Carolina-South Carolina borders) is also quite simple. The western  (North Carolina-Tennessee) and eastern (the Atlantic coast) borders of the state are much more complex because they are defined by natural features. Let's see what this looks like when we cast the geometry from polygon to point:
+
+```{r, warning = FALSE}
+states %>%  
+  filter(NAME == "North Carolina") %>% 
+  st_cast("POINT") %>% 
+  ggplot() +
+  geom_sf()
+```
+
+:::{class="mysecret"}
+<i class="fa fa-user-secret" aria-hidden="true" style = "font-size: 150%; padding-right: 5px;"></i>Because there is a vertex at every turning point of the polygon, complex shapes contain many more points than simple shapes. As such, such shapes require much more of our computer's memory to process. We will cover this in some depth in a future lesson.
+:::
+
+### From points to lines
+
+Converting points to lines is not quite as straightforward. Let's start by reminding ourselves what our point geometry looks like for our `landmarks` point object:
+
+```{r}
+landmarks
+```
+
+We can see that each point occupies a row in the `sf` data frame. Recall that each of the rows in the geometry column represents a single feature. As such, simply casting the features to a linestring geometry type is not very useful:
+
+```{r}
+landmarks %>% 
+  st_cast("LINESTRING")
+```
+
+In the above, notice that, although the geometry column has been converted to a linestring, each line only contains a single point!
+
+There are several methods that we can use to convert these points to a line and we will look at two that I find to be the most straightforward. 
+
+The first is similar to how we created a line from scratch. Recall that the function `st_linestring()` generates a line using a matrix of coordinates. We can use the function `st_coordinates()` to extract a matrix of coordinates from a point object:
+
+```{r}
+landmarks %>% 
+  st_coordinates()
+```
+
+... and then define the line with the same steps we used to create a line from scratch:
+
+1. Generating a linestring geometry with `st_linestring()`
+2. Creating an `sfc` object with `st_sfc()` and the CRS
+3. Converting the object to an `sf` object with `st_sf()`
+
+```{r}
+landmarks %>% 
+  st_coordinates() %>% 
+  st_linestring() %>% 
+  st_sfc(crs = 4269) %>% 
+  st_sf()
+```
+
+This method is *reasonably* straightforward, but I do not like that we have to build the `sf` object from the ground up (e.g., defining the CRS again).
+
+The next method relies on generating an intermediate geometry type, a **MULTIPOINT** geometry. A multipoint geometry is a geometry in which a single feature may contain more than one point. To create a multipoint geometry, we must combine the geometries (points) into a single feature. This requires a bit of a trick. We can use the `st_combine()` function to combine geometries. To collapse all of the features in our data frame into a single feature, however, we wrap `st_combine()` inside of `dplyr::summarize()`:
+
+```{r}
+landmarks %>% 
+  summarize(
+    geometry = st_combine(geometry)
+  )
+```
+
+We can then cast these data to a linestring geometry with `st_cast()`:
+
+```{r}
+landmarks %>% 
+  summarize(
+    geometry = st_combine(geometry)
+  ) %>% 
+  st_cast("LINESTRING")
+```
+
+Let's see if it worked:
+
+```{r}
+states %>%  
+  ggplot() +
+  geom_sf() +
+  geom_sf(
+    data = 
+      landmarks %>% 
+      summarize(
+        geometry = st_combine(geometry)
+      ) %>% 
+      st_cast("LINESTRING")
+  )
+```
+
+Although the above method may take some getting used to, I think it is much more straightforward than the method used to build the linestring from a matrix of coordinates.
+
+:::{class="mysecret"}
+<i class="fa fa-user-secret" aria-hidden="true" style = "font-size: 150%; padding-right: 5px;"></i>If you need to generate multiple lines, the `summarize()` and `st_combine()` functions can also be run on grouped data by including a grouping variable with `group_by()` or `summarize(..., .by = ...)`.
+:::
+
+#### What if we wanted to change the order of points?
+
+To address this, we have to do a bit of a trick. We can `mutate()` the points object, supply a new column that represents the preferred order of points, and then sort the data based on that column:
+
+```{r}
+landmarks %>% 
+  mutate(
+    order = 
+      c(
+        1, 
+        3:2,
+        4:5
+      )
+  ) %>% 
+  arrange(order)
+```
+
+Let's see how it looks (here, I am using a new function, `geom_sf_text()` to draw text instead of points):
+
+```{r, warning = FALSE}
+states %>%  
+  ggplot() +
+  geom_sf() +
+  geom_sf_text(
+    data = 
+      landmarks %>% 
+      mutate(
+        order = 
+          c(
+            1, 
+            3:2,
+            4:5
+          )
+      ) %>% 
+      arrange(order),
+    aes(label = order),
+    size = 8
+  )
+```
+
+If we are satisfied with the order of our points, we can cast these points to a line as above:
+
+```{r}
+states %>%  
+  ggplot() +
+  geom_sf() +
+  geom_sf(
+    data = 
+      landmarks %>% 
+      mutate(
+        order = 
+          c(
+            1, 
+            3:2,
+            4:5
+          )
+      ) %>% 
+      arrange(order) %>% 
+      summarize(
+        geometry = st_combine(geometry)
+      ) %>% 
+      st_cast("LINESTRING")
+  )
+```
+
+:::{class="mysecret"}
+<i class="fa fa-user-secret" aria-hidden="true" style = "font-size: 150%; padding-right: 5px;"></i>I often use this method to generate paths from tracking data. In this use case, the data are sorted by the date or time of detection.
+:::
+
+:::{class="mysecret"}
+<i class="fa fa-user-secret" aria-hidden="true" style = "font-size: 150%; padding-right: 5px;"></i>
+You may also want to explore using `geom_path()` and `geom_line()` to plot line data!
+:::
+
+### From points to polygons
+
+As you might imagine, converting points to polygons represents our most complex use case. However, it is actually a bit more straightforward than creating a polygon from scratch and, if we understand how to cast points to linestrings, we are already most of the way there!
+
+Because each polygon is a feature comprised of multiple points, we need to combine the points with `st_combine()` and `summarize()`:
+
+```{r}
+landmarks %>% 
+  summarize(
+    geometry = st_combine(geometry)
+  )
+```
+
+... and can then pass the output to `st_cast()`:
+
+```{r}
+landmarks %>% 
+  summarize(
+    geometry = st_combine(geometry)
+  ) %>% 
+  st_cast("POLYGON")
+```
+
+*Note: When you use `st_cast("POLYGON")`, the polygon generated is closed by default!*
+
+Let's see how it looks:
+
+```{r}
+states %>%  
+  ggplot() +
+  geom_sf() +
+  geom_sf(
+    data = 
+      landmarks %>% 
+      summarize(
+        geometry = st_combine(geometry)
+      ) %>% 
+      st_cast("POLYGON"),
+    fill = "#33eeff",
+    alpha = 0.5
+  )
+```
+
+Well, the above is the same messy polygon we created before ... we need to ensure that the order of the vertices match the expectations of what our polygon looks like. Luckily, we've already learned how we may order points:
+
+```{r, warning = FALSE}
+states %>%  
+  ggplot() +
+  geom_sf() +
+  geom_sf_text(
+    data = 
+      landmarks %>% 
+      mutate(
+        order = 
+          c(
+            1, 
+            3:2,
+            4:5
+          )
+      ) %>% 
+      arrange(order),
+    aes(label = order),
+    size = 8)
+```
+
+We can now generate our desired polygon by arranging the data frame prior to casting the points:
+
+```{r}
+states %>%  
+  ggplot() +
+  geom_sf() +
+  geom_sf(
+    data = 
+      landmarks %>% 
+      mutate(
+        order = 
+          c(
+            1:2,
+            5, 
+            4:3
+          )
+      ) %>% 
+      arrange(order) %>% 
+      summarize(
+        geometry = st_combine(geometry)) %>% 
+      st_cast("POLYGON"),
+    fill = "#33eeff",
+    alpha = 0.5)
+```
+
+:::{class="mysecret"}
+<i class="fa fa-user-secret" aria-hidden="true" style = "font-size: 150%; padding-right: 5px;"></i>Similar to lines, multiple polygons can be generated with the above method by grouping data with `group_by()` or `summarize(..., .by = ...)`.
+:::
+
+## Reference
+
+<button class="accordion">Glossary</button>
+::: panel
+* **Coordinate reference system (CRS)**: The reference system (may be projected or geographic) that allows us to define the location of a geometry on the surface of the Earth.
+* **Geometry**: The coordinates of points or vertices of an sfg object. 
+* **Linestring**: A one-dimensional geometry containing a sequence of vertices (points) connected by straight lines.
+* **Multipoint**: A geometry that contains one or more points within a single geometry object
+* **Point**: A zero-dimensional geometry containing a single point.
+* **Polygon**: Two-dimensional geometry containing a sequence of vertices (points) forming a closed ring of straight lines.
+* **Simple features object (sf)**: A data frame that contains the geometry, attributes, and coordinate reference system (CRS) information.
+* **Simple Features Geometry (sfg)**: The geometry of an individual simple feature.
+* **Simple Features Geometry List Column Object (sfc)**:  list column with the geometry of all simple features in a dataset. 
+* **Tab**: Each pane has a tab on the top of it. For example, I will often refer to the Environment or History tabs of the workspace pane.
+* **Vertex (plural: vertices)**: A point where two or more lines (also called edges) meet.
+:::
+
+<button class="accordion">Functions</button>
+::: panel
+**Important!** Primitive functions as well as functions in the *base* and *utils* packages, are loaded by default when you start an R session. Functions in *dplyr*, *ggplot2*, *lubridate*, *purrr*, *readr*, *tibble*, *tidyr*, and *tidyverse* are loaded with `library(tidyverse)`.
+
+::: function_table
+
+```{r, message = FALSE, echo = FALSE}
+render_function_table("functions_3.3_constructing_and_converting_shapefiles.csv")
+```
+
+:::
+
+:::
+
+
+<button class="accordion">Keyboard shortcuts</button>
+::: panel
+
+{{< include ../../src/includes/keyboard_shortcuts.qmd >}}
+:::
+
+<button class="accordion">R Studio panes</button>
+::: panel
+{{< include ../../src/includes/rstudio_panes.qmd >}}
+:::
+
