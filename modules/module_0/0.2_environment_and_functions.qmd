@@ -3,25 +3,7 @@ title: "Preliminary Lesson 2: Environment & Functions"
 format: live-html
 ---
 
-```{r}
-#| include: false
-
-source("src/r/course_functions.R")
-```
-```{r}
-#| label: setup
-#| include: false
-
-library(webexercises)
-
-knitr::opts_chunk$set(
-  echo = TRUE,
-  eval = TRUE,
-  error = TRUE
-)
-```
-
-{{< include ../../_extensions/r-wasm/live/_knitr.qmd >}}
+{{< include /src/includes/_setup.qmd >}}
 
 <hr>
 
