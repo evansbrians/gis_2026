@@ -3,27 +3,7 @@ title: "Preliminary Lesson 1: R & RStudio"
 format: live-html
 ---
 
-```{r}
-#| label: setup
-#| include: false
-
-library(tidyverse)
-library(webexercises)
-
-source("src/r/course_functions.R")
-source("src/r/reference_lookup.R")
-
-knitr::opts_chunk$set(
-  echo = TRUE,
-  eval = TRUE,
-  error = TRUE
-)
-
-lesson_refs <- 
-  find_lesson_references("modules/module_0/0.1_intro_to_r_and_rstudio.qmd")
-```
-
-{{< include ../../_extensions/r-wasm/live/_knitr.qmd >}}
+{{< include /src/includes/_setup.qmd >}}
 
 <hr>
 

@@ -20,3 +20,5 @@ _reorg_to_delete
 # Other stuff:
 
 *.html
+
+/.quarto/
