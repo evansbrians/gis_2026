@@ -24,21 +24,18 @@ connect_course_db <-
     )
   }
 
-# Concatenate body text of R/webr chunks in a lesson's raw .qmd text,
-# skipping `include = FALSE` setup/infrastructure chunks.
+# Concatenate the body text of every R/webr code chunk in a lesson's raw
+# .qmd text -- used to search code without matching prose.
 
 extract_code_chunks <-
   function(.lesson_text) {
-    chunk_matches <-
-      .lesson_text %>%
+    .lesson_text %>%
       str_match_all(
-        "(?s)```\\{(?:r|webr)([^\\n]*)\\n(.*?)\\n```"
+        "(?s)```\\{(?:r|webr)[^\\n]*\\n(.*?)\\n```"
       ) %>%
-      pluck(1)
-
-    is_setup_chunk <- str_detect(chunk_matches[ , 2], "include\\s*=\\s*FALSE")
-
-    chunk_matches[!is_setup_chunk, 3] %>%
+      pluck(1) %>%
+      as_tibble(.name_repair = "unique") %>%
+      pull(2) %>%
       str_c(collapse = "\n")
   }
 
@@ -53,68 +50,35 @@ remove_code_chunks <-
       )
   }
 
-# A function_name is "named" (c, read_csv, mean) if it's a plain
-# identifier; anything else (+, <-, %>%, [...]) is an operator.
+# Resolve the currently-rendering lesson's own path via Quarto/knitr;
+# NULL outside of a render (pass .lesson_path explicitly instead).
 
-is_named_function <-
-  function(.function_name) {
-    str_detect(.function_name, "^[a-zA-Z._][a-zA-Z0-9._]*$")
-  }
+detect_lesson_path <-
+  function() {
+    document_dir <- Sys.getenv("QUARTO_DOCUMENT_PATH", unset = NA)
+    input_file <- knitr::current_input()
 
-# Bracket-style operator entries stand in for a symbol that can't be
-# searched for literally -- map each to the token to search for instead.
-
-operator_detection_token <-
-  function(.function_name) {
-    case_when(
-      .function_name == "(...)" ~ "(",
-      .function_name == "[...]" ~ "[",
-      .function_name == "[[...]]" ~ "[[",
-      .function_name == "{...}" ~ "{",
-      TRUE ~ .function_name
-    )
-  }
-
-# Find which operator rows literally appear in code_text, longest
-# token first and masked out as found, to avoid double-counting.
-
-detect_operators <-
-  function(code_text, operators) {
-    ordered_operators <-
-      operators %>%
-      mutate(detection_token = operator_detection_token(function_name)) %>%
-      arrange(desc(str_length(detection_token)))
-
-    masked_text <- code_text
-    found <- logical(nrow(ordered_operators))
-
-    for (i in seq_len(nrow(ordered_operators))) {
-      token <- ordered_operators$detection_token[i]
-
-      if (str_detect(masked_text, fixed(token))) {
-        found[i] <- TRUE
-        masked_text <-
-          str_replace_all(masked_text, fixed(token), str_dup(" ", str_length(token)))
-      }
+    if (is.na(document_dir) || is.null(input_file)) {
+      return(NULL)
     }
 
-    ordered_operators[found, ] %>%
-      select(-detection_token)
+    file.path(document_dir, input_file)
   }
 
-# Match a lesson's called functions/operators and bolded terms against
-# the functions/glossary tables; unmatched candidates are dropped.
+# Match a lesson's called functions and bolded terms against the
+# functions/glossary tables; unmatched candidates are dropped.
 
 find_lesson_references <-
-  function(.lesson_path, .db_path = course_db_path) {
-    # Drop the "## Reference" section itself -- its generated
-    # accordions shouldn't feed back into the search.
+  function(.lesson_path = NULL, .db_path = course_db_path) {
+    if (is.null(.lesson_path)) {
+      .lesson_path <- detect_lesson_path()
+    }
 
-    split_text <-
-      read_file(.lesson_path) %>%
-      str_split_fixed("\\n## Reference", n = 2)
+    if (is.null(.lesson_path)) {
+      stop("Not rendering inside Quarto -- pass .lesson_path explicitly.")
+    }
 
-    lesson_text <- split_text[1, 1]
+    lesson_text <- read_file(.lesson_path)
 
     code_text <- extract_code_chunks(lesson_text)
     prose_text <- remove_code_chunks(lesson_text)
@@ -138,19 +102,10 @@ find_lesson_references <-
     con <- connect_course_db(.db_path)
     on.exit(DBI::dbDisconnect(con))
 
-    all_functions <-
+    matched_functions <-
       tbl(con, "functions") %>%
-      collect()
-
-    named_matches <-
-      all_functions %>%
-      filter(is_named_function(function_name)) %>%
+      collect() %>%
       filter(function_name %in% called_functions)
-
-    operator_matches <-
-      all_functions %>%
-      filter(!is_named_function(function_name)) %>%
-      detect_operators(code_text, operators = .)
 
     matched_terms <-
       tbl(con, "glossary") %>%
@@ -158,7 +113,7 @@ find_lesson_references <-
       filter(str_to_lower(term) %in% str_to_lower(bolded_terms))
 
     list(
-      functions = bind_rows(named_matches, operator_matches),
+      functions = matched_functions,
       terms = matched_terms
     )
   }
