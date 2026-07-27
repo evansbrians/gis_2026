@@ -4,9 +4,16 @@ project:
 
 engine: knitr
 
+execute:
+  echo: true
+  eval: true
+  error: true
+  warning: false
+  message: false
+
 format:
   html:
-    embed-resouces: true
+    embed-resources: true
     self-contained: true
     standalone: true
     toc: true
@@ -19,7 +26,7 @@ format:
       - cosmo
       - src/css/custom_style.scss
   live-html:
-    embed-resouces: true
+    embed-resources: true
     self-contained: true
     standalone: true
     toc: true
