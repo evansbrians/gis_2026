@@ -609,21 +609,16 @@ Before you move on, here are the ideas from this lesson that are most worth hold
 
 ## Reference
 
-<button class="accordion">Glossary</button>
-::: panel
-* **Character**: A symbol or set of symbols from a given alphabet (note: also includes numbers and punctuation).
-* **Class**: A blueprint that describes an object's structure.
-* **Double numeric vector**: An atomic numeric vector where the values are stored as decimal numbers (essentially).
-* **Escape character**: A backslash (`\`) placed before a character to tell R to treat that character literally rather than as part of R's syntax.
-* **Factor**: A value that maps character labels onto integers.
-* **Integer**: A whole number, or an atomic vector of data stored as whole numbers.
-* **Labels (of a factor)**: The character values associated with a factor level when printing or plotting.
-* **Levels (of a factor)**: The character values mapped to a factor's integer values.
-* **Logical constant**: `TRUE` or `FALSE`.
-* **Logical operator**: An operator used to test a logical statement (e.g., `3 > 2`).
-* **String**: A character value comprised of more than one symbol.
-* **Type**: How an object is stored in your computer.
-:::
+```{r}
+#| label: glossary
+#| message: false
+#| echo: false
+#| results: "asis"
+
+lesson_refs$terms %>%
+  glossary_panel_html(.button_label = "Glossary") %>%
+  cat()
+```
 
 <button class="accordion">Functions</button>
 ::: panel
@@ -632,10 +627,12 @@ Before you move on, here are the ideas from this lesson that are most worth hold
 ::: function_table
 
 ```{r}
-#| echo: false
+#| label: functions
 #| message: false
+#| echo: false
 
-render_function_table("functions_0.3_values.csv")
+lesson_refs$functions %>%
+  function_table_kable()
 ```
 
 :::

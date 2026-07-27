@@ -804,20 +804,16 @@ Here's the short version of what to carry forward from this lesson:
 
 ## Reference
 
-<button class="accordion">Glossary</button>
-::: panel
-* **Arguments**: The subject of an evaluation or condition that modifies a behavior of a function
-* **Assignment**: The process of providing a name (binding) for an R object
-* **Assignment operator**: A function used to assign an object to a name
-* **Environment**: A data structure used to reference objects stored in memory
-* **Function**: An R object that contains instructions for executing a given task
-* **Library**: The location of a package on your computer
-* **Metapackage**: A package that is comprised of more than one smaller packages
-* **Names**: Reference points to objects stored in your system's memory. These may also be called "keys" or "bindings"
-* **Nested function**: A function that is run inside of another function
-* **Operator**: A function expressed that is expressed as a symbol and is not followed by parentheses.
-* **Package**: A set of pre-written functions that can be downloaded (*note: There are also data packages!*)
-:::
+```{r}
+#| label: glossary
+#| message: false
+#| echo: false
+#| results: "asis"
+
+lesson_refs$terms %>%
+  glossary_panel_html(.button_label = "Glossary") %>%
+  cat()
+```
 
 <button class="accordion">Functions</button>
 ::: panel
@@ -826,10 +822,12 @@ Here's the short version of what to carry forward from this lesson:
 ::: function_table
 
 ```{r}
-#| echo: false
+#| label: functions
 #| message: false
+#| echo: false
 
-render_function_table("functions_0.2_environment_and_functions.csv")
+lesson_refs$functions %>%
+  function_table_kable()
 ```
 
 :::

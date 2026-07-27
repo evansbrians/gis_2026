@@ -1280,24 +1280,16 @@ Here are the big ideas to carry forward from our tour of data objects:
 
 ## Reference
 
-<button class="accordion">Glossary</button>
-::: panel
-* **Atomic vector**: A set of values of the same class (*homogeneous*) arranged in one dimension
-* **Attributes**: Information about the values of an object that is not contained in the values themselves
-* **Data frame**: A special type of list that is comprised of equal-length vectors; data frames are *heterogeneous* and have two dimensions.
-* **Dimensions**: The arrangement of values in an object; may also refer to the number of values or child objects within a given dimension (i.e., rows or columns)
-* **Heterogeneous object**: A container that holds values of one or more object classes
-* **Homogeneity**: Whether an object may contain one or more than one class of object
-* **Homogeneous object**: a container that holds values of only one class
-* **Indexing**: Subsetting an object by the location of a value or values within an object
-* **List**: A storage container that holds objects of any class; lists are *heterogenous* and have one dimension
-* **Matrix**: An atomic vector that is arranged into rows and columns. Matrices are *homogeneous* and have two dimensions.
-* **One-dimensional object**: Objects where data are arranged in a single line
-* **Structure**: The class of data, how the data are stored, dimensions, and metadata describing the object
-* **Tibble**: A type of data frame with unique properties that make them super useful!
-* **Two-dimensional object**: An object where data are arranged as rows and columns
-* **Vector**: A one-dimensional object
-:::
+```{r}
+#| label: glossary
+#| message: false
+#| echo: false
+#| results: "asis"
+
+lesson_refs$terms %>%
+  glossary_panel_html(.button_label = "Glossary") %>%
+  cat()
+```
 
 <button class="accordion">Functions</button>
 ::: panel
@@ -1306,10 +1298,12 @@ Here are the big ideas to carry forward from our tour of data objects:
 ::: function_table
 
 ```{r}
-#| echo: false
+#| label: functions
 #| message: false
+#| echo: false
 
-render_function_table("functions_0.4_objects.csv")
+lesson_refs$functions %>%
+  function_table_kable()
 ```
 
 :::
