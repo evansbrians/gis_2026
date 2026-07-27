@@ -3,25 +3,7 @@ title: "Preliminary Lesson 2: Environment & Functions"
 format: live-html
 ---
 
-```{r}
-#| include: false
-
-source("src/r/course_functions.R")
-```
-```{r}
-#| label: setup
-#| include: false
-
-library(webexercises)
-
-knitr::opts_chunk$set(
-  echo = TRUE,
-  eval = TRUE,
-  error = TRUE
-)
-```
-
-{{< include ../../_extensions/r-wasm/live/_knitr.qmd >}}
+{{< include /src/includes/_setup.qmd >}}
 
 <hr>
 
@@ -156,7 +138,7 @@ Single and double quotation marks can largely be used interchangeably for words 
 
 **Functions** are what data-wrangling guru Hadley Wickham calls the "fundamental building block of R". Functions are a special type of R object that contain instructions for executing a given task. You invoke a function any time you run R code.
 
-For example, you actually used an R function when you ran `1 + 2`. The plus sign is a special type of R function called an **operator**. An operator is a function that is expressed as a symbol.
+For example, you actually used an R function when you ran `1 + 2`. The plus sign is an R function called an **operator**.
 
 ### 2.1 Using a named function
 
@@ -175,7 +157,7 @@ When you download R you have access to thousands of functions. Most functions ha
 :::
 :::
 
-The **name** of a function is a pointer that your computer uses to find the instructions to execute when running the function. The **parentheses** are an operator that provides an enclosing environment for a function's arguments and instructs R to execute the function. The **arguments** of a function determine what you want your function to evaluate (usually the data) and often the behavior of the evaluation. If the function you are using contains more than one argument, each argument is separated by a **comma** -- a comma is not a function but is instead a special character used exclusively for separating arguments in a function.
+The **name** of a function is a pointer that your computer uses to find the instructions to execute when running the function. **Parentheses** are syntax that enclose a function's arguments and indicate that the function should be called. The **arguments** of a function determine what you want your function to evaluate (usually the data) and often the behavior of the evaluation. If the function you are using contains more than one argument, each argument is separated by a **comma** -- a comma is not a function but is instead a special character used exclusively for separating arguments in a function.
 
 ::: now_you
 {{< fa user-circle size=2x >}} [Copy-and-paste the code below into your console panel and run it:]{style="padding-left: 0.5em;"}
@@ -185,7 +167,12 @@ c(1, 1, 2, 3)
 ```
 :::
 
-In the above, `c` is the name of the R function used to combine multiple values into a single object. The arguments of this function are the values that we would like to combine. Each argument is separated by a comma. Note that, because the parentheses, `()`, is an operator, there are actually two functions in the above code!
+Let's deconstruct the above:
+
+* `c` is the name of the R function that is used to combine multiple values into a single object
+* The parentheses `(...)` enclose the arguments of `c`, which here are the individual values to combine, and tell R to call the function
+* The commas are syntax which separate the arguments of the function (*Note: commas are not functions*)
+* The arguments of the function are the values that we would like to combine.
 
 ::: mysecret
 {{< fa user-secret size=2x >}} [Space out your commas!]{style="font-size: 1.25em; padding-left: 0.5em;"}
@@ -202,7 +189,19 @@ my_object <-
   c(1, 1, 2, 3)
 ```
 
-*Note: The code now has three functions, the assignment operator, `<-`, the combine function `c`, and the parentheses operator, `()`.*
+*Note: The code now has two functions, the assignment operator, `<-` and the combine function `c`.*
+
+::: mysecret
+An operator *is* a function that performs a specific operation but is written using a symbol or set of symbols instead of the usual `function_name(...)` syntax. The following are equivalent:
+
+```{webr}
+1 + 2
+
+`+`(1, 2)
+```
+
+The value of using an operator is that it can simplify common tasks.
+:::
 
 Probably the most important function in all of R is the `?` operator. We use `?` to show the help file for a given function in the viewer pane. The documentation includes a description of the function, how it is used, important details on its usage, the type of value returned, and even examples.
 
