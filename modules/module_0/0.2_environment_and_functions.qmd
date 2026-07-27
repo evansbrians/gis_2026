@@ -175,7 +175,7 @@ When you download R you have access to thousands of functions. Most functions ha
 :::
 :::
 
-The **name** of a function is a pointer that your computer uses to find the instructions to execute when running the function. The **parentheses** are an operator that provides an enclosing environment for a function's arguments and instructs R to execute the function. The **arguments** of a function determine what you want your function to evaluate (usually the data) and often the behavior of the evaluation. If the function you are using contains more than one argument, each argument is separated by a **comma** -- a comma is not a function but is instead a special character used exclusively for separating arguments in a function.
+The **name** of a function is a pointer that your computer uses to find the instructions to execute when running the function. **Parentheses** are syntax that enclose a function's arguments and indicate that the function should be called. The **arguments** of a function determine what you want your function to evaluate (usually the data) and often the behavior of the evaluation. If the function you are using contains more than one argument, each argument is separated by a **comma** -- a comma is not a function but is instead a syntax used to separate arguments in a function.
 
 ::: now_you
 {{< fa user-circle size=2x >}} [Copy-and-paste the code below into your console panel and run it:]{style="padding-left: 0.5em;"}
@@ -185,7 +185,12 @@ c(1, 1, 2, 3)
 ```
 :::
 
-In the above, `c` is the name of the R function used to combine multiple values into a single object. The arguments of this function are the values that we would like to combine. Each argument is separated by a comma. Note that, because the parentheses, `()`, is an operator, there are actually two functions in the above code!
+Let's deconstruct the above:
+
+* `c` is the name of the R function that is used to combine multiple values into a single object
+* The parentheses `(...)` enclose the arguments of `c`, which here are the individual values to combine, and tell R to call the function
+* The commas are syntax which separate the arguments of the function (*Note: commas are not functions*)
+* The arguments of the function are the values that we would like to combine.
 
 ::: mysecret
 {{< fa user-secret size=2x >}} [Space out your commas!]{style="font-size: 1.25em; padding-left: 0.5em;"}
@@ -202,7 +207,19 @@ my_object <-
   c(1, 1, 2, 3)
 ```
 
-*Note: The code now has three functions, the assignment operator, `<-`, the combine function `c`, and the parentheses operator, `()`.*
+*Note: The code now has two functions, the assignment operator, `<-` and the combine function `c`.*
+
+::: mysecret
+An operator *is* a function that performs a specific operation but is written using a symbol or set of symbols instead of the usual `function_name(...)` syntax. The following are equivalent:
+
+```{webr}
+1 + 2
+
+`+`(1, 2)
+```
+
+The value of using an operator is that it can simplify common tasks.
+:::
 
 Probably the most important function in all of R is the `?` operator. We use `?` to show the help file for a given function in the viewer pane. The documentation includes a description of the function, how it is used, important details on its usage, the type of value returned, and even examples.
 
@@ -329,6 +346,13 @@ Installing packages is not something you do every time you run a script in R. As
 :::
 
 Once a package is installed on your computer, it is *almost* ready to use, but not quite. For example, the tidyverse metapackage contains the function `str_c` that can be used to combine two words. Can we use the function yet?
+
+```{r}
+#| echo: false
+
+unloadNamespace("stringr")
+```
+
 
 ```{r}
 #| error: true
@@ -530,7 +554,7 @@ In our hunt for a more communicative assignment, we might be tempted to start ou
 
 We get an error above because assignments cannot start with numbers. They can, however, include numbers in other locations:
 
-```{webr}
+```{r}
 #| autorun: true
 
 instruments4 <-
@@ -546,7 +570,7 @@ instruments4 <-
 
 The name we assigned, `instruments4`, is perhaps not a great convention to describe this object. We want to limit the amount of thought that has to go into understanding what an assignment means. In this case, it's probably better to provide our number first and simply spell it out:
 
-```{webr}
+```{r}
 #| autorun: true
 
 fourinstruments <-
@@ -578,7 +602,7 @@ To address our spacing issues, we must search for a different way to define the 
 
 * PascalCase (sometimes called UpperCamelCase):
 
-```{webr}
+```{r}
 #| autorun: true
 
 FourInstruments <-
@@ -592,7 +616,7 @@ FourInstruments <-
 
 * camelCase (sometimes called lowerCamelCase)
 
-```{webr}
+```{r}
 #| autorun: true
 
 fourInstruments <-
@@ -606,7 +630,7 @@ fourInstruments <-
 
 * snake_case:
 
-```{webr}
+```{r}
 four_instruments <-
   c(
     "vocals",
@@ -640,7 +664,7 @@ Managing the assignments in your global environment helps you better organize yo
 
 We can view these names with the function `ls()`:
 
-```{webr}
+```{r}
 ls()
 ```
 
@@ -660,7 +684,7 @@ Looks crazy right? One glaring issue that we might notice is that we have five d
 
 We can remove names from the global environment using the `rm()` function. Inside of the parentheses, we supply the names that we would like to remove, with each name separated by a comma.
 
-```{webr}
+```{r}
 #| autorun: true
 
 rm(
@@ -676,7 +700,7 @@ rm(
 
 This yields a much more manageable global environment:
 
-```{webr}
+```{r}
 ls()
 ```
 
@@ -685,9 +709,9 @@ ls()
 Though we've improved the organization of the global environment, we haven't really saved much in terms of memory allocation. That's because R only had to store the additional names of `four_instruments`, not copies of the data object itself. To save memory, we need to remove a name that is uniquely assigned to an object.
 
 ::: now_you
-{{< fa user-circle size=2x >}} [Use `rm()` to remove the assignment `hello` from our global environment.]{style="padding-left: 0.5em;"}
+{{< fa user-circle size=2x >}} [Use `rm()` to remove the assignment `hello` from your global environment.]{style="padding-left: 0.5em;"}
 
-```{webr}
+```{r}
 #| edit: true
 #| min-lines: 3
 
@@ -765,9 +789,9 @@ window.parsonsProblems.push({
 
 2. Consider the following code, then answer the questions that follow:
 
-```{webr}
+```{r}
 my_values <-
-  c(1, 1, 2)
+  c(1, 1, 2 + 3)
 ```
 
 3. TRUE/FALSE: Upon execution, this code stores the data object in the global environment.
@@ -790,7 +814,6 @@ Here's the short version of what to carry forward from this lesson:
 * An **environment** maps names to objects. Remember Hadley's line -- "names have objects; objects don't have names" -- so several names can point to the very same object, and R is smart enough not to duplicate that object in memory.
 * Use the assignment operator `<-` to give an object a name so it sticks around in your global environment. Without assignment, an object exists just long enough to print and is then gone.
 * Whether a word needs quotes depends on how you want R to treat it: a bare word is a reference (a name R looks up in the environment), while a quoted word is treated as plain data.
-* A function is a **name plus parentheses plus comma-separated arguments** -- and don't forget the parentheses are themselves a function that tells R to run the thing. Get in the habit of reading a function's help file with `?` before you rely on it.
 * Nested functions evaluate from the inside out, so the inner function (like `c()`) runs before the outer one (like `mean()`) ever sees its result.
 * Many functions take extra arguments that change their behavior -- `na.rm = TRUE` in `mean()` is the classic example, telling R to drop missing values before computing.
 * Install packages once with `install.packages()` (name in quotes, run from the console), but load them every session with `library()` (name unquoted, kept in your source pane). And watch out for the "package trap" -- don't collect a new package every time Stack Overflow suggests one.
