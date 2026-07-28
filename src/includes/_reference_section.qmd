@@ -37,17 +37,17 @@ The most common keyboard shortcuts are provided below for Windows and Mac operat
 :::{style="background-color: white; font-size: 14px;"}
 |Task                         | Windows          | Mac
 |:----------------------------|:----------------:|:-------------------:|
-| View all keyboard shortcuts | Ctrl + Alt + K   | command + option + K
-| Open an existing script     | Ctrl + O         | command + O
-| Create a new script         | Ctrl + shift + N | command + shift + N
-| Save script file            | Ctrl + S         | command + S
-| Execute code                | Ctrl + Enter     | command + return
-| Copy                        | Ctrl + C         | command + C
-| Paste                       | Ctrl + V         | command + V
-| Add a pipe operator         | Ctrl + shift + M | command + shift + M
-| Add an assignment operator  | Alt + dash       | option + dash
-| Add a new code section      | Ctrl + shift + R | command + shift + R
-| Indent code                 | Ctrl + I         | command + I
+| View all keyboard shortcuts | Alt + &#8679; + K | &#8997; + &#8679; + K
+| Open an existing script     | Ctrl + O         | &#8984; + O
+| Create a new script         | Ctrl + &#8679; + N | &#8984; + &#8679; + N
+| Save script file            | Ctrl + S         | &#8984; + S
+| Execute code                | Ctrl + Enter     | &#8984; + Return
+| Copy                        | Ctrl + C         | &#8984; + C
+| Paste                       | Ctrl + V         | &#8984; + V
+| Add a pipe operator         | Ctrl + &#8679; + M | &#8984; + &#8679; + M
+| Add an assignment operator  | Alt + dash       | &#8997; + dash
+| Add a new code section      | Ctrl + &#8679; + R | &#8984; + &#8679; + R
+| Indent code                 | Ctrl + I         | &#8984; + I
 :::
 
 :::

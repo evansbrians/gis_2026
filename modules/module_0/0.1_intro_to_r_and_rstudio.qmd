@@ -30,10 +30,10 @@ Throughout these preliminary lessons there are a number of icons and formats to 
 
 * Key **vocabulary terms** are provided in boldface font. There is a glossary of terms at the end of each lesson.
 
-* [Keyboard shortcuts and file paths are provided in the monospace font-family.]{style="font-family: monospace;"}. A table of keyboard shortcuts is provided at the end of each lesson.
+* [Keyboard shortcuts and file paths are provided in a monospace font]{style="font-family: monospace;"}. A table of keyboard shortcuts is provided at the end of each lesson.
 
 *  :::{style="font-family: monospace; background-color: #f0f0f0; font-size: 0.75em;"}
-Sections that appear exactly as they would in R are provided in the monospace font-family and are highlighted in gray. A table of functions used is provided at the end of each lesson.
+Sections that appear exactly as they would in R are provided in a monospace font and are highlighted in gray. A table of functions used is provided at the end of each lesson.
 :::
 
 * ::: now_you
@@ -49,13 +49,13 @@ Sections that appear exactly as they would in R are provided in the monospace fo
 :::{style="display: flow-root;"}
 ![](https://github.com/rstudio/hex-stickers/blob/main/thumbs/RStudio.png?raw=true){style="float:left; height: 10em; padding-right: 15px;"}
 
-In this course, we will use R within the RStudio IDE (Integrated Development Environment). RStudio is an interface to R that has numerous advantages over using R's built-in interface. The RStudio IDE provides loads of tools for an effective and well-organized R data workflow.
+In this course, we will use R within the RStudio IDE (Integrated Development Environment). RStudio is an interface to R that has numerous advantages over using R's built-in interface. The RStudio IDE provides a wide range of tools for an effective and well-organized R data workflow.
 :::
 
 ::: now_you
 {{< fa user-circle size=2x >}} [Install and open RStudio]{style="font-size: 1.25em; padding-left: 0.5em;"}
 
-1. If you do not have *the most recent version* of {{< fa brands r-project size=1.5em >}} (≥ `r glue::glue("{R.version$major}.{R.version$minor} -- {R.version$nickname}")`) installed on your computer, <a href="https://www.r-project.org/" target="_blank"> **please visit this link**</a> and follow the directions to do so.
+1. If you do not have {{< fa brands r-project size=1.5em >}} version `r glue::glue("{R.version$major}.{R.version$minor}")` or later installed on your computer, <a href="https://www.r-project.org/" target="_blank"> **please visit this link**</a> and follow the directions to do so.
 
 2. If you do not have *the most recent version* of RStudio Desktop installed on your computer, <a href="https://www.rstudio.com/products/rstudio/download/" target="_blank"> **visit this link** </a> and follow the directions to do so. *Note: RStudio updates often! If you already have RStudio Desktop on your computer, please ensure that your version is up-to-date.*
 
@@ -80,7 +80,7 @@ The options I will have you set below represent a few of *my* personal preferenc
 
 To open RStudio's global options:
 
-* Windows: Go to Tools/Global Options ... (top menu bar)
+* Windows: Go to Tools &rarr; Global Options&hellip; (top menu bar)
 * Mac: As above or (better yet), press the keyboard shortcut [&#8984;+,]{style="font-family: monospace"}.
 :::
 
@@ -101,7 +101,7 @@ RStudio can restore a previously saved workspace at startup, save the current wo
 4. Ensure that "Always save history (even when not saving .RData)" is *not* checked.
 :::
 
-![](../../src/images/global_opts_2.png){style="width: 100%;" fig-alt="Screenshot highlighting settings described above"}
+![](../../src/images/global_opts_2.png){style="width: 100%;" fig-alt="Screenshot highlighting the settings described above"}
 
 ::: mysecret
 
@@ -173,7 +173,7 @@ Here are some basic processes to get us started with R scripts:
 Using keyboard shortcuts:
 
 1. Create a new R script file.
-2. Save the file on your computer and name the file "rstudio_intro". *Note: The ".R" file extension will be added automatically*.
+2. Save the file on your computer and name the file "rstudio_intro". *Note: The ".R" file extension will be added automatically.*
 3. Close the script file.
 :::
 
@@ -184,13 +184,13 @@ Using keyboard shortcuts:
 
 Save your script files in a location that can easily be found on your computer's hard drive. In doing so, here are some recommendations:
 
-* Avoid including spaces in your folders or filenames -- when writing in code, spaces can cause problems for some command-line tools and external software. For example, we will use the bash shell in this course and spaces in that system carry real meaning!
+* Avoid including spaces in your folders or filenames -- spaces can have specific meanings in programming languages and command-line contexts. For example, we will use the bash shell in this course, where spaces separate commands and their arguments.
 * Avoid running R scripts from a cloud storage location (e.g., iCloud, OneDrive, Dropbox, Box, Google Drive) -- this is usually not an issue, but if the cloud drive and RStudio get out of sync it can cause a conflict in your project state. Solutions to this problem can be a time sink because you will sometimes have to resolve duplicate files, restart R, or even close RStudio.
-* Avoid including uppercase letters in your filename. Consistent capitalization and using lowercase letters improve readability and avoid case-related mistakes.
+* Avoid including uppercase letters in your filenames. Using lowercase filenames consistently improves readability and prevents capitalization errors.
 
 #### On closing scripts:
 
-Strive to minimize the number of script files you have open at any given time. This helps reduce clutter and thus makes your coding sessions more efficient. When you are finished working on a script, you should close it! 
+Strive to minimize the number of script files you have open at any given time. This helps reduce clutter and thus makes your coding sessions more efficient. When you are finished working on a script, you should close it!
 :::
 
 Of course, we're not done with this one yet ... let's open it in our Source Pane again and add some content.
@@ -231,7 +231,7 @@ A rule of thumb is that any code that you will use more than once or upon which 
 
 The **Console Pane** contains RStudio's interface to R. When a line of code is run from the command prompt (the symbol `>`) on the Console, the interface sends the code to R which evaluates it and displays any resulting output in the Console.
 
-![](../../src/images/panes_Console.png){style="width: 100%;" fig-alt="Image highlighting the location of the Console Pane"}
+![](../../src/images/panes_console.png){style="width: 100%;" fig-alt="Image highlighting the location of the Console Pane"}
 
 When you ran the preceding commands from the Source Pane, you may have noticed that the input and output appeared in the Console Pane. This highlights a component of how RStudio works: code written in the Source Pane is submitted to the active R session, and the submitted command and any resulting output appear in the Console.
 
@@ -298,7 +298,7 @@ The **Output Pane** organizes several tools and outputs into the following tabs:
 * Plots: Any plots that you create can be viewed here.
 * Packages: Installed R packages available through the current R session's configured library paths.
 * Help: Help files that provide in-depth information about R functions, packages, and related topics.
-* Viewer: Web content (e.g., HTML and widgets) can be viewed and interacted with here.
+* Viewer: Web content (e.g., HTML and interactive HTML widgets) can be viewed and interacted with here.
 * Presentation: View slide presentations (similar to PowerPoint).
 
 *Note: The Output Pane also contains tools for a number of other tasks, including those for loading and installing packages and managing files.*
@@ -321,6 +321,27 @@ The **Output Pane** organizes several tools and outputs into the following tabs:
 3. TRUE/FALSE: In this course, you should set RStudio to "Save workspace to .RData on exit" so that your objects are automatically restored the next time you open R.
  
 `r torf(FALSE)`
+
+4. Match each RStudio keyboard shortcut to what it does. Click a shortcut, then click its action; when you're finished, select "Check My Matches".
+
+```{r}
+#| echo: false
+#| results: asis
+
+matching_game(
+  .id = "m-0-1-01",
+  .os_switch = TRUE,
+  .pairs =
+    tribble(
+      ~mac,          ~windows,        ~right,
+      "Cmd+Shift+N", "Ctrl+Shift+N",  "Create a new R script",
+      "Cmd+O",       "Ctrl+O",        "Open an R script",
+      "Cmd+W",       "Ctrl+W",        "Close an R script",
+      "Cmd+S",       "Ctrl+S",        "Save an R script",
+      "Cmd+Return",  "Ctrl+Enter",    "Execute a line of code"
+    )
+)
+```
 :::
 
 ## Take-home points

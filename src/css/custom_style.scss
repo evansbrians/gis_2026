@@ -365,3 +365,174 @@ code {
 .parsons-feedback-incorrect {
   color: #b00020;
 }
+
+/* Matching game (js-driven, see src/js/matching_game.js) --------------------
+   Two columns of clickable pills: click a left item, then a right item, to
+   pair them. Shares the Parsons look (pills, .parsons-btn buttons, feedback). */
+
+.matching-game {
+  margin-top: 10px;
+  margin-bottom: 1.25em;
+}
+
+.matching-game .matching-col {
+  width: 46%;
+}
+
+.matching-game .matching-left {
+  float: left;
+}
+
+.matching-game .matching-right {
+  float: right;
+}
+
+/* Each option is a clickable pill */
+
+.matching-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border: 1px solid #9db0e6;
+  background-color: #eaf0ff;
+  border-radius: 16px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.12);
+  padding: 8px 14px;
+  margin: 8px 0;
+  font-size: 0.8rem;
+  line-height: 1.25;
+  cursor: pointer;
+  user-select: none;
+  transition: border-color 0.12s ease, box-shadow 0.12s ease,
+    background-color 0.12s ease;
+}
+
+.matching-item:hover {
+  border-color: #6b7fd0;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.16);
+}
+
+/* Selected (left item awaiting a right-column click) */
+
+.matching-item.selected {
+  outline: 2px solid #292093;
+  outline-offset: 1px;
+  background-color: #dbe4ff;
+}
+
+/* Numbered badge that ties a left item to its matched right item */
+
+.matching-badge {
+  flex: 0 0 auto;
+  box-sizing: border-box;
+  width: 1.5em;
+  height: 1.5em;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #ffffff;
+  background-color: #c3c9da;
+}
+
+.matching-right-item .matching-badge:empty {
+  background-color: transparent;
+  border: 1px dashed #b9c0d6;
+}
+
+.matching-label {
+  flex: 1 1 auto;
+}
+
+/* Keyboard keys inside a pill */
+
+.matching-item kbd {
+  font-family: monospace;
+  font-size: 0.85em;
+  background-color: #ffffff;
+  border: 1px solid #b9b9c9;
+  border-bottom-width: 2px;
+  border-radius: 4px;
+  padding: 1px 5px;
+  margin: 0 1px;
+  color: #333333;
+  white-space: nowrap;
+}
+
+.matching-item .kbd-line {
+  display: block;
+  margin: 2px 0;
+}
+
+.matching-item .kbd-os {
+  font-family: inherit;
+  font-size: 0.7rem;
+  color: #777777;
+  padding-left: 4px;
+}
+
+/* Graded states (override the inline match colour) */
+
+.matching-item.matching-correct {
+  border-color: #2e7d32 !important;
+  background-color: #eaf7ea;
+}
+
+.matching-item.matching-incorrect {
+  border-color: #b00020 !important;
+  background-color: #fdecec;
+}
+
+/* Prompt line above a matching game */
+
+.matching-prompt {
+  margin-bottom: 10px;
+}
+
+/* macOS / Windows-Linux toggle above a matching game */
+
+.matching-os-switch {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.matching-os-label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #333333;
+}
+
+.matching-os-toggle {
+  display: inline-flex;
+  border: 1px solid #9db0e6;
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.matching-os-btn {
+  border: none;
+  background-color: #eef2fd;
+  color: #292093;
+  font-size: 0.78rem;
+  font-weight: 600;
+  padding: 5px 14px;
+  cursor: pointer;
+  transition: background-color 0.12s ease, color 0.12s ease;
+}
+
+.matching-os-btn + .matching-os-btn {
+  border-left: 1px solid #9db0e6;
+}
+
+.matching-os-btn.active {
+  background-color: #292093;
+  color: #ffffff;
+}
+
+.matching-os-btn:not(.active):hover {
+  background-color: #dbe4ff;
+}
