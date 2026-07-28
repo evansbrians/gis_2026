@@ -13,12 +13,14 @@ format: live-html
 
 R is a programming language and environment for statistical computing and graphics. Members of the R community have extended this functionality to address a wide array of applications, from data engineering and management to using R as a Geographic Information System (GIS).
 
-The introductory documents in this series will begin to prepare you for the material presented in this course. Even if you are entering this class with loads of R experience, please thoroughly read and complete each lesson, as they may contain unfamiliar terminology or concepts.
+The introductory documents in this series will begin to prepare you for the material presented in this course. Even if you are entering this class with loads of R experience, please thoroughly read and complete each lesson -- these preliminary lessons contain terminology and concepts that are critical for understanding the course content.
 
-In this lesson, you will learn:
+In this lesson, you will install and set up R and RStudio. You will learn:
 
-* How to install and set up R and RStudio, including recommended global options
-* The core RStudio panes (source, console, environment, and output) and what each is used for
+* How to adjust global options for a comfortable and reproducible coding workflow
+* The core RStudio panes (Source, Console, Environment, and Output) and what each is used for
+* How to manage and run script files with keyboard shortcuts
+
 
 </div>
 
@@ -26,12 +28,12 @@ In this lesson, you will learn:
 
 Throughout these preliminary lessons there are a number of icons and formats to pay special attention to:
 
-* Key **vocabulary terms** are provided in bold-face font. There is a glossary of terms at the end of each lesson.
+* Key **vocabulary terms** are provided in boldface font. There is a glossary of terms at the end of each lesson.
 
-* [Keyboard shortcuts and file paths are provided in the Courier font-family.]{style="font-family: monospace;"}. A table of keyboard shortcuts is provided at the end of each lesson.
+* [Keyboard shortcuts and file paths are provided in the monospace font-family.]{style="font-family: monospace;"}. A table of keyboard shortcuts is provided at the end of each lesson.
 
 *  :::{style="font-family: monospace; background-color: #f0f0f0; font-size: 0.75em;"}
-Sections that appear exactly as they would in R are provided in the Courier font-family and are highlighted in gray. A table of functions used is provided at the end of each lesson.
+Sections that appear exactly as they would in R are provided in the monospace font-family and are highlighted in gray. A table of functions used is provided at the end of each lesson.
 :::
 
 * ::: now_you
@@ -39,7 +41,7 @@ Sections that appear exactly as they would in R are provided in the Courier font
 :::
 
 * ::: mysecret
-{{< fa user-secret size=2x >}} [Tips and tricks start with a user secret icon and are highlighted in light yellow.]{style="padding-left: 0.5em;"}
+{{< fa user-secret size=2x >}} [Tips and tricks start with a user secret icon and are highlighted in yellow.]{style="padding-left: 0.5em;"}
 :::
 
 ## 1. Installing R and RStudio
@@ -53,9 +55,9 @@ In this course, we will use R within the RStudio IDE (Integrated Development Env
 ::: now_you
 {{< fa user-circle size=2x >}} [Install and open RStudio]{style="font-size: 1.25em; padding-left: 0.5em;"}
 
-1. If you do not have *the most recent version* of {{< fa brands r-project size=1.5em >}} installed on your computer, <a href="https://www.r-project.org/" target="_blank"> **please visit this link**</a> and follow the directions to do so. *Note: R updates often! If you already have R on your computer, please ensure that your version is the most recent version by downloading the latest version.*
+1. If you do not have *the most recent version* of {{< fa brands r-project size=1.5em >}} (≥ `r glue::glue("{R.version$major}.{R.version$minor} -- {R.version$nickname}")`) installed on your computer, <a href="https://www.r-project.org/" target="_blank"> **please visit this link**</a> and follow the directions to do so.
 
-2. If you do not have *the most recent version* of RStudio Desktop installed on your computer, <a href="https://www.rstudio.com/products/rstudio/download/" target="_blank"> **visit this link** </a> and follow the directions to do so. *Note: RStudio updates often! If you already have RStudio Desktop on your computer, please ensure that your version is the most recent version by downloading the latest version.*
+2. If you do not have *the most recent version* of RStudio Desktop installed on your computer, <a href="https://www.rstudio.com/products/rstudio/download/" target="_blank"> **visit this link** </a> and follow the directions to do so. *Note: RStudio updates often! If you already have RStudio Desktop on your computer, please ensure that your version is up-to-date.*
 
 3. Please ensure that both programs are properly installed on your computer.
 
@@ -69,7 +71,7 @@ Before getting started with using R and RStudio, let's set the global options fo
 
 ## Global options are not universal!
 
-The options I will have you set below represent a few of *my* personal preferences when coding. My recommendations are based on long days spent creating, cleaning, and fixing code and I feel that they help the process. Please do not hesitate to set options in a way that is most comfortable for you.
+The options I will have you set below represent a few of *my* personal preferences when coding. My recommendations are based on long days spent creating, cleaning, and fixing code and I have found that they make long coding sessions more comfortable and reproducible. Please do not hesitate to set options in a way that is most comfortable for you.
 
 :::
 
@@ -88,7 +90,7 @@ This opens a window for setting your global options:
 
 #### 1.1.1 General options
 
-RStudio gives us the opportunity to automatically save and restore the R workspace we are working in and a history of code that we ran. We do not want to enable these options automatically. As the tasks that you undertake in R become more complex, these "opportunities" can become more of a hindrance than a help. It's best to avoid them from the get-go.
+RStudio can restore a previously saved workspace at startup, save the current workspace when you exit, and preserve your command history across sessions. Although these features may seem convenient, disabling them encourages you to create complete, reproducible scripts that can rebuild your work from a clean R session.
 
 ::: now_you
 {{< fa user-circle size=2x >}} [Set General options]{style="font-size: 1.25em; padding-left: 0.5em;"}
@@ -99,16 +101,14 @@ RStudio gives us the opportunity to automatically save and restore the R workspa
 4. Ensure that "Always save history (even when not saving .RData)" is *not* checked.
 :::
 
-![](../../src/images/global_opts_2.png){style="width: 100%;" fig-alt="Image highlighting setting the options described above"}
+![](../../src/images/global_opts_2.png){style="width: 100%;" fig-alt="Screenshot highlighting settings described above"}
 
 ::: mysecret
 
 {{< fa user-secret size=2x >}} [Why should I avoid saving the workspace and command history across sessions?]{style="font-size: 1.25em; padding-left: 0.5em;"}
 
-* Saving data across sessions is generally considered bad practice because it can negatively impact the reproducibility of your analysis. 
+* Saving your workspace across sessions is generally considered bad practice because it can negatively impact the reproducibility of your analysis. 
 * I choose to avoid saving history across sessions to ensure that the information provided is limited to the most recent, relevant commands.
-
-*Note: There are circumstances in which saved history can be beneficial. I recommend saving history carefully and with intention*. 
 
 :::
 
@@ -116,7 +116,7 @@ RStudio gives us the opportunity to automatically save and restore the R workspa
 
 Options in the "Code" tab can really improve your workflow!
 
-"Soft-wrapping" source files ensures that long lines of code are shown within the editor. This avoids having to scroll horizontally to view all of your code.
+Enabling "soft wrapping" ensures that long lines remain visible within the editor. This avoids having to scroll horizontally to view all of your code.
 
 "Rainbow parentheses" ensure that matching parentheses share colors and, when code is nested, each nested set of parentheses has its own color. This makes it easier to debug your code (i.e., find and fix problems).
 
@@ -142,7 +142,7 @@ Eye fatigue can become a big problem when coding. To address this, I recommend t
 
 :::
 
-![](../../src/images/global_opts_4.png){style="width: 100%;" fig-alt="Image showing where you can expiment with appearance settings"}
+![](../../src/images/global_opts_4.png){style="width: 100%;" fig-alt="Image showing where you can experiment with appearance settings"}
 
 ## 2. The RStudio IDE
 
@@ -160,12 +160,12 @@ The source pane is where you will write code that future operations will depend 
 
 Here are some basic processes to get us started with R scripts:
 
-* **Create an R script**: We can create a new script file with the keyboard shortcut [CTRL+Shift+N]{style="font-family: monospace"} (Windows) or [&#8984;+shift+N]{style="font-family: monospace"} (Mac).
-* **Open an R script**: We can open an existing script file with the keyboard shortcut [CTRL+O]{style="font-family: monospace"} (Windows) or [&#8984;+O]{style="font-family: monospace"} (Mac).
-* **Save an R script**: We can save the script file using the keyboard shortcut [CTRL+S]{style="font-family: monospace"} (Windows) or [&#8984;+S]{style="font-family: monospace"} (Mac).
-* **Close an R script**: We can close the script file using the keyboard shortcut [CTRL+W]{style="font-family: monospace"} (Windows) or [&#8984;+W]{style="font-family: monospace"} (Mac).
-* **Execute code**: To run code from the Source Pane, place your cursor on the line you would like to run and use the keyboard shortcut [CTRL+Enter]{style="font-family: monospace"} (Windows) or [&#8984;+return]{style="font-family: monospace"} (Mac).
-* **Execute a subset of code**: To run a subset of a line of code, highlight the portion you want to execute and use the keyboard shortcut [CTRL+Enter]{style="font-family: monospace"} (Windows) or [&#8984;+return]{style="font-family: monospace"} (Mac).
+* **Create an R script**: We can create a new script file with the keyboard shortcut [Ctrl+&#8679;+N]{style="font-family: monospace"} (Windows) or [&#8984;+&#8679;+N]{style="font-family: monospace"} (Mac).
+* **Open an R script**: We can open an existing script file with the keyboard shortcut [Ctrl+O]{style="font-family: monospace"} (Windows) or [&#8984;+O]{style="font-family: monospace"} (Mac).
+* **Save an R script**: We can save the script file using the keyboard shortcut [Ctrl+S]{style="font-family: monospace"} (Windows) or [&#8984;+S]{style="font-family: monospace"} (Mac).
+* **Close an R script**: We can close the script file using the keyboard shortcut [Ctrl+W]{style="font-family: monospace"} (Windows) or [&#8984;+W]{style="font-family: monospace"} (Mac).
+* **Execute code**: To run code from the Source Pane, place your cursor on the line you would like to run and use the keyboard shortcut [Ctrl+Enter]{style="font-family: monospace"} (Windows) or [&#8984;+Return]{style="font-family: monospace"} (Mac).
+* **Execute a subset of code**: To run a subset of a line of code, highlight the portion you want to execute and use the keyboard shortcut [Ctrl+Enter]{style="font-family: monospace"} (Windows) or [&#8984;+Return]{style="font-family: monospace"} (Mac).
 
 ::: now_you
 {{< fa user-circle size=2x >}} [Saving script files]{style="font-size: 1.25em; padding-left: 0.5em;"}
@@ -173,7 +173,7 @@ Here are some basic processes to get us started with R scripts:
 Using keyboard shortcuts:
 
 1. Create a new R script file.
-2. Save the file on your computer and name the file "rstudio_intro" (*Note: The file extension, ".R" will be added automatically*).
+2. Save the file on your computer and name the file "rstudio_intro". *Note: The ".R" file extension will be added automatically*.
 3. Close the script file.
 :::
 
@@ -182,21 +182,21 @@ Using keyboard shortcuts:
 
 #### On saving scripts:
 
-Save your script files in a location that can easily be found on your computer's hard drive. In doing so, ensure that:
+Save your script files in a location that can easily be found on your computer's hard drive. In doing so, here are some recommendations:
 
-* The folders where your files are stored do not contain a space -- when coding in some programming languages, spaces can make it difficult to read in files.
-* R script files are not stored in a cloud storage location (e.g., iCloud, OneDrive, Dropbox, Box, Google Drive) -- this is typically not an issue, but if the cloud drive and RStudio get out of sync it can cause a conflict in your project state that can only be solved by restarting R.
-* Avoid including spaces (as above) and uppercase letters in your file name. Consistent capitalization and using lowercase letters improve readability and avoids case-related mistakes. Programming languages often have stylistic case conventions to ensure consistency.
+* Avoid including spaces in your folders or filenames -- when writing in code, spaces can cause problems for some command-line tools and external software. For example, we will use the bash shell in this course and spaces in that system carry real meaning!
+* Avoid running R scripts from a cloud storage location (e.g., iCloud, OneDrive, Dropbox, Box, Google Drive) -- this is usually not an issue, but if the cloud drive and RStudio get out of sync it can cause a conflict in your project state. Solutions to this problem can be a time sink because you will sometimes have to resolve duplicate files, restart R, or even close RStudio.
+* Avoid including uppercase letters in your filename. Consistent capitalization and using lowercase letters improve readability and avoid case-related mistakes.
 
 #### On closing scripts:
 
-Strive to minimize the number of script files you have open at any given time. When you are finished working on a script, you should close it!
+Strive to minimize the number of script files you have open at any given time. This helps reduce clutter and thus makes your coding sessions more efficient. When you are finished working on a script, you should close it! 
 :::
 
 Of course, we're not done with this one yet ... let's open it in our Source Pane again and add some content.
 
 ::: now_you
-{{< fa user-circle size=2x >}} [Try coding from an R script!]{style="padding-left: 0.5em;"}
+{{< fa user-circle size=2x >}} [Try coding in an R script!]{style="padding-left: 0.5em;"}
 
 Using keyboard shortcuts:
 
@@ -219,7 +219,7 @@ Using keyboard shortcuts:
 
 :::
 
-*Note: Make sure that you have [CTRL+Enter]{style="font-family: monospace"} (Mac: [&#8984;+return]{style="font-family: monospace"}) in your muscle memory -- you are going to be using it a lot!*
+*Note: Make sure that you have [Ctrl+Enter]{style="font-family: monospace"} (Mac: [&#8984;+Return]{style="font-family: monospace"}) in your muscle memory -- you are going to be using it a lot!*
 
 ::: mysecret
 {{< fa user-secret size=2x >}} [Use the Source Pane for anything you'll reuse!]{style="font-size: 1.25em; padding-left: 0.5em;"}
@@ -229,32 +229,32 @@ A rule of thumb is that any code that you will use more than once or upon which 
 
 ### 2.2 The Console Pane
 
-The **Console Pane** contains RStudio's interface to R. When a line of code is run from the command prompt (the symbol `>`) on the console, the interface sends the code to R which evaluates it and displays any resulting output in the console.
+The **Console Pane** contains RStudio's interface to R. When a line of code is run from the command prompt (the symbol `>`) on the Console, the interface sends the code to R which evaluates it and displays any resulting output in the Console.
 
-![](../../src/images/panes_console.png){style="width: 100%;" fig-alt="Image highlighting the location of the console pane"}
+![](../../src/images/panes_Console.png){style="width: 100%;" fig-alt="Image highlighting the location of the Console Pane"}
 
-When you ran the preceding commands from the Source Pane, you may have noticed that the input and output appeared in the console pane. This highlights a component of how RStudio works: code written in the Source Pane is submitted to the active R session, and the submitted command and any resulting output appear in the Console.
+When you ran the preceding commands from the Source Pane, you may have noticed that the input and output appeared in the Console Pane. This highlights a component of how RStudio works: code written in the Source Pane is submitted to the active R session, and the submitted command and any resulting output appear in the Console.
 
-You can also run code directly from the console. To do so, simply type the code you would like to run and press enter.
+You can also run code directly from the Console. To do so, simply type the code you would like to run and press Enter.
 
 ::: now_you
 {{< fa user-circle size=2x >}} [Running a line of code in the Console Pane]{style="font-size: 1.25em; padding-left: 0.5em;"}
 
-Type `1 + 1 + 2` after the command prompt on the console pane and press enter to run the code.
+Type `1 + 1 + 2` after the command prompt on the Console Pane and press Enter to run the code.
 :::
 
-You can use the up and down arrows on your keyboard to navigate between lines of code you've run in the console pane. This can be especially useful for editing and rerunning a previous command.
+You can use the up and down arrows on your keyboard to navigate between lines of code you've run in the Console Pane. This can be especially useful for editing and rerunning a previous command.
 
 ::: now_you
-{{< fa user-circle size=2x >}} [Navigating the console pane]{style="font-size: 1.25em; padding-left: 0.5em;"}
+{{< fa user-circle size=2x >}} [Navigating the Console Pane]{style="font-size: 1.25em; padding-left: 0.5em;"}
 
 Use the up arrow on your keyboard to change the line `1 + 1 + 2` to `1 + 1 + 2 + 3`.
 :::
 
 ::: mysecret
-{{< fa user-secret size=2x >}} [Use the console pane for one-off code!]{style="font-size: 1.25em; padding-left: 0.5em;"}
+{{< fa user-secret size=2x >}} [Use the Console Pane for one-off code!]{style="font-size: 1.25em; padding-left: 0.5em;"}
 
-Any code that you will use only once should typically be written and executed in the console pane. Do not write code into the console pane if future code elements will depend on the code's output!
+Any code that you will use only once should typically be written and executed in the Console Pane. Do not write code into the Console Pane if future code elements will depend on the code's output!
 :::
 
 ### 2.3 The Environment Pane
@@ -287,17 +287,17 @@ You can use the history tab to search for lines of code that you have written an
 {{< fa user-circle size=2x >}} [Restore code from your session history]{style="font-size: 1.25em; padding-left: 0.5em;"}
 
 1. Send a line of code from your history to your Console Pane by double-clicking the line of code with your mouse.
-2. Send a line of code from your history to your Source Pane by selecting a line of code with your mouse, holding down the shift key and double-clicking the line.
+2. Send a line of code from your history to your Source Pane by selecting a line of code with your mouse, holding down the shift key (&#8679;) and double-clicking the line.
 :::
 
 ### 2.4 The Output Pane
 
-There is a lot going on in the Output Pane, but basically it provides tools using the following tabs:
+The **Output Pane** organizes several tools and outputs into the following tabs:
 
 * Files: A file manager window. This shows the files located in your working directory, which is the folder on your computer that R is reading from and writing to.
 * Plots: Any plots that you create can be viewed here.
-* Packages: Installed R packages available through the current R session's configure library paths. 
-* Help: Help files that provide in-depth information about R functions and packages that you will use.
+* Packages: Installed R packages available through the current R session's configured library paths.
+* Help: Help files that provide in-depth information about R functions, packages, and related topics.
 * Viewer: Web content (e.g., HTML and widgets) can be viewed and interacted with here.
 * Presentation: View slide presentations (similar to PowerPoint).
 
@@ -310,7 +310,7 @@ There is a lot going on in the Output Pane, but basically it provides tools usin
 ::: now_you
 {{< fa user-circle size=2x >}} [Test your knowledge!]{style="padding-left: 0.5em;"}
  
-1. Which pane of the RStudio IDE would be best to use to search for code that you previously executed in the console pane?
+1. Which pane of the RStudio IDE would be best to use to search for code that you previously executed in the Console Pane?
  
 `r longmcq(c("Source", "Console", answer = "Environment", "Output"))`
  
@@ -328,9 +328,9 @@ There is a lot going on in the Output Pane, but basically it provides tools usin
 Before we dive deeper, let’s pin down the essentials from this lesson:
 
 * We work in R through the RStudio IDE, and it’s worth keeping both R and RStudio updated to their most recent versions so you have the latest features (like rainbow parentheses).
-* Set your global options up front. I recommend: avoiding the auto-save feature for your workspace or history, turning on soft-wrapping and rainbow parentheses, and picking a comfortable theme and zoom to spare your eyes.
+* Set your global options up front. I recommend avoiding the auto-save feature for your workspace or history, turning on soft-wrapping and rainbow parentheses, and picking a comfortable theme and zoom to spare your eyes.
 * RStudio has four panes: the Source Pane for writing and running reusable code (or anything later lines depend on), the Console Pane for one-off code, the Environment Pane for your environment and history, and the Output Pane for files, plots, packages, and help.
-* Use the Source Pane for anything you’ll reuse, and use the Console Pane for quick, one-off code, remembering that the up arrow recalls previous console commands so you can tweak and rerun them.
-* Get CTRL+Enter (Mac: ⌘+return) into your muscle memory, since that’s how you’ll run code from the Source Pane throughout the course.
+* Use the Source Pane for anything you’ll reuse, and use the Console Pane for quick, one-off code, remembering that the up arrow recalls previous Console commands so you can tweak and rerun them.
+* Get Ctrl+Enter (Mac: ⌘+Return) into your muscle memory, since that’s how you’ll run code from the Source Pane throughout the course.
 
 {{< include /src/includes/_reference_section.qmd >}}
