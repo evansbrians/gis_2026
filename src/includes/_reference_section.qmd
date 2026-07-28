@@ -52,10 +52,10 @@ The most common keyboard shortcuts are provided below for Windows and Mac operat
 
 :::
 
-<button class="accordion">R Studio panes</button>
+<button class="accordion">RStudio panes</button>
 ::: panel
 
-Throughout this class, I will refer to the panes (sections) of the R Studio window. This graphic should help you remember them:
+Throughout this class, I will refer to the panes (sections) of the RStudio window. This graphic should help you remember them:
 
 ![](../../src/images/panes_all.png){style="width: 100%;" fig-alt="Image of RStudio panes: Source, Console, Environment, and Output"}
 
