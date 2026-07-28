@@ -25,3 +25,5 @@ _to_delete/
 .quarto/
 
 /.quarto/
+
+**/*.quarto_ipynb

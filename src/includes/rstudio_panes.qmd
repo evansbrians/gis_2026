@@ -1,3 +1,0 @@
-Throughout this class, I will refer to the panes (sections) of the R Studio window. This graphic should help you remember them:
-<img src = '../../src/images/rstudio_panes.png' style = "max-width: 100%; height: auto; padding-top: 20px; padding-bottom: 12px"></img>
-*Note: I sometimes also describe the "workspace" pane as the "environment" pane.*
