@@ -1,0 +1,41 @@
+## Reference
+
+```{r}
+#| label: glossary
+#| message: false
+#| echo: false
+#| results: "asis"
+
+lesson_refs$terms %>%
+  glossary_panel_html(.button_label = "Glossary") %>%
+  cat()
+```
+
+<button class="accordion">Functions</button>
+::: panel
+**Important!** Primitive functions as well as functions in the *base* and *graphics* packages are loaded by default when you start an R session.
+
+::: function_table
+
+```{r}
+#| label: functions
+#| message: false
+#| echo: false
+
+lesson_refs$functions %>%
+  function_table_kable()
+```
+
+:::
+:::
+
+<button class="accordion">Keyboard shortcuts</button>
+::: panel
+
+{{< include /src/includes/keyboard_shortcuts.qmd >}}
+:::
+
+<button class="accordion">R Studio panes</button>
+::: panel
+{{< include /src/includes/rstudio_panes.qmd >}}
+:::

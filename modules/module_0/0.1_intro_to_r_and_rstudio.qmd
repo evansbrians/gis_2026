@@ -172,9 +172,9 @@ RStudio is organized into four panes, as described in the image below. We will u
 
 ![](../../src/images/panes_all.png){style="width: 100%;"}
 
-### 3.1 The source pane
+### 3.1 The Source Pane
 
-The **source pane** provides an interface for writing and editing scripts. An R **script** is a text file that contains a set of commands to read, manipulate, and analyze data. Any code that you will use more than once or upon which future lines of code depend should always be written in a script file and executed from the source pane.
+The **Source Pane** provides an interface for writing and editing scripts. An R **script** is a text file that contains a set of commands to read, manipulate, and analyze data. Any code that you will use more than once or upon which future lines of code depend should always be written in a script file and executed from the Source Pane.
 
 ![](../../src/images/panes_source.png){style="width: 100%;"}
 
@@ -211,7 +211,7 @@ Close the script file using the keyboard combination [CTRL+W]{style="font-family
 You should strive to minimize the number of script files you have open at any given time. When you are finished working on a script, you should close it!
 :::
 
-Of course, we're not done with this one yet ... let's open it in our source pane again.
+Of course, we're not done with this one yet ... let's open it in our Source Pane again.
 
 ::: now_you
 {{< fa user-circle size=2x >}} [Opening script files]{style="font-size: 1.25em; padding-left: 0.5em;"}
@@ -219,12 +219,12 @@ Of course, we're not done with this one yet ... let's open it in our source pane
 Use the keyboard combination [CTRL+O]{style="font-family: monospace"} (Mac: [&#8984;+O]{style="font-family: monospace"}) to open your script file again.
 :::
 
-#### 3.1.2 Code execution from the source pane
+#### 3.1.2 Code execution from the Source Pane
 
-To execute code from the source pane, place your cursor on the line you would like to run and use the keyboard shortcut [CTRL+Enter]{style="font-family: monospace"} (Mac: [&#8984;+return]{style="font-family: monospace"}).
+To execute code from the Source Pane, place your cursor on the line you would like to run and use the keyboard shortcut [CTRL+Enter]{style="font-family: monospace"} (Mac: [&#8984;+return]{style="font-family: monospace"}).
 
 ::: now_you
-{{< fa user-circle size=2x >}} [Type `1 + 1 + 2` on the first line of your script in the source pane. Use the keyboard shortcut [CTRL+Enter]{style="font-family: monospace"} (Mac: [&#8984;+return]{style="font-family: monospace"}) to execute the line of code that the cursor is on.]{style="padding-left: 0.5em;"}
+{{< fa user-circle size=2x >}} [Type `1 + 1 + 2` on the first line of your script in the Source Pane. Use the keyboard shortcut [CTRL+Enter]{style="font-family: monospace"} (Mac: [&#8984;+return]{style="font-family: monospace"}) to execute the line of code that the cursor is on.]{style="padding-left: 0.5em;"}
 
 You may also use your mouse and [CTRL+Enter]{style="font-family: monospace"} (Mac: [&#8984;+return]{style="font-family: monospace"}) to run a subset of a line of code. Using your entry above, highlight just `1 + 2` with your mouse and run the code.
 :::
@@ -232,18 +232,18 @@ You may also use your mouse and [CTRL+Enter]{style="font-family: monospace"} (Ma
 *Note: Make sure that you have [CTRL+Enter]{style="font-family: monospace"} (Mac: [&#8984;+return]{style="font-family: monospace"}) in your muscle memory -- you are going to be using it a lot!*
 
 ::: mysecret
-{{< fa user-secret size=2x >}} [Use the source pane for anything you'll reuse!]{style="font-size: 1.25em; padding-left: 0.5em;"}
+{{< fa user-secret size=2x >}} [Use the Source Pane for anything you'll reuse!]{style="font-size: 1.25em; padding-left: 0.5em;"}
 
-Any code that you will use more than once or upon which future lines of code depend should always be written and executed in the source pane.
+Any code that you will use more than once or upon which future lines of code depend should always be written and executed in the Source Pane.
 :::
 
-### 3.2 The console pane
+### 3.2 The Console Pane
 
-The **console pane** contains RStudio's interface to program R. When a line of code is run from the command prompt (the symbol `>`) on the console, the interface sends the code to R which evaluates it and returns any potential output.
+The **Console Pane** contains RStudio's interface to program R. When a line of code is run from the command prompt (the symbol `>`) on the console, the interface sends the code to R which evaluates it and returns any potential output.
 
 ![](../../src/images/panes_console.png){style="width: 100%;"}
 
-When you ran the above sections of code from the source pane, you may have noticed that the input and output appeared in the console pane. This highlights a component of how RStudio works: code written in the source pane is sent to the console pane, the console pane sends the code to R for evaluation, and R prints the results in the console pane (if applicable).
+When you ran the above sections of code from the Source Pane, you may have noticed that the input and output appeared in the console pane. This highlights a component of how RStudio works: code written in the Source Pane is sent to the console pane, the console pane sends the code to R for evaluation, and R prints the results in the console pane (if applicable).
 
 You can also run code directly from the console pane. To do so, simply type the code you would like to run and press enter.
 
@@ -267,28 +267,28 @@ Use the up arrow on your keyboard to change the line `1 + 1 + 2` to `1 + 1 + 2 +
 Any code that you will use only once should be written and executed in the console pane. Do not write code into the console pane if future code elements will depend on the code's output!
 :::
 
-### 3.3 The workspace pane
+### 3.3 The Environment Pane
 
-Whenever you open RStudio, you initiate an **R session**. An R session is defined by all R operations conducted since R was opened. The **workspace pane** provides information on your current R session.
+Whenever you open RStudio, you initiate an **R session**. An R session is defined by all R operations conducted since R was opened. The **Environment Pane** provides information on your current R session.
 
 ![](../../src/images/panes_workspace.png){style="width: 100%;"}
 
-The workspace pane is separated into a number of tabs (the tabs listed on your workspace pane may be different from mine).
+The Environment Pane is separated into a number of tabs (the tabs listed on your Environment Pane may be different from mine).
 
-#### 3.3.1 Workspace pane: Environment tab
+#### 3.3.1 Environment Pane: Environment tab
 
 When you start an R session, you create a personal workspace known as the **global environment**. The environment tab provides a glimpse of the names assigned to files that you have stored in your system's memory (we'll go more in-depth on this subject in the next lesson!).
 
-*Note: The environment tab of the workspace pane also provides tools for a number of tasks, including importing and exporting data and managing memory. You may want to explore these features.*
+*Note: The environment tab of the Environment Pane also provides tools for a number of tasks, including importing and exporting data and managing memory. You may want to explore these features.*
 
-#### 3.3.2 Workspace pane: History tab
+#### 3.3.2 Environment Pane: History tab
 
-In addition to managing your global environment, you can use the workspace pane to view and manage your **session history**.
+In addition to managing your global environment, you can use the Environment Pane to view and manage your **session history**.
 
 ::: now_you
 {{< fa user-circle size=2x >}} [View your session history]{style="font-size: 1.25em; padding-left: 0.5em;"}
 
-Click on the "History" tab of the workspace pane to view the commands that you have run so far.
+Click on the "History" tab of the Environment Pane to view the commands that you have run so far.
 :::
 
 You can use the history tab to search for lines of code that you have written and even run them again!
@@ -297,13 +297,13 @@ You can use the history tab to search for lines of code that you have written an
 {{< fa user-circle size=2x >}} [Restore code from your session history]{style="font-size: 1.25em; padding-left: 0.5em;"}
 
 * To your console pane: Double-clicking the line of code with your mouse.
-* To your source pane: Select a line of code with your mouse, hold down the shift key and double-click the line of code.
+* To your Source Pane: Select a line of code with your mouse, hold down the shift key and double-click the line of code.
 * Multiple lines of code: Use your mouse to select the first line of code in the sequence then hold down the shift key and select the last line of code. In the menu bar, click "To Console" or "To Source".
 :::
 
-### 3.4 The viewer pane
+### 3.4 The Output Pane
 
-There is a lot going on in the viewer pane, but basically it provides tools for file management and viewing anything other than command line output.
+There is a lot going on in the Output Pane, but basically it provides tools for file management and viewing anything other than command line output.
 
 ![](../../src/images/panes_viewer.png){style="width: 100%;"}
 
@@ -316,7 +316,7 @@ The tabs on this pane include:
 * Viewer: Images and maps can be viewed here.
 * Presentation: View slide presentations (similar to PowerPoint).
 
-*Note: The viewer pane also contains tools for a number of other tasks, including tools for loading and installing libraries and managing files.*
+*Note: The Output Pane also contains tools for a number of other tasks, including tools for loading and installing libraries and managing files.*
 
 ## 4. Exercises
  
@@ -329,7 +329,7 @@ The tabs on this pane include:
  
 2. You are writing a line of code whose output later lines will depend on. In which pane should you write and run it?
  
-`r longmcq(c(answer = "Source pane", "Console pane", "Viewer pane", "History tab"))`
+`r longmcq(c(answer = "Source Pane", "Console pane", "Output Pane", "History tab"))`
  
 3. TRUE/FALSE: In this course, you should set RStudio to "Save workspace to .RData on exit" so that your objects are automatically restored the next time you open R.
  
@@ -342,48 +342,8 @@ Before we dive deeper, let’s pin down the essentials from this lesson:
 
 * We work in R through the RStudio IDE, and it’s worth keeping both R and RStudio updated to their most recent versions so you have the latest features (like rainbow parentheses).
 * Set your global options up front: never auto-save your workspace or history, turn on soft-wrapping and rainbow parentheses, and pick a comfortable dark theme with the zoom bumped up to spare your eyes.
-* RStudio has four panes: the source pane for writing and running reusable code (or anything later lines depend on), the console pane for one-off code, the workspace pane for your environment and history, and the viewer pane for files, plots, packages, and help.
-* Use the source pane for anything you’ll reuse, and use the console pane for quick, one-off code, remembering that the up arrow recalls previous console commands so you can tweak and rerun them.
-* Get CTRL+Enter (Mac: ⌘+return) into your muscle memory, since that’s how you’ll run code from the source pane throughout the course.
+* RStudio has four panes: the Source Pane for writing and running reusable code (or anything later lines depend on), the console pane for one-off code, the Environment Pane for your environment and history, and the Output Pane for files, plots, packages, and help.
+* Use the Source Pane for anything you’ll reuse, and use the console pane for quick, one-off code, remembering that the up arrow recalls previous console commands so you can tweak and rerun them.
+* Get CTRL+Enter (Mac: ⌘+return) into your muscle memory, since that’s how you’ll run code from the Source Pane throughout the course.
 
-## Reference
-
-```{r}
-#| label: glossary
-#| message: false
-#| echo: false
-#| results: "asis"
-
-lesson_refs$terms %>%
-  glossary_panel_html(.button_label = "Glossary") %>%
-  cat()
-```
-
-<button class="accordion">Functions</button>
-::: panel
-**Important!** Primitive functions as well as functions in the *base* and *graphics* packages are loaded by default when you start an R session.
-
-::: function_table
-
-```{r}
-#| label: functions
-#| message: false
-#| echo: false
-
-lesson_refs$functions %>%
-  function_table_kable()
-```
-
-:::
-:::
-
-<button class="accordion">Keyboard shortcuts</button>
-::: panel
-
-{{< include ../../src/includes/keyboard_shortcuts.qmd >}}
-:::
-
-<button class="accordion">R Studio panes</button>
-::: panel
-{{< include ../../src/includes/rstudio_panes.qmd >}}
-:::
+{{< include /src/includes/_reference_section.qmd >}}

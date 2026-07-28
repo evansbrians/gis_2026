@@ -607,44 +607,4 @@ Before you move on, here are the ideas from this lesson that are most worth hold
 * Logical `TRUE`/`FALSE` are stored as 1 and 0, so you can `sum()` them to count `TRUE`s or take their `mean()` to get a proportion.
 * Finally, `==` compares **by position** while `%in%` tests **set membership** -- so when you want to know whether values appear *anywhere* in another vector, reach for `%in%`, not `==`.
 
-## Reference
-
-```{r}
-#| label: glossary
-#| message: false
-#| echo: false
-#| results: "asis"
-
-lesson_refs$terms %>%
-  glossary_panel_html(.button_label = "Glossary") %>%
-  cat()
-```
-
-<button class="accordion">Functions</button>
-::: panel
-**Important!** Primitive functions as well as functions in the *base* and *graphics* packages are loaded by default when you start an R session.
-
-::: function_table
-
-```{r}
-#| label: functions
-#| message: false
-#| echo: false
-
-lesson_refs$functions %>%
-  function_table_kable()
-```
-
-:::
-:::
-
-<button class="accordion">Keyboard shortcuts</button>
-::: panel
-
-{{< include ../../src/includes/keyboard_shortcuts.qmd >}}
-:::
-
-<button class="accordion">R Studio panes</button>
-::: panel
-{{< include ../../src/includes/rstudio_panes.qmd >}}
-:::
+{{< include /src/includes/_reference_section.qmd >}}

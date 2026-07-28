@@ -1278,44 +1278,4 @@ Here are the big ideas to carry forward from our tour of data objects:
 * Make the **tibble** your default data frame. Its informative printing shows you the dimensions and each column's class right away, which is why I almost never reach for a plain data frame.
 * Read and write with *readr*: use `read_csv()`/`write_csv()` for portable, cross-program data, and `read_rds()`/`write_rds()` when you want an R-only file that preserves an object's class, type, and attributes.
 
-## Reference
-
-```{r}
-#| label: glossary
-#| message: false
-#| echo: false
-#| results: "asis"
-
-lesson_refs$terms %>%
-  glossary_panel_html(.button_label = "Glossary") %>%
-  cat()
-```
-
-<button class="accordion">Functions</button>
-::: panel
-**Important!** Primitive functions as well as functions in the *base* and *graphics* packages are loaded by default when you start an R session.
-
-::: function_table
-
-```{r}
-#| label: functions
-#| message: false
-#| echo: false
-
-lesson_refs$functions %>%
-  function_table_kable()
-```
-
-:::
-:::
-
-<button class="accordion">Keyboard shortcuts</button>
-::: panel
-
-{{< include ../../src/includes/keyboard_shortcuts.qmd >}}
-:::
-
-<button class="accordion">R Studio panes</button>
-::: panel
-{{< include ../../src/includes/rstudio_panes.qmd >}}
-:::
+{{< include /src/includes/_reference_section.qmd >}}

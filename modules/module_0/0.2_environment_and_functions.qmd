@@ -802,44 +802,4 @@ Here's the short version of what to carry forward from this lesson:
 * Comment your code on the line *before* the code, with one space after the `#`, and name your objects in snake_case: all lowercase, no spaces, never starting with a number, and save the `.` for file extensions.
 * Keep your global environment tidy -- use `ls()` to see what's there and `rm()` to clear out names you no longer need. Once the last name pointing to an object is gone, garbage collection frees that object from memory.
 
-## Reference
-
-```{r}
-#| label: glossary
-#| message: false
-#| echo: false
-#| results: "asis"
-
-lesson_refs$terms %>%
-  glossary_panel_html(.button_label = "Glossary") %>%
-  cat()
-```
-
-<button class="accordion">Functions</button>
-::: panel
-**Important!** Primitive functions as well as functions in the *base* and *graphics* packages are loaded by default when you start an R session.
-
-::: function_table
-
-```{r}
-#| label: functions
-#| message: false
-#| echo: false
-
-lesson_refs$functions %>%
-  function_table_kable()
-```
-
-:::
-:::
-
-<button class="accordion">Keyboard shortcuts</button>
-::: panel
-
-{{< include ../../src/includes/keyboard_shortcuts.qmd >}}
-:::
-
-<button class="accordion">R Studio panes</button>
-::: panel
-{{< include ../../src/includes/rstudio_panes.qmd >}}
-:::
+{{< include /src/includes/_reference_section.qmd >}}
