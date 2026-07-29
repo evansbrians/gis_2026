@@ -11,7 +11,23 @@ format: live-html
 
 ![](../../src/images/hex_complex.png){.intro_image}
 
-In the last lesson we installed R and RStudio and toured the RStudio IDE. Now we'll dig into the two concepts that everything else in this course builds on: the **environment**, where R keeps track of the names you've assigned, and **functions**, the building blocks of every task R performs. We'll close out with some best practices that will make your code easier to read (and easier to debug!) from the very start.
+In the last lesson, we installed R and RStudio and toured the RStudio IDE. Now we'll dig into the three concepts that everything else in this course builds on: the **environment**, where R keeps track of the names you've assigned; **functions**, the building blocks of every task R performs; and **objects**, the data upon which functions operate. For example, consider the following statement:
+
+```{r}
+1 + 1 + 2
+```
+
+The above statement was executed within the R **environment**. The numbers and the addition symbol are all R **objects**. The addition symbol is a type of object called a **function**. When the code was executed, R used the `+` function to calculate the sum of the values.
+
+## Before you begin
+
+To get the most out of this lesson, please:
+
+* Open RStudio in a clean session.
+* Open a new, blank script file and save it as "lesson_0.2.R".
+* Code along with the content.
+
+We'll close out with some best practices that will make your code easier to read (and easier to debug!) from the very start.
 
 In this lesson, you will learn:
 
@@ -25,13 +41,13 @@ In this lesson, you will learn:
 
 </div>
 
-## Before you begin
 
-To get the most out of this lesson, please:
+Regardless of the application, coding in R involves working with:
 
-* Open RStudio in a clean session;
-* Open a new, blank script file and save it as "lesson_0.2.R";
-* Code along with the content!
+* **Environments**: Data structures used to reference objects located in your system's memory.
+* **Functions**: Sets of instructions for accomplishing a given task. *Everything that happens in R is the result of a function call* (J. Chambers)!
+* **Objects**: The values R works with, including vectors, functions, environments, and other structures. *Everything that exists in R is an object* (J. Chambers)!
+
 
 ## 1. The environment
 
@@ -40,16 +56,16 @@ An **environment** is a data structure that associates a set of **names** (also 
 <figure style="margin-bottom: 2em; text-align: center;">
   <img
     src = "../../src/images/global_enviro.png"
-    width = "90%">
+    width = "90%"
+    alt = "Diagram of an environment associating names with objects in memory">
   <figcaption style="font-size: 0.8em; font-style: italic; margin-top: 15px;">
     Adapted from <a
-          href = "http://adv-r.had.co.nz/Environments.html"
-          target="_blank">Advanced R</a>
-    , Hadley Wickham
+          href = "https://adv-r.hadley.nz/environments.html"
+          target="_blank">Advanced R</a> by Hadley Wickham
   </figcaption>
 </figure>
 
-In the diagram above, the "environment" (the gray box) associates names (white boxes with rounded edges) with data objects (white boxes with square edges). The objects stored are the numbers 1, 1, 2, and 3 and the phrase "hello world". Note that the environment does not contain the objects themselves -- it contains names that "point to" the objects. The objects are stored in your computer's memory.
+In the diagram above, the "environment" (the gray box) associates names (white boxes with rounded edges) with data objects (white boxes with square edges). The objects shown are the numbers 1, 1, 2, and 3 and the phrase "hello world". Note that the environment does not contain the objects themselves -- it contains names that "point to" the objects. The objects are stored in your computer's memory.
 
 ::: mysecret
 {{< fa user-secret size=2x >}} [Names have objects; objects don't have names.]{style="font-size: 1.25em; padding-left: 0.5em;"}
@@ -59,7 +75,7 @@ In the diagram above, the "environment" (the gray box) associates names (white b
 
 ### 1.1 Assignment
 
-When you execute code in R, the objects returned are, by default, not stored by your system's memory. For example, run the following in your console pane:
+When you execute code in R, the objects returned are, by default, not stored by your system's memory. For example, run the following in your Console Pane:
 
 ::: now_you
 ```{webr}
@@ -67,15 +83,15 @@ When you execute code in R, the objects returned are, by default, not stored by 
 ```
 :::
 
-My nerdy greeting existed for a moment, but just long enough to print the results. To use objects like this in the future, we need to ensure that the object can be maintained in our system's memory. One way to do so is to associate a name with the object. This is a process known as "**assignment**". We assign objects to our global environment with `<-`, which is a function called an **assignment operator**.
+My nerdy greeting existed for a moment, but just long enough to print the results. To use objects like this in the future, we need to ensure that the object can be maintained in our system's memory. One way to do so is to associate a name with the object. This is a process known as "**assignment**". We create a binding in our global environment with `<-`, associating a name with an object in memory.
 
 ::: now_you
-{{< fa user-circle size=2x >}} [Working in the source pane]{style="font-size: 1.25em; padding-left: 0.5em;"}
+{{< fa user-circle size=2x >}} [Working in the Source Pane]{style="font-size: 1.25em; padding-left: 0.5em;"}
 
-1. Type `hello`;
-2. Add an assignment operator with the keyboard shortcut [Alt + -]{style="font-family: monospace"} (Mac: [option + -]{style="font-family: monospace"});
-4. Type `"hello world"` (with quotes);
-5. Run the code with the keyboard shortcut [CTRL + Enter]{style="font-family: monospace"} (Mac: [&#8984; + Enter]{style="font-family: monospace"}).
+1. Type `hello`.
+2. Add an assignment operator with the keyboard shortcut [Alt + -]{style="font-family: monospace"} (Mac: [Option + -]{style="font-family: monospace"}).
+3. Type `"hello world"` (with quotes).
+4. Run the code with the keyboard shortcut [Ctrl + Enter]{style="font-family: monospace"} (Mac: [&#8984; + Return]{style="font-family: monospace"}).
 
 Your code should look like:
 
@@ -86,25 +102,25 @@ hello <- "hello world"
 ```
 :::
 
-Have a look at the Environment tab of the workspace pane. You should notice that the name `hello` has been assigned to your global environment. We can use this name (`hello`) to retrieve the object ("hello world") from our system's memory.
+Have a look at the Environment tab of the Environment Pane. You should notice that the name `hello` has been assigned to your global environment. We can use this name (`hello`) to retrieve the object ("hello world") from our system's memory.
 
 ::: now_you
 {{< fa user-circle size=2x >}} [Calling objects]{style="font-size: 1.25em; padding-left: 0.5em;"}
 
-Type `hello` in your console pane and run it to see what it returns.
+Type `hello` in your Console Pane and run it to see what it returns.
 :::
 
 ::: mysecret
 {{< fa user-secret size=2x >}} [Watch how many names you have in your global environment!]{style="font-size: 1.25em; padding-left: 0.5em;"}
 
-Warning! Be aware of how many names are in your global environment. Each name represents an object that is stored in your system's memory -- accumulation of objects can greatly reduce performance.
+Warning! Be aware of how many names are in your global environment. Each name represents an object that is stored in your system's memory -- an accumulation of objects can greatly reduce performance.
 :::
 
-### 1.2 On the use of "quotes"
+### 1.2 On the use of quotation marks
 
-In every one of our classes we are invariably asked why some words must be quoted and others do not. The environment is a good place to start with this common source of confusion.
+In every one of our classes, we are invariably asked why some words must be quoted and others do not. The environment is a good place to start with this common source of confusion.
 
-Words (or even letters) do not require quotes if they can be found within their parent environment. For example, we assigned the name `hello` to the global environment above. Therefore, when we type and run `hello` in the console pane, the following is returned:
+Quotation marks distinguish character values from names. When R evaluates an unquoted name such as `hello`, it searches the accessible environments for a binding associated with that name. Because we assigned the name `hello` to the global environment above, typing and running `hello` in the Console Pane retrieves the object associated with that name:
 
 ```{webr}
 hello
@@ -118,15 +134,15 @@ Conversely, watch what happens when we type `my_object` into R:
 my_object
 ```
 
-We get an error! That's because the name `my_object` is not assigned to an environment that R has access to (it will be!).
+We get an error! That's because R cannot find a binding for the name `my_object` in an environment it can access (it will be able to shortly!).
 
-We can, however, wrap my_object in quotation marks and R will not return an error:
+We can, however, wrap `my_object` in quotation marks and R will not return an error:
 
-```{webr}
+```{r}
 "my_object"
 ```
 
-What gives? This behavior occurs because words inside of quotes are treated as a data object whereas a words outside of quotes are treated as a reference point (i.e., an assigned name).
+What gives? `"my_object"` is a character value, so R returns it directly. In contrast, the unquoted name `my_object` tells R to search for a binding and retrieve the object associated with that name.
 
 ::: mysecret
 {{< fa user-secret size=2x >}} [Single or double quotes?]{style="font-size: 1.25em; padding-left: 0.5em;"}
@@ -136,20 +152,20 @@ Single and double quotation marks can largely be used interchangeably for words 
 
 ## 2. Functions
 
-**Functions** are what data-wrangling guru Hadley Wickham calls the "fundamental building block of R". Functions are a special type of R object that contain instructions for executing a given task. You invoke a function any time you run R code.
+**Functions** are what data-wrangling guru Hadley Wickham calls the "fundamental building block of R". Functions are a special type of R object that contain instructions for executing a given task. Most computations in R involve one or more function calls.
 
 For example, you actually used an R function when you ran `1 + 2`. The plus sign is a special type of R function called an **operator**. An operator is a function that is expressed as a symbol.
 
 ### 2.1 Using a named function
 
 ::: {.row}
-When you download R you have access to thousands of functions. Most functions have names and users run them by providing (in order):
+When you download R, you have access to thousands of functions. Most functions have names, and users run them by providing, in order:
 
 :::{.column style="width: 55%"}
-1. The name of the function
-2. An opening parentheses `(`
-3. The argument(s) of the function
-4. A closing parentheses `)`
+1. The name of the function.
+2. An opening parenthesis, `(`.
+3. The argument(s) of the function.
+4. A closing parenthesis, `)`.
 :::
 
 :::{.column style="width: 45%"}
@@ -157,10 +173,10 @@ When you download R you have access to thousands of functions. Most functions ha
 :::
 :::
 
-The **name** of a function is a pointer that your computer uses to find the instructions to execute when running the function. **Parentheses** are syntax that enclose a function's arguments and indicate that the function should be called. The **arguments** of a function determine what you want your function to evaluate (usually the data) and often the behavior of the evaluation. If the function you are using contains more than one argument, each argument is separated by a **comma** -- a comma is not a function but is instead a syntax used to separate arguments in a function.
+The **name** of a function is a pointer that your computer uses to find the instructions to execute when running the function. **Parentheses** are syntax that enclose a function's arguments and indicate that the function should be called. The **arguments** of a function determine what you want your function to evaluate (usually the data) and often the behavior of the evaluation. If the function you are using contains more than one argument, each argument is separated by a **comma** -- a comma is not a function but is instead syntax used to separate arguments in a function.
 
 ::: now_you
-{{< fa user-circle size=2x >}} [Copy-and-paste the code below into your console panel and run it:]{style="padding-left: 0.5em;"}
+{{< fa user-circle size=2x >}} [Copy and paste the code below into your Console Pane and run it:]{style="padding-left: 0.5em;"}
 
 ```{webr}
 c(1, 1, 2, 3)
@@ -169,9 +185,9 @@ c(1, 1, 2, 3)
 
 Let's deconstruct the above:
 
-* `c` is the name of the R function that is used to combine multiple values into a single object
-* The parentheses `(...)` enclose the arguments of `c`, which here are the individual values to combine, and tell R to call the function
-* The commas are syntax which separate the arguments of the function (*Note: commas are not functions*)
+* `c()` is the R function used to combine multiple values into a single object.
+* The parentheses `(...)` enclose the arguments of `c()`, which here are the individual values to combine, and tell R to call the function.
+* The commas are syntax that separates the arguments of the function (*Note: commas are not functions*).
 * The arguments of the function are the values that we would like to combine.
 
 ::: mysecret
@@ -182,40 +198,40 @@ When using commas to delineate a function's arguments, it's best practice to inc
 
 If we wanted to use this object in the future, we can assign a name using the `<-` operator:
 
-```{webr}
-#| autorun: true
-
+```{r}
 my_object <-
   c(1, 1, 2, 3)
 ```
 
-*Note: The code now has two functions, the assignment operator, `<-` and the combine function `c`.*
+*Note: The code now has two functions: the assignment operator `<-` and the combine function `c()`.*
 
 ::: mysecret
 An operator *is* a function that performs a specific operation but is written using a symbol or set of symbols instead of the usual `function_name(...)` syntax. The following are equivalent:
 
-```{webr}
+```{r}
 1 + 2
 
 `+`(1, 2)
 ```
 
-The value of using an operator is that it can simplify common tasks.
+The advantage of using an operator is that it can simplify common tasks.
 :::
 
-Probably the most important function in all of R is the `?` operator. We use `?` to show the help file for a given function in the viewer pane. The documentation includes a description of the function, how it is used, important details on its usage, the type of value returned, and even examples.
+Probably the most important function in all of R is the `?` operator. We use `?` to show the help file for a given function in the Help tab of the Output Pane. The documentation includes a description of the function, how it is used, important details on its usage, the type of value returned, and even examples.
 
 ::: now_you
 {{< fa user-circle size=2x >}} [Getting help]{style="font-size: 1.25em; padding-left: 0.5em;"}
 
-Copy-paste-and-run the code below in your console pane:
+Copy, paste, and run the code below in your Console Pane:
 
-```{webr}
+```{r}
+#| eval: false
+
 ?c
 ```
 :::
 
-By running the `?` function above, we are provided with a description of the function, how it is used, the arguments of the function, a detailed description of considerations when using the function, and returned values. `?` will often return references to related functions and examples of the functions usage.
+By running the `?` function above, we are provided with a description of the function, how it is used, its arguments, important considerations, and its return value. `?` will often return references to related functions and examples of the function's usage.
 
 ::: mysecret
 {{< fa user-secret size=2x >}} [Read the help files!]{style="font-size: 1.25em; padding-left: 0.5em;"}
@@ -229,37 +245,37 @@ Functions can be nested inside other functions. In other words, you can run a fu
 
 For example, we assigned our data object `c(1, 1, 2, 3)` to the name `my_object`. The function `mean` can be used to calculate the average of a set of values. Because R can use the name `my_object` to locate the data object from our system's memory, this could be written as:
 
-```{webr}
+```{r}
 mean(my_object)
 ```
 
 Recall, however, the name is really just a reference point to the object. As such, the name associated with the object, `my_object`, can be used interchangeably with the code used to create it. In practice, this means that we can also calculate the mean of these values using:
 
-```{webr}
+```{r}
 mean(
   c(1, 1, 2, 3)
 )
 ```
 
-This is what's known as a **nested function** because `c()` is nested inside of the parentheses of `mean`. It's important to note the rather unfortunate order of operations here -- the function `c` must be evaluated prior to calculating the mean!
+This is what's known as a **nested function** because `c()` is nested inside the parentheses of `mean()`. Remember the order of evaluation: `c()` must be evaluated before `mean()` can calculate the average.
 
 ### 2.3 Arguments that modify a function's behavior
 
 Many functions contain arguments in addition to the data object that you are evaluating. These arguments may modify the behavior of the function (*Note: Some arguments are necessary while some are optional*).
 
-Let's look at what happens when we try to calculate the mean of set of values where one of the values is `NA` (unknown):
+Let's look at what happens when we try to calculate the mean of a set of values in which one value is `NA` (unknown):
 
-```{webr}
+```{r}
 mean(
   c(5, 8, 13, NA)
 )
 ```
 
-If one of the values of a set are unknown, the value returned by `mean()` is also unknown by default. To address this we can use an argument that modifies the default behavior of the function.
+If one of the values in a set is unknown, the value returned by `mean()` is also unknown by default. To address this, we can use an argument that modifies the default behavior of the function.
 
-The `mean` function contains an argument, `na.rm`, that tells R whether you want to remove `NA` prior to calculating the average (see `?mean`). We supply the additional argument after a comma:
+The `mean()` function contains an argument, `na.rm`, that tells R whether you want to remove `NA` prior to calculating the average (see `?mean`). We supply the additional argument after a comma:
 
-```{webr}
+```{r}
 mean(
   c(5, 8, 13, NA),
   na.rm = TRUE
@@ -306,7 +322,7 @@ window.parsonsProblems.push({
 :::{.row}
 ![](https://github.com/rstudio/hex-stickers/blob/main/thumbs/tidyverse.png?raw=true){style="float:left; height: 11em; margin-top: 10px; padding-right: 15px;"}
 
-Though R provides a huge set of functions that were pre-loaded when you downloaded R, there are countless numbers of functions that have been written by members of the R community and assembled into **packages** that you can download. Many of these community-built packages are very powerful and some are crucial to a modern workflow in R. The package we'll use the most in this class is the "tidyverse" package. It's actually a **metapackage** -- meaning it's a package comprised of other smaller packages. To download a package or packages, you use the function `install.packages`. This function evaluates the name of a package, in quotation marks, and installs it on your computer.
+R includes a default set of packages and functions, and countless additional functions have been written by members of the R community and assembled into **packages** that you can download. Many of these community-built packages are very powerful, and some are crucial to a modern workflow in R. The package we'll use most in this class is the "tidyverse" package. It's actually a **metapackage** -- meaning that it is composed of other, smaller packages. To download one or more packages, you use the function `install.packages()`. This function evaluates the name of a package, in quotation marks, and installs it on your computer.
 :::
 
 ::: now_you
@@ -322,17 +338,18 @@ install.packages("tidyverse")
 :::
 
 ::: mysecret
-{{< fa user-secret size=2x >}} [Install packages from the console pane!]{style="font-size: 1.25em; padding-left: 0.5em;"}
+{{< fa user-secret size=2x >}} [Install packages from the Console Pane!]{style="font-size: 1.25em; padding-left: 0.5em;"}
 
-Installing packages is not something you do every time you run a script in R. As such, package installation should occur in the Console pane.
+Installing packages is not something you do every time you run a script in R. As such, package installation should occur in the Console Pane.
 :::
 
-Once a package is installed on your computer, it is *almost* ready to use, but not quite. For example, the tidyverse metapackage contains the function `str_c` that can be used to combine two words. Can we use the function yet?
+Once a package is installed on your computer, it is *almost* ready to use, but not quite. For example, the tidyverse metapackage installs stringr, the package that provides the `str_c()` function for combining character values. Can we use the function yet?
 
 ```{r}
 #| echo: false
+#| include: false
 
-unloadNamespace("stringr")
+detach("package:stringr", character.only = TRUE)
 ```
 
 
@@ -345,7 +362,14 @@ str_c(
 )
 ```
 
-R couldn't find it! That's because we haven't provided a reference to the package. The location of the package on your computer is called a **library**. To use the package, we need to "go to the library" -- in other words, associate the library with our current R session. To do so, we use the function `library`. Installed libraries are defined, therefore quotes are not necessary when loading them.
+```{r}
+#| echo: false
+#| include: false
+
+library(stringr)
+```
+
+R couldn't find it! That's because stringr is installed but is not currently attached. Installed packages are stored in directories called **libraries**. To make a package's exported functions available by name in the current R session, we use `library()` to load and attach the package. `library()` accepts either an unquoted package name or a package name in quotation marks; this course generally uses the unquoted form.
 
 ::: now_you
 {{< fa user-circle size=2x >}} [Loading libraries]{style="font-size: 1.25em; padding-left: 0.5em;"}
@@ -365,26 +389,26 @@ str_c(
 ```
 :::
 
-*Note: the practice boxes in these lessons run inside a browser-based R session that has tidyverse preloaded behind the scenes for performance reasons -- so `library(tidyverse)` above won't produce the usual startup messages you'll see the first time you run it for real in RStudio. Get in the habit of typing it anyway; in RStudio (and in every script you write from here on) it's a required step, not an optional one.*
+*Note: The practice boxes in these lessons run inside a browser-based R session that has tidyverse preloaded behind the scenes for performance reasons. Therefore, `library(tidyverse)` above won't produce the usual startup messages you'll see the first time you run it in RStudio. Get in the habit of typing it anyway; in RStudio (and in every script you write from here on), it's a required step, not an optional one.*
 
-*Note: The *`library` *function needs to be run each time a new R session is initiated. Because future lines of code may depend on the library or libraries loaded, loading should always occur in the source pane.*
+*Note: The `library()` function needs to be run each time a new R session is initiated. Because future lines of code may depend on the package or packages loaded, loading should always occur in the Source Pane.*
 
 ::: mysecret
 {{< fa user-secret size=2x >}} [Watch out for the "package trap"!]{style="font-size: 1.25em; padding-left: 0.5em;"}
 
 Warning! In the early stages of learning R, or even later if you have not spent much time learning the language, you will find yourself falling into what I call the "package trap". The package trap works like this:
 
-1. You need to manipulate your data in some way that you are unfamiliar with
-2. You visit Stack Overflow and, reading through the answers, find a package that will do what you want
-3. You install and load the package and *potentially* move past the issue
+1. You need to manipulate your data in an unfamiliar way.
+2. You visit Stack Overflow and, while reading through the answers, find a package that will do what you want.
+3. You install and load the package and *potentially* move past the issue.
 
-*Why is this a problem?* Some of the packages you stumble on in this way will be critical to your current and future workflows -- most will not. This workflow turns scripts into a sloppy patchwork of packages. It can make your code very confusing to follow and lead to unseen errors (if the function does not do exactly what you perceive it should). If the issue can be solved with Base R or the packages you are currently working with, it will make your code more clear, help you avoid problems, and save you time in the future.
+*Why is this a problem?* Some of the packages you stumble on in this way will be critical to your current and future workflows -- most will not. This workflow turns scripts into a sloppy patchwork of packages. It can make your code very confusing to follow and lead to unseen errors (if the function does not do exactly what you perceive it should). If the issue can be solved with base R or the packages you are currently working with, it will make your code clearer, help you avoid problems, and save you time in the future.
 :::
 
 ::: now_you
 {{< fa user-circle size=2x >}} [Test your knowledge!]{style="padding-left: 0.5em;"}
 
-1. True or false: `install.packages()` needs to be run only once per package and is best run in the console pane, whereas `library()` must be run in every new session and belongs in the source pane.
+1. True or false: `install.packages()` needs to be run only once per package and is best run in the Console Pane, whereas `library()` must be run in every new session and belongs in the Source Pane.
 
 `r torf(TRUE)`
 
@@ -408,7 +432,7 @@ window.parsonsProblems = window.parsonsProblems || [];
 window.parsonsProblems.push({
   id: "p-0-2-02",
   maxDistractors: 2,
-  code: "install.packages(\"tidyverse\")\nlibrary(tidyverse)\nstr_c(c(\"Hello\", \"world\"), collapse = \" \")\ninstall.packages(tidyverse) #distractor\nlibrary(\"tidyverse\") #distractor"
+  code: "install.packages(\"tidyverse\")\nlibrary(tidyverse)\nstr_c(c(\"Hello\", \"world\"), collapse = \" \")\ninstall.packages(tidyverse) #distractor\nlibrary(str_c) #distractor"
 });
 </script>
 :::
@@ -422,7 +446,7 @@ Throughout this course, you'll learn a number of "best practices" that will make
 It's important to provide descriptive content that communicates your code to your future self and others. This is known as commenting a script. In R, you add a comment using a hashtag, `#`. R will not evaluate any text entered after a hashtag.
 
 ::: now_you
-{{< fa user-circle size=2x >}} [Observe what happens when your run the following code with and without the preceding hashtag.]{style="padding-left: 0.5em;"}
+{{< fa user-circle size=2x >}} [Observe what happens when you run the following code with and without the preceding hashtag.]{style="padding-left: 0.5em;"}
 
 ```{webr}
 #| edit: true
@@ -439,7 +463,7 @@ Adding comments is a bit of an art form. You want your comments to be descriptiv
 
 Here's an example of a very descriptive, but unnecessarily detailed, comment:
 
-```{webr}
+```{r}
 # To practice adding numbers with the `+` function, I am
 # adding the numbers 1, 2, and 3, with each number separated
 # by `+`:
@@ -447,9 +471,9 @@ Here's an example of a very descriptive, but unnecessarily detailed, comment:
 1 + 2 + 3
 ```
 
-In the above, we can already see the values that are being added and that each number is separated by a `+` -- that makes those elements of the comment unnecessary. The comment can therefore be reduced to to:
+In the above, we can already see the values that are being added and that each number is separated by a `+` -- that makes those elements of the comment unnecessary. The comment can therefore be reduced to:
 
-```{webr}
+```{r}
 # To practice adding numbers:
 
 1 + 2 + 3
@@ -457,7 +481,7 @@ In the above, we can already see the values that are being added and that each n
 
 ... and of course we probably don't need to know that the purpose of this line of code is "to practice". We can therefore simplify our comment to:
 
-```{webr}
+```{r}
 # Add numbers:
 
 1 + 2 + 3
@@ -469,19 +493,19 @@ In the above, we can already see the values that are being added and that each n
 Take your target audience into consideration when commenting a script. If you are new to R or writing code for someone who is just starting out, your script should be full of comments that explain every potentially confusing process. When communicating to more advanced R users, you will likely need less commenting.
 :::
 
-#### 3.1.2 Comments should occur before executed code
+#### 3.1.2 In this course, comments should occur before executed code
 
-Always add comments **before steps in a code** rather than on the same line. In other words ...
+In this course, place explanatory comments **before the code they describe**. Short end-of-line comments can sometimes be useful, but placing comments on their own lines is usually easier to read. In other words ...
 
-**Do not do this**:
+**Avoid this in course scripts**:
 
-```{webr}
+```{r}
 1 + 2 + 3 # Add numbers
 ```
 
-**Do this**:
+**Prefer this**:
 
-```{webr}
+```{r}
 # Add numbers:
 
 1 + 2 + 3
@@ -492,8 +516,8 @@ Always add comments **before steps in a code** rather than on the same line. In 
 
 Consistent formatting of comments really helps with the legibility of your scripts. It's best practice to:
 
-* Include a blank line of space before and after your comment;
-* Include one blank space between the hashtag and comment text.
+* Include a blank line before and after your comment.
+* Include one space between the hashtag and comment text.
 :::
 
 ### 3.2 Naming conventions
@@ -504,9 +528,7 @@ There are a few important rules to consider when assigning names to your global 
 
 It's important to assign names that convey meaning about the object. For example, let's define the instruments used in a rock band and assign the name `x` to the object:
 
-```{webr}
-#| autorun: true
-
+```{r}
 x <-
   c(
     "vocals",
@@ -537,15 +559,8 @@ In our hunt for a more communicative assignment, we might be tempted to start ou
 We get an error above because assignments cannot start with numbers. They can, however, include numbers in other locations:
 
 ```{r}
-#| autorun: true
-
 instruments4 <-
-  c(
-    "vocals",
-    "guitar",
-    "bass",
-    "drums"
-  )
+  x
 ```
 
 #### 3.2.3 Assignments with two or more words
@@ -553,15 +568,8 @@ instruments4 <-
 The name we assigned, `instruments4`, is perhaps not a great convention to describe this object. We want to limit the amount of thought that has to go into understanding what an assignment means. In this case, it's probably better to provide our number first and simply spell it out:
 
 ```{r}
-#| autorun: true
-
 fourinstruments <-
-  c(
-    "vocals",
-    "guitar",
-    "bass",
-    "drums"
-  )
+  x
 ```
 
 The name above still takes too much interpretation because it's difficult to see where one word stops and another begins. We might, therefore, be tempted to add a space between the words:
@@ -585,41 +593,22 @@ To address our spacing issues, we must search for a different way to define the 
 * PascalCase (sometimes called UpperCamelCase):
 
 ```{r}
-#| autorun: true
-
 FourInstruments <-
-  c(
-    "vocals",
-    "guitar",
-    "bass",
-    "drums"
-  )
+  x
 ```
 
-* camelCase (sometimes called lowerCamelCase)
+* camelCase (sometimes called lowerCamelCase):
 
 ```{r}
-#| autorun: true
-
 fourInstruments <-
-  c(
-    "vocals",
-    "guitar",
-    "bass",
-    "drums"
-  )
+  x
 ```
 
 * snake_case:
 
 ```{r}
 four_instruments <-
-  c(
-    "vocals",
-    "guitar",
-    "bass",
-    "drums"
-  )
+  x
 ```
 
 Among the naming conventions above, snake_case has quickly become the convention because it is considered to be easier to read.
@@ -631,7 +620,7 @@ The use of snake_case also avoids the use of uppercase letters. By specifying yo
 ::: mysecret
 {{< fa user-secret size=2x >}} [A naming convention to avoid]{style="font-size: 1.25em; padding-left: 0.5em;"}
 
-A naming convection that I did not cover above is the use of a period to separate words (e.g., `four.instruments`). While this was a common convention at one time, it should be avoided at all costs, because a the use of `.` should be reserved for file extensions.
+Another valid R naming convention uses a period to separate words (e.g., `four.instruments`). You may encounter this style in existing R functions and scripts. In this course, however, we will use snake_case consistently and avoid periods in the names we assign.
 :::
 
 ::: now_you
@@ -642,21 +631,23 @@ A naming convection that I did not cover above is the use of a period to separat
 
 ### 3.3 Managing your global environment
 
-Managing the assignments in your global environment helps you better organize your workflow and avoid performance issues due to memory limitations. In doing so, it's important to **maintain only the assignments that you'll need**. Let's take a moment to explore the names assigned to our global environment.
+Managing the names in your global environment helps you better organize your workflow and avoid performance issues due to memory limitations. In doing so, it's important to **maintain only the names that you'll need**. Let's take a moment to explore the names assigned to our global environment.
 
 We can view these names with the function `ls()`:
 
 ```{r}
+#| eval: false
+
 ls()
 ```
 
-*Note: Notice in the above that we didn't have to supply any arguments inside the parentheses? That's because the *`ls()` *searches within our global environment by default.*
+*Note: We didn't have to supply any arguments inside the parentheses above because `ls()` searches within our global environment by default.*
 
-We can see that our global environment currently contains a number of names. Here's a visualization of its current state of our R session:
+We can see that our global environment currently contains a number of names. Here's a simplified visualization of the current state of our R session:
 
-![](../../src/images/global_environment_instruments.png){width="100%"}
+![](../../src/images/global_environment_instruments.png){width="100%" fig-alt="Simplified Global Environment containing several names associated with the same data object"}
 
-Looks crazy right? One glaring issue that we might notice is that we have five different names assigned to the same data object. This reveals something special about how R uses assignments -- because the names point to the *same* data object, R is able to reduce the amount of data that must be stored in memory. That being said, this redundancy is not necessary.
+Looks crazy, right? One glaring issue is that we have several different names assigned to the same data object. This reveals something special about how R uses assignments -- because the names point to the *same* data object, R is able to reduce the amount of data that must be stored in memory. That being said, this redundancy is not necessary.
 
 ::: now_you
 {{< fa user-circle size=2x >}} [True or false: Assigning two different names to the same set of values stores two independent copies of the data in memory, one for each name.]{style="padding-left: 0.5em;"}
@@ -667,8 +658,6 @@ Looks crazy right? One glaring issue that we might notice is that we have five d
 We can remove names from the global environment using the `rm()` function. Inside of the parentheses, we supply the names that we would like to remove, with each name separated by a comma.
 
 ```{r}
-#| autorun: true
-
 rm(
   fourinstruments,
   FourInstruments,
@@ -683,33 +672,17 @@ rm(
 This yields a much more manageable global environment:
 
 ```{r}
+#| eval: false
+
 ls()
 ```
 
-![](../../src/images/global_environment_instruments_reduced.png){width="100%"}
+![](../../src/images/global_environment_instruments_reduced.png){width="100%" fig-alt="Global Environment after redundant names have been removed"}
 
-Though we've improved the organization of the global environment, we haven't really saved much in terms of memory allocation. That's because R only had to store the additional names of `four_instruments`, not copies of the data object itself. To save memory, we need to remove a name that is uniquely assigned to an object.
+Although we've improved the organization of the global environment, we haven't really saved much in terms of memory allocation. That's because R only had to store additional names, not copies of the data object itself. To save memory, we need to remove a name that is uniquely assigned to an object.
 
 ::: now_you
 {{< fa user-circle size=2x >}} [Use `rm()` to remove the assignment `hello` from your global environment.]{style="padding-left: 0.5em;"}
-
-```{r}
-#| edit: true
-#| min-lines: 3
-
-```
-:::
-
-<button class="accordion" style="margin-bottom: 1em;">Solution</button>
-::: panel
-
-```{r}
-rm(hello)
-```
-:::
-
-::: now_you
-{{< fa user-circle size=2x >}} [List the current files in the global environment.]{style="padding-left: 0.5em;"}
 
 ```{webr}
 #| edit: true
@@ -722,19 +695,41 @@ rm(hello)
 ::: panel
 
 ```{r}
+#| eval: false
+
+rm(hello)
+```
+:::
+
+::: now_you
+{{< fa user-circle size=2x >}} [List the current names in the global environment.]{style="padding-left: 0.5em;"}
+
+```{webr}
+#| edit: true
+#| min-lines: 3
+
+```
+:::
+
+<button class="accordion" style="margin-bottom: 1em;">Solution</button>
+::: panel
+
+```{r}
+#| eval: false
+
 ls()
 ```
 :::
 
 By removing the assignment `hello` above, the data object "hello world" was left without a reference in the global environment. Because of this, the data will be automatically removed from memory (*Note: This process is known as garbage collection*).
 
-![](../../src/images/my_object_instruments_enviro.png){width="100%"}
+![](../../src/images/my_object_instruments_enviro.png){width="100%" fig-alt="Global Environment after the hello name has been removed"}
 
 ::: mysecret
 {{< fa user-secret size=2x >}} [Some key rules regarding assignments]{style="font-size: 1.25em; padding-left: 0.5em;"}
 
 * Only define an object if you truly want to use it in the future.
-* Do not overwrite assignments (i.e., do not assign the same name to a modified version of an object)
+* Do not overwrite assignments (i.e., do not assign the same name to a modified version of an object).
 * Do not assign names to multiple versions of the same object (e.g., `fourInstruments` and `four_instruments`).
 :::
 
@@ -755,7 +750,7 @@ window.parsonsProblems = window.parsonsProblems || [];
 window.parsonsProblems.push({
   id: "p-0-2-03",
   maxDistractors: 2,
-  code: "hello &lt;- \"hello world\"\nhello\nrm(hello)\nrm(\"hello\") #distractor\n\"hello world\" &lt;- hello #distractor"
+  code: "hello &lt;- \"hello world\"\nhello\nrm(hello)\nhello() #distractor\nrm &lt;- hello #distractor"
 });
 </script>
 :::
@@ -767,7 +762,7 @@ window.parsonsProblems.push({
 
 1. Which of the following statements is TRUE?
 
-`r longmcq(c("An operator is not a function", "All functions are follow by parentheses", answer = "An R function is a type of object", "The arguments of a function cannot include more than one data object"))`
+`r longmcq(c("An operator is not a function", "All functions are followed by parentheses", answer = "An R function is a type of object", "The arguments of a function cannot include more than one data object"))`
 
 2. Consider the following code, then answer the questions that follow:
 
@@ -784,7 +779,7 @@ my_values <-
 
 `r longmcq(c("0", answer = "3", "1", "2"))`
 
-5. TRUE/FALSE: The above code should be written in the source pane.
+5. TRUE/FALSE: The above code should be written in the Source Pane.
 
 `r torf(TRUE)`
 :::
@@ -798,8 +793,8 @@ Here's the short version of what to carry forward from this lesson:
 * Whether a word needs quotes depends on how you want R to treat it: a bare word is a reference (a name R looks up in the environment), while a quoted word is treated as plain data.
 * Nested functions evaluate from the inside out, so the inner function (like `c()`) runs before the outer one (like `mean()`) ever sees its result.
 * Many functions take extra arguments that change their behavior -- `na.rm = TRUE` in `mean()` is the classic example, telling R to drop missing values before computing.
-* Install packages once with `install.packages()` (name in quotes, run from the console), but load them every session with `library()` (name unquoted, kept in your source pane). And watch out for the "package trap" -- don't collect a new package every time Stack Overflow suggests one.
-* Comment your code on the line *before* the code, with one space after the `#`, and name your objects in snake_case: all lowercase, no spaces, never starting with a number, and save the `.` for file extensions.
+* Install packages once with `install.packages()` (name in quotes, run from the Console Pane), but load them every session with `library()` (using the course's unquoted-name style and keeping the call in your Source Pane). And watch out for the "package trap" -- don't collect a new package every time Stack Overflow suggests one.
+* In this course, place explanatory comments on the line *before* the code, with one space after the `#`, and use snake_case for names: all lowercase, no spaces, and never starting with a number. Periods are valid in R names, but we will avoid them for consistency.
 * Keep your global environment tidy -- use `ls()` to see what's there and `rm()` to clear out names you no longer need. Once the last name pointing to an object is gone, garbage collection frees that object from memory.
 
 {{< include /src/includes/_reference_section.qmd >}}
