@@ -1,6 +1,8 @@
 project:
   type: default
   execute-dir: project
+  output-dir: out
+  output-dir: out
 
 engine: knitr
 
