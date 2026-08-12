@@ -13,7 +13,7 @@ lesson_refs$terms %>%
 
 <button class="accordion">Functions</button>
 ::: panel
-**Important!** Primitive functions as well as functions in the *base* and *graphics* packages are loaded by default when you start an R session.
+**Important!** Primitive functions, as well as functions in the packages that R attaches by default (e.g., *base*, *utils*, *stats*, and *graphics*), are available as soon as you start an R session.
 
 ::: function_table
 

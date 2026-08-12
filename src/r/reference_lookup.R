@@ -107,7 +107,6 @@ is_named_function <-
 operator_detection_token <-
   function(.function_name) {
     case_when(
-      .function_name == "(...)" ~ "(",
       .function_name == "[...]" ~ "[",
       .function_name == "[[...]]" ~ "[[",
       .function_name == "{...}" ~ "{",

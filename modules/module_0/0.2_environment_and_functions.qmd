@@ -37,7 +37,7 @@ In this lesson, you will learn:
 * How to install and load packages
 * Best practices for commenting your code, naming your objects, and managing your global environment
 
-[{{< fa exclamation-triangle size=2x >}} Important!]{style="color: red;"} This lesson assumes that you have completed [Preliminary Lesson 1: R & RStudio](0.1_intro_to_r_and_rstudio.qmd){target="_blank"}. As the material covered herein will build on the content in that lesson, please do not proceed until its completion.
+[{{< fa exclamation-triangle size=2x >}} Important!]{style="color: red;"} This lesson assumes that you have completed [Preliminary Lesson 1: R & RStudio](0.1_intro_to_r_and_rstudio.qmd){target="_blank"}. The material here builds on that lesson, so please complete it before moving on.
 
 </div>
 
@@ -75,11 +75,11 @@ In the diagram above, the "environment" (the gray box) associates names (white b
 
 ### 1.1 Assignment
 
-When you execute code in R, the objects returned are, by default, not stored by your system's memory. For example, run the following in your Console Pane:
+When you execute code in R, the objects returned are, by default, not maintained in your system's memory. For example, run the following in your Console Pane:
 
 ::: now_you
 ```{webr}
-"Hello world"
+"hello world"
 ```
 :::
 
@@ -113,7 +113,7 @@ Type `hello` in your Console Pane and run it to see what it returns.
 ::: mysecret
 {{< fa user-secret size=2x >}} [Watch how many names you have in your global environment!]{style="font-size: 1.25em; padding-left: 0.5em;"}
 
-Warning! Be aware of how many names are in your global environment. Each name represents an object that is stored in your system's memory -- an accumulation of objects can greatly reduce performance.
+Warning! Be aware of how many names are in your global environment. Each name represents an object that is stored in your system's memory -- an accumulation of large objects can reduce performance.
 :::
 
 ### 1.2 On the use of quotation marks
@@ -154,7 +154,7 @@ Single and double quotation marks can largely be used interchangeably for words 
 
 **Functions** are what data-wrangling guru Hadley Wickham calls the "fundamental building block of R". Functions are a special type of R object that contain instructions for executing a given task. Most computations in R involve one or more function calls.
 
-For example, you actually used an R function when you ran `1 + 2`. The plus sign is a special type of R function called an **operator**. An operator is a function that is expressed as a symbol.
+For example, you actually used an R function when you ran `1 + 1 + 2`. The plus sign is a special type of R function called an **operator**. An operator is a function that is expressed as a symbol.
 
 ### 2.1 Using a named function
 
@@ -187,7 +187,7 @@ Let's deconstruct the above:
 
 * `c()` is the R function used to combine multiple values into a single object.
 * The parentheses `(...)` enclose the arguments of `c()`, which here are the individual values to combine, and tell R to call the function.
-* The commas are syntax that separates the arguments of the function (*Note: commas are not functions*).
+* The commas are syntax that separate the arguments of the function.
 * The arguments of the function are the values that we would like to combine.
 
 ::: mysecret
@@ -198,7 +198,9 @@ When using commas to delineate a function's arguments, it's best practice to inc
 
 If we wanted to use this object in the future, we can assign a name using the `<-` operator:
 
-```{r}
+```{webr}
+#| autorun: true
+
 my_object <-
   c(1, 1, 2, 3)
 ```
@@ -243,21 +245,21 @@ It's *super important* to be able to read and understand R help files! When usin
 
 Functions can be nested inside other functions. In other words, you can run a function from within another function. This can help us avoid making unnecessary assignments.
 
-For example, we assigned our data object `c(1, 1, 2, 3)` to the name `my_object`. The function `mean` can be used to calculate the average of a set of values. Because R can use the name `my_object` to locate the data object from our system's memory, this could be written as:
+For example, we assigned our data object `c(1, 1, 2, 3)` to the name `my_object`. The function `mean()` can be used to calculate the average of a set of values. Because R can use the name `my_object` to locate the data object from our system's memory, this could be written as:
 
-```{r}
+```{webr}
 mean(my_object)
 ```
 
 Recall, however, the name is really just a reference point to the object. As such, the name associated with the object, `my_object`, can be used interchangeably with the code used to create it. In practice, this means that we can also calculate the mean of these values using:
 
-```{r}
+```{webr}
 mean(
   c(1, 1, 2, 3)
 )
 ```
 
-This is what's known as a **nested function** because `c()` is nested inside the parentheses of `mean()`. Remember the order of evaluation: `c()` must be evaluated before `mean()` can calculate the average.
+This is what's known as a **nested function** because `c()` is nested inside the parentheses of `mean()`. Note the order of evaluation: nested functions are evaluated from the inside out, so `c()` must be evaluated before `mean()` can calculate the average.
 
 ### 2.3 Arguments that modify a function's behavior
 
@@ -528,7 +530,9 @@ There are a few important rules to consider when assigning names to your global 
 
 It's important to assign names that convey meaning about the object. For example, let's define the instruments used in a rock band and assign the name `x` to the object:
 
-```{r}
+```{webr}
+#| autorun: true
+
 x <-
   c(
     "vocals",
@@ -558,7 +562,9 @@ In our hunt for a more communicative assignment, we might be tempted to start ou
 
 We get an error above because assignments cannot start with numbers. They can, however, include numbers in other locations:
 
-```{r}
+```{webr}
+#| autorun: true
+
 instruments4 <-
   x
 ```
@@ -567,7 +573,9 @@ instruments4 <-
 
 The name we assigned, `instruments4`, is perhaps not a great convention to describe this object. We want to limit the amount of thought that has to go into understanding what an assignment means. In this case, it's probably better to provide our number first and simply spell it out:
 
-```{r}
+```{webr}
+#| autorun: true
+
 fourinstruments <-
   x
 ```
@@ -592,21 +600,27 @@ To address our spacing issues, we must search for a different way to define the 
 
 * PascalCase (sometimes called UpperCamelCase):
 
-```{r}
+```{webr}
+#| autorun: true
+
 FourInstruments <-
   x
 ```
 
 * camelCase (sometimes called lowerCamelCase):
 
-```{r}
+```{webr}
+#| autorun: true
+
 fourInstruments <-
   x
 ```
 
 * snake_case:
 
-```{r}
+```{webr}
+#| autorun: true
+
 four_instruments <-
   x
 ```
@@ -635,9 +649,7 @@ Managing the names in your global environment helps you better organize your wor
 
 We can view these names with the function `ls()`:
 
-```{r}
-#| eval: false
-
+```{webr}
 ls()
 ```
 
@@ -657,9 +669,10 @@ Looks crazy, right? One glaring issue is that we have several different names as
 
 We can remove names from the global environment using the `rm()` function. Inside of the parentheses, we supply the names that we would like to remove, with each name separated by a comma.
 
-```{r}
+```{webr}
 rm(
   fourinstruments,
+  four_instruments,
   FourInstruments,
   instruments4,
   fourInstruments,
@@ -671,9 +684,7 @@ rm(
 
 This yields a much more manageable global environment:
 
-```{r}
-#| eval: false
-
+```{webr}
 ls()
 ```
 
@@ -764,22 +775,22 @@ window.parsonsProblems.push({
 
 `r longmcq(c("An operator is not a function", "All functions are followed by parentheses", answer = "An R function is a type of object", "The arguments of a function cannot include more than one data object"))`
 
-2. Consider the following code, then answer the questions that follow:
+Consider the following code, then answer the questions that follow:
 
 ```{r}
 my_values <-
   c(1, 1, 2 + 3)
 ```
 
-3. TRUE/FALSE: Upon execution, this code stores the data object in the global environment.
+2. TRUE/FALSE: Upon execution, the name `my_values` is added to the global environment, but the data object itself is stored in your system's memory.
 
-`r torf(FALSE)`
+`r torf(TRUE)`
 
-4. How many functions are present in the above code?
+3. How many functions are present in the above code?
 
 `r longmcq(c("0", answer = "3", "1", "2"))`
 
-5. TRUE/FALSE: The above code should be written in the Source Pane.
+4. TRUE/FALSE: The above code should be written in the Source Pane.
 
 `r torf(TRUE)`
 :::
