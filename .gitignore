@@ -14,6 +14,7 @@ pedagogical_additions/
 _reorg_to_delete
 _to_delete/
 hr/
+logistics/
 
 # macOS
 
@@ -26,5 +27,11 @@ hr/
 .quarto/
 
 /.quarto/
+.gitignore
 
 **/*.quarto_ipynb
+
+# Exclude *.html but roll out learning content as it's developed
+
+!modules/module_0/*/index.html
+!logistics/course_logistics/index.html
