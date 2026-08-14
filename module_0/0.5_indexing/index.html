@@ -33101,8 +33101,8 @@ eyJhdHRyIjp7ImVkaXQiOnRydWUsImV2YWwiOnRydWV9LCJjb2RlIjoic3RyKG15X29iamVjdCkifQ==
 <ol start="2" type="1">
 <li>Why can you write <code>my_data_frame$words</code> without quotes, while <code>my_object[[&quot;apple&quot;]]</code> requires them?</li>
 </ol>
-<div id="radio_SCMKXLLYRH" class="webex-radiogroup">
-<label><input type="radio" autocomplete="off" name="radio_SCMKXLLYRH" value="answer"> <span>$ treats the name on its right literally, whereas [[…]] requires a character index such as “apple”</span></label><label><input type="radio" autocomplete="off" name="radio_SCMKXLLYRH" value> <span>$ never needs quotes and [[…]] always does</span></label><label><input type="radio" autocomplete="off" name="radio_SCMKXLLYRH" value> <span>It is an arbitrary style choice</span></label><label><input type="radio" autocomplete="off" name="radio_SCMKXLLYRH" value> <span>Data frames cannot be indexed with quotes</span></label>
+<div id="radio_BVGAGPPTHJ" class="webex-radiogroup">
+<label><input type="radio" autocomplete="off" name="radio_BVGAGPPTHJ" value="answer"> <span>$ treats the name on its right literally, whereas [[…]] requires a character index such as “apple”</span></label><label><input type="radio" autocomplete="off" name="radio_BVGAGPPTHJ" value> <span>$ never needs quotes and [[…]] always does</span></label><label><input type="radio" autocomplete="off" name="radio_BVGAGPPTHJ" value> <span>It is an arbitrary style choice</span></label><label><input type="radio" autocomplete="off" name="radio_BVGAGPPTHJ" value> <span>Data frames cannot be indexed with quotes</span></label>
 </div>
 </div>
 </section>
@@ -33310,8 +33310,8 @@ eyJhdHRyIjp7ImVkaXQiOnRydWUsImV2YWwiOnRydWV9LCJjb2RlIjoiZmlsdGVyKG15X2RhdGFfZnJh
 <p>Notice that we simply wrote <code>bunnies</code>, not <code>my_data_frame$bunnies</code> or <code>my_data_frame[, &quot;bunnies&quot;]</code> – <code>filter()</code> already knows to look for <code>bunnies</code> <em>inside</em> <code>my_data_frame</code>, so there’s no need to tell it twice.</p>
 <div class="now_you">
 <p><i class="fa-solid fa-user-circle fa-2x" aria-label="user-circle"></i> <span style="padding-left: 0.5em;">Which tidyverse function subsets the ROWS of a data frame by condition?</span></p>
-<div id="radio_ZXRJTXOTXF" class="webex-radiogroup">
-<label><input type="radio" autocomplete="off" name="radio_ZXRJTXOTXF" value="answer"> <span>filter()</span></label><label><input type="radio" autocomplete="off" name="radio_ZXRJTXOTXF" value> <span>pluck()</span></label><label><input type="radio" autocomplete="off" name="radio_ZXRJTXOTXF" value> <span>which()</span></label><label><input type="radio" autocomplete="off" name="radio_ZXRJTXOTXF" value> <span>select()</span></label>
+<div id="radio_YRSDNFEWXB" class="webex-radiogroup">
+<label><input type="radio" autocomplete="off" name="radio_YRSDNFEWXB" value="answer"> <span>filter()</span></label><label><input type="radio" autocomplete="off" name="radio_YRSDNFEWXB" value> <span>pluck()</span></label><label><input type="radio" autocomplete="off" name="radio_YRSDNFEWXB" value> <span>which()</span></label><label><input type="radio" autocomplete="off" name="radio_YRSDNFEWXB" value> <span>select()</span></label>
 </div>
 </div>
 <p>We can filter on a character column the same way:</p>
@@ -33351,8 +33351,8 @@ eyJhdHRyIjp7ImVkaXQiOnRydWUsImV2YWwiOnRydWV9LCJjb2RlIjoiZmlsdGVyKFxuICBteV9kYXRh
 </div>
 <div class="now_you">
 <p><i class="fa-solid fa-user-circle fa-2x" aria-label="user-circle"></i> <span style="padding-left: 0.5em;">In base R, <code>my_data_frame[my_data_frame$bunnies &lt; 10, ]</code>, why must the condition be written as <code>my_data_frame$bunnies &lt; 10</code> rather than just <code>bunnies &lt; 10</code>?</span></p>
-<div id="radio_DRLKWHWLLX" class="webex-radiogroup">
-<label><input type="radio" autocomplete="off" name="radio_DRLKWHWLLX" value="answer"> <span>The logical test must be able to run in isolation, and bunnies does not exist in the global environment</span></label><label><input type="radio" autocomplete="off" name="radio_DRLKWHWLLX" value> <span>Base R requires $ in every expression</span></label><label><input type="radio" autocomplete="off" name="radio_DRLKWHWLLX" value> <span>It forces column selection</span></label><label><input type="radio" autocomplete="off" name="radio_DRLKWHWLLX" value> <span>bunnies is a reserved word</span></label>
+<div id="radio_STTNHUYCQC" class="webex-radiogroup">
+<label><input type="radio" autocomplete="off" name="radio_STTNHUYCQC" value="answer"> <span>The logical test must be able to run in isolation, and bunnies does not exist in the global environment</span></label><label><input type="radio" autocomplete="off" name="radio_STTNHUYCQC" value> <span>Base R requires $ in every expression</span></label><label><input type="radio" autocomplete="off" name="radio_STTNHUYCQC" value> <span>It forces column selection</span></label><label><input type="radio" autocomplete="off" name="radio_STTNHUYCQC" value> <span>bunnies is a reserved word</span></label>
 </div>
 </div>
 <div class="mysecret">
@@ -33414,7 +33414,7 @@ Solution
 <section id="exercise-2" class="level3">
 <h3 class="anchored" data-anchor-id="exercise-2">Exercise</h3>
 <div class="now_you">
-<p><i class="fa-solid fa-user-circle fa-2x" aria-label="user-circle"></i> <span style="padding-left: 0.5em;">Use <code>filter()</code> to subset <code>my_list[[3]]</code> (<em>Hint: You could also use <code>pluck()</code> to extract this list item!</em>) to rows where <code>words</code> contains the value “hello”.</span></p>
+<p><i class="fa-solid fa-user-circle fa-2x" aria-label="user-circle"></i> <span style="padding-left: 0.5em;">Use <code>filter()</code> to subset <code>my_list[[3]]</code> to rows where <code>words</code> contains the value “hello”.</span></p>
 <div class="cell" data-edit="true" data-min-lines="6">
 <div>
 <div id="webr-62" class="exercise-cell">
@@ -33435,7 +33435,7 @@ Solution
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  my_data_frame</span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="fu">filter</span>(</span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pluck</span>(my_list, <span class="dv">3</span>),</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>  my_list[<span class="dv">3</span>, ],</span>
 <span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>  words <span class="sc">==</span> <span class="st">&quot;hello&quot;</span></span>
 <span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
@@ -33443,7 +33443,7 @@ Solution
 <div class="now_you">
 <p><i class="fa-solid fa-user-circle fa-2x" aria-label="user-circle"></i> <span style="padding-left: 0.5em;">Test your knowledge!</span></p>
 <ol type="1">
-<li>Parsons Problem: Reorder the lines below to assign <code>my_data_frame</code> into <code>my_list[[3]]</code>, then pluck it back out and filter it to rows where <code>words</code> is <code>&quot;hello&quot;</code>. One line doesn’t belong – leave it in the trash.</li>
+<li>Parsons Problem: Reorder the lines below to assign the third position of <code>my_list</code> as the object <code>my_data_frame</code>, then pluck it back out and filter it to rows where <code>words</code> is <code>&quot;hello&quot;</code>. One line doesn’t belong – leave it in the trash.</li>
 </ol>
 <div class="parsons-problem">
 <div id="p-0-5-03-trash" class="sortable-code">
@@ -33475,8 +33475,8 @@ window.parsonsProblems.push({
 <ol start="2" type="1">
 <li>Which of the following is TRUE about recursive data objects?</li>
 </ol>
-<div id="radio_MPTNWQMDOM" class="webex-radiogroup">
-<label><input type="radio" autocomplete="off" name="radio_MPTNWQMDOM" value> <span>The atomic matrix used in this lesson is a recursive object</span></label><label><input type="radio" autocomplete="off" name="radio_MPTNWQMDOM" value="answer"> <span>A data frame is a type of recursive object</span></label><label><input type="radio" autocomplete="off" name="radio_MPTNWQMDOM" value> <span>Quotation marks must be used when calling names assigned within an object</span></label><label><input type="radio" autocomplete="off" name="radio_MPTNWQMDOM" value> <span>The values of recursive objects are stored within the object itself</span></label>
+<div id="radio_KVMKHFFYEV" class="webex-radiogroup">
+<label><input type="radio" autocomplete="off" name="radio_KVMKHFFYEV" value> <span>The atomic matrix used in this lesson is a recursive object</span></label><label><input type="radio" autocomplete="off" name="radio_KVMKHFFYEV" value="answer"> <span>A data frame is a type of recursive object</span></label><label><input type="radio" autocomplete="off" name="radio_KVMKHFFYEV" value> <span>Quotation marks must be used when calling names assigned within an object</span></label><label><input type="radio" autocomplete="off" name="radio_KVMKHFFYEV" value> <span>The values of recursive objects are stored within the object itself</span></label>
 </div>
 </div>
 </section>
