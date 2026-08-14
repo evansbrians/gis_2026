@@ -33056,36 +33056,6 @@ eyJhdHRyIjp7ImF1dG9ydW4iOnRydWUsImVkaXQiOnRydWUsImV2YWwiOnRydWV9LCJjb2RlIjoiXG5t
 </script>
 </div>
 </div>
-<div class="now_you">
-<p><i class="fa-solid fa-user-circle fa-2x" aria-label="user-circle"></i> <span style="padding-left: 0.5em;">Parsons Problem: Reorder the lines below to add a <code>bunnies</code> column to <code>my_data_frame</code>, then overwrite just its 3rd and 4th values. One line doesn’t belong – leave it in the trash.</span></p>
-<div class="parsons-problem">
-<div id="p-0-5-01-trash" class="sortable-code">
-
-</div>
-<div id="p-0-5-01-sortable" class="sortable-code">
-
-</div>
-<div style="clear: both;">
-
-</div>
-<button id="p-0-5-01-check" class="parsons-btn parsons-btn-check" type="button">
-Check My Order
-</button>
-<button id="p-0-5-01-reset" class="parsons-btn parsons-btn-reset" type="button">
-Shuffle Again
-</button>
-<p id="p-0-5-01-feedback" class="parsons-feedback">
-</p>
-</div>
-<script>
-window.parsonsProblems = window.parsonsProblems || [];
-window.parsonsProblems.push({
-  id: "p-0-5-01",
-  maxDistractors: 1,
-  code: "my_data_frame$bunnies &lt;-\n  c(1, 1, 2, 3)\nmy_data_frame$bunnies[3:4] &lt;-\n  c(13, 21)\nmy_data_frame\nmy_data_frame$bunnies &lt;-\n  c(13, 21) #distractor"
-});
-</script>
-</div>
 <section id="what-about-atomic-objects" class="level4">
 <h4 class="anchored" data-anchor-id="what-about-atomic-objects">What about atomic objects?</h4>
 <p>Can we use <code>$</code> with an atomic vector?</p>
@@ -33131,8 +33101,8 @@ eyJhdHRyIjp7ImVkaXQiOnRydWUsImV2YWwiOnRydWV9LCJjb2RlIjoic3RyKG15X29iamVjdCkifQ==
 <ol start="2" type="1">
 <li>Why can you write <code>my_data_frame$words</code> without quotes, while <code>my_object[[&quot;apple&quot;]]</code> requires them?</li>
 </ol>
-<div id="radio_HUVTLMKBHQ" class="webex-radiogroup">
-<label><input type="radio" autocomplete="off" name="radio_HUVTLMKBHQ" value="answer"> <span>$ treats the name on its right literally, whereas [[…]] requires a character index such as “apple”</span></label><label><input type="radio" autocomplete="off" name="radio_HUVTLMKBHQ" value> <span>$ never needs quotes and [[…]] always does</span></label><label><input type="radio" autocomplete="off" name="radio_HUVTLMKBHQ" value> <span>It is an arbitrary style choice</span></label><label><input type="radio" autocomplete="off" name="radio_HUVTLMKBHQ" value> <span>Data frames cannot be indexed with quotes</span></label>
+<div id="radio_SCMKXLLYRH" class="webex-radiogroup">
+<label><input type="radio" autocomplete="off" name="radio_SCMKXLLYRH" value="answer"> <span>$ treats the name on its right literally, whereas [[…]] requires a character index such as “apple”</span></label><label><input type="radio" autocomplete="off" name="radio_SCMKXLLYRH" value> <span>$ never needs quotes and [[…]] always does</span></label><label><input type="radio" autocomplete="off" name="radio_SCMKXLLYRH" value> <span>It is an arbitrary style choice</span></label><label><input type="radio" autocomplete="off" name="radio_SCMKXLLYRH" value> <span>Data frames cannot be indexed with quotes</span></label>
 </div>
 </div>
 </section>
@@ -33340,8 +33310,8 @@ eyJhdHRyIjp7ImVkaXQiOnRydWUsImV2YWwiOnRydWV9LCJjb2RlIjoiZmlsdGVyKG15X2RhdGFfZnJh
 <p>Notice that we simply wrote <code>bunnies</code>, not <code>my_data_frame$bunnies</code> or <code>my_data_frame[, &quot;bunnies&quot;]</code> – <code>filter()</code> already knows to look for <code>bunnies</code> <em>inside</em> <code>my_data_frame</code>, so there’s no need to tell it twice.</p>
 <div class="now_you">
 <p><i class="fa-solid fa-user-circle fa-2x" aria-label="user-circle"></i> <span style="padding-left: 0.5em;">Which tidyverse function subsets the ROWS of a data frame by condition?</span></p>
-<div id="radio_XSPVPNMLHQ" class="webex-radiogroup">
-<label><input type="radio" autocomplete="off" name="radio_XSPVPNMLHQ" value="answer"> <span>filter()</span></label><label><input type="radio" autocomplete="off" name="radio_XSPVPNMLHQ" value> <span>pluck()</span></label><label><input type="radio" autocomplete="off" name="radio_XSPVPNMLHQ" value> <span>which()</span></label><label><input type="radio" autocomplete="off" name="radio_XSPVPNMLHQ" value> <span>select()</span></label>
+<div id="radio_ZXRJTXOTXF" class="webex-radiogroup">
+<label><input type="radio" autocomplete="off" name="radio_ZXRJTXOTXF" value="answer"> <span>filter()</span></label><label><input type="radio" autocomplete="off" name="radio_ZXRJTXOTXF" value> <span>pluck()</span></label><label><input type="radio" autocomplete="off" name="radio_ZXRJTXOTXF" value> <span>which()</span></label><label><input type="radio" autocomplete="off" name="radio_ZXRJTXOTXF" value> <span>select()</span></label>
 </div>
 </div>
 <p>We can filter on a character column the same way:</p>
@@ -33381,8 +33351,8 @@ eyJhdHRyIjp7ImVkaXQiOnRydWUsImV2YWwiOnRydWV9LCJjb2RlIjoiZmlsdGVyKFxuICBteV9kYXRh
 </div>
 <div class="now_you">
 <p><i class="fa-solid fa-user-circle fa-2x" aria-label="user-circle"></i> <span style="padding-left: 0.5em;">In base R, <code>my_data_frame[my_data_frame$bunnies &lt; 10, ]</code>, why must the condition be written as <code>my_data_frame$bunnies &lt; 10</code> rather than just <code>bunnies &lt; 10</code>?</span></p>
-<div id="radio_GBTTBRMDVM" class="webex-radiogroup">
-<label><input type="radio" autocomplete="off" name="radio_GBTTBRMDVM" value="answer"> <span>The logical test must be able to run in isolation, and bunnies does not exist in the global environment</span></label><label><input type="radio" autocomplete="off" name="radio_GBTTBRMDVM" value> <span>Base R requires $ in every expression</span></label><label><input type="radio" autocomplete="off" name="radio_GBTTBRMDVM" value> <span>It forces column selection</span></label><label><input type="radio" autocomplete="off" name="radio_GBTTBRMDVM" value> <span>bunnies is a reserved word</span></label>
+<div id="radio_DRLKWHWLLX" class="webex-radiogroup">
+<label><input type="radio" autocomplete="off" name="radio_DRLKWHWLLX" value="answer"> <span>The logical test must be able to run in isolation, and bunnies does not exist in the global environment</span></label><label><input type="radio" autocomplete="off" name="radio_DRLKWHWLLX" value> <span>Base R requires $ in every expression</span></label><label><input type="radio" autocomplete="off" name="radio_DRLKWHWLLX" value> <span>It forces column selection</span></label><label><input type="radio" autocomplete="off" name="radio_DRLKWHWLLX" value> <span>bunnies is a reserved word</span></label>
 </div>
 </div>
 <div class="mysecret">
@@ -33505,8 +33475,8 @@ window.parsonsProblems.push({
 <ol start="2" type="1">
 <li>Which of the following is TRUE about recursive data objects?</li>
 </ol>
-<div id="radio_VIQDZIFSZZ" class="webex-radiogroup">
-<label><input type="radio" autocomplete="off" name="radio_VIQDZIFSZZ" value> <span>The atomic matrix used in this lesson is a recursive object</span></label><label><input type="radio" autocomplete="off" name="radio_VIQDZIFSZZ" value="answer"> <span>A data frame is a type of recursive object</span></label><label><input type="radio" autocomplete="off" name="radio_VIQDZIFSZZ" value> <span>Quotation marks must be used when calling names assigned within an object</span></label><label><input type="radio" autocomplete="off" name="radio_VIQDZIFSZZ" value> <span>The values of recursive objects are stored within the object itself</span></label>
+<div id="radio_MPTNWQMDOM" class="webex-radiogroup">
+<label><input type="radio" autocomplete="off" name="radio_MPTNWQMDOM" value> <span>The atomic matrix used in this lesson is a recursive object</span></label><label><input type="radio" autocomplete="off" name="radio_MPTNWQMDOM" value="answer"> <span>A data frame is a type of recursive object</span></label><label><input type="radio" autocomplete="off" name="radio_MPTNWQMDOM" value> <span>Quotation marks must be used when calling names assigned within an object</span></label><label><input type="radio" autocomplete="off" name="radio_MPTNWQMDOM" value> <span>The values of recursive objects are stored within the object itself</span></label>
 </div>
 </div>
 </section>
