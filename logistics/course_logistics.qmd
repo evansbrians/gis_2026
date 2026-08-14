@@ -1,0 +1,136 @@
+---
+title: "Course logistics"
+format:
+  html:
+    embed-resources: true
+    self-contained: true
+    standalone: true
+    toc: true
+    toc-location: left
+    number-sections: false
+    search: true
+    include-in-header:
+      text: |
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+        <link rel="icon" type="image/png" href="../src/images/hex_icon.png" />
+        <script src="https://kit.fontawesome.com/03064bdd6c.js" crossorigin="anonymous"></script>
+    include-after-body:
+      text: |
+        <script src="../src/js/accordion.js"></script>
+    theme:
+      - cosmo
+      - ../src/css/custom_style.scss
+editor: source
+editor_options:
+  chunk_output_type: console
+---
+
+<hr>
+
+![](../src/images/gis_logo.png){.gis_logo}
+
+Welcome to **GIS in R: Fundamentals and applications for ecologists**! Please read this logistics document carefully and often, as this is a handy guide for how to navigate course content.
+
+For further detail on course requirements, policies, grading criteria, and logistics, please visit the course syllabus for your section.
+
+## Course schedule {.unnumbered}
+
+This course is divided into eight learning modules that will first ensure that you have a solid foundation in coding in the tidyverse and then apply that foundation to using R as a GIS (while continuing to enhance your tidyverse skills!). Each module is comprised of a series of html files that contain instructions, links, and videos. Course modules include:
+
+-   **Module 1: Foundations**  (25 - 31 Aug): We will lay the foundations for your success in this course!
+-   **Module 2: The tidyverse** (1 - 7 Sep): You will learn the primary tidyverse tools for managing and visualizing ecological data.
+-   **Module 3: Introduction to shapefiles** (8 - 14 Sep): This module is our first foray in using R as a GIS and explores creating and using shapefiles with the *sf* package.
+-   **Module 4: Programming in R and introduction to tmap**  (15 - 21 Sep): How to create custom functions, use iteration (with *purrr*) to improve your programming workflow, and generate high quality static and interactive maps with *tmap*.
+-   **Module 5: Advanced shapefiles and introduction to rasters** (22 - 28 Sep): This module explores geometric operations with shapefiles and provides an introduction to using rasters (i.e., continuous surfaces) with the *terra* package.
+-   **Module 6: Categorizing vectors, shapefiles, and rasters**  (29 Sep - 5 Oct): This week will be all about classifying data (i.e., defining categories for continuous data or reclassifying categorical data). We will work with non-spatial data at first and then apply those concepts to shapefiles and rasters at the end of the module.
+-   **Module 7: Advanced rasters and spatial patterns** (6 - 12 Oct): We will push the envelope a bit further by addressing concepts such as conducting terrain analyses of raster data, deriving density and distance rasters, and toe-dipping into the all-important concept of spatial autocorrelation.
+-   **Module 8: Communicating data with Quarto and Shiny** (*Optional*; 13 - 19 Oct): The final module of this course will provide tools for sharing data products. You will learn how to communicate data by creating static (*Quarto*) and interactive (*Shiny*) web pages. *Note: As an optional module, you will not be evaluated on the content herein.*
+
+## Saving course material {.unnumbered}
+
+You will continue to have access to the Canvas site for this course for a minimum of 6 months after the course has ended. All of the html files in this course can be saved for offline use as PDF documents (e.g., here is how to do so in [Chrome](https://www.tomsguide.com/how-to/how-to-save-a-web-page-as-a-pdf){target="_blank"}) or html files (e.g., how to save websites in [Chrome](https://support.google.com/chrome/answer/7343019?hl=en&co=GENIE.Platform%3DDesktop){target="_blank"} and [Safari](https://support.apple.com/guide/safari/keep-a-reading-list-sfri35905/16.1/mac/13.0){target="_blank"}). Most lessons contain interactive content, so I strongly recommend saving html versions of the content.
+
+## The Discussion Board {.unnumbered}
+
+The discussion board is really the heart-and-soul of this course. Here, you will have the opportunity to develop your understanding further by engaging in peer-to-peer learning. Moreover, consulting with your peers can be a great time-saver when you’re stuck on a question! We will check the discussion board often but will only weigh in if we feel that a question was left unaddressed for too long, a question was inadequately addressed, or if a provided answer was incorrect.
+
+In writing a post on the discussion board, please adhere to the following:
+
+-   Lead each discussion board thread with a question or request for input from your peers, not a comment.
+-   Be specific! Your questions should target specific issues that you are experiencing (either conceptually or in practice).
+-   When posting or answering a question regarding a weekly problem set, do not include your code for the question – instead, come up with an example dataset that mimics the problem you are experiencing. Any question or answer that includes homework code will be deleted.
+-   "Trolling" will not be tolerated. We expect everyone in this course to treat each other (and us) respectfully – any posts that we perceive to be in violation of this will be deleted.
+
+To get the most out of sharing code in the discussion board, we strongly recommend using Canvas’s tool for inputting code. To do so, click the button {;} (choose any code language you like … they don’t have R). If you do not see the code button, click the ellipses (…) to view more formatting options.
+
+For more information on how to ask a good question, this guide from Stack Overflow may help: [https://stackoverflow.com/help/how-to-ask](https://stackoverflow.com/help/how-to-ask){target="_blank"}.
+
+## Meeting Schedule {.unnumbered}
+
+Please ensure that your camera is on during all video meetings.
+
+| Meeting         |    Day    |    Time\*     |                                                  Zoom                                                   | Primary goal                             |
+|---------------|:-------------:|:-------------:|:-------------:|---------------|
+| Review session  |  Mondays  | 10:30 - 11:45 | [Link](https://smithsonian.zoom.us/j/85331426725?pwd=aXLbaMUMYCbnWK0zCdX4r18NBRXLFR.1){target="_blank"} | Review problem set key                   |
+| Office hours^†^ | Thursdays | 08:00 - 09:30 | [Link](https://smithsonian.zoom.us/j/89623119028?pwd=uxgPBnsrO30LdsclWuazl0XQXw2w5g.1){target="_blank"} | Course-relevant, one-on-one help session |
+| Q & A session   |  Fridays  | 10:45 - 11:30 | [Link](https://smithsonian.zoom.us/j/84104276219?pwd=Ab9SqxqsonbGFlNW6nhphRM1qQZzwK.1){target="_blank"} | Address questions regarding problem sets |
+| Office hours^†^ |  Fridays  | 13:30 - 14:45 | [Link](https://smithsonian.zoom.us/j/82588103885?pwd=OKVaBVepxaPYFAvERiEINb1jbSubVe.1){target="_blank"} | Course-relevant, one-on-one help session |
+
+[\* All times are Eastern Time (ET)]{style="padding-top:0em;"}\
+^†^ See [Office hours](#sec-officehrs), below, for details
+
+## Live Classroom Sessions {.unnumbered}
+
+### Weekly Review Sessions {.unnumbered}
+
+-   **When**: Mondays from 10:30-11:45 ET.
+-   **Review session link** (Zoom): Click [this link](https://smithsonian.zoom.us/j/85331426725?pwd=aXLbaMUMYCbnWK0zCdX4r18NBRXLFR.1){target="_blank"} to join the review session.
+-   **Purpose**: We will review the answers to the problem set that was due on the previous night. We will typically go over questions that students had difficulty with and then open the floor for further questions. Please feel free to ask questions throughout! Note: The first weekly review session will be dedicated to introducing the course.
+-   **Can’t make it?** We will post videos of these sessions on the following Tuesday morning.
+
+### Question & Answer Sessions {.unnumbered}
+
+-   **When**: Fridays from 10:45-11:30 ET.
+-   **Q & A session link** (Zoom): Click [this link](https://smithsonian.zoom.us/j/84104276219?pwd=Ab9SqxqsonbGFlNW6nhphRM1qQZzwK.1){target="_blank"} to join the Q & A session.
+-   **Purpose**: We will address any questions you may have for the current problem set. This session is guided by you, so please come prepared to ask questions! When all questions for the current problem set have been addressed, we will open the floor for additional questions.
+-   **Can’t make it?** If you can’t make it to the session, please be sure to post questions in the discussion board. We will post videos of these sessions on the following Saturday morning.
+
+## Office Hours {#sec-officehrs .unnumbered}
+
+Office hours are your opportunity to get one-on-one help from your professors. At least initially, please limit office hours to content relating to the course – we are happy to help you address problems in your personal data sets as we near the end of the course.
+
+-   **When**: Office hours are on Thursdays, from 08:00-09:30 ET and Fridays, from 13:30-14:45 ET.
+-   **Signing up for office hours**: Office hours are by appointment only. Please sign up for your appointment at [this link](https://docs.google.com/spreadsheets/d/1GjALqK3jdjjrVjapRY6tMVJmHa8dcrKvbNyGHYP91cQ/edit?usp=sharing){target="_blank"}.
+-   **Office hours link**: Please use the links in the table above or in the office hours spreadsheet to sign into your office hour session.
+-   **Important notes regarding signing up for office hours**:
+    -   Please do not sign up for sessions more than 7 days in advance.
+    -   You must sign up for your session no later than the previous day.
+    -   Each office hour session is 15 minutes.
+    -   Please do not sign up for more than one session on a given day. Your time can be extended if no one has reserved the time slot after yours.
+
+## Problem Sets {.unnumbered}
+
+Weekly problem sets will be provided to you as html documents and R script files. Problem sets will be posted by 08:00 ET on Monday mornings and are due at 23:59 ET on the following Sunday night. We will post the answer key to the problem sets at 00:01 ET on Monday mornings – as such, no late work will be accepted.
+
+### Grading {.unnumbered}
+
+The grading rubric for each problem set will be provided to you within the problem set itself. As this is a coding class, you may lose considerable points even though your code produces the correct answer! To avoid this, please be sure to review the scoring penalties associated with each problem set. Of note:
+
+-   You will be given a list of “**functions that you may use in this assignment**” that includes operators (e.g., \[x, …\]), named R functions (e.g., c(x, …)), and functions from community packages (e.g., dplyr::filter(x, …)). This is intended to help you with your problem set, but you will incur a major point deduction for using functions outside of the approved list!
+-   **Global assignments** are rare in proper tidyverse coding – unless explicitly approved for a given question, assigning objects to the global environment unnecessarily will result in a major point reduction!
+-   **Improper code formatting** (e.g., spacing and indentation) will result in small deductions to the allotted points.
+
+**A note on problem sets**: While completing the weekly problem sets can sometimes take considerable time, the difficulty of each question varies. For example, you will be given points for each problem set simply for saving the document and adding your name as instructed (avoid losing these points!). Most of the questions will then ask you to apply existing code from the lectures and tutorials to a new dataset. One or two questions per problem set will ask that you integrate knowledge across the content provided thus far.
+
+### Final Problem Set {.unnumbered}
+
+At the end of this course you will complete a *final problem set* that will be provided to you as an html document and R script file. The material covered in the problem set will be comprehensive and may draw from any content across the lessons in this course. The final problem set will be made available to you no less than two weeks prior to its due date (**19 Oct**). Students who wish to earn a course certificate must score 70% or higher on the final problem set.
+
+## Contacting Us {.unnumbered}
+
+We may only be directly contacted via email. **Do not use the email system within Canvas, as this sends your messages to an unattended mailbox**. We will answer your emails within 24 hours. You can reach us at:
+
+-   Brian Evans (instructor): [evansbr\@si.edu](mailto:evansbr@si.edu)\
+-   Joseph Kolowski (co-instructor/course logistics): [kolowskij\@si.edu](mailto:kolowskij@si.edu)
+
+**Important**! For questions regarding clarification of code or methodology, please consult with your peers using the Canvas discussion board! This is meant to be a peer-to-peer learning device -- we will monitor the discussion board but will only weigh in if/when we deem it necessary.
