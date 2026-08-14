@@ -34,4 +34,4 @@ logistics/
 # Exclude *.html but roll out learning content as it's developed
 
 !modules/module_0/*/index.html
-!logistics/course_logistics/index.html
+!logistics/index.html
