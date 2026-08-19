@@ -37,14 +37,14 @@ For further detail on course requirements, policies, grading criteria, and logis
 
 This course is divided into eight learning modules that will first ensure that you have a solid foundation in coding in the tidyverse and then apply that foundation to using R as a GIS (while continuing to enhance your tidyverse skills!). Each module is comprised of a series of html files that contain instructions, links, and videos. Course modules include:
 
--   **Module 1: Foundations**  (25 - 31 Aug): We will lay the foundations for your success in this course!
--   **Module 2: The tidyverse** (1 - 7 Sep): You will learn the primary tidyverse tools for managing and visualizing ecological data.
--   **Module 3: Introduction to shapefiles** (8 - 14 Sep): This module is our first foray in using R as a GIS and explores creating and using shapefiles with the *sf* package.
--   **Module 4: Programming in R and introduction to tmap**  (15 - 21 Sep): How to create custom functions, use iteration (with *purrr*) to improve your programming workflow, and generate high quality static and interactive maps with *tmap*.
--   **Module 5: Advanced shapefiles and introduction to rasters** (22 - 28 Sep): This module explores geometric operations with shapefiles and provides an introduction to using rasters (i.e., continuous surfaces) with the *terra* package.
--   **Module 6: Categorizing vectors, shapefiles, and rasters**  (29 Sep - 5 Oct): This week will be all about classifying data (i.e., defining categories for continuous data or reclassifying categorical data). We will work with non-spatial data at first and then apply those concepts to shapefiles and rasters at the end of the module.
--   **Module 7: Advanced rasters and spatial patterns** (6 - 12 Oct): We will push the envelope a bit further by addressing concepts such as conducting terrain analyses of raster data, deriving density and distance rasters, and toe-dipping into the all-important concept of spatial autocorrelation.
--   **Module 8: Communicating data with Quarto and Shiny** (*Optional*; 13 - 19 Oct): The final module of this course will provide tools for sharing data products. You will learn how to communicate data by creating static (*Quarto*) and interactive (*Shiny*) web pages. *Note: As an optional module, you will not be evaluated on the content herein.*
+-   **Module 1: Foundations**  (24-30 Aug): We will lay the foundations for your success in this course!
+-   **Module 2: The tidyverse** (31 Aug-6 Sep): You will learn the primary tidyverse tools for managing and visualizing ecological data.
+-   **Module 3: Introduction to shapefiles** (7-13 Sep): This module is our first foray in using R as a GIS and explores creating and using shapefiles with the *sf* package.
+-   **Module 4: Programming in R and introduction to tmap**  (14-20 Sep): How to create custom functions, use iteration (with *purrr*) to improve your programming workflow, and generate high quality static and interactive maps with *tmap*.
+-   **Module 5: Advanced shapefiles and introduction to rasters** (21-27 Sep): This module explores geometric operations with shapefiles and provides an introduction to using rasters (i.e., continuous surfaces) with the *terra* package.
+-   **Module 6: Categorizing vectors, shapefiles, and rasters**  (28 Sep-4 Oct): This week will be all about classifying data (i.e., defining categories for continuous data or reclassifying categorical data). We will work with non-spatial data at first and then apply those concepts to shapefiles and rasters at the end of the module.
+-   **Module 7: Advanced rasters and spatial patterns** (5-11 Oct): We will push the envelope a bit further by addressing concepts such as conducting terrain analyses of raster data, deriving density and distance rasters, and toe-dipping into the all-important concept of spatial autocorrelation.
+-   **Module 8: Communicating data with Quarto and Shiny** (*Optional*; 12-18 Oct): The final module of this course will provide tools for sharing data products. You will learn how to communicate data by creating static (*Quarto*) and interactive (*Shiny*) web pages. *Note: As an optional module, you will not be evaluated on the content herein.*
 
 ## Saving course material {.unnumbered}
 
