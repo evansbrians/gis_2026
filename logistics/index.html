@@ -2189,13 +2189,13 @@ vertical-align: -.125em;
   <li><a href="#the-discussion-board" id="toc-the-discussion-board" class="nav-link" data-scroll-target="#the-discussion-board">The Discussion Board</a></li>
   <li><a href="#meeting-schedule" id="toc-meeting-schedule" class="nav-link" data-scroll-target="#meeting-schedule">Meeting Schedule</a></li>
   <li><a href="#live-classroom-sessions" id="toc-live-classroom-sessions" class="nav-link" data-scroll-target="#live-classroom-sessions">Live Classroom Sessions</a>
-  <ul class="collapse">
+  <ul>
   <li><a href="#weekly-review-sessions" id="toc-weekly-review-sessions" class="nav-link" data-scroll-target="#weekly-review-sessions">Weekly Review Sessions</a></li>
   <li><a href="#question-answer-sessions" id="toc-question-answer-sessions" class="nav-link" data-scroll-target="#question-answer-sessions">Question &amp; Answer Sessions</a></li>
   </ul></li>
   <li><a href="#sec-officehrs" id="toc-sec-officehrs" class="nav-link" data-scroll-target="#sec-officehrs">Office Hours</a></li>
   <li><a href="#problem-sets" id="toc-problem-sets" class="nav-link" data-scroll-target="#problem-sets">Problem Sets</a>
-  <ul class="collapse">
+  <ul>
   <li><a href="#grading" id="toc-grading" class="nav-link" data-scroll-target="#grading">Grading</a></li>
   <li><a href="#final-problem-set" id="toc-final-problem-set" class="nav-link" data-scroll-target="#final-problem-set">Final Problem Set</a></li>
   </ul></li>
@@ -2323,7 +2323,7 @@ vertical-align: -.125em;
 <h3 class="unnumbered anchored" data-anchor-id="question-answer-sessions">Question &amp; Answer Sessions</h3>
 <ul>
 <li><strong>When</strong>: Fridays from 10:45-11:30 ET.</li>
-<li><strong>Q &amp; A session link</strong> (Zoom): Click <a href="ttps://smithsonian.zoom.us/j/86112628050?pwd=ytkS0DR1AQlngCPXWC2Sbk2pOvoIIz.1" target="_blank">this link</a> to join the Q &amp; A session.</li>
+<li><strong>Q &amp; A session link</strong> (Zoom): Click <a href="https://smithsonian.zoom.us/j/86112628050?pwd=ytkS0DR1AQlngCPXWC2Sbk2pOvoIIz.1" target="_blank">this link</a> to join the Q &amp; A session.</li>
 <li><strong>Purpose</strong>: We will address any questions you may have for the current problem set. This session is guided by you, so please come prepared to ask questions! When all questions for the current problem set have been addressed, we will open the floor for additional questions.</li>
 <li><strong>Can’t make it?</strong> If you can’t make it to the session, please be sure to post questions in the discussion board. We will post videos of these sessions on the following Saturday morning.</li>
 </ul>
@@ -2377,6 +2377,280 @@ vertical-align: -.125em;
 </main>
 <!-- /main column -->
 <script src="../../src/js/accordion.js"></script>
+<style>
+img.zoomable { cursor: zoom-in; }
+img.zoomable:focus-visible { outline: 3px solid #292093; outline-offset: 3px; }
+.figure-modal {
+position: fixed; inset: 0; z-index: 2000;
+background: rgba(20, 22, 40, 0.72);
+display: none; align-items: center; justify-content: center;
+}
+.figure-modal.is-open { display: flex; }
+.figure-modal__panel {
+background: #ffffff; border-radius: 10px;
+width: 90vw; max-height: 94vh;
+display: flex; flex-direction: column;
+box-shadow: 0 12px 40px rgba(0, 0, 0, 0.35);
+}
+.figure-modal__bar {
+display: flex; align-items: center; gap: 0.75rem;
+padding: 0.6rem 0.9rem; border-bottom: 1px solid #dbe4ff;
+}
+.figure-modal__title {
+margin-right: auto; font-weight: 700; color: #292093; font-size: 1rem;
+}
+.figure-modal__btn {
+font: inherit; font-size: 0.9rem; line-height: 1.2;
+border: 1px solid #292093; border-radius: 6px;
+background: #eaf0ff; color: #292093;
+padding: 0.4rem 0.75rem; cursor: pointer; text-decoration: none;
+}
+.figure-modal__btn:hover { background: #dbe4ff; }
+.figure-modal__close { border-color: #b9b9c9; background: #ffffff; color: #333333; }
+.figure-modal__body { overflow: auto; padding: 1rem; }
+.figure-modal__body img { width: 100%; height: auto; display: block; }
+</style>
+
+<script>
+// Click a figure marked .zoomable to open it in a wide modal.
+// Optional attributes on the image:
+//   data-title    -- heading shown in the modal bar
+//   data-pdf-key  -- key into window.figurePdfs, giving a PDF for the download button
+(function () {
+  if (window.__figureModalReady) return;   // safe if included more than once
+  window.__figureModalReady = true;
+
+  function init() {
+    var figures = document.querySelectorAll("img.zoomable");
+    if (!figures.length) return;
+
+    var modal = document.createElement("div");
+    modal.className = "figure-modal";
+    modal.setAttribute("role", "dialog");
+    modal.setAttribute("aria-modal", "true");
+    modal.innerHTML =
+      '<div class="figure-modal__panel">' +
+        '<div class="figure-modal__bar">' +
+          '<span class="figure-modal__title"></span>' +
+          '<a class="figure-modal__btn figure-modal__pdf" download>Download PDF</a>' +
+          '<button type="button" class="figure-modal__btn figure-modal__close">Close</button>' +
+        '</div>' +
+        '<div class="figure-modal__body"><img alt=""></div>' +
+      '</div>';
+    document.body.appendChild(modal);
+
+    var panelImg = modal.querySelector(".figure-modal__body img");
+    var pdfLink  = modal.querySelector(".figure-modal__pdf");
+    var titleEl  = modal.querySelector(".figure-modal__title");
+    var closeBtn = modal.querySelector(".figure-modal__close");
+    var opener   = null;
+
+    function openModal(img) {
+      opener = img;
+      panelImg.src = img.currentSrc || img.src;
+      panelImg.alt = img.getAttribute("alt") || "";
+      titleEl.textContent = img.dataset.title || "";
+      modal.setAttribute("aria-label", img.dataset.title || "Figure");
+
+      var pdf = (window.figurePdfs || {})[img.dataset.pdfKey];
+      if (pdf) {
+        pdfLink.href = pdf;
+        pdfLink.setAttribute("download", (img.dataset.pdfKey || "figure") + ".pdf");
+        pdfLink.hidden = false;
+      } else {
+        pdfLink.hidden = true;
+      }
+
+      modal.classList.add("is-open");
+      closeBtn.focus();
+    }
+
+    function closeModal() {
+      modal.classList.remove("is-open");
+      panelImg.removeAttribute("src");
+      if (opener) opener.focus();
+    }
+
+    figures.forEach(function (img) {
+      img.tabIndex = 0;
+      img.setAttribute("role", "button");
+      img.addEventListener("click", function () { openModal(img); });
+      img.addEventListener("keydown", function (event) {
+        if (event.key === "Enter" || event.key === " ") {
+          event.preventDefault();
+          openModal(img);
+        }
+      });
+    });
+
+    modal.addEventListener("click", function (event) {
+      if (event.target === modal || event.target === closeBtn) closeModal();
+    });
+    document.addEventListener("keydown", function (event) {
+      if (event.key === "Escape" && modal.classList.contains("is-open")) closeModal();
+    });
+  }
+
+  // run now if the document is already parsed, otherwise wait
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", init);
+  } else {
+    init();
+  }
+})();
+</script>
+<style>
+
+.answer_link {
+display: inline-block;
+margin-top: 0.6rem;
+color: #292093;
+font-weight: 600;
+text-decoration: underline;
+cursor: pointer;
+}
+.answer_link:hover { color: #1a1566; }
+.answer_link:focus-visible { outline: 3px solid #292093; outline-offset: 3px; }
+
+.answer_body { display: none; }
+.answer-modal {
+position: fixed; inset: 0; z-index: 2000;
+background: rgba(20, 22, 40, 0.72);
+display: none; align-items: center; justify-content: center;
+}
+.answer-modal.is-open { display: flex; }
+.answer-modal__panel {
+box-sizing: border-box;
+background: #eeffff;
+border-left: 8px solid #292093;
+border-radius: 6px;
+width: 90vw; 
+max-width: 96vw; max-height: 92vh;
+display: flex; flex-direction: column;
+box-shadow: 0 12px 40px rgba(0, 0, 0, 0.35);
+}
+.answer-modal__bar {
+display: flex; align-items: center; gap: 0.75rem;
+padding: 0.6rem 0.9rem; border-bottom: 1px solid #b9c4ec;
+}
+.answer-modal__title { margin-right: auto; font-weight: 700; color: #292093; }
+.answer-modal__close {
+font: inherit; font-size: 0.9rem;
+border: 1px solid #b9b9c9; border-radius: 6px;
+background: #ffffff; color: #333333;
+padding: 0.4rem 0.75rem; cursor: pointer;
+}
+.answer-modal__close:hover { background: #efefef; }
+.answer-modal__body { overflow: auto; padding: 1rem 1.1rem; }
+.answer-modal__body > :first-child { margin-top: 0; }
+.answer-modal__body > :last-child { margin-bottom: 0; }
+</style>
+
+<script>
+// [Click here to see my answer]{.answer_link data-answer="<id>"} opens the hidden
+// ::: {.answer_body #<id>} block in a modal as wide as its Now you! box.
+(function () {
+  if (window.__answerModalReady) return;
+  window.__answerModalReady = true;
+
+  function init() {
+    var links = document.querySelectorAll(".answer_link");
+    if (!links.length) return;
+
+    var modal = document.createElement("div");
+    modal.className = "answer-modal";
+    modal.setAttribute("role", "dialog");
+    modal.setAttribute("aria-modal", "true");
+    modal.setAttribute("aria-label", "Answer");
+    modal.innerHTML =
+      '<div class="answer-modal__panel">' +
+        '<div class="answer-modal__bar">' +
+          '<span class="answer-modal__title">My answer</span>' +
+          '<button type="button" class="answer-modal__close">Close</button>' +
+        '</div>' +
+        '<div class="answer-modal__body"></div>' +
+      '</div>';
+    document.body.appendChild(modal);
+
+    var panel  = modal.querySelector(".answer-modal__panel");
+    var body   = modal.querySelector(".answer-modal__body");
+    var closeBtn = modal.querySelector(".answer-modal__close");
+    var opener = null;
+
+    // The question a link belongs to -- its list item when the box numbers its
+    // questions, otherwise the Now you! box itself. Used to name the dialog.
+    function questionText(link) {
+      var item = link.closest("li");
+      var scope = item || link.closest(".now_you");
+      if (!scope) return "";
+      var clone = scope.cloneNode(true);
+      clone.querySelectorAll(".answer_link, .answer_body").forEach(function (el) {
+        el.remove();
+      });
+      // A whole box carries its "Now you!" title as its first line; a list item
+      // does not.
+      if (!item && clone.firstElementChild) clone.firstElementChild.remove();
+      return (clone.textContent || "").replace(/\s+/g, " ").trim().slice(0, 120);
+    }
+
+    function openModal(link) {
+      var answer = document.getElementById(link.getAttribute("data-answer"));
+      if (!answer) return;
+      opener = link;
+
+      var question = questionText(link);
+      modal.setAttribute("aria-label", question ? "Answer to: " + question : "Answer");
+
+      body.innerHTML = answer.innerHTML;
+
+      // match the width of the Now you! box this link sits in
+      var host = link.closest(".now_you");
+      panel.style.width = host ? host.getBoundingClientRect().width + "px" : "90vw";
+
+      modal.classList.add("is-open");
+      body.scrollTop = 0;
+      closeBtn.focus();
+    }
+
+    function closeModal() {
+      modal.classList.remove("is-open");
+      body.innerHTML = "";
+      if (opener) opener.focus();
+    }
+
+    links.forEach(function (link) {
+      link.tabIndex = 0;
+      link.setAttribute("role", "button");
+      link.setAttribute("aria-haspopup", "dialog");
+      link.addEventListener("click", function () { openModal(link); });
+      link.addEventListener("keydown", function (event) {
+        if (event.key === "Enter" || event.key === " ") {
+          event.preventDefault();
+          openModal(link);
+        }
+      });
+    });
+
+    modal.addEventListener("click", function (event) {
+      if (event.target === modal || event.target === closeBtn) closeModal();
+    });
+    document.addEventListener("keydown", function (event) {
+      if (event.key === "Escape" && modal.classList.contains("is-open")) closeModal();
+    });
+    window.addEventListener("resize", function () {
+      if (!modal.classList.contains("is-open") || !opener) return;
+      var host = opener.closest(".now_you");
+      if (host) panel.style.width = host.getBoundingClientRect().width + "px";
+    });
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", init);
+  } else {
+    init();
+  }
+})();
+</script>
 <script id="quarto-html-after-body" type="application/javascript">
   window.document.addEventListener("DOMContentLoaded", function (event) {
     const icon = "";
