@@ -1,0 +1,28 @@
+---
+title: "Module 0: Preliminary content"
+format: live-html
+---
+
+```{r}
+#| include: false
+
+source("src/r/reference_lookup.R")
+
+module_refs <- find_module_references(0)
+```
+
+<hr>
+
+![](../../src/images/hex_complex.png){.intro_image}
+
+Prior to starting this course, I *strongly* suggest completing the preliminary course material. These lessons contain the core knowledge and skills that I believe an early beginner in R should have obtained. The lessons also contain elements of the language that are often overlooked by those with considerable R experience. Even if you’re coming in with *loads* of R experience, you’ll almost certainly learn a thing or two along the way!
+
+-   **[Preliminary Lesson 1: R & RStudio](https://evansbrians.github.io/gis_2026/module_0/0.1_intro_to_r_and_rstudio/){target="_blank"}**: Install and set up R and RStudio, adjust RStudio's global options for a comfortable and reproducible workflow, and get oriented in the four core RStudio panes (Source, Console, Environment, and Output).
+-   **[Preliminary Lesson 2: Environment & Functions](https://evansbrians.github.io/gis_2026/module_0/0.2_environment_and_functions/){target="_blank"}**: Learn how R's environment tracks the objects you create, how assignment and functions work, when quotation marks are (and aren't) necessary, how to install and load packages, and best practices for commenting and naming your code.
+-   **[Preliminary Lesson 3: Values](https://evansbrians.github.io/gis_2026/module_0/0.3_values/){target="_blank"}**: Get to know the four atomic vector types you'll use throughout the course -- numeric (double and integer), character, factor, and logical -- and the common pitfalls that come with each.
+-   **[Preliminary Lesson 4: Objects](https://evansbrians.github.io/gis_2026/module_0/0.4_objects/){target="_blank"}**: Explore how atomic vectors, matrices, lists, and data frames differ in dimensions and homogeneity, how to construct and describe each, and how to read and write data with the *readr* package.
+-   **[Preliminary Lesson 5: Indexing](https://evansbrians.github.io/gis_2026/module_0/0.5_indexing/){target="_blank"}**: Learn to subset atomic vectors, matrices, lists, and data frames by position, name, or logical condition using `[...]`, `[[...]]`, `pluck()`, `$`, and the tidyverse's `filter()`.
+
+If you want additional practice we recommend the Swirl package, and have provided some guidance for that work here: <https://smbc-nzp.github.io/dataSci/swirl.html>. Those who consider themselves beginners in R should plan to do these lessons as well as those above.
+
+{{< include /src/includes/_reference_section_intro.qmd >}}

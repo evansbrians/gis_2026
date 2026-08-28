@@ -22,7 +22,7 @@ In this lesson, you will learn:
 * How to use name attributes and the `$` operator to extract data by name
 * How to subset a vector by condition, and how to subset a data frame by condition using `filter()`
 
-[{{< fa exclamation-triangle size=2x >}} Important!]{style="color: red;"} This lesson assumes that you have completed [Preliminary Lesson 4: Objects](0.4_objects.qmd){target="_blank"}. The material here builds on that lesson, so please complete it before moving on.
+[{{< fa exclamation-triangle size=2x >}} Important!]{style="color: red;"} This lesson assumes that you have completed [Preliminary Lesson 4: Objects](https://evansbrians.github.io/gis_2026/module_0/0.4_objects/){target="_blank"}. The material here builds on that lesson, so please complete it before moving on.
 
 </div>
 
@@ -631,28 +631,6 @@ my_data_frame$bunnies[3:4] <-
 my_data_frame
 ```
 
-::: now_you
-{{< fa user-circle size=2x >}} [Parsons Problem: Reorder the lines below to add a `bunnies` column to `my_data_frame`, then overwrite just its 3rd and 4th values. One line doesn't belong -- leave it in the trash.]{style="padding-left: 0.5em;"}
-
-<div class="parsons-problem">
-<div id="p-0-5-01-trash" class="sortable-code"></div>
-<div id="p-0-5-01-sortable" class="sortable-code"></div>
-<div style="clear: both;"></div>
-<button id="p-0-5-01-check" class="parsons-btn parsons-btn-check" type="button">Check My Order</button>
-<button id="p-0-5-01-reset" class="parsons-btn parsons-btn-reset" type="button">Shuffle Again</button>
-<p id="p-0-5-01-feedback" class="parsons-feedback"></p>
-</div>
-
-<script>
-window.parsonsProblems = window.parsonsProblems || [];
-window.parsonsProblems.push({
-  id: "p-0-5-01",
-  maxDistractors: 1,
-  code: "my_data_frame$bunnies &lt;-\n  c(1, 1, 2, 3)\nmy_data_frame$bunnies[3:4] &lt;-\n  c(13, 21)\nmy_data_frame\nmy_data_frame$bunnies &lt;-\n  c(13, 21) #distractor"
-});
-</script>
-:::
-
 #### What about atomic objects?
 
 Can we use `$` with an atomic vector?
@@ -691,7 +669,7 @@ Names in an atomic vector are stored as an attribute of the object -- just as th
 
 Our final task of this lesson will be to explore subsetting an object by condition -- a process often called **filtering**.
 
-Filtering relies heavily on the logical operators that we learned in [Preliminary Lesson 3: Values](0.3_values.qmd){target="_blank"}:
+Filtering relies heavily on the logical operators that we learned in [Preliminary Lesson 3: Values](https://evansbrians.github.io/gis_2026/module_0/0.3_values/){target="_blank"}:
 
 | Operator |  Usage     |       Meaning                              |
 |:--------:|:----------:|:------------------------------------------:|
@@ -900,7 +878,7 @@ my_data_frame[c(1, 3), 1]
 ### Exercise
 
 ::: now_you
-{{< fa user-circle size=2x >}} [Use `filter()` to subset `my_list[[3]]` (*Hint: You could also use `pluck()` to extract this list item!*) to rows where `words` contains the value "hello".]{style="padding-left: 0.5em;"}
+{{< fa user-circle size=2x >}} [Use `filter()` to subset `my_list[[3]]` to rows where `words` contains the value "hello".]{style="padding-left: 0.5em;"}
 
 ```{webr}
 #| edit: true
@@ -925,7 +903,7 @@ my_list[[3]] <-
   my_data_frame
 
 filter(
-  pluck(my_list, 3),
+  my_list[3, ],
   words == "hello"
 )
 ```
@@ -934,7 +912,7 @@ filter(
 ::: now_you
 {{< fa user-circle size=2x >}} [Test your knowledge!]{style="padding-left: 0.5em;"}
 
-1. Parsons Problem: Reorder the lines below to assign `my_data_frame` into `my_list[[3]]`, then pluck it back out and filter it to rows where `words` is `"hello"`. One line doesn't belong -- leave it in the trash.
+1. Parsons Problem: Reorder the lines below to assign the third position of `my_list` as the object `my_data_frame`, then pluck it back out and filter it to rows where `words` is `"hello"`. One line doesn't belong -- leave it in the trash.
 
 <div class="parsons-problem">
 <div id="p-0-5-03-trash" class="sortable-code"></div>

@@ -20,7 +20,7 @@ In this lesson, we will explore four kinds of vectors that you will encounter of
 * What a factor is and why the order of its levels matters
 * How logical values are represented and tested, including a common mistake that catches almost everyone at least once
 
-[{{< fa exclamation-triangle size=2x >}} Important!]{style="color: red;"} This lesson assumes that you have completed [Preliminary Lesson 2: Environment & Functions](0.2_environment_and_functions.qmd){target="_blank"}. The material here builds on that lesson, so please complete it before moving on.
+[{{< fa exclamation-triangle size=2x >}} Important!]{style="color: red;"} This lesson assumes that you have completed [Preliminary Lesson 2: Environment & Functions](https://evansbrians.github.io/gis_2026/module_0/0.2_environment_and_functions/){target="_blank"}. The material here builds on that lesson, so please complete it before moving on.
 
 </div>
 
@@ -171,7 +171,7 @@ window.parsonsProblems.push({
 ::: mysecret
 {{< fa user-secret size=2x >}} [This editor won't auto-indent your code!]{style="font-size: 1.25em; padding-left: 0.5em;"}
 
-Unlike RStudio, the code editor in these practice boxes does not automatically indent your code as you type -- pressing Enter after an opening parenthesis will not indent the next line for you the way RStudio does. Get in the habit of indenting your own code as you go here; it's good practice for when you're writing real scripts in RStudio, where our [style guide](../module_1/1.6_course_style_guide.qmd){target="_blank"} rules do apply (and are graded!).
+Unlike RStudio, the code editor in these practice boxes does not automatically indent your code as you type -- pressing Enter after an opening parenthesis will not indent the next line for you the way RStudio does. Get in the habit of indenting your own code as you go here; it's good practice for when you're writing real scripts in RStudio, where our [Course style guide](https://evansbrians.github.io/gis_2026/resources/course_style_guide/){target="_blank"} rules do apply (and are graded!).
 :::
 
 <button class="accordion" style="margin-bottom: 1em;">Solution</button>
@@ -236,7 +236,7 @@ as.character(1:5)
 
 ### Single or double quotes?
 
-Single (`'hello world'`) and double (`"hello world"`) quotes can largely be used interchangeably in R. **In this course, we will always use double quotes for character values** -- this is the convention set out in our [style guide](../module_1/1.6_course_style_guide.qmd){target="_blank"} and it matches the [tidyverse style guide](https://style.tidyverse.org/syntax.html#character-vectors){target="_blank"}.
+Single (`'hello world'`) and double (`"hello world"`) quotes can largely be used interchangeably in R. **In this course, we will always use double quotes for character values** -- this is the convention set out in our [Course style guide](https://evansbrians.github.io/gis_2026/resources/course_style_guide/){target="_blank"} and it matches the [tidyverse style guide](https://style.tidyverse.org/syntax.html#character-vectors){target="_blank"}.
 
 The main situation in which you will need to reach for single quotes is when the character value itself contains a double quote. Watch what happens when we try to enclose a quoted phrase in double quotes:
 

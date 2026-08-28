@@ -37,7 +37,7 @@ In this lesson, you will learn:
 * How to install and load packages
 * Best practices for commenting your code, naming your objects, and managing your global environment
 
-[{{< fa exclamation-triangle size=2x >}} Important!]{style="color: red;"} This lesson assumes that you have completed [Preliminary Lesson 1: R & RStudio](0.1_intro_to_r_and_rstudio.qmd){target="_blank"}. The material here builds on that lesson, so please complete it before moving on.
+[{{< fa exclamation-triangle size=2x >}} Important!]{style="color: red;"} This lesson assumes that you have completed [Preliminary Lesson 1: R & RStudio](https://evansbrians.github.io/gis_2026/module_0/0.1_intro_to_r_and_rstudio/){target="_blank"}. The material here builds on that lesson, so please complete it before moving on.
 
 </div>
 

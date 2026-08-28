@@ -24,7 +24,7 @@ In this lesson, you will learn:
 * How to construct data frames and tibbles
 * How to read and write data objects with the *readr* package
 
-[{{< fa exclamation-triangle size=2x >}} Important!]{style="color: red;"} This lesson assumes that you have completed [Preliminary Lesson 3: Values](0.3_values.qmd){target="_blank"}. The material here builds on that lesson, so please complete it before moving on.
+[{{< fa exclamation-triangle size=2x >}} Important!]{style="color: red;"} This lesson assumes that you have completed [Preliminary Lesson 3: Values](https://evansbrians.github.io/gis_2026/module_0/0.3_values/){target="_blank"}. The material here builds on that lesson, so please complete it before moving on.
 
 </div>
 
