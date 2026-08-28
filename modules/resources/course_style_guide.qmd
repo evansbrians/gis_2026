@@ -1,0 +1,713 @@
+---
+title: "Course style guide"
+format: live-html
+---
+
+```{r}
+#| include: false
+
+source("src/r/course_functions.R")
+```
+```{r}
+#| label: setup
+#| include: false
+
+library(tidyverse)
+
+knitr::opts_chunk$set(echo = TRUE,
+                      eval = FALSE)
+```
+
+<hr>
+
+<div>
+
+![](../../src/images/hex_complex.png){.intro_image}
+
+This document represents a style guide for the script files in our course and is intended to help you develop a consistent syntax for creating communicable, readable code. Well-formatted code is not just an end product though — recommendations in this document will help you explore and debug your code *as you write it*. Moreover, a portion of your grade will be based on adhering to this style guide (up to 10 percentage points per problem set)!
+
+Style guides, such as this one, are common across many computer languages and organizations. Although "style" generally represents a preference and typically does not influence code output, spacing can sometimes affect how R parses code. In all cases, using a style guide makes collaboration easier! Herein, I borrow heavily from the [tidyverse style guide](https://style.tidyverse.org/){target="_blank"}, from which most of the formatting rules below were derived. I include only elements from the tidyverse style guide that are relevant to the content in this course and have included additional or modified elements that, in my opinion, provide added utility or enhanced code readability.
+
+This lesson is divided into the following sections:
+
+- **Style guide, in brief**: This section provides the code formatting rules that we will follow in this course. I suggest returning to this *often* and comparing your problem set answers with this guide prior to submission.
+
+- **Style guide, in-depth**: I provide a description of the code formatting rules, why they are helpful, and examples of each. Recommendations that vary between this document and the tidyverse style guide are annotated with a superscript † symbol and are described on a case-by-case basis.
+
+</div>
+
+## Style guide, in brief
+
+### Horizontal spacing
+
+- **Commas** should be followed by *one* trailing space, but *not* a leading space. *Exception*: More than one space *can* be added after a comma if it improves the alignment within a code block.
+- **Infix functions** should be separated from surrounding code with a *single* leading and trailing space. *Exceptions:*
+  - The high-precedence operators `::`, `:::`, `$`, `@`, `[`, `[[`, `^`, unary `-`, unary `+`, and `:` should *not* be surrounded by spaces. The same applies to the tidy-evaluation operators `!!` and `!!!` and the help operator `?`. See the [tidyverse guidance on infix operators](https://style.tidyverse.org/syntax.html#infix-operators){target="_blank"}.
+  - You can add more than one space before the `=` operator if it improves code block alignment.
+- **Prefix functions**: A prefix function call places the function's name before its arguments (e.g., `mean(x)`), unlike an infix function call, in which an operator appears between its arguments (e.g., `1 + 2`). Do not put a space between the function name and `(` or immediately inside the parentheses. Prefix operators, such as `!` and unary `-`, should not be followed by a space.
+- **Single-sided formulas**: Do not place a space after `~` when the right-hand side is a single name (e.g., `~x`); include a space when the right-hand side is a more complex expression (e.g., `~ .x + 1`). See the [tidyverse guidance on infix operators](https://style.tidyverse.org/syntax.html#infix-operators){target="_blank"}.
+- **Parentheses**: Do not put spaces inside or outside parentheses for regular function calls. Place a space before `(` and after `)` in `if`, `for`, and `while`; also place a space after the `)` that closes a function definition's argument list. See the [tidyverse guidance on parentheses](https://style.tidyverse.org/syntax.html#parentheses){target="_blank"}.
+- **Square brackets**: Do not put a space before extraction brackets (`[]` and `[[...]]`) or immediately inside them. Follow the usual comma-spacing rule within brackets. See the [tidyverse guidance on infix operators](https://style.tidyverse.org/syntax.html#infix-operators){target="_blank"}.
+- **Curly braces**: In braced expressions, place `{` at the end of its line, indent the contents two spaces, and place `}` at the beginning of its line. Write an empty braced expression as `{}`. See the [tidyverse guidance on braced expressions](https://style.tidyverse.org/syntax.html#braced-expressions){target="_blank"}.
+- **Comments**: Add a *single* space between the hashtag (`#`) and comment.
+- **Indentation**: Piped and nested code should be indented *two* spaces (one indentation level) relative to the parent object in a chained analysis.
+
+### Vertical spacing
+
+- **Code blocks**: Maintain *one* blank line between distinct code statements^†^. (In this course, we refer to distinct code statements as "code blocks.") *Exception*: Do not separate adjacent `library()` functions with a blank line.
+- **Comments**: Maintain *one* blank line between code blocks and comments^†^.
+
+### Line breaks
+
+- When possible, code and comments should not exceed 80 characters in width — add a line break when needed.
+- **Prefix functions**: Include no more than *one* prefix function per line of code^†^. *Exceptions*: Prefix operators, the combine function (`c()`), `aes()`, and functions used to calculate summary statistics of a data object (e.g., `mean()`, `n()`, and `length()`).
+- **Arguments in a function**: If you provide three or more arguments to a function, place each argument on its own line^†^. *Exception*: When using the `c()` or `list()` functions, you may include up to five numeric values.
+- **Assignment**: If a code block spans more than one line of code, add a new line after the assignment operator ^†^.
+- **Pipe operators** (`%>%` or `|>`): Code that follows a pipe operator should be placed on a new line^†^.
+
+### Assignment
+
+- When assigning a name in the global environment, use `<-`, not `=`.
+- Assigned names should be written in snake_case.
+
+### Functions
+
+- **Nested functions** should not be nested deeper than two levels (use a pipe instead!)^†^ and each level should be indented *two* spaces (one indentation level) relative to the parent function.
+- **Logicals**: Spell out `TRUE` and `FALSE` in a function's argument.
+- When supplying a non-default value for an argument that controls a function's behavior, include the argument's name.
+
+## Style guide, in-depth
+
+### Horizontal spacing
+
+::: indent_bb
+[●]{.bulls} **Commas** should be followed by *one* trailing space, but *not* a leading space.
+:::
+
+::: indent_code_bb
+[Bad:]{.bad}
+
+```{r}
+c(1,1 , 2, 3 , 5)
+```
+
+[Good:]{.good}
+
+```{r}
+c(1, 1, 2, 3, 5)
+```
+
+**Exception**: More than one space *can* be added after a comma if it improves the alignment within a code block.
+
+```{r}
+tribble(
+  ~x, ~y,
+  11, 2,
+  3,  5)
+```
+:::
+
+::: indent_bb
+[●]{.bulls} **Infix functions** should be separated from surrounding code with a *single* leading and trailing space.
+:::
+
+::: indent_code_bb
+[Bad:]{.bad}
+
+```{r}
+country<-c("boy", "howdy")
+
+nerdy <-c("hello", "world")
+
+formal<- c("warm", "wishes")
+
+my_list <-
+  list(
+    country= "boy howdy",
+    nerdy ="hello world",
+    formal= "warm wishes")
+
+1/2
+1+ 2
+1 ==2
+
+c(11, 23, 32)%>%
+  mean()
+```
+
+[Good:]{.good}
+
+```{r}
+country <- c("boy", "howdy")
+
+nerdy <- c("hello", "world")
+
+formal <- c("warm", "wishes")
+
+my_list <-
+  list(
+    country = "boy howdy",
+    nerdy = "hello world",
+    formal = "warm wishes")
+
+1 / 2
+1 + 2
+1 == 2
+
+c(11, 23, 32) %>%
+  mean()
+```
+:::
+
+::: indent_wb
+[○]{.bulls} **Exceptions**: The high-precedence operators `::`, `:::`, `$`, `@`, `[`, `[[`, `^`, unary `-`, unary `+`, and `:` should *not* be surrounded by spaces. The same applies to the tidy-evaluation operators `!!` and `!!!` and the help operator `?`. See the [tidyverse guidance on infix operators](https://style.tidyverse.org/syntax.html#infix-operators){target="_blank"}.
+:::
+
+::: indent_code_wb
+[Bad:]{.bad}
+
+```{r}
+my_list$ nerdy
+
+my_list $nerdy
+
+readr ::read_csv
+
+readr:: read_csv
+
+values [1]
+
+x ^ 2
+
+1 :4
+
+1: 4
+```
+
+[Good:]{.good}
+
+```{r}
+my_list$nerdy
+
+readr::read_csv
+
+values[1]
+
+x^2
+
+1:4
+```
+:::
+
+::: indent_wb
+[○]{.bulls} **Exception**: You can add more than one space before the `=` operator if it improves code block alignment.
+:::
+
+::: indent_code_wb
+
+```{r}
+sayings <-
+  tibble(
+    country = c("boy", "howdy"),
+    nerdy   = c("hello", "world"),
+    formal  = c("warm", "wishes"))
+```
+:::
+
+::: indent_bb
+[●]{.bulls} **Prefix functions**: A prefix function call places the function's name before its arguments (e.g., `mean(x)`), unlike an infix function call, in which an operator appears between its arguments (e.g., `1 + 2`). Do not put a space between the function name and `(` or immediately inside the parentheses. Prefix operators, such as `!` and unary `-`, should not be followed by a space.
+:::
+
+::: indent_code_bb
+[Bad:]{.bad}
+
+```{r}
+c ("boy", "howdy")
+
+! TRUE
+```
+
+[Good:]{.good}
+
+```{r}
+c("boy", "howdy")
+
+!TRUE
+```
+:::
+
+::: indent_bb
+[●]{.bulls} **Single-sided formulas**: Do not place a space after `~` when the right-hand side is a single name; include a space when the right-hand side is a more complex expression. See the [tidyverse guidance on infix operators](https://style.tidyverse.org/syntax.html#infix-operators){target="_blank"}.
+:::
+
+::: indent_code_bb
+
+[Bad:]{.bad}
+
+```{r}
+tribble(
+  ~ x, ~ y,
+  11, 2,
+  3,  5)
+
+c(1, 2) %>%
+  map_dbl(~.x + 1)
+```
+
+[Good:]{.good}
+
+```{r}
+tribble(
+  ~x, ~y,
+  11, 2,
+  3,  5)
+
+c(1, 2) %>%
+  map_dbl(~ .x + 1)
+```
+
+*Note: The* `map` *family of functions will be covered in Module 4!*
+:::
+
+::: indent_bb
+[●]{.bulls} **Parentheses**: Do not put spaces inside or outside parentheses for regular function calls. Place a space before `(` and after `)` in `if`, `for`, and `while`; also place a space after the `)` that closes a function definition's argument list. See the [tidyverse guidance on parentheses](https://style.tidyverse.org/syntax.html#parentheses){target="_blank"}.
+:::
+
+::: indent_code_bb
+[Bad:]{.bad}
+
+```{r}
+c( "boy", "howdy")
+
+c ("boy", "howdy")
+
+c("boy", "howdy" )
+
+if(TRUE) {
+  print("TRUE")
+}
+
+my_function <- function(x){}
+```
+
+[Good:]{.good}
+
+```{r}
+c("boy", "howdy")
+
+if (TRUE) {
+  print("TRUE")
+}
+
+my_function <- function(x) {}
+```
+
+*Note: This course style guide does not include a preferred style for hanging parentheses or collapsed closing parentheses. For example, both of the following are acceptable:*
+
+```{r}
+mean(
+  c(1, 1)
+)
+
+mean(
+  c(1, 1))
+```
+:::
+
+::: indent_bb
+[●]{.bulls} **Square brackets**: Do not put a space before extraction brackets (`[]` and `[[...]]`) or immediately inside them. Follow the usual comma-spacing rule within brackets. See the [tidyverse guidance on infix operators](https://style.tidyverse.org/syntax.html#infix-operators){target="_blank"}.
+:::
+
+::: indent_code_bb
+[Bad:]{.bad}
+
+```{r}
+my_list [[1]]
+
+my_list[[ 1]]
+
+sayings [, -1]
+```
+
+[Good:]{.good}
+
+```{r}
+my_list[[1]]
+
+sayings[, -1]
+```
+:::
+
+::: indent_bb
+[●]{.bulls} **Curly braces**: In braced expressions, place `{` at the end of its line, indent the contents two spaces, and place `}` at the beginning of its line. Write an empty braced expression as `{}`. See the [tidyverse guidance on braced expressions](https://style.tidyverse.org/syntax.html#braced-expressions){target="_blank"}.
+:::
+
+::: indent_code_bb
+[Bad:]{.bad}
+
+```{r}
+if (TRUE)
+{
+print("TRUE") }
+```
+
+[Good:]{.good}
+
+```{r}
+if (TRUE) {
+  print("TRUE")
+}
+```
+:::
+
+::: indent_bb
+[●]{.bulls} **Comments**: Add a *single* space between the hashtag (`#`) and comment.
+:::
+
+::: indent_code_bb
+[Bad:]{.bad}
+
+```{r}
+#my section header --------------------------------------------
+
+#My atomic vector:
+
+c(1, 2)
+```
+
+[Good:]{.good}
+
+```{r}
+# my section header -------------------------------------------
+
+# My atomic vector:
+
+c(1, 2)
+```
+:::
+
+::: indent_bb
+[●]{.bulls} **Indentation**: Piped and nested code should be indented *two* spaces (one indentation level) relative to the parent object in a chained analysis.
+:::
+
+::: indent_code_bb
+[Bad:]{.bad}
+
+```{r}
+c(1, 2) %>%
+mean()
+
+mean(
+c(1, 2)
+)
+```
+
+[Good:]{.good}
+
+```{r}
+c(1, 2) %>%
+  mean()
+
+mean(
+  c(1, 2))
+```
+:::
+
+### Vertical spacing
+
+::: indent_bb
+[●]{.bulls} **Code blocks**: Maintain *one* blank line between distinct code statements^†^. (In this course, we refer to distinct code statements as "code blocks.")
+:::
+
+::: indent_code_bb
+[Bad:]{.bad}
+
+```{r}
+c(1, 2)
+list(1, 2)
+```
+
+[Good:]{.good}
+
+```{r}
+c(1, 2)
+
+list(1, 2)
+```
+
+**Exception**: Do not separate adjacent `library()` functions with a blank line.
+
+```{r}
+library(lobstr)
+library(tidyverse)
+```
+:::
+
+::: indent_bb
+[●]{.bulls} **Comments**: Maintain *one* blank line between code blocks and comments^†^.
+:::
+
+::: indent_code_bb
+[Bad:]{.bad}
+
+```{r}
+# my section header -------------------------------------------
+# My atomic vector:
+c(1, 2)
+```
+
+[Good:]{.good}
+
+```{r}
+# my section header -------------------------------------------
+
+# My atomic vector:
+
+c(1, 2)
+```
+:::
+
+### Line breaks
+
+::: indent_bb
+[●]{.bulls} When possible, code and comments should not exceed 80 characters in width — add a line break when needed.
+:::
+
+::: indent_code_bb
+[Bad:]{.bad}
+
+```{r}
+brood_x_cicadas <- c("Magicicada cassini", "Magicicada septendecim", "Magicicada septendecula")
+```
+
+[Good:]{.good}
+
+```{r}
+brood_x_cicadas <-
+  c("Magicicada cassini", "Magicicada septendecim", "Magicicada septendecula")
+
+# Or (even better):
+
+brood_x_cicadas <-
+  c("Magicicada cassini",
+    "Magicicada septendecim",
+    "Magicicada septendecula")
+```
+:::
+
+::: indent_bb
+[●]{.bulls} **Prefix functions**: Include no more than *one* prefix function per line of code^†^.
+:::
+
+::: indent_code_bb
+[Bad:]{.bad}
+
+```{r}
+tibble(a = factor(1:2), b = 1:2)
+```
+
+[Good:]{.good}
+
+```{r}
+tibble(
+  a = factor(1:2),
+  b = 1:2)
+```
+
+**Exception**: Prefix operators, the combine function (`c()`), `aes()`, and functions used to calculate summary statistics of a data object (e.g., `mean()`, `n()`, and `length()`). It is, however, still acceptable to put these on a new line.
+
+```{r}
+mean(c(1, 2))
+```
+:::
+
+::: indent_bb
+[●]{.bulls} **Arguments in a function**: If you provide three or more arguments to a function, place each argument on its own line^†^.
+:::
+
+::: indent_code_bb
+[Bad:]{.bad}
+
+```{r}
+c("roger", "pete", "john", "keith")
+```
+
+[Good:]{.good}
+
+```{r}
+c("roger",
+  "pete",
+  "john",
+  "keith")
+```
+
+**Exception**: When using the `c()` or `list()` functions, you may include up to five numeric values.
+
+```{r}
+c(1, 1, 2, 3, 5)
+```
+:::
+
+::: indent_bb
+[●]{.bulls} **Assignment**: If a code block spans more than one line of code, add a new line after the assignment operator ^†^.
+:::
+
+::: indent_code_bb
+[Bad:]{.bad}
+
+```{r}
+mean_value <- mean(
+  c(1, 2))
+```
+
+[Good:]{.good}
+
+```{r}
+mean_value <-
+  mean(c(1, 2))
+```
+:::
+
+::: indent_bb
+[●]{.bulls} **Pipe operators**: Code that follows a pipe operator should be placed on a new line^†^.
+:::
+
+::: indent_code_bb
+[Bad:]{.bad}
+
+```{r}
+c(1, 2) %>% mean()
+```
+
+[Good:]{.good}
+
+```{r}
+c(1, 2) %>%
+  mean()
+```
+:::
+
+### Assignment
+
+::: indent_bb
+[●]{.bulls} When assigning a name in the global environment, use `<-`, not `=`.
+:::
+
+::: indent_code_bb
+[Bad:]{.bad}
+
+```{r}
+my_vector = c(1, 2)
+```
+
+[Good:]{.good}
+
+```{r}
+my_vector <- c(1, 2)
+```
+:::
+
+::: indent_bb
+[●]{.bulls} Assigned names should be written in snake_case.
+:::
+
+::: indent_code_bb
+[Bad:]{.bad}
+
+```{r}
+my.phrases <-
+  tribble(
+    ~boyHowdy, ~HelloWorld,
+    1, 3,
+    2, 4)
+```
+
+[Good:]{.good}
+
+```{r}
+my_phrases <-
+  tribble(
+    ~boy_howdy, ~hello_world,
+    1, 3,
+    2, 4)
+```
+:::
+
+### Functions
+
+::: indent_bb
+[●]{.bulls} **Nested functions** should not be nested deeper than two levels (use a pipe instead!)^†^.
+:::
+
+::: indent_code_bb
+[Bad:]{.bad}
+
+```{r}
+mean(
+  as.numeric(
+    factor(1:2)
+  ))
+```
+
+[Good:]{.good}
+
+```{r}
+factor(1:2) %>%
+  as.numeric() %>%
+  mean()
+```
+
+*Course convention: Using a pipe for this type of nested code is the preferred style for this course and intentionally differs from the tidyverse style guide.*
+:::
+
+::: indent_bb
+[●]{.bulls} **Logicals**: Spell out `TRUE` and `FALSE` in a function's argument.
+:::
+::: indent_code_bb
+[Bad:]{.bad}
+
+```{r}
+mean(c(1, NA, 3), na.rm = T)
+```
+
+[Good:]{.good}
+
+```{r}
+mean(c(1, NA, 3), na.rm = TRUE)
+```
+:::
+
+::: indent_bb
+[●]{.bulls} When supplying a non-default value for an argument that controls a function's behavior, include the argument's name.
+:::
+
+::: indent_code_bb
+[Bad:]{.bad}
+
+```{r}
+factor(
+  c("roger",
+    "pete",
+    "john",
+    "keith"),
+  c("keith",
+    "john",
+    "pete",
+    "roger"))
+```
+
+[Good:]{.good}
+
+```{r}
+factor(
+  c("roger",
+    "pete",
+    "john",
+    "keith"),
+  levels =
+    c("keith",
+      "john",
+      "pete",
+      "roger"))
+```
+:::

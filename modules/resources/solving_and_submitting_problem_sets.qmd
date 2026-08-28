@@ -1,0 +1,92 @@
+---
+title: "Solving and submitting problem sets"
+format: live-html
+---
+
+```{r}
+#| include: false
+
+source("src/r/course_functions.R")
+```
+<hr>
+
+![](../../src/images/hex_complex.png){fig-alt="Course logo" .intro_image}
+
+Each problem set in this course will ask you to address three types of questions:
+
+* **The gimmes**: The first few questions of each problem set ask you to do things like name your R file and load the tidyverse.
+
+* **Straight from the course material**: Most questions will directly reflect the material as it was provided.
+
+* **Integrated questions**: Some questions ask you to integrate material from across the course and/or test your conceptual understanding. Avoid getting stuck asking yourself, "*Where did we do this?*" That question can become a time sink when you are being asked to apply functions in a new way. Taking careful notes during the lectures can help. Additionally, review the functions guide at the end of each module!
+
+## Recommended workflow
+
+**Do not begin by coding your way through the problems!** Data wrangling is the process of solving a series of puzzles, and jumping straight to the code can become a *major* time sink. Instead, *plan ahead* — a whiteboard, pencil, and scrap paper are among a coder's most important problem-solving tools.
+
+Here is my recommended workflow for solving problem sets:
+
+::: {.workflow-list}
+1. **Functions that you may use**: Start by reviewing the "Functions that you may use …" list. If any functions are unfamiliar, place the cursor within the function name and press [F1]{.mono}, or run a help command such as `?mean`. Then use RStudio's Find in Files command ([Ctrl/Cmd + Shift + F]{.mono}) to search your code-along scripts and course tutorials for examples of how we have used the function.
+
+2. **Explore the data**: Before heading to the questions (other than data loading), explore the dataset using functions such as `str()` and `summary()`. Pay careful attention to the class and type of values present, the container used to hold those values (e.g., a list or atomic vector), and whether there are any [NA]{.mono} values. Unless you are explicitly asked to do so, do not include data-exploration code in your submitted assignment.
+
+3. **Visualize**: For each question, visualize what you want the resulting object to look like. Look for clues in the language of the question to determine the *class* of the resulting object (e.g., should it be a single value or a data frame?).
+
+4. **Write out the primary steps** (*integrated questions*): If you are confronted with an *integrated question*, use pencil and paper or a whiteboard to plan the primary steps needed to achieve the result. I am a visual thinker, so I typically create diagrams that resemble flowcharts. You can also write out the steps using plain language that a non-coder could understand.
+
+5. **Add the individual stages** (*integrated questions*): Expand your plan using pencil and paper or a whiteboard by breaking each multi-step process into individual stages. Continue using a diagram or plain language. Be specific at this stage (e.g., "subset the rows of the data frame using a logical test").
+
+6. **Add candidate functions** (*integrated questions*): Once you are confident that your plan is complete, add candidate functions from the *approved* functions list to each stage. Give this step careful consideration. For example, to subset a data frame, use the `select()` family to choose columns, the `slice()` family to choose rows by position, or the `filter()` family to choose rows using a logical condition. Look for clues in the question that point to an appropriate family of functions. Adding or modifying a variable suggests `mutate()`, whereas calculating a summary value for a dataset or group suggests `summarize()`.
+
+7. **Code it**: Then (and only then) should you address a problem with code! *Note: When you do so, avoid removing the question text or section headers.*
+
+8. **Test it**: Make sure the output matches what you expected:
+
+    * If a multi-step process does not generate the expected output (or throws an error), highlight and run individual sections of the code to verify that each component produces the desired result.
+    * If the process includes iteration or a custom function, temporarily assign a representative value to the index or argument name in the global environment (e.g., `i`, `x`, or `.x`) and test the expression outside the loop or function. *Avoid making wholesale changes to the entire code block without first testing its individual components.*
+:::
+
+While the first step is specific to our problem sets, steps 2–8 are also useful when solving data-wrangling problems outside this course.
+
+## Other tips and tricks {.compact-section-end}
+
+You can protect your problem set score by following these practices:
+
+* Always ensure that the naming convention used for your assignment is [problem_set\_\[week\]\_\[last\_name\]\_\[first\_name\].R]{.mono}. For example, if I submitted a problem set for the first week, the name of my submitted document would be [problem_set_1_evans_brian.R]{.mono}.
+
+* Never, never, never use `setwd()`!
+
+* Always use keyboard shortcuts for adding global assignment operators ([Alt/Option + Dash]{.mono}), comments ([Ctrl/Cmd + Shift + C]{.mono}), and pipes ([Ctrl/Cmd + Shift + M]{.mono}).
+
+* Before submitting your problem set:
+
+    * Select all content ([Ctrl/Cmd + A]{.mono}) and fix any potential indentation errors with the keyboard shortcut [Ctrl/Cmd + I]{.mono}.
+
+    * Double-check your code formatting using the [***Course style guide***](https://evansbrians.github.io/gis_2026/resources/course_style_guide/){target="_blank"}.
+
+    * Cross-check your functions (including operators) with those provided to you in the "Functions you may use …" section.
+
+    * Clear your global environment or restart R (Menu bar → Session → Restart R) and run your entire script. If it runs without errors, you are ready to submit it through Canvas!
+
+## Submitting your problem set {.mt-0}
+
+Submit your completed R script file (`.R`) through the appropriate weekly assignment in Canvas. Do not submit the HTML problem set or its associated data files unless the assignment explicitly instructs you to do so.
+
+1. In Canvas, open the course and select **Assignments** in the Course Navigation menu.
+2. Open the correct problem-set assignment, verify its title and due date, and select **Start Assignment**.
+3. Select the **File Upload** tab and choose your completed `.R` script. Confirm that the displayed filename follows the required naming convention.
+4. Select **Submit Assignment**.
+5. Verify that Canvas displays the submission details. Use the link to the submitted file to download or open it and confirm that you uploaded the correct script.
+
+Canvas provides illustrated instructions for [submitting an online assignment](https://community.instructure.com/en/kb/articles/661210-how-do-i-submit-an-online-assignment){target="_blank"} and [uploading a file as an assignment submission](https://community.instructure.com/en/kb/articles/661219-how-do-i-upload-a-file-as-an-assignment-submission-in-canvas){target="_blank"}. The Canvas interface may look slightly different if Assignment Enhancements are enabled, but the general submission process is the same.
+
+## Using external coding resources
+
+### A note on Stack Overflow
+
+Stack Overflow can be a valuable resource, but **I strongly advise against using it when completing weekly problem sets**. Anyone can answer a question, older answers may rely on superseded R workflows, and searching can become a major time sink. For problem sets, begin with the course materials, the approved functions list, and the Canvas discussion board.
+
+### A note on AI
+
+You are welcome to use AI tools, such as ChatGPT or Claude, to help you complete problem sets. We strongly recommend using AI as a thought partner rather than as a source of answers. AI-generated R code may rely on outdated workflows, deprecated functions, or functions that are not included in the approved functions list. Carefully review and test any AI-generated suggestions — you are responsible for writing, reviewing, understanding, and verifying every line of code that you submit.
