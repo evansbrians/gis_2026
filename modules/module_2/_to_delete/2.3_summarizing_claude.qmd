@@ -1,0 +1,580 @@
+---
+title: "2.3 Introduction to summarizing"
+format: live-html
+---
+
+```{r}
+#| include: false
+
+library(webexercises)
+library(tidyverse)
+
+source("src/r/course_functions.R")
+source("src/r/reference_lookup.R")
+
+lesson_refs <- find_lesson_references()
+```
+
+<hr>
+
+<div>
+![](../../src/images/hex_complex.png){.intro_image fig-alt="Course logo"}
+
+To **summarize** a data frame is to calculate one or more summary statistics and return the result as a data frame. We often want those statistics for groups in our data, such as the mean wing length of each species, the number of captures at each site, or the number of sites at which birds were captured in a given year. In completing this lesson, you will learn how to:
+
+* Calculate summary statistics for a data frame with `summarize()`, `n()`, and `count()`
+* Understand when to use `summarize()`
+* Conduct operations on grouped data frames using the `.by = ` argument and `group_by()`
+* Understand when to use `.by = ` vs. `group_by()`
+
+**Important!** Before starting this tutorial, be sure that you have completed all preliminary and previous lessons!
+
+</div>
+
+## Data for this lesson
+
+<button class="accordion">Please click on the button below to explore the metadata for this lesson!</button>
+::: panel
+In this lesson, we will explore:
+
+```{r}
+#| echo: false
+#| output: asis
+
+lesson_metadata(
+  .dataset = "district_birds.rds",
+  .tables = "captures"
+) %>%
+  cat()
+```
+:::
+
+## Set up your session
+
+Please complete the following to ensure that you are working in a clean session:
+
+1. Please ensure that your **Global Environment** is empty.
+2. In the *History* tab of your **workspace pane**, ensure that your **session history** is empty.
+
+Now that we are working in a clean session:
+
+1. Create a script file.
+2. Save your script file as `scripts/summarizing.R`.
+3. Add metadata as a comment on the top of the file.
+4. Following your metadata, create a new **code section** and call it "`setup`".
+5. Following your section header, attach the packages that comprise the **core tidyverse**.
+
+At this point, your script should look something like:
+
+```{r}
+#| eval: false
+
+# My code for the summarizing tutorial
+
+# setup --------------------------------------------------------
+
+library(tidyverse)
+```
+
+Now we are going to add our data for this lesson ... let's do it as a "Now you!" challenge:
+
+::: now_you
+{{< fa user-circle size=2x >}} [Now you!]{style="font-size: 1.25em; padding-left: 0.5em;"}
+
+In a single piped statement:
+
+* Read in the file [district_birds.rds]{.mono};
+* Extract the list item assigned to the name `captures`;
+* Subset `captures` to the columns `spp`, `sex`, `wing`, and `mass`;
+* Assign the resultant object to your global environment with the name `measures`.
+
+*Hint: We extracted a list item with `pluck()` and subset columns with `select()` in **2.1 Introduction to subsetting and extraction**.*
+
+[Click here to see my answer]{.answer_link data-answer="a-2-3-measures"}
+
+::: {.answer_body #a-2-3-measures}
+
+```{r}
+measures <-
+
+  # Read in the file:
+
+  read_rds("data/raw/district_birds.rds") %>%
+
+  # Extract the list item assigned to the name "captures":
+
+  pluck("captures") %>%
+
+  # Select the columns of interest:
+
+  select(
+    spp:sex,
+    wing,
+    mass
+  )
+```
+
+:::
+:::
+
+Each row of `measures` is a capture record that represents observations of a given bird during a sampling event.
+
+## Summarize a data frame
+
+In ***1.4 Importing, exploring, and exporting data*** we used the `summary()` function to look at the summary statistics of a data frame:
+
+```{r}
+summary(measures)
+```
+
+`summary()` returns a fixed set of statistics across columns in a data frame. With the *dplyr* function `summarize()` we choose the statistics and variables of interest using the following arguments:
+
+* The target data frame (typically passed to the function via a pipe)
+* A name and a calculation for each column of the result
+
+For example, let's calculate the mean and standard deviation of wing length with `mean()` and `sd()` (from ***1.4 Importing, exploring, and exporting data***):
+
+```{r}
+measures %>%
+  summarize(
+    mean_wing =
+      mean(wing, na.rm = TRUE),
+    sd_wing =
+      sd(wing, na.rm = TRUE)
+  )
+```
+
+*Note: Recall that `na.rm = TRUE` is an argument of `mean()` and `sd()`. Without that argument, a vector that contains an `NA` returns `NA`.*
+
+The result does not tell us how many records went into those statistics. We can add that with the *dplyr* function `n()`, which counts the rows of a data frame:
+
+```{r}
+measures %>%
+  summarize(
+    n = n(),
+    mean_wing =
+      mean(wing, na.rm = TRUE),
+    sd_wing =
+      sd(wing, na.rm = TRUE)
+  )
+```
+
+Notice what our `n` counted, though. Every row of `measures` went into that count, while `mean_wing` and `sd_wing` were calculated after `na.rm = TRUE` set the missing values aside. The count and the statistics describe different sets of records.
+
+We can address this by removing the missing values before we summarize. To do so, let's use the *tidyr* function `drop_na()` (see ***2.1 Introduction to subsetting and extraction***):
+
+```{r}
+measures %>%
+  drop_na(wing) %>%
+  summarize(
+    n = n(),
+    mean_wing = mean(wing),
+    sd_wing = sd(wing)
+  )
+```
+
+The mean and standard deviation are unchanged, and `n` now counts the records that they describe.
+
+*Note: While `drop_na()` should be used carefully, reducing the repetition of `na.rm = TRUE` enhances the parsimony of our code!*
+
+::: mysecret
+
+{{< fa user-secret size=2x >}} [Do not use `summarize()` for a single statistic!]{style="font-size: 1.25em; padding-left: 0.5em;"}
+
+We can calculate a single statistic with `summarize()`:
+
+```{r}
+measures %>%
+  summarize(
+    mean_wing =
+      mean(wing, na.rm = TRUE)
+  )
+```
+
+The result is a **tibble** that contains a single value, and we would have to extract that value before we could use it. It is far more parsimonious to extract the column and calculate the statistic directly (see ***2.1 Introduction to subsetting and extraction***):
+
+```{r}
+measures %>%
+  pull(wing) %>%
+  mean(na.rm = TRUE)
+```
+
+Use `summarize()` when you want a table of statistics. Use `pull()` and a summary function when you want a value.
+:::
+
+## Group the data
+
+We often want to conduct an operation on groups of rows in our data rather than on the data frame as a whole. To **group** a data frame is to divide its rows by the values in a variable, so that an operation is conducted on each group separately. We specify the grouping variable (unquoted) with the `.by = ` argument.
+
+The `.by = ` argument is accepted by many *dplyr* functions, including `mutate()`, `filter()`, `slice()`, and `summarize()`. Because those functions conduct different operations, the functions return different results:
+
+* `mutate()` adds a column, so a grouped `mutate()` returns every row of the original data frame;
+* `filter()` subsets rows by condition, so a grouped `filter()` returns the rows that satisfy the condition within each group;
+* `summarize()` calculates statistics, so a grouped `summarize()` returns a row for each group.
+
+### Group a mutation
+
+In ***2.2 Introduction to mutation*** we used `mutate()` to add a column that was calculated from other columns. Below, we calculate mean mass of the birds in `measures`:
+
+```{r}
+measures %>%
+  mutate(
+    mean_mass =
+      mean(mass, na.rm = TRUE)
+  )
+```
+
+Every row received the same value, because `mean()` was given the whole `mass` column. That value tells us very little about an individual bird, because `measures` contains species as different in size as chickadees and robins. Let's supply `spp` to the `.by = ` argument:
+
+```{r}
+measures %>%
+  mutate(
+    mean_mass =
+      mean(mass, na.rm = TRUE),
+    .by = spp
+  )
+```
+
+The value in `mean_mass` is now the mean mass of the species in each row. Notice that every row of `measures` is still here -- a grouped `mutate()` is still a `mutate()`.
+
+With that column, we can compare each bird to the others of its species:
+
+```{r}
+measures %>%
+  mutate(
+    mean_mass =
+      mean(mass, na.rm = TRUE),
+    mass_index = mass / mean_mass,
+    .by = spp
+  )
+```
+
+Note that `mass_index` was calculated from `mean_mass`, which we created on the line above it. Arguments inside a `mutate()` call are evaluated in order, as we saw in ***2.2 Introduction to mutation***.
+
+::: now_you
+{{< fa user-circle size=2x >}} [Now you!]{style="font-size: 1.25em; padding-left: 0.5em;"}
+
+Add a column named `wing_index` that contains each bird's wing length divided by the mean wing length of its species. Every row of `measures` should be maintained.
+
+*Hint: You will need two named arguments and the `.by = `, in that order.*
+
+[Click here to see my answer]{.answer_link data-answer="a-2-3-index"}
+
+::: {.answer_body #a-2-3-index}
+
+```{r}
+measures %>%
+  mutate(
+    mean_wing =
+      mean(wing, na.rm = TRUE),
+    wing_index = wing / mean_wing,
+    .by = spp
+  )
+```
+
+:::
+:::
+
+### Group a filter
+
+In ***2.1 Introduction to subsetting and extraction*** we used `filter()` to subset a data frame by condition. Below, we subset `measures` to the birds that weighed more than the average bird in the dataset:
+
+```{r}
+measures %>%
+  filter(
+    mass > mean(mass, na.rm = TRUE)
+  )
+```
+
+Have a look at the `spp` column. We can see that this omitted small species. For example, the heaviest House Wren in this dataset weighs less than the average bird, so no House Wren can satisfy this condition. 
+
+Supplying `spp` to `.by = ` subsets to the birds whose weight is greater than the average for its species:
+
+```{r}
+measures %>%
+  filter(
+    mass > mean(mass, na.rm = TRUE),
+    .by = spp
+  )
+```
+
+Each bird is now compared to the mean mass of its own species, and the small species are represented.
+
+The `slice_*()` functions from ***2.1*** are grouped in the same way. Below, we subset `measures` to the heaviest bird of each species:
+
+```{r}
+measures %>%
+  slice_max(
+    mass,
+    n = 1,
+    by = spp
+  )
+```
+
+::: mysecret
+
+{{< fa user-secret size=2x >}} [Watch the dot!]{style="font-size: 1.25em; padding-left: 0.5em;"}
+
+The grouping argument is `.by = ` in `mutate()`, `filter()`, `slice()`, and `summarize()`. It is `by = `, with no dot, in `slice_max()`, `slice_min()`, `slice_head()`, `slice_sample()`, and the rest of the `slice_*()` functions.
+
+The error message that you receive when you get this wrong is not a helpful one, so it is worth committing to memory.
+:::
+
+::: now_you
+{{< fa user-circle size=2x >}} [Now you!]{style="font-size: 1.25em; padding-left: 0.5em;"}
+
+Subset `measures` to the longest-winged capture record of each `sex`, maintaining all four columns.
+
+*Hint: Watch the dot.*
+
+[Click here to see my answer]{.answer_link data-answer="a-2-3-slice"}
+
+::: {.answer_body #a-2-3-slice}
+
+```{r}
+measures %>%
+  slice_max(
+    wing,
+    n = 1,
+    by = sex
+  )
+```
+
+:::
+:::
+
+### Group a summary
+
+Our summary of wing length described the whole data frame. We can produce that summary for each species by supplying `spp` to the `.by = ` argument:
+
+```{r}
+measures %>%
+  drop_na(wing) %>%
+  summarize(
+    n = n(),
+    mean_wing = mean(wing),
+    sd_wing = sd(wing),
+    .by = spp
+  )
+```
+
+A row in the result is a species rather than a capture record. A grouped `mutate()` describes each bird in terms of its species. A grouped `summarize()` describes the species themselves.
+
+*Note: The species that were never measured for wing length are absent here, because `drop_na(wing)` removed all of their records. Had we used `na.rm = TRUE` instead, those species would be returned with a `mean_wing` of `NaN` -- the value that `mean()` returns when it receives an empty vector.*
+
+We can group by more than one variable by supplying them to `.by = ` inside of `c()`:
+
+```{r}
+measures %>%
+  summarize(
+    n = n(),
+    .by = c(spp, sex)
+  )
+```
+
+A row in the result is now a species *and* a sex. Notice that the records with an `NA` in `sex` form a group of their own, as `.by = ` treats `NA` like any other value.
+
+::: now_you
+{{< fa user-circle size=2x >}} [Now you!]{style="font-size: 1.25em; padding-left: 0.5em;"}
+
+In a single `summarize()` statement, return the number of capture records and the mean mass of each `sex`. Values that are missing from `mass` should be excluded from the mean.
+
+*Hint: You will need two named arguments before the `.by = `.*
+
+[Click here to see my answer]{.answer_link data-answer="a-2-3-by"}
+
+::: {.answer_body #a-2-3-by}
+
+```{r}
+measures %>%
+  summarize(
+    n = n(),
+    mean_mass =
+      mean(mass, na.rm = TRUE),
+    .by = sex
+  )
+```
+
+:::
+:::
+
+## When to use `group_by()`
+
+There is a second way to group a data frame. The *dplyr* function `group_by()` predates the `.by = ` argument, and much of the code that you read will use it. It does one thing that `.by = ` cannot do.
+
+Look again at our summary of species and sex. The records with an `NA` in `sex` formed a group of their own, and we know from ***2.2 Introduction to mutation*** that "U" is the code that this project uses for a bird whose sex could not be determined. We would like to recode `sex` and group by it in the same statement.
+
+The `.by = ` argument cannot do this:
+
+```{r}
+#| error: true
+
+measures %>%
+  summarize(
+    n = n(),
+    .by =
+      c(
+        spp,
+        sex = replace_na(sex, "U")
+      )
+  )
+```
+
+::: mysecret
+
+{{< fa screwdriver-wrench size=2x >}} [Why `.by = ` cannot build a grouping variable]{style="font-size: 1.25em; padding-left: 0.5em;"}
+
+The error message reports that the object `sex` was not found, which is strange to read when `sex` is a column of `measures`. The reason is one that we met in ***2.1 Introduction to subsetting and extraction***: the `.by = ` argument uses **tidy selection**, the mechanism that `select()` and `pull()` use. Tidy selection matches a bare name against the names of a data frame and returns the columns that it finds. The values in those columns are not made available, so `replace_na()` has nothing to modify.
+
+The `group_by()` function uses **data masking**, the mechanism that `mutate()` and `filter()` use. Data masking makes the values in each column available inside of the function, so an argument to `group_by()` can be an expression.
+:::
+
+The `group_by()` function builds its grouping variables in the way that `mutate()` builds columns:
+
+```{r}
+measures %>%
+  group_by(
+    spp,
+    sex = replace_na(sex, "U")
+  ) %>%
+  summarize(
+    n = n(),
+    .groups = "drop"
+  )
+```
+
+The `NA` group has been combined with "U" for every species. Note that we did not add a recoded column to `measures` -- the recoding took place inside of `group_by()`, and it is present only in the result.
+
+We can also rename a grouping variable as we group by it, which is useful when a field name is not informative for our readers:
+
+```{r}
+measures %>%
+  group_by(species = spp) %>%
+  summarize(n = n())
+```
+
+### Remove the grouping when you are finished
+
+The `.by = ` argument groups a single operation. The `group_by()` function attaches a grouping to the data frame, and that grouping is maintained until it is removed.
+
+Below, we count the captures of each species and sex, then subset the result to the largest group:
+
+```{r}
+measures %>%
+  group_by(spp, sex) %>%
+  summarize(n = n()) %>%
+  slice_max(n, n = 1)
+```
+
+We received a row for each species rather than the single row that we asked for. The `summarize()` function removes only the last grouping variable, so the result was still grouped by `spp`, and `slice_max()` returned the largest group *within each species*. R gave us no error, and the message that we did receive says nothing about the problem.
+
+The `.groups = "drop"` argument of `summarize()` removes the grouping as the summary is calculated:
+
+```{r}
+measures %>%
+  group_by(spp, sex) %>%
+  summarize(
+    n = n(),
+    .groups = "drop"
+  ) %>%
+  slice_max(n, n = 1)
+```
+
+The *dplyr* function `ungroup()` removes a grouping at any point in a pipe:
+
+```{r}
+measures %>%
+  group_by(spp, sex) %>%
+  summarize(n = n()) %>%
+  ungroup() %>%
+  slice_max(n, n = 1)
+```
+
+*Note: The `group_by()` function also sorts its groups, which is why it returns our species in alphabetical order while `.by = ` returns them in the order that they appear in the data.*
+
+## Choosing a grouping method
+
+We have now seen where each method fails, which is what we need in order to choose between them:
+
+* Group with `.by = `. It groups a single operation and returns an ungrouped result, so there is no grouping to affect a later step.
+* Group with `group_by()` when the grouping variable has to be built -- recoded, renamed, or calculated -- because tidy selection cannot do that and data masking can.
+* Whenever you group with `group_by()`, remove the grouping with `.groups = "drop"` or `ungroup()` before you pass the data frame to another function.
+
+::: now_you
+{{< fa user-circle size=2x >}} [Now you!]{style="font-size: 1.25em; padding-left: 0.5em;"}
+
+Which grouping method would you use for each of the following, and why?
+
+1. The mean wing length of each species.
+2. The number of captures of each species and sex, with the `NA` values in `sex` recoded to "U".
+3. A column that contains each bird's mass divided by the mean mass of its sex.
+
+[Click here to see my answer]{.answer_link data-answer="a-2-3-choose"}
+
+::: {.answer_body #a-2-3-choose}
+
+1. `.by = spp`. The grouping variable is already a column, so tidy selection is all that we need.
+2. `group_by()`, ending with `.groups = "drop"`. The grouping variable does not exist yet -- we are building it from `sex` -- and data masking is what allows us to do that.
+3. `.by = sex`, inside of `mutate()`. Grouping is not only for summarizing, and this question asks for a column rather than a table.
+
+:::
+:::
+
+## Take-home points
+
+* `summarize()` calculates summary statistics and returns them as a data frame. Use `pull()` and a summary function when you want a value rather than a table.
+* The `n()` function counts rows. The `na.rm = TRUE` argument belongs to `mean()` and its relatives, not to `summarize()`.
+* Where a summary reports a count alongside a statistic, remove the missing values with `drop_na()` before you summarize.
+* The `.by = ` argument divides a data frame into groups before a function does its work. A grouped `mutate()` returns every row, a grouped `filter()` and `slice_max()` return the rows chosen within each group, and a grouped `summarize()` returns a row for each group.
+* Grouping changes the question that a function asks, not just the arithmetic that it does.
+* The grouping argument is `.by = ` everywhere except the `slice_*()` functions, where it is `by = `.
+* `.by = ` uses tidy selection and cannot build a grouping variable. `group_by()` uses data masking and can, which is the reason to use it.
+* A `group_by()` grouping is maintained until it is removed. Remove it with `.groups = "drop"` or `ungroup()`.
+
+## Exercises
+
+::: now_you
+{{< fa user-circle size=2x >}} [Test your knowledge!]{style="font-size: 1.25em; padding-left: 0.5em;"}
+
+1. Which statement returns the mean mass of every bird in `measures` as a value?
+
+   `r longmcq(c("summarize(measures, mean_mass = mean(mass, na.rm = TRUE))", answer = "measures %>% pull(mass) %>% mean(na.rm = TRUE)", "mutate(measures, mean_mass = mean(mass, na.rm = TRUE))", "slice_max(measures, mass, n = 1)"))`
+
+2. How many rows does `mutate(measures, mean_mass = mean(mass, na.rm = TRUE), .by = spp)` return?
+
+   `r longmcq(c(answer = "Every row of measures, because mutate() does not change the number of rows", "A row for each species", "A single row", "It depends on how many species have a recorded mass"))`
+
+3. True or false: `filter(measures, mass > mean(mass, na.rm = TRUE), .by = spp)` and the same statement without `.by = spp` ask the same question of the data.
+
+   `r torf(FALSE)`
+
+4. `summarize(measures, n = n(), .by = c(sex = replace_na(sex, "U")))` reports that the object `sex` was not found. Why?
+
+   `r longmcq(c("replace_na() may only be used inside of mutate()", answer = "The .by argument uses tidy selection, which matches column names rather than supplying the values in those columns", "The sex column contains NA values, which cannot be grouped", "c() may not be used with .by"))`
+
+5. You group `measures` by `spp` and `sex` with `group_by()`, summarize, and pipe the result into `slice_max(n, n = 1)` without removing the grouping. What is returned?
+
+   `r longmcq(c("An error, because the data frame is still grouped", "A single row: the largest group in the dataset", answer = "A row for each species, because slice_max() ran within each group", "The summary, unchanged"))`
+
+6. Parsons Problem: Reorder the lines below to subset `measures` to the heaviest capture record of each species. One line uses the wrong spelling of the grouping argument. Leave it in the trash.
+
+   <div class="parsons-problem">
+   <div id="p-2-3-01-trash" class="sortable-code"></div>
+   <div id="p-2-3-01-sortable" class="sortable-code"></div>
+   <div style="clear: both;"></div>
+   <button id="p-2-3-01-check" class="parsons-btn parsons-btn-check" type="button">Check My Order</button>
+   <button id="p-2-3-01-reset" class="parsons-btn parsons-btn-reset" type="button">Shuffle Again</button>
+   <p id="p-2-3-01-feedback" class="parsons-feedback"></p>
+   </div>
+
+   <script>
+   window.parsonsProblems = window.parsonsProblems || [];
+   window.parsonsProblems.push({
+     id: "p-2-3-01",
+     maxDistractors: 1,
+     code: "measures %>%\n  slice_max(\n    mass,\n    n = 1,\n    by = spp\n  )\n    .by = spp #distractor"
+   });
+   </script>
+:::
+
+{{< include /src/includes/_reference_section.qmd >}}

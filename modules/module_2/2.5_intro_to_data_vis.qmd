@@ -959,7 +959,9 @@ Now we can modify specific theme elements inside the *ggplot2* function `theme()
 
 * One argument per element that we would like to restyle, named for that element (e.g., `axis.text = `, `plot.title = `, `strip.text = `)
 
-Each element is restyled by a matching function, so text elements are modified by passing arguments to `element_text()`. Note that `axis.text` names the tick labels along the axes. The axis titles are named by `axis.title`, and the title above the plot by `plot.title`. Let's make our tick labels larger:
+Each element is restyled by a matching function, so text elements are modified by passing arguments to `element_text()`. Note that `axis.text` names the tick labels along the axes. The axis titles are named by `axis.title`, and the title above the plot by `plot.title`.
+
+The two facets in the plot above are close enough that the tick label at the right edge of one panel touches the tick label at the left edge of the next. The gap between panels is named by `panel.spacing`, and it is restyled by `unit()`, which takes a size and the units to measure it in. Let's make our tick labels larger and separate the panels:
 
 ```{r}
 chickadees %>%
@@ -1021,7 +1023,9 @@ chickadees %>%
   theme_bw() +
   theme(
     axis.text =
-      element_text(size = 12)
+      element_text(size = 12),
+    panel.spacing =
+      unit(1.5, "lines")
   )
 ```
 
@@ -1037,7 +1041,7 @@ I adjust my themes at the very end of my ggplot code. You typically need to adju
 
 At this point my hope is that you have a mental model for building a plot. It might look something like this (click to expand):
 
-![](../../src/images/decision_trees/ggplot.svg){.zoomable data-title="Decision tree: Building a plot with ggplot" data-pdf-key="ggplot" fig-alt="Decision tree. The first question is which element of the grammar of graphics you want to change. The data gives ggplot(), into which the data are piped. The aesthetic mappings give aes(), which is inherited by every geometry. The geometries lead to a further question, which geometry: one point per observation gives geom_point(), and a line of best fit gives geom_smooth(). The scales lead to a further question, which scale: the x axis gives scale_x_continuous(), the y axis gives scale_y_continuous(), colors that you choose give scale_color_manual(), and colors from a palette give scale_color_brewer(). The facets give facet_wrap(), which draws one subplot per value. The labels give labs(). The theme leads to a further question, whole theme or one element: the whole theme gives theme_bw(), and one element gives theme(), which takes one argument per element."}
+![](../../src/images/decision_trees/ggplot.svg){.zoomable data-title="Decision tree: Building a plot with ggplot" data-pdf-key="ggplot" fig-alt="Decision tree. The first question is which element of the grammar of graphics you want to change. The data gives ggplot(), into which the data are piped. The aesthetic mappings give aes(), which is inherited by every geometry. The geometries lead to a further question, which geometry: one point per observation gives geom_point(), and a line of best fit gives geom_smooth(). The scales lead to a further question, which scale: the x axis gives scale_x_continuous(), the y axis gives scale_y_continuous(), colors that you choose give scale_color_manual(), and colors from a palette give scale_color_brewer(). The facets give facet_wrap(), which draws one subplot per value. The labels give labs(). The theme leads to a further question, whether to use a pre-built theme: yes gives theme_bw(), and no gives theme(), which takes one argument per element."}
 
 {{< include ../../src/includes/decision_tree_pdfs/ggplot.qmd >}}
 
@@ -1049,13 +1053,13 @@ As in ***2.1 Introduction to subsetting and extraction***, this tree is a visual
 
 ## Take-home points
 
-* A plot is built from the seven elements of the grammar of graphics. Naming the element that you want to change is the fastest way to find the function that changes it.
+* A plot is built from the elements of the grammar of graphics. Naming the element that you want to change is the fastest way to find the function that changes it.
 * Pipe the data into `ggplot()` with `%>%`, then add every element after that with `+`.
 * An aesthetic mapping supplied to `aes()` is inherited by every geometry in the plot. A mapping supplied inside a single `geom_` function applies to that geometry alone.
 * Scales govern more than the axes. The range of an axis and the colors assigned to a variable are both scaling operations.
 * Choose a colorblind-safe palette. A distinction carried by colors that a reader cannot tell apart is lost to that reader.
 * Facets split one plot into subplots by the values of a variable, so the labels on those subplots are the values themselves. Change the values, and you change the labels.
-* Adjust the theme last. Themes are tuned iteratively against a saved file, and keeping `theme()` at the end of the chain makes it easy to find.
+* A pre-built theme such as `theme_bw()` sets every non-data element at once. `theme()` restyles the elements you name, one argument each. Adjust the theme last: themes are tuned iteratively against a saved file, and keeping `theme()` at the end of the chain makes it easy to find.
 
 ## Exercises
 

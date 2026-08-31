@@ -1,0 +1,570 @@
+---
+title: "2.6 Tidy data"
+format: live-html
+---
+
+```{r}
+#| include: false
+
+source("src/r/course_functions.R")
+source("src/r/reference_lookup.R")
+
+lesson_refs <- find_lesson_references()
+```
+
+```{r}
+#| label: setup
+#| include: false
+
+library(tidyverse)
+
+knitr::opts_chunk$set(
+  echo = TRUE,
+  eval = TRUE,
+  error = TRUE
+)
+```
+
+<hr>
+
+<div>
+![](../../src/images/hex_complex.png){.intro_image fig-alt="Course logo"}
+
+You will hear me say this a lot, but the tidyverse is not simply a set of functions or packages built for working with data. Instead, Hadley Wickham built the tidyverse to develop a new way of using the R language that adheres to long-established standards in data engineering. At the foundation of the tidyverse are the rules that govern **tidy data**. These rules represent a recommended structure for your data that ensures that your data are robust against errors, easy to modify, and easy to work with. In this lesson, you will learn:
+
+* Why tidy data is an important consideration in data management
+* Three of the primary rules of normal (a.k.a. "tidy") data from the perspective of data engineering and relational databases
+* The tidy data rules, which describe the normal data rules in statistical language
+* How to recognize the most common ways that a dataset violates those rules
+* What a transitive dependence is and why we remove it
+* How data tidying differs from data cleaning
+* How to tidy a messy dataset with *dplyr* and *tidyr* functions
+
+**Important!** Before starting this lesson, be sure that you have completed all preliminary and previous lessons!
+
+</div>
+
+## Data for this lesson
+
+<button class="accordion">Please click on the button below to explore the metadata for this lesson!</button>
+::: panel
+
+In this lesson, we will explore:
+
+```{r}
+#| echo: false
+#| output: asis
+
+lesson_metadata(.dataset = "messy_weather.csv") %>%
+  cat()
+```
+:::
+
+## Set up your session
+
+Please do the following to ensure that you are working in a clean session:
+
+1. Please ensure that your **Global Environment** is empty.
+2. In the *History* tab of your **workspace pane**, ensure that your **session history** is empty.
+
+Now that we are working in a clean session:
+
+1. Create a script file.
+2. Save your script file as "[scripts/tidy_data_written_content.R]{.mono}".
+3. Add metadata as a comment on the top of the file.
+4. Following your metadata, create a new **code section** and call it "`setup`".
+5. Following your section header, attach the packages that comprise the **core tidyverse**.
+
+At this point, your script should look something like:
+
+```{r}
+#| eval: false
+
+# My code for the tidy data tutorial
+
+# setup --------------------------------------------------------
+
+library(tidyverse)
+```
+
+Let's read in the data and have a look at the object:
+
+```{r}
+#| message: false
+
+weather <-
+  read_csv("data/raw/messy_weather.csv")
+
+weather
+```
+
+We have 165 rows and 40 columns. Before we can decide what to do about this file, we need a vocabulary for describing what is wrong with it.
+
+## The vocabulary of tidy data
+
+The tidy data rules were formalized by Hadley Wickham in a 2014 paper in the *Journal of Statistical Software* ([Wickham 2014](https://vita.had.co.nz/papers/tidy-data.pdf){target="_blank"}). The rules rest on four terms that have a specific meaning in this context:
+
+* A **value** is a single recorded entry in a dataset. The number 37.9 in the first row of the latitude column is formally a value.
+* A **variable** is the full set of values that measure the same attribute. Elevation is considered a variable in our dataset because every elevation value measures the same thing.
+* An **observation** is the full set of values recorded on the same thing at the same time and place. One day at one weather station is an observation.
+* An **observational unit** is the *kind of thing* that is being measured. Wickham uses this term for what I will more often call a **level of observation**. In our weather file there are two levels of observation, because some of the recorded values describe a station and some of them describe a day at a station.
+
+With that vocabulary in place, the three rules of tidy data are:
+
+1. Every variable forms a column.
+2. Every observation forms a row.
+3. Every type of observational unit forms a table. I state this rule as **every level of observation forms a table**, and that is the phrasing I would like you to use.
+
+Wickham's tidy data rules are a restatement, in statistical language, of the third normal form of relational database design ([Codd 1990](https://dl.acm.org/doi/book/10.5555/77708){target="_blank"}). Database engineers have relied on these rules for decades. Wickham added the translation, and the recognition that a single standard structure allows a set of tools to work together.
+
+
+::: {.callout-tip}
+
+What constitutes a value, variable, observation, or observational unit is not dependent on the current structure of a dataset nor is it defined by the dataset. For example, although precipitation, snow, and temperature on a given day at a given station is an observation, [messy_weather.csv]{.mono} is not formatted in this way. Our goal is to use the tidy data rules to govern how we structure the data.
+
+:::
+
+## Rule 1: Every variable forms a column
+
+Every variable gets one column, and every column holds one variable. This rule can be broken from either direction. A variable can be present in a dataset without having a column of its own, and a single column can carry more than one variable.
+
+### Recognizing a violation of rule 1
+
+Our weather file breaks this rule in three ways.
+
+**Column headers are values rather than variable names.** The day of the month is a variable, because every one of its values measures the same attribute. In [messy_weather.csv]{.mono} the days are stored as the column names [march_1]{.mono} through [march_31]{.mono}, which puts the values of the day variable in the header row and leaves the variable itself without a column.
+
+**One variable is split across several columns.** The date on which a measurement was taken is a variable, and this file records it in three places: the [year]{.mono} column, the [month]{.mono} column, and the column names. Giving the days a column of their own will not settle this. It will leave the date split across three columns rather than across two columns and a header row.
+
+**More than one variable is stored in a single column.** The rows in which [variable]{.mono} is "temperature_min_max" hold a daily minimum and a daily maximum separated by a colon. These measure two different attributes, so they are two variables sharing one column.
+
+### Fixing the first violation of rule 1
+
+Let's start with the day variable, whose values are stored as column names. To move a set of columns into rows, we use the *tidyr* function `pivot_longer()`, supplying the columns to stack along with `names_to = ` and `values_to = `:
+
+```{r}
+weather %>%
+  pivot_longer(
+    march_1:march_31,
+    names_to = "day",
+    values_to = "value"
+  )
+```
+
+We now have 5,115 rows, which is 165 rows multiplied by the 31 columns that we stacked. The [day]{.mono} column holds what used to be column names and the [value]{.mono} column holds the measurements.
+
+::: mysecret
+{{< fa user-secret size=2x >}} [Why do I need quotes for `names_to` and `values_to`?]{style="font-size: 1.25em; padding-left: 0.5em;"}
+
+Recall from Module 1 that a **name** is a symbol that R evaluates to retrieve an object. We supplied [march_1]{.mono} through [march_31]{.mono} as bare names because those columns are present in the data frame that we piped into the function, so there is something for R to retrieve.
+
+The [day]{.mono} and [value]{.mono} columns are a different matter. Neither of them existed when we ran the code, because the point of running it was to create them. There is nothing for R to retrieve, so we supply the text of each name as a character value instead.
+
+**A column that already exists is addressed by its bare name. A column that you are creating is supplied within quotes.** You will use this distinction in every tidyverse function that adds a column to a data frame.
+:::
+
+::: now_you
+{{< fa user-circle size=2x >}} [Now you!]{style="font-size: 1.25em; padding-left: 0.5em;"}
+
+Have a look at the values in the [day]{.mono} column. What are they carrying that this data frame already records somewhere else?
+
+[Click here to see my answer]{.answer_link data-answer="a-2-6-day"}
+
+::: {.answer_body #a-2-6-day}
+
+Every value begins with "march_". The month of a record is already stored in the [month]{.mono} column, so each [day]{.mono} value repeats a fact that this data frame records somewhere else.
+
+:::
+:::
+
+Each column in a table should describe the observation directly. When the values in one column can instead be determined by the values in another column, the same fact has been written down in two places, and we call this a **transitive dependence**. The month carried inside each [day]{.mono} value is determined by the [month]{.mono} column, so the "march_" prefix is a transitive dependence.
+
+Removing dependencies like this is a primary goal of the tidy data rules. 
+
+*Note: The classic textbook example of a transitive dependence is a whole column that is determined by another column, rather than a fragment of a value. The principle is the same, and this is a good opportunity to learn it.*
+
+::: callout-note
+
+## Why is transitive dependence an issue?
+
+Managing datasets that have transitively dependent columns can cause problems. In our example, if a record's [month]{.mono} were corrected from 3 to 4 and its [day]{.mono} values were left as "march_1", the row would disagree with itself. Removing the prefix leaves one place where the month of a record is written down.
+
+:::
+
+The `names_prefix = ` argument of `pivot_longer()` removes a prefix from each column name as that name is stacked into the new column:
+
+```{r}
+weather_long <-
+  weather %>%
+  pivot_longer(
+    march_1:march_31,
+    names_to = "day",
+    names_prefix = "march_",
+    values_to = "value"
+  )
+
+weather_long
+```
+
+The day of the month now has a column of its own, and the month is written down in one place.
+
+### Fixing the second violation of rule 1
+
+The date on which a measurement was taken is still spread across the [year]{.mono}, [month]{.mono}, and [day]{.mono} columns. To combine several columns into one, we use the *tidyr* function `unite()`, supplying `col = `, the columns to combine, and `sep = `:
+
+```{r}
+weather_dated <-
+  weather_long %>%
+  unite(
+    col = "date",
+    year,
+    month,
+    day,
+    sep = "-"
+  )
+
+weather_dated
+```
+
+The date of a measurement is now recorded in one column. Notice that `unite()` removed the three columns that went into it. Had it left them in place, each of them could be determined from the new [date]{.mono} column, and we would have created another transitive dependence.
+
+*Note: The values in [date]{.mono} are character values, and they are not written in the international standard format for dates (ISO 8601), which records the first of March 2010 as "2010-03-01" rather than "2010-3-1". We will cover date formats, and how to convert a date to the standard, later in the course.*
+
+::: mysecret
+{{< fa user-secret size=2x >}} [A date is one variable!]{style="font-size: 1.25em; padding-left: 0.5em;"}
+
+The moment at which an observation was made is one attribute of that observation, so rule 1 asks for one column. A file that spreads that moment across [year]{.mono}, [month]{.mono}, and [day]{.mono} has recorded one variable in three places.
+
+The cost of the split shows up in every question that you later ask of the date. Ordering your observations in time, selecting the first two weeks of April, and measuring the number of days between two events are all operations on the date as a whole. When the date lives in three columns, each of these operations begins by putting it back together, and every person who works with your data has to reassemble it the same way that you would have.
+
+**If your data record a time of day, it belongs in that same variable.** A measurement taken at 14:30 on the first of March 2010 was made at one moment, and one moment is one value. A separate time column repeats the problem one level down, because two observations made on the same day can no longer be placed in order without recombining the two columns. The international standard writes such a value as "2010-03-01T14:30:00".
+:::
+
+Our third violation of rule 1 is still out of reach. The minimum and maximum temperatures sit in the [value]{.mono} column, and the label "temperature_min_max" sits in the [variable]{.mono} column, so there is no temperature column to split yet. We will return to it once rule 2 is satisfied.
+
+## Rule 2: Every observation forms a row
+
+An observation is the full set of values recorded on the same thing at the same time, and each observation gets one row. In [messy_weather.csv]{.mono}, one day at one station is an observation, so a tidy version of this file has one row for each station on each day.
+
+### Recognizing a violation of rule 2
+
+Our weather file breaks this rule in one way.
+
+**Variables are spread across both rows and columns.** The [variable]{.mono} column holds the *names* of variables rather than measured values, which puts precipitation, snowfall, and temperature down the rows while the days run across the columns. One day at one station is therefore scattered across three rows, contributing one measurement to each. Wickham singles this arrangement out as the hardest kind of messiness to untangle, and it is the violation that takes the longest to see.
+
+*Note: A single problem often breaks more than one rule. Storing the days as column names breaks rule 1 because the day variable has no column, and it breaks rule 2 because each row holds 31 observations rather than one.*
+
+### Fixing the violation of rule 2
+
+Next is the [variable]{.mono} column, which contains variable names rather than measured values. The remedy is the inverse of what we just did, which is to move the values of a column back out into columns of their own. For this we use the *tidyr* function `pivot_wider()`, supplying `names_from = ` and `values_from = `:
+
+```{r}
+weather_wide <-
+  weather_dated %>%
+  pivot_wider(
+    names_from = variable,
+    values_from = value
+  )
+
+weather_wide
+```
+
+We are down to 1,705 rows, which is 5 stations multiplied by 11 years multiplied by 31 days. Each row is now a single day at a single station, and precipitation, snowfall, and temperature each have a column.
+
+### Returning to the third violation of rule 1
+
+That leaves [temperature_min_max]{.mono}, which holds two measurements separated by a colon. To split one column into several, we use the *tidyr* function `separate_wider_delim()`. We supply the following arguments:
+
+* The target data frame (typically passed to the function via a pipe)
+* The column that we would like to split
+* The delimiter that separates the values (`delim = `)
+* A character vector of names for the resulting columns (`names = `)
+
+```{r}
+weather_split <-
+  weather_wide %>%
+  separate_wider_delim(
+    temperature_min_max,
+    delim = ":",
+    names = c("temperature_min", "temperature_max")
+  )
+
+weather_split
+```
+
+Every variable in this table now has one column, and every column holds one variable.
+
+## Rule 3: Every level of observation forms a table
+
+A dataset that records some values about stations and other values about days holds two levels of observation, and each of those levels needs a table of its own. A table that breaks this rule still looks perfectly ordinary, which is what makes the violation easy to miss.
+
+### Recognizing a violation of rule 3
+
+The fastest way to find a violation of this rule is to look for values that repeat down the rows for no good reason. In our weather file, the latitude of the Berkeley station is recorded 33 times. Latitude is an attribute of a station, not of a March day, so its repetition tells us that a second level of observation is hiding in this table.
+
+**More than one level of observation is stored in a single table.** The columns [longitude]{.mono}, [latitude]{.mono}, [elevation]{.mono}, [state]{.mono}, and [name]{.mono} describe a station. The daily measurements describe a day at a station. Our file stores both levels together.
+
+::: mysecret
+{{< fa user-secret size=2x >}} [Repeated values are the signal!]{style="font-size: 1.25em; padding-left: 0.5em;"}
+
+Every repeated value is a value that can be edited in one row and missed in another. This is how a single station quietly acquires two latitudes.
+
+Splitting a table by its levels of observation records each fact exactly once, which is the whole reason that the third rule exists.
+:::
+
+### Fixing the violation of rule 3
+
+Our data now satisfy the first two rules of tidy data, but the station attributes are still repeated on every one of the 1,705 rows. To satisfy the third rule, we need to split this table into one table per level of observation.
+
+The station table is the smaller of the two. We want one row per station and only the columns that describe a station, which is exactly what the *dplyr* function `distinct()` provides:
+
+```{r}
+stations <-
+  weather_split %>%
+  distinct(
+    station,
+    longitude,
+    latitude,
+    elevation,
+    state,
+    name
+  )
+
+stations
+```
+
+Five rows for five stations. The [station]{.mono} column is the **primary key** of this table because its values uniquely identify each row.
+
+The observation table holds everything that was measured on a given day at a given station, which we subset to with `select()`:
+
+```{r}
+observations <-
+  weather_split %>%
+  select(
+    station,
+    date,
+    precip,
+    snow,
+    temperature_min,
+    temperature_max
+  )
+
+observations
+```
+
+Here, [station]{.mono} is a **foreign key** that refers back to the primary key of `stations`, and the combination of [station]{.mono} and [date]{.mono} forms the **compound key** of this table (i.e., neither column identifies a row on its own, but together they do).
+
+::: mysecret
+{{< fa user-secret size=2x >}} [Tidy data is a structure, not a function!]{style="font-size: 1.25em; padding-left: 0.5em;"}
+
+Tidying is a decision that you make about what your variables and your levels of observation are, followed by whichever functions carry out that decision. There is no `tidy()` function, and there never will be. Two people given the same messy file may reasonably produce different tidy versions of it, because they have defined the observational units differently.
+
+This is why I ask you to write down what each level of observation is *before* you write any code. The functions are the easy part.
+:::
+
+::: now_you
+{{< fa user-circle size=2x >}} [Now you!]{style="font-size: 1.25em; padding-left: 0.5em;"}
+
+In a single piped statement, and without using any of the objects we assigned along the way:
+
+* Read in [messy_weather.csv]{.mono};
+* Stack the day columns into a [day]{.mono} column and a [value]{.mono} column, dropping the "march_" prefix;
+* Build a [date]{.mono} column, dropping the three columns that went into it;
+* Move the values of [variable]{.mono} out into their own columns;
+* Split [temperature_min_max]{.mono} into [temperature_min]{.mono} and [temperature_max]{.mono};
+* Subset to the six columns of the observation table;
+* Assign the resultant object to your global environment with the name `daily_weather`.
+
+*Hint: We used `pivot_longer()`, `pivot_wider()`, and `unite()` in **2.4 Reshaping data frames**, and `separate_wider_delim()` earlier in this lesson.*
+
+[Click here to see my answer]{.answer_link data-answer="a-2-6-tidy"}
+
+::: {.answer_body #a-2-6-tidy}
+
+```{r}
+#| message: false
+
+daily_weather <-
+  read_csv("data/raw/messy_weather.csv") %>%
+  pivot_longer(
+    march_1:march_31,
+    names_to = "day",
+    names_prefix = "march_",
+    values_to = "value"
+  ) %>%
+
+  # Give the date variable a column of its own:
+
+  unite(
+    col = "date",
+    year,
+    month,
+    day,
+    sep = "-"
+  ) %>%
+  pivot_wider(
+    names_from = variable,
+    values_from = value
+  ) %>%
+  separate_wider_delim(
+    temperature_min_max,
+    delim = ":",
+    names = c("temperature_min", "temperature_max")
+  ) %>%
+  select(
+    station,
+    date,
+    precip,
+    snow,
+    temperature_min,
+    temperature_max
+  )
+
+daily_weather
+```
+
+:::
+:::
+
+## Tidying is not cleaning
+
+Our data now satisfy all three tidy data rules, and the measurements are still character vectors. Have a look:
+
+```{r}
+observations
+```
+
+Converting those columns to numeric is a **data cleaning** step. Cleaning corrects the *content* of a dataset, which includes classes, units, misspellings, impossible values, and missing data codes. Tidying corrects the *structure* of a dataset, which is what the three rules govern. A dataset can be perfectly tidy and full of errors, and it can be scrupulously clean and completely untidy.
+
+The distinction matters because the two are done for different reasons and at different points in a workflow, and because a tidy dataset is far easier to clean than a messy one. Now that each variable has a column, we can convert all four of them in one step. The *dplyr* function `across()` applies the same change to a selection of columns, and we call it inside `mutate()`. To `across()` we supply the following arguments:
+
+* The columns that we would like to modify
+* The function to apply to each of them
+
+```{r}
+observations <-
+  observations %>%
+  mutate(
+    across(precip:temperature_max, as.numeric)
+  )
+
+observations
+```
+
+*Note: The `across()` function allows you to apply a function to a selection of columns inside of `mutate()` or `summarize()`. We will use it a lot in this course.*
+
+## Putting the rules together
+
+We have now met all three rules, seen how [messy_weather.csv]{.mono} broke each of them, and repaired the damage. Let's step back and look at the whole picture again.
+
+::: mysecret
+{{< fa user-secret size=2x >}} [Five ways that data go messy!]{style="font-size: 1.25em; padding-left: 0.5em;"}
+
+Wickham catalogues five problems that account for most messy datasets ([Wickham 2014](https://vita.had.co.nz/papers/tidy-data.pdf){target="_blank"}). Each one breaks a rule that we have now covered:
+
+* Column headers are values rather than variable names (rule 1).
+* More than one variable is stored in a single column (rule 1).
+* Variables are spread across both rows and columns (rule 2).
+* More than one level of observation is stored in a single table (rule 3).
+* One level of observation is spread across multiple tables (rule 3).
+
+Our weather file has the first four. You will meet the fifth the first time a colleague hands you a folder of files with one year, site, or species in each.
+:::
+
+::: now_you
+{{< fa user-circle size=2x >}} [Check your understanding]{style="padding-left: 0.5em;"}
+
+Match each problem in [messy_weather.csv]{.mono} to the rule that it breaks. Click a problem, then click its rule; when you are finished, select **Check My Matches**.
+
+```{r}
+#| echo: false
+#| results: asis
+
+matching_game(
+  .id = "m-2-6-01",
+  .pairs =
+    tibble(
+      left =
+        c(
+          "The days of the month are stored as the column names <code>march_1</code> through <code>march_31</code>",
+          "<code>temperature_min_max</code> holds a daily minimum and a daily maximum, separated by a colon",
+          "The <code>variable</code> column holds the names precip, snow, and temperature_min_max",
+          "<code>longitude</code>, <code>latitude</code>, <code>elevation</code>, <code>state</code>, and <code>name</code> repeat on every row"
+        ),
+      right =
+        c(
+          "Rule 1: the day variable has no column of its own",
+          "Rule 1: one column carries two variables",
+          "Rule 2: one day at one station is spread across three rows",
+          "Rule 3: two levels of observation share one table"
+        )
+    )
+)
+```
+:::
+
+## Saving the tidy data
+
+Because our tidy dataset is two tables that belong together, we can store them as a single list and write that list to a [.rds]{.mono} file:
+
+```{r}
+#| eval: false
+
+list(
+  stations = stations,
+  observations = observations
+) %>%
+  write_rds("data/processed/weather_tidy.rds")
+```
+
+You will meet [weather_tidy.rds]{.mono} again in later lessons, and it will be a great deal more pleasant to work with than the file we started from.
+
+## Exercises
+
+::: now_you
+{{< fa user-circle size=2x >}} [Test your knowledge!]{style="padding-left: 0.5em;"}
+
+1. A table of bird captures repeats the common name, foraging strategy, and diet of a species alongside every capture record. Which tidy data rule does this table violate?
+
+`r longmcq(c("Every variable forms a column", "Every observation forms a row", answer = "Every level of observation forms a table", "None -- the table is tidy"))`
+
+2. In [messy_weather.csv]{.mono}, the column names [march_1]{.mono} through [march_31]{.mono} are values of a day variable. Which function moves those column names into a column of their own?
+
+`r longmcq(c(answer = "pivot_longer()", "pivot_wider()", "separate_wider_delim()", "distinct()"))`
+
+3. True or false: An observational unit is the kind of thing being measured, so a dataset with measurements taken on both stations and days has two levels of observation.
+
+`r torf(TRUE)`
+
+4. Parsons Problem: Reorder the lines below to read [messy_weather.csv]{.mono} and stack its day columns into a [day]{.mono} column and a [value]{.mono} column. One line assigns the column names to the wrong destination. Leave it in the trash.
+
+<div class="parsons-problem">
+<div id="p-2-6-01-trash" class="sortable-code"></div>
+<div id="p-2-6-01-sortable" class="sortable-code"></div>
+<div style="clear: both;"></div>
+<button id="p-2-6-01-check" class="parsons-btn parsons-btn-check" type="button">Check My Order</button>
+<button id="p-2-6-01-reset" class="parsons-btn parsons-btn-reset" type="button">Shuffle Again</button>
+<p id="p-2-6-01-feedback" class="parsons-feedback"></p>
+</div>
+
+<script>
+window.parsonsProblems = window.parsonsProblems || [];
+window.parsonsProblems.push({
+  id: "p-2-6-01",
+  maxDistractors: 1,
+  code: "read_csv(\"data/raw/messy_weather.csv\") %>%\n  pivot_longer(\n    march_1:march_31,\n    names_to = \"day\",\n    values_to = \"value\"\n  )\n    names_to = \"value\", #distractor"
+});
+</script>
+:::
+
+## Take-home points
+
+* Tidy data is a set of structural rules, not a set of functions. Data that follow the rules are easier to modify, easier to plot, and far less likely to hide errors.
+* Every variable forms a column, every observation forms a row, and every level of observation forms a table.
+* A level of observation (Wickham's "observational unit") is the kind of thing that is being measured. Values that repeat down the rows are the clearest signal that a table holds more than one of them.
+* Most messiness comes from a short list of problems, and each of those problems has a matching *tidyr* or *dplyr* remedy.
+* Tidying corrects the structure of a dataset and cleaning corrects its content. The three rules govern structure alone, so a class conversion is a cleaning step no matter how untidy the data look.
+* When the values in one column can be determined by the values in another, the same fact is recorded twice. This is a transitive dependence, and it gives a row a way to disagree with itself.
+* Tables that describe different levels of observation are reconnected by a primary key and its matching foreign key, rather than by being stored together in one wide table.
+
+{{< include /src/includes/_reference_section.qmd >}}

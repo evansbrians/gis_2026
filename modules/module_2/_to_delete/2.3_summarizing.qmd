@@ -1,0 +1,558 @@
+---
+title: "2.3 Introduction to summarizing"
+format: live-html
+---
+
+```{r}
+#| include: false
+
+library(webexercises)
+library(tidyverse)
+
+source("src/r/course_functions.R")
+source("src/r/reference_lookup.R")
+
+lesson_refs <- find_lesson_references()
+```
+
+<hr>
+
+<div>
+![](../../src/images/hex_complex.png){.intro_image fig-alt="Course logo"}
+
+To **summarize** a data frame in the tidyverse is to calculate one or more summary statistics and return the resultant data as a **tibble** data frame. Fundamentally, summarizing is three processes in one:
+
+* Summarizing adds a new variable or variables to a tibble, like `mutate()`
+* Summarizing reduces the columns in a tibble, like `select()`
+* Summarizing removes duplicate rows, like `distinct()`
+
+If you are a little exhausted from the *super* long subsetting lesson (I know I am!), this one is much shorter because summarizing is very straightforward! In completing this lesson, you will learn how to:
+
+* Use `summarize()`, with and without `group_by()`, to summarize data frames by a variable or variables
+* Count the number of observations with `n()`
+* Use `group_by()` while calculating and assigning a new variable in a dataset
+
+**Important!** Before starting this tutorial, be sure that you have completed all preliminary and previous lessons!
+
+</div>
+
+## Data for this lesson
+
+<button class="accordion">Please click on the button below to explore the metadata for this lesson!</button>
+::: panel
+In this lesson, we will explore:
+
+```{r}
+#| echo: false
+#| output: asis
+
+lesson_metadata(
+  .dataset = "district_birds.rds",
+  .tables = "captures"
+) %>%
+  cat()
+```
+:::
+
+## Set up your session
+
+Please do the following to ensure that you are working in a clean session:
+
+1. In the *Environment* tab of your **workspace pane**, ensure that your **Global Environment** is empty. If it is not, click the *broom* to remove all objects. *Note: Conversely, you can remove all items with `rm(list = ls())`*.
+2. In the *History* tab of your **workspace pane**, ensure that your **session history** is empty. If it is not, click the *broom* to remove your history.
+
+Now that we are working in a clean session:
+
+1. Create a script file (Windows: [Ctrl + Shift + N]{.mono}; Mac: [Cmd + Shift + N]{.mono}).
+2. Save your script file as "[scripts/summarize_written_content.R]{.mono}".
+3. Add metadata as a comment on the top of the file (e.g., `# My code for the summarizing tutorial`).
+4. Following your metadata, create a new **code section** (Windows: [Ctrl + Shift + R]{.mono}; Mac: [Cmd + Shift + R]{.mono}) and call it "`setup`".
+5. Following your section header, attach the packages that comprise the **core tidyverse** (`library(tidyverse)`).
+
+At this point, your script should look something like:
+
+```{r}
+#| eval: false
+
+# My code for the summarizing tutorial
+
+# setup --------------------------------------------------------
+
+library(tidyverse)
+```
+
+Now we are going to add our data for this lesson ... let's do this as a "Now you!" challenge:
+
+::: now_you
+{{< fa user-circle size=2x >}} [Now you!]{style="font-size: 1.25em; padding-left: 0.5em;"}
+
+In a single piped statement:
+
+* Read in the file [district_birds.rds]{.mono};
+* Use the `pluck()` function to extract the list item assigned to the name `captures`;
+* Subset `captures` to the columns `spp`, `sex`, `wing`, `mass`, and `bp_cp`;
+* Use `replace_na()` to change `NA` values in `bp_cp` to `-`;
+* Use `filter()` to remove any rows with a `bp_cp` value of "U";
+* Assign the resultant object to your global environment with the name `measures`.
+
+*Hint: We used `pluck()` and `select()` in **2.1 Introduction to subsetting and extraction**, and `replace_na()` inside `mutate()` in **2.2 Introduction to mutation**.*
+
+[Click here to see my answer]{.answer_link data-answer="a-2-3-measures"}
+
+::: {.answer_body #a-2-3-measures}
+
+```{r}
+# Read in the data and subset to the list item and variables of
+# interest:
+
+measures <-
+
+  # Read in the file:
+
+  read_rds("data/raw/district_birds.rds") %>%
+
+  # Extract the list item assigned to the name "captures":
+
+  pluck("captures") %>%
+
+  # Select the columns of interest:
+
+  select(
+    spp:sex,
+    wing,
+    mass:bp_cp
+  ) %>%
+
+  # Convert `NA` values in `bp_cp` to "-":
+
+  mutate(
+    bp_cp = replace_na(bp_cp, "-")
+  ) %>%
+
+  # Subset the data to where `bp_cp` does not equal "U":
+
+  filter(bp_cp != "U")
+
+# Or:
+
+measures <-
+
+  # Read in the file:
+
+  read_rds("data/raw/district_birds.rds") %>%
+
+  # Extract the list item assigned to the name "captures":
+
+  pluck("captures") %>%
+
+  # Select the columns of interest:
+
+  select(
+    spp:sex,
+    wing,
+    mass:bp_cp
+  ) %>%
+
+  # Convert `NA` values in `bp_cp` to "-":
+
+  mutate(
+    bp_cp = replace_na(bp_cp, "-")
+  ) %>%
+
+  # Subset the data to where `bp_cp` does not equal "U":
+
+  filter(!bp_cp == "U")
+```
+
+:::
+:::
+
+## Summarize
+
+The `summarize()` function allows you to calculate summary statistics for a grouped dataset.
+
+Let's run the code below and think about what occurred:
+
+```{r}
+measures %>%
+
+  # Group the data:
+
+  group_by(spp) %>%
+
+  # Calculate the average wing length of each group:
+
+  summarize(
+    mean_wing =
+      mean(wing, na.rm = TRUE)
+  )
+```
+
+The above provided the average wing length by species ... but what is `summarize()` doing?
+
+We *could* have used `mutate()` to calculate the mean wing length by species:
+
+```{r}
+measures %>%
+
+  # Group the data:
+
+  group_by(spp) %>%
+
+  # Calculate the average wing length of each group:
+
+  mutate(
+    mean_wing =
+      mean(wing, na.rm = TRUE)
+  )
+```
+
+... then ungrouped the data with the *dplyr* function `ungroup()`:
+
+```{r}
+measures %>%
+
+  # Group the data:
+
+  group_by(spp) %>%
+
+  # Calculate the average wing length of each group:
+
+  mutate(
+    mean_wing =
+      mean(wing, na.rm = TRUE)
+  ) %>%
+
+  # Remove the grouping:
+
+  ungroup()
+```
+
+*Note: Leaving data grouped is VERY dangerous! I always suggest removing a grouping after the grouping is no longer necessary.*
+
+... then selected our columns of interest with `select()`:
+
+```{r}
+measures %>%
+
+  # Group the data:
+
+  group_by(spp) %>%
+
+  # Calculate the average wing length of each group:
+
+  mutate(
+    mean_wing =
+      mean(wing, na.rm = TRUE)
+  ) %>%
+
+  # Remove the grouping:
+
+  ungroup() %>%
+
+  # Select the columns of interest:
+
+  select(spp, mean_wing)
+```
+
+... then subset the data to unique rows with `distinct()`:
+
+```{r}
+measures %>%
+
+  # Group the data:
+
+  group_by(spp) %>%
+
+  # Calculate the average wing length of each group:
+
+  mutate(
+    mean_wing =
+      mean(wing, na.rm = TRUE)
+  ) %>%
+
+  # Remove the grouping:
+
+  ungroup() %>%
+
+  # Select the columns of interest:
+
+  select(spp, mean_wing) %>%
+
+  # Remove duplicate rows:
+
+  distinct()
+```
+
+But that is a lot of coding ... `summarize()` saves us loads of time and really enhances code parsimony!
+
+*Note: We will cover grouping data in more depth in the near future ... it is super powerful!*
+
+## Multiple groups
+
+I often use the `summarize()` function, in combination with `n()`, for calculating the number of observations per group:
+
+```{r}
+measures %>%
+
+  # Group the data:
+
+  group_by(spp) %>%
+
+  # Count the number of observations per group:
+
+  summarize(n = n())
+```
+
+*Note: The function `n()` is a row counter. It counts the number of rows per group. Although the above can be produced with `tally()`, I typically use this version, as it is more flexible (because I can add more summary statistics other than simply counts).*
+
+What if we wanted to summarize the number of observations by multiple groups, though? We simply separate additional grouping variables inside `group_by()` with a comma. In doing so, any subsequent function (e.g., `filter()`, `mutate()`, or `summarize()`) will run on each group separately.
+
+In the code below, I summarize the number of observations by species and sex:
+
+```{r}
+measures %>%
+
+  # Group the data:
+
+  group_by(spp, sex) %>%
+
+  # Count the number of observations per group:
+
+  summarize(n = n())
+```
+
+But notice the warning message we received ... the data are still grouped by `spp`! By default, `summarize()` drops only the last grouping variable (in this case, `sex`) -- when we supply two or more grouping variables, the resultant data will still be grouped. If we summarize based on a single group, we do not have to think about it.
+
+Historically, we had to use `ungroup()` to remove the grouping from the resultant data:
+
+```{r}
+measures %>%
+
+  # Group the data:
+
+  group_by(spp, sex) %>%
+
+  # Count the number of observations per group:
+
+  summarize(n = n()) %>%
+
+  # Remove the grouping:
+
+  ungroup()
+```
+
+*Note: Although we received a warning message from* `summarize()`*, notice in the output that the resultant data are no longer grouped by* `spp`*.*
+
+Thanks to the `.groups = "drop"` argument, we can remove the grouping structure from the data without the additional `ungroup()` function:
+
+```{r}
+measures %>%
+
+  # Group the data:
+
+  group_by(spp, sex) %>%
+
+  # Count the number of observations per group:
+
+  summarize(
+    n = n(),
+    .groups = "drop"
+  )
+```
+
+## Rename groups
+
+We can rename a group on the fly right inside of the `group_by()` function. For example, the variable name `spp` might not be very informative for all of our readers. We can change this to `species` with:
+
+```{r}
+measures %>%
+
+  # Group the data:
+
+  group_by(species = spp, sex) %>%
+
+  # Count the number of observations per group:
+
+  summarize(
+    n = n()
+  ) %>%
+
+  # Remove the grouping:
+
+  ungroup()
+```
+
+::: now_you
+{{< fa user-circle size=2x >}} [Now you!]{style="font-size: 1.25em; padding-left: 0.5em;"}
+
+Modify the above such that:
+
+* The `NA` values in `sex` are removed;
+* The code does not include `ungroup()` and the resultant object is *not* grouped;
+* The [spp]{.mono} column is named [species]{.mono} in the resultant object.
+
+*Hint: We removed `NA` values with `is.na()` and `drop_na()` in **2.1 Introduction to subsetting and extraction**, and renamed a column while selecting it in **Changing column names**, in the same lesson.*
+
+[Click here to see my answer]{.answer_link data-answer="a-2-3-grouping"}
+
+::: {.answer_body #a-2-3-grouping}
+
+```{r}
+measures %>%
+
+  # Remove rows where `sex` is NA:
+
+  filter(
+    !is.na(sex)
+  ) %>%
+
+  # Group the data, renaming spp on the fly:
+
+  group_by(species = spp, sex) %>%
+
+  # Count the number of observations per group:
+
+  summarize(
+    n = n(),
+    .groups = "drop"
+  )
+
+# Or:
+
+measures %>%
+
+  # Remove rows where `sex` is NA:
+
+  drop_na(sex) %>%
+
+  # Group the data, renaming spp on the fly:
+
+  group_by(species = spp, sex) %>%
+
+  # Count the number of observations per group:
+
+  summarize(
+    n = n(),
+    .groups = "drop"
+  )
+```
+
+:::
+:::
+
+## Avoiding `group_by()`
+
+The `summarize()` function has gained an argument, `.by = `. We simply specify the grouping variable (unquoted) using that argument.
+
+To see how this works, let's again count the number of captures by `spp`:
+
+```{r}
+measures %>%
+
+  # Count the number of observations per species:
+
+  summarize(
+    n = n(),
+    .by = spp
+  )
+```
+
+That is very straightforward! A huge advantage of this approach is that the resultant data object is *not* grouped, even when multiple grouping variables are used. To illustrate this, let's again group the data by `spp` and `sex`. We then supply a vector of variables of interest to the `.by = ` argument:
+
+```{r}
+measures %>%
+
+  # Count the number of observations per species and sex:
+
+  summarize(
+    n = n(),
+    .by = c(spp, sex)
+  )
+```
+
+The resultant data frame is not grouped!
+
+So is `group_by()` a relic of the past? No!!! A difference between `group_by()` and `.by = ` is that we can calculate and assign a new column during the `group_by()` process (thus `group_by()` includes a mutation). We cannot (currently) do so with `.by = `. As such, this works ...
+
+```{r}
+measures %>%
+
+  # Group the data:
+
+  group_by(species = spp, sex) %>%
+
+  # Count the number of observations per group:
+
+  summarize(
+    n = n(),
+    .groups = "drop"
+  )
+```
+
+... but we currently cannot do so with `.by = `:
+
+```{r}
+#| error: true
+
+measures %>%
+
+  # Count the number of observations per group:
+
+  summarize(
+    n = n(),
+    .by =
+      c(species = spp, sex)
+  )
+```
+
+`group_by()` lives!
+
+## Take-home points
+
+* `summarize()` does the work of `mutate()`, `select()`, and `distinct()` in a single step, returning one row per group.
+* Group the data first with `group_by()`, or name the grouping variables inline with the `.by = ` argument of `summarize()`.
+* `n()` counts the rows in each group and can be combined freely with other summary statistics in the same `summarize()` call.
+* Include `na.rm = TRUE` in summary functions such as `mean()`, or a single missing value will return `NA` for the whole group.
+* With two or more grouping variables, `summarize()` drops only the last one. Use `.groups = "drop"` (or `.by = `) to return ungrouped data, and never leave a data frame grouped once the grouping is no longer needed.
+* `group_by()` can create and rename a variable on the fly; `.by = ` cannot. Both remain useful.
+
+## Exercises
+
+::: now_you
+{{< fa user-circle size=2x >}} [Test your knowledge!]{style="padding-left: 0.5em;"}
+
+1. You group `measures` by `spp` and `sex` and then summarize. What is the grouping structure of the result?
+
+`r longmcq(c("Ungrouped", answer = "Grouped by spp", "Grouped by sex", "Grouped by spp and sex"))`
+
+2. Which argument returns an ungrouped data frame without adding an `ungroup()` step?
+
+`r longmcq(c(".keep = \"none\"", "na.rm = TRUE", answer = ".groups = \"drop\"", ".before = spp"))`
+
+3. True or false: `.by = c(species = spp)` renames `spp` to `species` in the summarized result, just as `group_by(species = spp)` does.
+
+`r torf(FALSE)`
+
+4. Parsons Problem: Reorder the lines below to count the captures of each species, dropping rows with a missing `sex` first and returning an ungrouped result. One line leaves the data grouped. Leave it in the trash.
+
+<div class="parsons-problem">
+<div id="p-2-3-01-trash" class="sortable-code"></div>
+<div id="p-2-3-01-sortable" class="sortable-code"></div>
+<div style="clear: both;"></div>
+<button id="p-2-3-01-check" class="parsons-btn parsons-btn-check" type="button">Check My Order</button>
+<button id="p-2-3-01-reset" class="parsons-btn parsons-btn-reset" type="button">Shuffle Again</button>
+<p id="p-2-3-01-feedback" class="parsons-feedback"></p>
+</div>
+
+<script>
+window.parsonsProblems = window.parsonsProblems || [];
+window.parsonsProblems.push({
+  id: "p-2-3-01",
+  maxDistractors: 1,
+  code: "measures %>%\n  drop_na(sex) %>%\n  group_by(spp, sex) %>%\n  summarize(\n    n = n(),\n    .groups = \"drop\"\n  )\n  summarize(n = n()) #distractor"
+});
+</script>
+:::
+
+{{< include /src/includes/_reference_section.qmd >}}

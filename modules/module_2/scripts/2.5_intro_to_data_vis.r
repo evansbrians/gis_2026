@@ -592,7 +592,7 @@ chickadees %>%
 
   theme_bw()
 
-# Let's make our tick labels larger:
+# Let's make our tick labels larger and separate the panels:
 
 chickadees %>%
 
@@ -653,5 +653,7 @@ chickadees %>%
   theme_bw() +
   theme(
     axis.text =
-      element_text(size = 12)
+      element_text(size = 12),
+    panel.spacing =
+      unit(1.5, "lines")
   )
