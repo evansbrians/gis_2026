@@ -27101,8 +27101,8 @@ Please click on the button below to explore the metadata for this lesson!
 </div></li>
 <li><p>Why is it <em>not</em> necessary to quote the names that you pass to <code>rm()</code>?</p>
 <p><em>Hint: We distinguished a name from the object that it is bound to in <strong>Preliminary Lesson 2: Environment &amp; Functions</strong>.</em></p>
-<div id="radio_HXUHXDMLHK" class="webex-radiogroup">
-<label><input type="radio" autocomplete="off" name="radio_HXUHXDMLHK" value> <span>Quotation marks would cause an error, because rm() accepts only unquoted names</span></label><label><input type="radio" autocomplete="off" name="radio_HXUHXDMLHK" value="answer"> <span>rm() acts on the name itself, not on the object that the name is bound to</span></label><label><input type="radio" autocomplete="off" name="radio_HXUHXDMLHK" value> <span>Quotation marks are never required in R – the ones in pluck() are a stylistic choice</span></label><label><input type="radio" autocomplete="off" name="radio_HXUHXDMLHK" value> <span>rm() is a base R function, and base R functions do not require quotation marks</span></label>
+<div id="radio_SALHTBUELJ" class="webex-radiogroup">
+<label><input type="radio" autocomplete="off" name="radio_SALHTBUELJ" value> <span>Quotation marks would cause an error, because rm() accepts only unquoted names</span></label><label><input type="radio" autocomplete="off" name="radio_SALHTBUELJ" value="answer"> <span>rm() acts on the name itself, not on the object that the name is bound to</span></label><label><input type="radio" autocomplete="off" name="radio_SALHTBUELJ" value> <span>Quotation marks are never required in R – the ones in pluck() are a stylistic choice</span></label><label><input type="radio" autocomplete="off" name="radio_SALHTBUELJ" value> <span>rm() is a base R function, and base R functions do not require quotation marks</span></label>
 </div></li>
 </ol>
 </div>
@@ -27130,39 +27130,11 @@ Please click on the button below to explore the metadata for this lesson!
 <p><i class="fa-solid fa-user-circle fa-2x" aria-label="user-circle"></i> <span style="font-size: 1.25em; padding-left: 0.5em;">Now you!</span></p>
 <ol type="1">
 <li><p>You have read <code>district_birds.rds</code> into a list named <code>district_birds</code>. A function has stopped with the message <code>must be a data frame, not a `list`</code>. You passed it <code>district_birds[&quot;birds&quot;]</code>. What does <code>class(district_birds[&quot;birds&quot;])</code> return?</p>
-<div id="radio_AYWBTRADQI" class="webex-radiogroup">
-<label><input type="radio" autocomplete="off" name="radio_AYWBTRADQI" value> <span>tbl_df, tbl, data.frame</span></label><label><input type="radio" autocomplete="off" name="radio_AYWBTRADQI" value="answer"> <span>list</span></label><label><input type="radio" autocomplete="off" name="radio_AYWBTRADQI" value> <span>character</span></label><label><input type="radio" autocomplete="off" name="radio_AYWBTRADQI" value> <span>birds</span></label>
+<div id="radio_OCZUAPZKFW" class="webex-radiogroup">
+<label><input type="radio" autocomplete="off" name="radio_OCZUAPZKFW" value> <span>tbl_df, tbl, data.frame</span></label><label><input type="radio" autocomplete="off" name="radio_OCZUAPZKFW" value="answer"> <span>list</span></label><label><input type="radio" autocomplete="off" name="radio_OCZUAPZKFW" value> <span>character</span></label><label><input type="radio" autocomplete="off" name="radio_OCZUAPZKFW" value> <span>birds</span></label>
 </div></li>
-<li><p>True or false: <code>list2env()</code> removes the list that you pass to it, leaving only the names of its items.</p>
-<p><select class="webex-select"><option value="blank"></option><option value>TRUE</option><option value="answer">FALSE</option></select></p></li>
-<li><p>Parsons Problem: Reorder the lines below to build a character vector of the common names in the <code>birds</code> table of <code>district_birds</code>. One line refers to a list item without quoting its name. Leave it in the trash.</p>
-<div class="parsons-problem">
-<div id="p-2-1-02-trash" class="sortable-code">
-
-</div>
-<div id="p-2-1-02-sortable" class="sortable-code">
-
-</div>
-<div style="clear: both;">
-
-</div>
-<button id="p-2-1-02-check" class="parsons-btn parsons-btn-check" type="button">
-Check My Order
-</button>
-<button id="p-2-1-02-reset" class="parsons-btn parsons-btn-reset" type="button">
-Shuffle Again
-</button>
-<p id="p-2-1-02-feedback" class="parsons-feedback">
-</p>
-</div>
-<script>
-window.parsonsProblems = window.parsonsProblems || [];
-window.parsonsProblems.push({
-  id: "p-2-1-02",
-  maxDistractors: 1,
-  code: 'district_birds %>%\n  pluck("birds") %>%\n  pull(common_name)\n  pluck(birds) #distractor'
-});
-</script></li>
+<li><p>True or false: <code>list2env()</code> assigns the names associated with the list items to the an environment.</p>
+<p><select class="webex-select"><option value="blank"></option><option value="answer">TRUE</option><option value>FALSE</option></select></p></li>
 </ol>
 </div>
 </section>
@@ -28278,15 +28250,15 @@ window.parsonsProblems.push({
 <div class="now_you">
 <p><i class="fa-solid fa-user-circle fa-2x" aria-label="user-circle"></i> <span style="font-size: 1.25em; padding-left: 0.5em;">Now you!</span></p>
 <ol type="1">
-<li><p><code>select(captures, spp, sex)</code> and <code>select(captures, c(spp, sex))</code> return the same two columns, so the <code>c()</code> did no work. When is the <code>c()</code> <strong>required</strong>?</p>
-<div id="radio_LNRXFWNVZP" class="webex-radiogroup">
-<label><input type="radio" autocomplete="off" name="radio_LNRXFWNVZP" value> <span>Whenever you select more than one column</span></label><label><input type="radio" autocomplete="off" name="radio_LNRXFWNVZP" value> <span>Whenever you select a range of columns, as in select(captures, spp:age)</span></label><label><input type="radio" autocomplete="off" name="radio_LNRXFWNVZP" value="answer"> <span>When you negate more than one column, as in select(captures, !c(spp, sex))</span></label><label><input type="radio" autocomplete="off" name="radio_LNRXFWNVZP" value> <span>Whenever the columns are not next to each other in the data frame</span></label>
+<li><p><code>select(captures, spp, sex)</code> and <code>select(captures, c(spp, sex))</code> return the same two columns, suggesting that the <code>c()</code> was not necessary. When is the <code>c()</code> <strong>required</strong>?</p>
+<div id="radio_EKBVLUHWYQ" class="webex-radiogroup">
+<label><input type="radio" autocomplete="off" name="radio_EKBVLUHWYQ" value> <span>Whenever you select more than one column</span></label><label><input type="radio" autocomplete="off" name="radio_EKBVLUHWYQ" value> <span>Whenever you select a range of columns, as in select(captures, spp:age)</span></label><label><input type="radio" autocomplete="off" name="radio_EKBVLUHWYQ" value="answer"> <span>When you negate more than one column, as in select(captures, !c(spp, sex))</span></label><label><input type="radio" autocomplete="off" name="radio_EKBVLUHWYQ" value> <span>Whenever the columns are not next to each other in the data frame</span></label>
 </div></li>
 <li><p>True or false: <code>distinct(captures, spp, sex)</code> returns a tibble with two columns.</p>
 <p><select class="webex-select"><option value="blank"></option><option value="answer">TRUE</option><option value>FALSE</option></select></p></li>
 <li><p>You want the ten heaviest captures. Which call returns them in a single step?</p>
-<div id="radio_UAJTLYXIGG" class="webex-radiogroup">
-<label><input type="radio" autocomplete="off" name="radio_UAJTLYXIGG" value> <span>filter(captures, mass &gt; 100)</span></label><label><input type="radio" autocomplete="off" name="radio_UAJTLYXIGG" value="answer"> <span>slice_max(captures, mass, n = 10)</span></label><label><input type="radio" autocomplete="off" name="radio_UAJTLYXIGG" value> <span>slice_head(captures, n = 10)</span></label><label><input type="radio" autocomplete="off" name="radio_UAJTLYXIGG" value> <span>distinct(captures, mass)</span></label>
+<div id="radio_MVYHGTGXHL" class="webex-radiogroup">
+<label><input type="radio" autocomplete="off" name="radio_MVYHGTGXHL" value> <span>filter(captures, mass &gt; 100)</span></label><label><input type="radio" autocomplete="off" name="radio_MVYHGTGXHL" value="answer"> <span>slice_max(captures, mass, n = 10)</span></label><label><input type="radio" autocomplete="off" name="radio_MVYHGTGXHL" value> <span>slice_head(captures, n = 10)</span></label><label><input type="radio" autocomplete="off" name="radio_MVYHGTGXHL" value> <span>distinct(captures, mass)</span></label>
 </div></li>
 </ol>
 </div>
@@ -28332,12 +28304,12 @@ Note
 <p><i class="fa-solid fa-user-circle fa-2x" aria-label="user-circle"></i> <span style="font-size: 1.25em; padding-left: 0.5em;">Test your knowledge!</span></p>
 <ol type="1">
 <li><p><code>select(birds, foraging)</code> and <code>pull(birds, foraging)</code> are both given a single column name. What is the difference between them?</p>
-<div id="radio_QPIYNEVICH" class="webex-radiogroup">
-<label><input type="radio" autocomplete="off" name="radio_QPIYNEVICH" value="answer"> <span>select() subsets the data frame and returns a data frame with one column; pull() extracts the column and returns the atomic vector inside it</span></label><label><input type="radio" autocomplete="off" name="radio_QPIYNEVICH" value> <span>They return the same object, but pull() is faster</span></label><label><input type="radio" autocomplete="off" name="radio_QPIYNEVICH" value> <span>select() returns a vector and pull() returns a data frame</span></label><label><input type="radio" autocomplete="off" name="radio_QPIYNEVICH" value> <span>pull() returns a data frame with one column, but drops the column name</span></label>
+<div id="radio_JSIHOLUVTQ" class="webex-radiogroup">
+<label><input type="radio" autocomplete="off" name="radio_JSIHOLUVTQ" value="answer"> <span>select() subsets the data frame and returns a data frame with one column; pull() extracts the column and returns the atomic vector inside it</span></label><label><input type="radio" autocomplete="off" name="radio_JSIHOLUVTQ" value> <span>They return the same object, but pull() is faster</span></label><label><input type="radio" autocomplete="off" name="radio_JSIHOLUVTQ" value> <span>select() returns a vector and pull() returns a data frame</span></label><label><input type="radio" autocomplete="off" name="radio_JSIHOLUVTQ" value> <span>pull() returns a data frame with one column, but drops the column name</span></label>
 </div></li>
 <li><p>A function has stopped with the message <code>must be a vector, not a `&lt;tbl_df&gt;`</code>. You passed it <code>measures %&gt;% select(spp)</code>. What is the fix?</p>
-<div id="radio_QSCZFVAIYX" class="webex-radiogroup">
-<label><input type="radio" autocomplete="off" name="radio_QSCZFVAIYX" value="answer"> <span>Replace select() with pull()</span></label><label><input type="radio" autocomplete="off" name="radio_QSCZFVAIYX" value> <span>Wrap the call in c()</span></label><label><input type="radio" autocomplete="off" name="radio_QSCZFVAIYX" value> <span>Add distinct() to the end of the pipe</span></label><label><input type="radio" autocomplete="off" name="radio_QSCZFVAIYX" value> <span>Replace select() with filter()</span></label>
+<div id="radio_HBUTZBKUOD" class="webex-radiogroup">
+<label><input type="radio" autocomplete="off" name="radio_HBUTZBKUOD" value="answer"> <span>Replace select() with pull()</span></label><label><input type="radio" autocomplete="off" name="radio_HBUTZBKUOD" value> <span>Wrap the call in c()</span></label><label><input type="radio" autocomplete="off" name="radio_HBUTZBKUOD" value> <span>Add distinct() to the end of the pipe</span></label><label><input type="radio" autocomplete="off" name="radio_HBUTZBKUOD" value> <span>Replace select() with filter()</span></label>
 </div></li>
 <li><p>Drag and drop: Each of the functions below either subsets or extracts. Drag the <strong>extraction</strong> functions into your answer, and leave the subsetting functions in the trash. The order of your answer does not matter.</p>
 <div class="parsons-problem">
@@ -28351,7 +28323,7 @@ Note
 
 </div>
 <button id="p-2-1-02-check" class="parsons-btn parsons-btn-check" type="button">
-Check My Answer
+Check My Order
 </button>
 <button id="p-2-1-02-reset" class="parsons-btn parsons-btn-reset" type="button">
 Shuffle Again
@@ -28363,10 +28335,8 @@ Shuffle Again
 window.parsonsProblems = window.parsonsProblems || [];
 window.parsonsProblems.push({
   id: "p-2-1-02",
-  unordered: true,
-  answerNoun: "functions",
-  maxDistractors: 4,
-  code: "pull()\npluck()\nlist2env()\nclass()\nnames()\ndim()\nselect() #distractor\nslice() #distractor\nfilter() #distractor\ndistinct() #distractor"
+  maxDistractors: 1,
+  code: 'district_birds %>%\n  pluck("birds") %>%\n  pull(common_name)\n  pluck(birds) #distractor'
 });
 </script></li>
 <li><p>Drag and drop: From the same set of functions, drag the <strong>subsetting</strong> functions into your answer, and leave the extraction functions in the trash. The order of your answer does not matter.</p>
