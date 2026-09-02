@@ -26843,25 +26843,25 @@ Please click on the button below to explore the metadata for this lesson!
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>lobstr<span class="sc">::</span><span class="fu">ref</span>(angola_ungulates_list)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>█ [1:0xa3a4a1408] &lt;named list&gt; 
-├─artiodactyla = █ [2:0xa3a570318] &lt;tibble[,8]&gt; 
-│                ├─year = [3:0xa39d74000] &lt;chr&gt; 
-│                ├─month = [4:0xa39d74600] &lt;chr&gt; 
-│                ├─day = [5:0xa39d75200] &lt;chr&gt; 
-│                ├─user_login = [6:0xa39d75e00] &lt;chr&gt; 
-│                ├─taxonomy = [7:0xa41d83000] &lt;chr&gt; 
-│                ├─genus = [8:0xa41d82a00] &lt;chr&gt; 
-│                ├─species = [9:0xa41d82400] &lt;chr&gt; 
-│                └─common_name = [10:0xa41d81800] &lt;chr&gt; 
-└─perissodactyla = █ [11:0xa3a570158] &lt;tibble[,8]&gt; 
-                   ├─year = [12:0xa39f3cd18] &lt;chr&gt; 
-                   ├─month = [13:0xa39f3cc68] &lt;chr&gt; 
-                   ├─day = [14:0xa39f3cbb8] &lt;chr&gt; 
-                   ├─user_login = [15:0xa39f3cb08] &lt;chr&gt; 
-                   ├─taxonomy = [16:0xa39f3ca58] &lt;chr&gt; 
-                   ├─genus = [17:0xa39f3c9a8] &lt;chr&gt; 
-                   ├─species = [18:0xa39f3c8f8] &lt;chr&gt; 
-                   └─common_name = [19:0xa39f3c848] &lt;chr&gt; </code></pre>
+<pre><code>█ [1:0x714fb2248] &lt;named list&gt; 
+├─artiodactyla = █ [2:0x714650698] &lt;tibble[,8]&gt; 
+│                ├─year = [3:0x71bc84600] &lt;chr&gt; 
+│                ├─month = [4:0x71c2c7000] &lt;chr&gt; 
+│                ├─day = [5:0x71c2c6a00] &lt;chr&gt; 
+│                ├─user_login = [6:0x71c2c7600] &lt;chr&gt; 
+│                ├─taxonomy = [7:0x71c1c0600] &lt;chr&gt; 
+│                ├─genus = [8:0x71c1c0c00] &lt;chr&gt; 
+│                ├─species = [9:0x71c1c2400] &lt;chr&gt; 
+│                └─common_name = [10:0x71bea8000] &lt;chr&gt; 
+└─perissodactyla = █ [11:0x714650bd8] &lt;tibble[,8]&gt; 
+                   ├─year = [12:0x713980f28] &lt;chr&gt; 
+                   ├─month = [13:0x713980e78] &lt;chr&gt; 
+                   ├─day = [14:0x713980dc8] &lt;chr&gt; 
+                   ├─user_login = [15:0x713980d18] &lt;chr&gt; 
+                   ├─taxonomy = [16:0x713980c68] &lt;chr&gt; 
+                   ├─genus = [17:0x713980bb8] &lt;chr&gt; 
+                   ├─species = [18:0x713980b08] &lt;chr&gt; 
+                   └─common_name = [19:0x713980a58] &lt;chr&gt; </code></pre>
 </div>
 </div>
 <p>We can see that the data are structured as a list in which:</p>
@@ -27940,16 +27940,16 @@ Note
 <div class="now_you">
 <p><i class="fa-solid fa-user-circle fa-2x" aria-label="user-circle"></i> <span style="padding-left: 0.5em;">Test your knowledge!</span></p>
 <ol type="1">
-<li>A table of iNaturalist observations repeats the class, order, and family of each species on every row. Which pair of functions would you use to split the taxonomy into its own table?</li>
+<li>A tibble of iNaturalist observations contains a <code>date</code> column and columns representing taxonomy (<code>class</code>, <code>order</code>, <code>family</code>, <code>species</code>). Values in the taxonomy columns are repeated because a species can be observed more than once. Assuming no other functions are used, which of the below could generate a tibble that only includes unique combinations of class, order, family, and species?</li>
 </ol>
-<div id="radio_VLHTMNGRSP" class="webex-radiogroup">
-<label><input type="radio" autocomplete="off" name="radio_VLHTMNGRSP" value="answer"> <span>select(), then distinct()</span></label><label><input type="radio" autocomplete="off" name="radio_VLHTMNGRSP" value> <span>unite(), then separate_wider_delim()</span></label><label><input type="radio" autocomplete="off" name="radio_VLHTMNGRSP" value> <span>pivot_wider(), then count()</span></label><label><input type="radio" autocomplete="off" name="radio_VLHTMNGRSP" value> <span>bind_cols(), then left_join()</span></label>
+<div id="radio_OETECOPXDP" class="webex-radiogroup">
+<label><input type="radio" autocomplete="off" name="radio_OETECOPXDP" value="answer"> <span>distinct()</span></label><label><input type="radio" autocomplete="off" name="radio_OETECOPXDP" value> <span>unite(), then separate_wider_delim()</span></label><label><input type="radio" autocomplete="off" name="radio_OETECOPXDP" value> <span>pivot_wider(), then count()</span></label><label><input type="radio" autocomplete="off" name="radio_OETECOPXDP" value> <span>unique()</span></label><label><input type="radio" autocomplete="off" name="radio_OETECOPXDP" value> <span>bind_cols(), then left_join()</span></label>
 </div>
 <ol start="2" type="1">
 <li>Why is <code>left_join()</code> usually safer than <code>bind_cols()</code> for combining two tables that describe the same observations?</li>
 </ol>
-<div id="radio_OBZJLIEDNA" class="webex-radiogroup">
-<label><input type="radio" autocomplete="off" name="radio_OBZJLIEDNA" value> <span>It is faster on large data frames</span></label><label><input type="radio" autocomplete="off" name="radio_OBZJLIEDNA" value="answer"> <span>It matches rows on the values in a key column rather than on row order</span></label><label><input type="radio" autocomplete="off" name="radio_OBZJLIEDNA" value> <span>It always returns fewer rows than either input</span></label><label><input type="radio" autocomplete="off" name="radio_OBZJLIEDNA" value> <span>It removes duplicated rows automatically</span></label>
+<div id="radio_SYEFWBUTDL" class="webex-radiogroup">
+<label><input type="radio" autocomplete="off" name="radio_SYEFWBUTDL" value> <span>It is faster on large data frames</span></label><label><input type="radio" autocomplete="off" name="radio_SYEFWBUTDL" value="answer"> <span>It matches rows on the values in a key column rather than on row order</span></label><label><input type="radio" autocomplete="off" name="radio_SYEFWBUTDL" value> <span>It always returns fewer rows than either input</span></label><label><input type="radio" autocomplete="off" name="radio_SYEFWBUTDL" value> <span>It removes duplicated rows automatically</span></label>
 </div>
 <ol start="3" type="1">
 <li>True or false: <code>distinct()</code> will remove a row that differs from another row only by a trailing space in one character column.</li>
