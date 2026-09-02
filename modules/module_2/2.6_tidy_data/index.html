@@ -27489,20 +27489,31 @@ Tip
 # ℹ 1,695 more rows</code></pre>
 </div>
 </div>
-<p>Converting those columns to numeric is a <strong>data cleaning</strong> step. Cleaning corrects the <em>content</em> of a dataset, which includes classes, units, misspellings, impossible values, and missing data codes. Tidying corrects the <em>structure</em> of a dataset, which is what the three rules govern. A dataset can be perfectly tidy and full of errors, and it can be scrupulously clean and completely untidy.</p>
-<p>The distinction matters because the two are done for different reasons and at different points in a workflow, and because a tidy dataset is far easier to clean than a messy one. Now that each variable has a column, we can convert all four of them in one step. The <em>dplyr</em> function <code>across()</code> applies the same change to a selection of columns, and we call it inside <code>mutate()</code>. To <code>across()</code> we supply the following arguments:</p>
+<p>Converting those columns to numeric is a <strong>data cleaning</strong> step. Cleaning corrects the <em>content</em> of a dataset, which includes classes, units, misspellings, impossible values, and missing data codes. Tidying corrects the <em>structure</em> of a dataset, which is what the three rules govern. A dataset can be perfectly tidy and full of errors, and it can be scrupulously clean and completely untidy. The distinction matters because:</p>
+<ul>
+<li>Tidying and cleaning are done for different reasons<br>
+</li>
+<li>Tidying and cleaning are typically done at different points in a workflow</li>
+<li>A tidy dataset is far easier to clean than a messy one.</li>
+</ul>
+<p>Now that each variable has a column, we can convert all four of them in one step. The <em>dplyr</em> function <code>across()</code> applies the same change to a selection of columns, and we call it inside <code>mutate()</code>. Within <code>across()</code> we supply the following arguments:</p>
 <ul>
 <li>The columns that we would like to modify</li>
-<li>The function to apply to each of them</li>
+<li><code>~</code> to initiate a formula</li>
+<li>The function to apply to the columns</li>
+<li><code>.x</code> as a variable that indicates the column name</li>
 </ul>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>observations <span class="ot">&lt;-</span></span>
 <span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>  observations <span class="sc">%&gt;%</span></span>
 <span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
-<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">across</span>(precip<span class="sc">:</span>temperature_max, as.numeric)</span>
-<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb28-6"><a href="#cb28-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-7"><a href="#cb28-7" aria-hidden="true" tabindex="-1"></a>observations</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">across</span>(</span>
+<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a>      precip<span class="sc">:</span>temperature_max, </span>
+<span id="cb28-6"><a href="#cb28-6" aria-hidden="true" tabindex="-1"></a>      <span class="sc">~</span> <span class="fu">as.numeric</span>(.x)</span>
+<span id="cb28-7"><a href="#cb28-7" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb28-8"><a href="#cb28-8" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb28-9"><a href="#cb28-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-10"><a href="#cb28-10" aria-hidden="true" tabindex="-1"></a>observations</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 1,705 × 6
    station     date      precip  snow temperature_min temperature_max
@@ -27528,11 +27539,12 @@ Tip
 <p>Both temperatures shared a column at the start, and a single day at a single station was spread across three rows. Now that each variable has a column, a grouped summary is one statement (see <strong><em>2.3 Grouped operations and summarizing</em></strong>):</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>observations <span class="sc">%&gt;%</span></span>
-<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(</span>
-<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">mean_min =</span> <span class="fu">mean</span>(temperature_min, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
-<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">mean_max =</span> <span class="fu">mean</span>(temperature_max, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
-<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">.by =</span> station</span>
-<span id="cb30-6"><a href="#cb30-6" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">drop_na</span>(temperature_min, temperature_max) <span class="sc">%&gt;%</span> </span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(</span>
+<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">mean_min =</span> <span class="fu">mean</span>(temperature_min),</span>
+<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">mean_max =</span> <span class="fu">mean</span>(temperature_max),</span>
+<span id="cb30-6"><a href="#cb30-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">.by =</span> station</span>
+<span id="cb30-7"><a href="#cb30-7" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 5 × 3
   station     mean_min mean_max
@@ -27607,9 +27619,10 @@ Tip
 <span id="cb35-5"><a href="#cb35-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">by =</span> <span class="st">&quot;station&quot;</span></span>
 <span id="cb35-6"><a href="#cb35-6" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
 <span id="cb35-7"><a href="#cb35-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(</span>
-<span id="cb35-8"><a href="#cb35-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">max_temperature =</span> <span class="fu">max</span>(temperature_max, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
-<span id="cb35-9"><a href="#cb35-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">.by =</span> name</span>
-<span id="cb35-10"><a href="#cb35-10" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb35-8"><a href="#cb35-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">max_temperature =</span></span>
+<span id="cb35-9"><a href="#cb35-9" aria-hidden="true" tabindex="-1"></a>      <span class="fu">max</span>(temperature_max, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb35-10"><a href="#cb35-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">.by =</span> name</span>
+<span id="cb35-11"><a href="#cb35-11" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 5 × 2
   name                   max_temperature
@@ -28009,12 +28022,12 @@ window.matchingGames.push({"id":"m-2-6-01","osSwitch":false,"pairs":[{"left":"Th
 <p><i class="fa-solid fa-user-circle fa-2x" aria-label="user-circle"></i> <span style="padding-left: 0.5em;">Test your knowledge!</span></p>
 <ol type="1">
 <li><p>A table of bird captures repeats the common name, foraging strategy, and diet of a species alongside every capture record. Which tidy data rule does this table violate?</p>
-<div id="radio_EJYNIDFODH" class="webex-radiogroup">
-<label><input type="radio" autocomplete="off" name="radio_EJYNIDFODH" value> <span>Every variable forms a column</span></label><label><input type="radio" autocomplete="off" name="radio_EJYNIDFODH" value> <span>Every observation forms a row</span></label><label><input type="radio" autocomplete="off" name="radio_EJYNIDFODH" value="answer"> <span>Every level of observation forms a table</span></label><label><input type="radio" autocomplete="off" name="radio_EJYNIDFODH" value> <span>None – the table is tidy</span></label>
+<div id="radio_UHUZUUPVEL" class="webex-radiogroup">
+<label><input type="radio" autocomplete="off" name="radio_UHUZUUPVEL" value> <span>Every variable forms a column</span></label><label><input type="radio" autocomplete="off" name="radio_UHUZUUPVEL" value> <span>Every observation forms a row</span></label><label><input type="radio" autocomplete="off" name="radio_UHUZUUPVEL" value="answer"> <span>Every level of observation forms a table</span></label><label><input type="radio" autocomplete="off" name="radio_UHUZUUPVEL" value> <span>None – the table is tidy</span></label>
 </div></li>
 <li><p>In <code>messy_weather.csv</code>, the column names <code>march_1</code> through <code>march_31</code> are values of a day variable. Which function moves those column names into a single column?</p>
-<div id="radio_GXMWTFTMGL" class="webex-radiogroup">
-<label><input type="radio" autocomplete="off" name="radio_GXMWTFTMGL" value="answer"> <span>pivot_longer()</span></label><label><input type="radio" autocomplete="off" name="radio_GXMWTFTMGL" value> <span>pivot_wider()</span></label><label><input type="radio" autocomplete="off" name="radio_GXMWTFTMGL" value> <span>separate_wider_delim()</span></label><label><input type="radio" autocomplete="off" name="radio_GXMWTFTMGL" value> <span>distinct()</span></label>
+<div id="radio_CEHZTXUTID" class="webex-radiogroup">
+<label><input type="radio" autocomplete="off" name="radio_CEHZTXUTID" value="answer"> <span>pivot_longer()</span></label><label><input type="radio" autocomplete="off" name="radio_CEHZTXUTID" value> <span>pivot_wider()</span></label><label><input type="radio" autocomplete="off" name="radio_CEHZTXUTID" value> <span>separate_wider_delim()</span></label><label><input type="radio" autocomplete="off" name="radio_CEHZTXUTID" value> <span>distinct()</span></label>
 </div></li>
 <li><p>True or false: An observational unit is the kind of entity being measured, so a dataset with measurements taken on both stations and days has two levels of observation.</p>
 <p><select class="webex-select"><option value="blank"></option><option value="answer">TRUE</option><option value>FALSE</option></select></p></li>
@@ -28122,128 +28135,138 @@ Functions
 </tr>
 <tr class="odd">
 <td style="text-align: center;">.Primitive</td>
+<td style="text-align: center;">as.numeric</td>
+<td style="text-align: left;">Transform an atomic vector to a double numeric vector (i.e., decimal numbers)</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">.Primitive</td>
 <td style="text-align: center;">c</td>
 <td style="text-align: left;">Combine values to form an atomic vector</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: center;">.Primitive</td>
 <td style="text-align: center;">list</td>
 <td style="text-align: left;">Combine multiple objects of any type into a single, recursive, data object</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: center;">.Primitive</td>
 <td style="text-align: center;">max</td>
 <td style="text-align: left;">Return the highest value in a numeric vector (integer or double) as a one-value numeric or integer vector (depending on input)</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: center;">.Primitive</td>
 <td style="text-align: center;">~</td>
 <td style="text-align: left;">The formula operator separates the left- and right-hand sides (LHS and RHS) in a formula.</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: center;">base</td>
 <td style="text-align: center;">library</td>
 <td style="text-align: left;">Attach the package environment for a given package to the current R session</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: center;">base</td>
 <td style="text-align: center;">mean</td>
 <td style="text-align: left;">Generate a one-value double numeric vector that describes the mean of a vector</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: center;">base</td>
 <td style="text-align: center;">unique</td>
 <td style="text-align: left;">Subset an atomic vector to the unique values in the set</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: center;">dplyr</td>
 <td style="text-align: center;">across</td>
 <td style="text-align: left;">Apply a function across multiple variables in a data frame</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: center;">dplyr</td>
 <td style="text-align: center;">count</td>
 <td style="text-align: left;">Tabulate the number of observations of each unique value of a column in a data frame and return as a long format tibble</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: center;">dplyr</td>
 <td style="text-align: center;">distinct</td>
 <td style="text-align: left;">Subset a data frame by removing duplicate rows</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: center;">dplyr</td>
 <td style="text-align: center;">left_join</td>
 <td style="text-align: left;">A mutating join that joins a source table to a target table and maintains all records found in the target table, regardless of matching key values</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: center;">dplyr</td>
 <td style="text-align: center;">mutate</td>
 <td style="text-align: left;">Add or modify a column in a data frame</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: center;">dplyr</td>
 <td style="text-align: center;">pull</td>
 <td style="text-align: left;">Extract a column from a data frame as a vector</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: center;">dplyr</td>
 <td style="text-align: center;">select</td>
 <td style="text-align: left;">Subset columns in a data frame by name (without quotes!)</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: center;">dplyr</td>
 <td style="text-align: center;">summarize</td>
 <td style="text-align: left;">Calculate one or more summary statistics on a variable or variables in a data frame (often used in conjunction with `group_by()` but may also be used with `.by = ...`)</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: center;">ggplot2</td>
 <td style="text-align: center;">aes</td>
 <td style="text-align: left;">Define aesthetics</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: center;">ggplot2</td>
 <td style="text-align: center;">facet_wrap</td>
 <td style="text-align: left;">Split plot into facets</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: center;">ggplot2</td>
 <td style="text-align: center;">geom_point</td>
 <td style="text-align: left;">Create a point geometry</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: center;">ggplot2</td>
 <td style="text-align: center;">geom_smooth</td>
 <td style="text-align: left;">Add a line-of-best-fit geometry</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: center;">ggplot2</td>
 <td style="text-align: center;">ggplot</td>
 <td style="text-align: left;">Set the data and, potentially, the aesthetics of a plot</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: center;">ggplot2</td>
 <td style="text-align: center;">labs</td>
 <td style="text-align: left;">Add or modify the labels of a plot</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: center;">ggplot2</td>
 <td style="text-align: center;">theme_bw</td>
 <td style="text-align: left;">Generate a pre-packaged light background theme for a plot</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: center;">magrittr</td>
 <td style="text-align: center;">%&gt;%</td>
 <td style="text-align: left;">The pipe operator passes the output of the LHS argument to the function on the right</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: center;">readr</td>
 <td style="text-align: center;">read_csv</td>
 <td style="text-align: left;">Read a tabular csv file into R as a tibble data frame</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: center;">readr</td>
 <td style="text-align: center;">write_rds</td>
 <td style="text-align: left;">Write a data object to your hard drive as an RDS file</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">tidyr</td>
+<td style="text-align: center;">drop_na</td>
+<td style="text-align: left;">Remove rows that contain NA values</td>
 </tr>
 <tr class="even">
 <td style="text-align: center;">tidyr</td>
