@@ -26737,6 +26737,7 @@ margin: 1em 0;
   <li><a href="#putting-it-all-together" id="toc-putting-it-all-together" class="nav-link" data-scroll-target="#putting-it-all-together">Putting it all together</a></li>
   <li><a href="#take-home-points" id="toc-take-home-points" class="nav-link" data-scroll-target="#take-home-points">Take-home points</a></li>
   <li><a href="#exercises" id="toc-exercises" class="nav-link" data-scroll-target="#exercises">Exercises</a></li>
+  <li><a href="#optional-introductory-video" id="toc-optional-introductory-video" class="nav-link" data-scroll-target="#optional-introductory-video">Optional introductory video</a></li>
   <li><a href="#reference" id="toc-reference" class="nav-link" data-scroll-target="#reference">Reference</a></li>
   </ul>
 </nav>
@@ -26829,325 +26830,6 @@ Please click on the button below to explore the metadata for this lesson!
 </figure>
 </div>
 </div>
-</div>
-<div class="now_you">
-<p><i class="fa-solid fa-user-circle fa-2x" aria-label="user-circle"></i> <span style="font-size: 1.25em; padding-left: 0.5em;">Now you!</span></p>
-<p>Every function below was used to build the plot above. Match each one to the element of the grammar of graphics that it represents. Click a function, then click its element; when you are finished, select <strong>Check My Matches</strong>.</p>
-<script>// Two-column "matching game" exercises for course lesson pages.
-//
-// Students click an item in the left column, then an item in the right column,
-// to pair them. Each pairing is shown with a shared number badge and colour on
-// both items. "Check My Matches" grades the pairings; "Shuffle Again" reshuffles
-// the right column and clears all matches.
-//
-// Markup (normally emitted by the matching_game() R helper in
-// src/r/course_functions.R):
-//   <div class="matching-game" id="<id>">
-//     <div class="matching-col matching-left"  id="<id>-left"></div>
-//     <div class="matching-col matching-right" id="<id>-right"></div>
-//     <div style="clear: both;"></div>
-//     <button id="<id>-check" ...>Check My Matches</button>
-//     <button id="<id>-reset" ...>Shuffle Again</button>
-//     <p id="<id>-feedback" class="parsons-feedback"></p>
-//   </div>
-// ...then registers itself with:
-//   window.matchingGames = window.matchingGames || [];
-//   window.matchingGames.push({
-//     id: "m-0-1-01",
-//     osSwitch: true,                 // optional; see below
-//     pairs: [ { left: ..., right: "..." }, ... ]
-//   });
-//
-// A pair's `left` may be:
-//   * a string (HTML allowed), or
-//   * an object { mac: "<html>", win: "<html>" } when osSwitch is true, in
-//     which case a "macOS / Windows-Linux" toggle is shown and the left column
-//     displays the variant for the selected operating system.
-//
-// Correct pairing is by position: left item i matches right item i. The right
-// column is shuffled on load. Registration just pushes onto a global array, so
-// load order does not matter; this file initialises every registered game once
-// the DOM is ready and is safe to load more than once.
-
-(function () {
-  "use strict";
-
-  var PALETTE = [
-    "#1565C0", "#2E7D32", "#6A1B9A", "#C62828", "#EF6C00",
-    "#00838F", "#AD1457", "#4E342E", "#283593", "#558B2F"
-  ];
-
-  function colorFor(num) {
-    return PALETTE[(num - 1) % PALETTE.length];
-  }
-
-  function shuffle(arr) {
-    var a = arr.slice();
-    for (var i = a.length - 1; i > 0; i--) {
-      var j = Math.floor(Math.random() * (i + 1));
-      var tmp = a[i];
-      a[i] = a[j];
-      a[j] = tmp;
-    }
-    return a;
-  }
-
-  function detectOS() {
-    var s = (navigator.platform || "") + " " + (navigator.userAgent || "");
-    return /Mac|iPhone|iPad|iPod/i.test(s) ? "mac" : "win";
-  }
-
-  function initGame(config) {
-    var root = document.getElementById(config.id);
-    if (!root || root.dataset.mgInit === "true") {
-      return;
-    }
-    root.dataset.mgInit = "true";
-
-    var leftBox = document.getElementById(config.id + "-left");
-    var rightBox = document.getElementById(config.id + "-right");
-    var feedback = document.getElementById(config.id + "-feedback");
-    if (!leftBox || !rightBox) {
-      return;
-    }
-
-    var pairs = config.pairs || [];
-    var leftOrder = pairs.map(function (_p, i) { return i; });   // source order
-    var rightOrder = shuffle(leftOrder);                         // shuffled
-
-    var selectedLeft = null;   // pair index of the currently selected left item
-    var matches = {};          // leftPairIndex -> rightPairIndex
-    var currentOS = detectOS();
-
-    function leftHTML(pairIdx) {
-      var lft = pairs[pairIdx].left;
-      if (lft && typeof lft === "object") {
-        return lft[currentOS] || lft.mac || lft.win || "";
-      }
-      return lft;
-    }
-
-    function numForLeft(pairIdx) {
-      return leftOrder.indexOf(pairIdx) + 1;
-    }
-
-    function rightOwner(rightPairIdx) {
-      var owner = null;
-      Object.keys(matches).forEach(function (lp) {
-        if (matches[lp] === rightPairIdx) {
-          owner = Number(lp);
-        }
-      });
-      return owner;
-    }
-
-    function clearFeedback() {
-      if (feedback) {
-        feedback.textContent = "";
-        feedback.className = "parsons-feedback";
-      }
-    }
-
-    function makeItem(pairIdx, side) {
-      var el = document.createElement("div");
-      el.className = "matching-item matching-" + side + "-item";
-      el.dataset.pair = pairIdx;
-
-      var badge = document.createElement("span");
-      badge.className = "matching-badge";
-
-      var label = document.createElement("span");
-      label.className = "matching-label";
-      label.innerHTML = side === "left" ? leftHTML(pairIdx) : pairs[pairIdx].right;
-
-      el.appendChild(badge);
-      el.appendChild(label);
-      return { el: el, badge: badge };
-    }
-
-    function paint(el, badge, num) {
-      if (num) {
-        badge.textContent = num;
-        badge.style.backgroundColor = colorFor(num);
-        el.style.borderColor = colorFor(num);
-        el.classList.add("matching-matched");
-      } else {
-        badge.textContent = "";
-        badge.style.backgroundColor = "";
-        el.style.borderColor = "";
-        el.classList.remove("matching-matched");
-      }
-    }
-
-    function render() {
-      leftBox.innerHTML = "";
-      rightBox.innerHTML = "";
-
-      leftOrder.forEach(function (pairIdx) {
-        var made = makeItem(pairIdx, "left");
-        var matched = Object.prototype.hasOwnProperty.call(matches, pairIdx);
-        paint(made.el, made.badge, matched ? numForLeft(pairIdx) : null);
-        if (selectedLeft === pairIdx) {
-          made.el.classList.add("selected");
-        }
-        made.el.addEventListener("click", function () { onLeftClick(pairIdx); });
-        leftBox.appendChild(made.el);
-      });
-
-      rightOrder.forEach(function (pairIdx) {
-        var made = makeItem(pairIdx, "right");
-        var owner = rightOwner(pairIdx);
-        paint(made.el, made.badge, owner === null ? null : numForLeft(owner));
-        made.el.addEventListener("click", function () { onRightClick(pairIdx); });
-        rightBox.appendChild(made.el);
-      });
-    }
-
-    function onLeftClick(pairIdx) {
-      clearFeedback();
-      selectedLeft = (selectedLeft === pairIdx) ? null : pairIdx;
-      render();
-    }
-
-    function onRightClick(pairIdx) {
-      clearFeedback();
-      if (selectedLeft === null) {
-        var owner = rightOwner(pairIdx);
-        if (owner !== null) {
-          delete matches[owner];
-          render();
-        }
-        return;
-      }
-      if (matches[selectedLeft] === pairIdx) {
-        delete matches[selectedLeft];
-      } else {
-        var prevOwner = rightOwner(pairIdx);
-        if (prevOwner !== null) {
-          delete matches[prevOwner];
-        }
-        matches[selectedLeft] = pairIdx;
-      }
-      selectedLeft = null;
-      render();
-    }
-
-    function check() {
-      clearFeedback();
-      root.querySelectorAll(".matching-item").forEach(function (el) {
-        el.classList.remove("matching-correct", "matching-incorrect");
-      });
-
-      var correct = 0;
-      leftOrder.forEach(function (pairIdx) {
-        var leftEl = leftBox.querySelector(
-          '.matching-left-item[data-pair="' + pairIdx + '"]');
-        var matchedRight = matches[pairIdx];
-        if (matchedRight === undefined) {
-          if (leftEl) { leftEl.classList.add("matching-incorrect"); }
-          return;
-        }
-        var rightEl = rightBox.querySelector(
-          '.matching-right-item[data-pair="' + matchedRight + '"]');
-        if (matchedRight === pairIdx) {
-          correct++;
-          if (leftEl) { leftEl.classList.add("matching-correct"); }
-          if (rightEl) { rightEl.classList.add("matching-correct"); }
-        } else {
-          if (leftEl) { leftEl.classList.add("matching-incorrect"); }
-          if (rightEl) { rightEl.classList.add("matching-incorrect"); }
-        }
-      });
-
-      if (feedback) {
-        if (correct === pairs.length) {
-          feedback.textContent = "All matched -- nice work!";
-          feedback.className = "parsons-feedback parsons-feedback-correct";
-        } else {
-          feedback.textContent = "You matched " + correct + " of " + pairs.length +
-            " correctly. Adjust the highlighted items and check again.";
-          feedback.className = "parsons-feedback parsons-feedback-incorrect";
-        }
-      }
-    }
-
-    function reset() {
-      matches = {};
-      selectedLeft = null;
-      rightOrder = shuffle(leftOrder);
-      clearFeedback();
-      render();
-    }
-
-    // Optional macOS / Windows-Linux toggle, shown above the columns.
-    if (config.osSwitch) {
-      var sw = document.createElement("div");
-      sw.className = "matching-os-switch";
-      sw.innerHTML =
-        '<span class="matching-os-label">Show shortcuts for:</span>' +
-        '<div class="matching-os-toggle" role="group" aria-label="Operating system">' +
-          '<button type="button" class="matching-os-btn" data-os="mac">macOS</button>' +
-          '<button type="button" class="matching-os-btn" data-os="win">Windows / Linux</button>' +
-        '</div>';
-      root.insertBefore(sw, leftBox);
-      var osButtons = sw.querySelectorAll(".matching-os-btn");
-      osButtons.forEach(function (btn) {
-        if (btn.dataset.os === currentOS) { btn.classList.add("active"); }
-        btn.addEventListener("click", function () {
-          if (currentOS === btn.dataset.os) { return; }
-          currentOS = btn.dataset.os;
-          osButtons.forEach(function (b) {
-            b.classList.toggle("active", b.dataset.os === currentOS);
-          });
-          render();   // relabel the left column; matches are preserved
-        });
-      });
-    }
-
-    var checkBtn = document.getElementById(config.id + "-check");
-    if (checkBtn) { checkBtn.addEventListener("click", check); }
-    var resetBtn = document.getElementById(config.id + "-reset");
-    if (resetBtn) { resetBtn.addEventListener("click", reset); }
-
-    render();
-  }
-
-  function initAll() {
-    (window.matchingGames || []).forEach(initGame);
-  }
-
-  if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", initAll);
-  } else {
-    initAll();
-  }
-
-  window.__initMatchingGames = initAll;
-})();
-</script>
-<div id="m-2-5-01" class="matching-game">
-<div id="m-2-5-01-left" class="matching-col matching-left">
-
-</div>
-<div id="m-2-5-01-right" class="matching-col matching-right">
-
-</div>
-<div style="clear: both;">
-
-</div>
-<button id="m-2-5-01-check" class="parsons-btn parsons-btn-check" type="button">
-Check My Matches
-</button>
-<button id="m-2-5-01-reset" class="parsons-btn parsons-btn-reset" type="button">
-Shuffle Again
-</button>
-<p id="m-2-5-01-feedback" class="parsons-feedback">
-</p>
-</div>
-<script>
-window.matchingGames = window.matchingGames || [];
-window.matchingGames.push({"id":"m-2-5-01","osSwitch":false,"pairs":[{"left":"<code>ggplot()<\/code>","right":"Data"},{"left":"<code>aes()<\/code>","right":"Aesthetic mappings"},{"left":"<code>geom_bar()<\/code>","right":"Geometries"},{"left":"<code>scale_y_continuous()<\/code>","right":"Scales"},{"left":"<code>coord_flip()<\/code>","right":"Coordinate system"},{"left":"<code>facet_wrap()<\/code>","right":"Facets"},{"left":"<code>element_text()<\/code>","right":"Theme"}]});
-</script>
 </div>
 </section>
 <section id="set-up-your-session" class="level2">
@@ -28162,21 +27844,336 @@ Note
 <div class="now_you">
 <p><i class="fa-solid fa-user-circle fa-2x" aria-label="user-circle"></i> <span style="padding-left: 0.5em;">Test your knowledge!</span></p>
 <ol type="1">
-<li>You want to keep species mapped to color but replace ggplot2’s default colors with two colorblind-safe colors. Which element of the grammar of graphics should you alter?</li>
+<li>Every function below was used to build the plot above. Match each one to the element of the grammar of graphics that it represents. Click a function, then click its element; when you are finished, select <strong>Check My Matches</strong>.</li>
 </ol>
-<div id="radio_KJLKOPHYVL" class="webex-radiogroup">
-<label><input type="radio" autocomplete="off" name="radio_KJLKOPHYVL" value> <span>Aesthetic mappings</span></label><label><input type="radio" autocomplete="off" name="radio_KJLKOPHYVL" value> <span>Geometries</span></label><label><input type="radio" autocomplete="off" name="radio_KJLKOPHYVL" value="answer"> <span>Scales</span></label><label><input type="radio" autocomplete="off" name="radio_KJLKOPHYVL" value> <span>Theme</span></label>
+<script>// Two-column "matching game" exercises for course lesson pages.
+//
+// Students click an item in the left column, then an item in the right column,
+// to pair them. Each pairing is shown with a shared number badge and colour on
+// both items. "Check My Matches" grades the pairings; "Shuffle Again" reshuffles
+// the right column and clears all matches.
+//
+// Markup (normally emitted by the matching_game() R helper in
+// src/r/course_functions.R):
+//   <div class="matching-game" id="<id>">
+//     <div class="matching-col matching-left"  id="<id>-left"></div>
+//     <div class="matching-col matching-right" id="<id>-right"></div>
+//     <div style="clear: both;"></div>
+//     <button id="<id>-check" ...>Check My Matches</button>
+//     <button id="<id>-reset" ...>Shuffle Again</button>
+//     <p id="<id>-feedback" class="parsons-feedback"></p>
+//   </div>
+// ...then registers itself with:
+//   window.matchingGames = window.matchingGames || [];
+//   window.matchingGames.push({
+//     id: "m-0-1-01",
+//     osSwitch: true,                 // optional; see below
+//     pairs: [ { left: ..., right: "..." }, ... ]
+//   });
+//
+// A pair's `left` may be:
+//   * a string (HTML allowed), or
+//   * an object { mac: "<html>", win: "<html>" } when osSwitch is true, in
+//     which case a "macOS / Windows-Linux" toggle is shown and the left column
+//     displays the variant for the selected operating system.
+//
+// Correct pairing is by position: left item i matches right item i. The right
+// column is shuffled on load. Registration just pushes onto a global array, so
+// load order does not matter; this file initialises every registered game once
+// the DOM is ready and is safe to load more than once.
+
+(function () {
+  "use strict";
+
+  var PALETTE = [
+    "#1565C0", "#2E7D32", "#6A1B9A", "#C62828", "#EF6C00",
+    "#00838F", "#AD1457", "#4E342E", "#283593", "#558B2F"
+  ];
+
+  function colorFor(num) {
+    return PALETTE[(num - 1) % PALETTE.length];
+  }
+
+  function shuffle(arr) {
+    var a = arr.slice();
+    for (var i = a.length - 1; i > 0; i--) {
+      var j = Math.floor(Math.random() * (i + 1));
+      var tmp = a[i];
+      a[i] = a[j];
+      a[j] = tmp;
+    }
+    return a;
+  }
+
+  function detectOS() {
+    var s = (navigator.platform || "") + " " + (navigator.userAgent || "");
+    return /Mac|iPhone|iPad|iPod/i.test(s) ? "mac" : "win";
+  }
+
+  function initGame(config) {
+    var root = document.getElementById(config.id);
+    if (!root || root.dataset.mgInit === "true") {
+      return;
+    }
+    root.dataset.mgInit = "true";
+
+    var leftBox = document.getElementById(config.id + "-left");
+    var rightBox = document.getElementById(config.id + "-right");
+    var feedback = document.getElementById(config.id + "-feedback");
+    if (!leftBox || !rightBox) {
+      return;
+    }
+
+    var pairs = config.pairs || [];
+    var leftOrder = pairs.map(function (_p, i) { return i; });   // source order
+    var rightOrder = shuffle(leftOrder);                         // shuffled
+
+    var selectedLeft = null;   // pair index of the currently selected left item
+    var matches = {};          // leftPairIndex -> rightPairIndex
+    var currentOS = detectOS();
+
+    function leftHTML(pairIdx) {
+      var lft = pairs[pairIdx].left;
+      if (lft && typeof lft === "object") {
+        return lft[currentOS] || lft.mac || lft.win || "";
+      }
+      return lft;
+    }
+
+    function numForLeft(pairIdx) {
+      return leftOrder.indexOf(pairIdx) + 1;
+    }
+
+    function rightOwner(rightPairIdx) {
+      var owner = null;
+      Object.keys(matches).forEach(function (lp) {
+        if (matches[lp] === rightPairIdx) {
+          owner = Number(lp);
+        }
+      });
+      return owner;
+    }
+
+    function clearFeedback() {
+      if (feedback) {
+        feedback.textContent = "";
+        feedback.className = "parsons-feedback";
+      }
+    }
+
+    function makeItem(pairIdx, side) {
+      var el = document.createElement("div");
+      el.className = "matching-item matching-" + side + "-item";
+      el.dataset.pair = pairIdx;
+
+      var badge = document.createElement("span");
+      badge.className = "matching-badge";
+
+      var label = document.createElement("span");
+      label.className = "matching-label";
+      label.innerHTML = side === "left" ? leftHTML(pairIdx) : pairs[pairIdx].right;
+
+      el.appendChild(badge);
+      el.appendChild(label);
+      return { el: el, badge: badge };
+    }
+
+    function paint(el, badge, num) {
+      if (num) {
+        badge.textContent = num;
+        badge.style.backgroundColor = colorFor(num);
+        el.style.borderColor = colorFor(num);
+        el.classList.add("matching-matched");
+      } else {
+        badge.textContent = "";
+        badge.style.backgroundColor = "";
+        el.style.borderColor = "";
+        el.classList.remove("matching-matched");
+      }
+    }
+
+    function render() {
+      leftBox.innerHTML = "";
+      rightBox.innerHTML = "";
+
+      leftOrder.forEach(function (pairIdx) {
+        var made = makeItem(pairIdx, "left");
+        var matched = Object.prototype.hasOwnProperty.call(matches, pairIdx);
+        paint(made.el, made.badge, matched ? numForLeft(pairIdx) : null);
+        if (selectedLeft === pairIdx) {
+          made.el.classList.add("selected");
+        }
+        made.el.addEventListener("click", function () { onLeftClick(pairIdx); });
+        leftBox.appendChild(made.el);
+      });
+
+      rightOrder.forEach(function (pairIdx) {
+        var made = makeItem(pairIdx, "right");
+        var owner = rightOwner(pairIdx);
+        paint(made.el, made.badge, owner === null ? null : numForLeft(owner));
+        made.el.addEventListener("click", function () { onRightClick(pairIdx); });
+        rightBox.appendChild(made.el);
+      });
+    }
+
+    function onLeftClick(pairIdx) {
+      clearFeedback();
+      selectedLeft = (selectedLeft === pairIdx) ? null : pairIdx;
+      render();
+    }
+
+    function onRightClick(pairIdx) {
+      clearFeedback();
+      if (selectedLeft === null) {
+        var owner = rightOwner(pairIdx);
+        if (owner !== null) {
+          delete matches[owner];
+          render();
+        }
+        return;
+      }
+      if (matches[selectedLeft] === pairIdx) {
+        delete matches[selectedLeft];
+      } else {
+        var prevOwner = rightOwner(pairIdx);
+        if (prevOwner !== null) {
+          delete matches[prevOwner];
+        }
+        matches[selectedLeft] = pairIdx;
+      }
+      selectedLeft = null;
+      render();
+    }
+
+    function check() {
+      clearFeedback();
+      root.querySelectorAll(".matching-item").forEach(function (el) {
+        el.classList.remove("matching-correct", "matching-incorrect");
+      });
+
+      var correct = 0;
+      leftOrder.forEach(function (pairIdx) {
+        var leftEl = leftBox.querySelector(
+          '.matching-left-item[data-pair="' + pairIdx + '"]');
+        var matchedRight = matches[pairIdx];
+        if (matchedRight === undefined) {
+          if (leftEl) { leftEl.classList.add("matching-incorrect"); }
+          return;
+        }
+        var rightEl = rightBox.querySelector(
+          '.matching-right-item[data-pair="' + matchedRight + '"]');
+        if (matchedRight === pairIdx) {
+          correct++;
+          if (leftEl) { leftEl.classList.add("matching-correct"); }
+          if (rightEl) { rightEl.classList.add("matching-correct"); }
+        } else {
+          if (leftEl) { leftEl.classList.add("matching-incorrect"); }
+          if (rightEl) { rightEl.classList.add("matching-incorrect"); }
+        }
+      });
+
+      if (feedback) {
+        if (correct === pairs.length) {
+          feedback.textContent = "All matched -- nice work!";
+          feedback.className = "parsons-feedback parsons-feedback-correct";
+        } else {
+          feedback.textContent = "You matched " + correct + " of " + pairs.length +
+            " correctly. Adjust the highlighted items and check again.";
+          feedback.className = "parsons-feedback parsons-feedback-incorrect";
+        }
+      }
+    }
+
+    function reset() {
+      matches = {};
+      selectedLeft = null;
+      rightOrder = shuffle(leftOrder);
+      clearFeedback();
+      render();
+    }
+
+    // Optional macOS / Windows-Linux toggle, shown above the columns.
+    if (config.osSwitch) {
+      var sw = document.createElement("div");
+      sw.className = "matching-os-switch";
+      sw.innerHTML =
+        '<span class="matching-os-label">Show shortcuts for:</span>' +
+        '<div class="matching-os-toggle" role="group" aria-label="Operating system">' +
+          '<button type="button" class="matching-os-btn" data-os="mac">macOS</button>' +
+          '<button type="button" class="matching-os-btn" data-os="win">Windows / Linux</button>' +
+        '</div>';
+      root.insertBefore(sw, leftBox);
+      var osButtons = sw.querySelectorAll(".matching-os-btn");
+      osButtons.forEach(function (btn) {
+        if (btn.dataset.os === currentOS) { btn.classList.add("active"); }
+        btn.addEventListener("click", function () {
+          if (currentOS === btn.dataset.os) { return; }
+          currentOS = btn.dataset.os;
+          osButtons.forEach(function (b) {
+            b.classList.toggle("active", b.dataset.os === currentOS);
+          });
+          render();   // relabel the left column; matches are preserved
+        });
+      });
+    }
+
+    var checkBtn = document.getElementById(config.id + "-check");
+    if (checkBtn) { checkBtn.addEventListener("click", check); }
+    var resetBtn = document.getElementById(config.id + "-reset");
+    if (resetBtn) { resetBtn.addEventListener("click", reset); }
+
+    render();
+  }
+
+  function initAll() {
+    (window.matchingGames || []).forEach(initGame);
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", initAll);
+  } else {
+    initAll();
+  }
+
+  window.__initMatchingGames = initAll;
+})();
+</script>
+<div id="m-2-5-01" class="matching-game">
+<div id="m-2-5-01-left" class="matching-col matching-left">
+
+</div>
+<div id="m-2-5-01-right" class="matching-col matching-right">
+
+</div>
+<div style="clear: both;">
+
+</div>
+<button id="m-2-5-01-check" class="parsons-btn parsons-btn-check" type="button">
+Check My Matches
+</button>
+<button id="m-2-5-01-reset" class="parsons-btn parsons-btn-reset" type="button">
+Shuffle Again
+</button>
+<p id="m-2-5-01-feedback" class="parsons-feedback">
+</p>
+</div>
+<script>
+window.matchingGames = window.matchingGames || [];
+window.matchingGames.push({"id":"m-2-5-01","osSwitch":false,"pairs":[{"left":"<code>ggplot()<\/code>","right":"Data"},{"left":"<code>aes()<\/code>","right":"Aesthetic mappings"},{"left":"<code>geom_bar()<\/code>","right":"Geometries"},{"left":"<code>scale_y_continuous()<\/code>","right":"Scales"},{"left":"<code>coord_flip()<\/code>","right":"Coordinate system"},{"left":"<code>facet_wrap()<\/code>","right":"Facets"},{"left":"<code>element_text()<\/code>","right":"Theme"}]});
+</script>
 </div>
 <ol start="2" type="1">
-<li>You want the points in a scatterplot colored by species, and you want that same coloring to apply to a line of best fit drawn on the same plot. Where should the color mapping go?</li>
+<li>You want to keep species mapped to color but replace ggplot2’s default colors with two colorblind-safe colors. Which element of the grammar of graphics should you alter?</li>
 </ol>
-<div id="radio_AWGIMBRVFS" class="webex-radiogroup">
-<label><input type="radio" autocomplete="off" name="radio_AWGIMBRVFS" value="answer"> <span>In the aes() call that follows ggplot(), so that both geometries inherit it</span></label><label><input type="radio" autocomplete="off" name="radio_AWGIMBRVFS" value> <span>In geom_point() only</span></label><label><input type="radio" autocomplete="off" name="radio_AWGIMBRVFS" value> <span>In geom_smooth() only</span></label><label><input type="radio" autocomplete="off" name="radio_AWGIMBRVFS" value> <span>In labs(), because color is a label</span></label>
+<div id="radio_EXLFINOSDF" class="webex-radiogroup">
+<label><input type="radio" autocomplete="off" name="radio_EXLFINOSDF" value> <span>Aesthetic mappings</span></label><label><input type="radio" autocomplete="off" name="radio_EXLFINOSDF" value> <span>Geometries</span></label><label><input type="radio" autocomplete="off" name="radio_EXLFINOSDF" value="answer"> <span>Scales</span></label><label><input type="radio" autocomplete="off" name="radio_EXLFINOSDF" value> <span>Theme</span></label>
 </div>
 <ol start="3" type="1">
-<li>True or false: The <code>+</code> used to add ggplot elements is the same operator as the pipe, <code>%&gt;%</code>.</li>
+<li>You want the points in a scatterplot colored by species, and you want that same coloring to apply to a line of best fit drawn on the same plot. Where should the color mapping go?</li>
 </ol>
-<p><select class="webex-select"><option value="blank"></option><option value>TRUE</option><option value="answer">FALSE</option></select></p>
+<div id="radio_EQCDFQLHMX" class="webex-radiogroup">
+<label><input type="radio" autocomplete="off" name="radio_EQCDFQLHMX" value="answer"> <span>In the aes() call that follows ggplot(), so that both geometries inherit it</span></label><label><input type="radio" autocomplete="off" name="radio_EQCDFQLHMX" value> <span>In geom_point() only</span></label><label><input type="radio" autocomplete="off" name="radio_EQCDFQLHMX" value> <span>In geom_smooth() only</span></label><label><input type="radio" autocomplete="off" name="radio_EQCDFQLHMX" value> <span>In labs(), because color is a label</span></label>
+</div>
 <ol start="4" type="1">
 <li>Parsons Problem: Reorder the lines below to plot mass against wing length, color the points by species, facet by sex, label the axes, and apply <code>theme_bw()</code>. One line pipes a geometry rather than adding it. Leave it in the trash.</li>
 </ol>
@@ -28199,6 +28196,7 @@ Shuffle Again
 <p id="p-2-5-01-feedback" class="parsons-feedback">
 </p>
 </div>
+</section>
 <section id="optional-introductory-video" class="level2">
 <h2 class="anchored" data-anchor-id="optional-introductory-video">Optional introductory video</h2>
 <div class="quarto-video ratio ratio-16x9"><iframe data-external="1" src="https://www.youtube.com/embed/YS7wDkPBvM4?si=f_ZUDOGa-mW2GSqQ" title frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>
@@ -28207,11 +28205,10 @@ window.parsonsProblems = window.parsonsProblems || [];
 window.parsonsProblems.push({
   id: "p-2-5-01",
   maxDistractors: 1,
-  code: "chickadees %>%\n  ggplot() +\n  aes(\n    x = wing,\n    y = mass,\n    color = spp\n  ) +\n  geom_point() +\n  scale_color_manual(\n    \"Species\",\n    values = c(\"#0072B2\", \"#D55E00\")\n  ) +\n  facet_wrap(~ sex) +\n  labs(\n    x = \"Wing length (mm)\",\n    y = \"Mass (g)\"\n  ) +\n  theme_bw()\n  %>% geom_point() #distractor"
+  code: "chickadees %>%\n  ggplot() +\n  aes(\n    x = wing,\n    y = mass,\n    color = spp\n  ) +\n  geom_point() +\n  facet_wrap(~ sex) +\n  labs(\n    x = \"Wing length (mm)\",\n    y = \"Mass (g)\"\n  ) +\n  theme_bw()\n  %>% geom_point() #distractor"
 });
 </script>
-</section>
-</div>
+<p>:::</p>
 </section>
 <section id="reference" class="level2">
 <h2 class="anchored" data-anchor-id="reference">Reference</h2>
