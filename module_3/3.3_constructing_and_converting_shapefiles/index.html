@@ -26990,8 +26990,8 @@ Geodetic CRS:  NAD83
 <div class="now_you">
 <p><i class="fa-solid fa-user-circle fa-2x" aria-label="user-circle"></i> <span style="padding-left: 0.5em;">Check your understanding</span></p>
 <p>Which object class contains a geometry, a CRS, <em>and</em> the fields that describe each feature?</p>
-<div id="radio_WNOZAOIARL" class="webex-radiogroup">
-<label><input type="radio" autocomplete="off" name="radio_WNOZAOIARL" value> <span>sfg</span></label><label><input type="radio" autocomplete="off" name="radio_WNOZAOIARL" value> <span>sfc</span></label><label><input type="radio" autocomplete="off" name="radio_WNOZAOIARL" value="answer"> <span>sf</span></label><label><input type="radio" autocomplete="off" name="radio_WNOZAOIARL" value> <span>A matrix of coordinates</span></label>
+<div id="radio_CGPIDYNTHD" class="webex-radiogroup">
+<label><input type="radio" autocomplete="off" name="radio_CGPIDYNTHD" value> <span>sfg</span></label><label><input type="radio" autocomplete="off" name="radio_CGPIDYNTHD" value> <span>sfc</span></label><label><input type="radio" autocomplete="off" name="radio_CGPIDYNTHD" value="answer"> <span>sf</span></label><label><input type="radio" autocomplete="off" name="radio_CGPIDYNTHD" value> <span>A matrix of coordinates</span></label>
 </div>
 <p>True or false: An sfc object can contain a CRS.</p>
 <p><select class="webex-select"><option value="blank"></option><option value="answer">TRUE</option><option value>FALSE</option></select></p>
@@ -27256,8 +27256,8 @@ Geodetic CRS:  NAD83
 <p>True or false: To create a polygon from scratch, the first and last vertices supplied must be the same point.</p>
 <p><select class="webex-select"><option value="blank"></option><option value="answer">TRUE</option><option value>FALSE</option></select></p>
 <p>A linestring is created from a matrix of coordinates. What determines the order in which the vertices are connected?</p>
-<div id="radio_DPKQWIHWIS" class="webex-radiogroup">
-<label><input type="radio" autocomplete="off" name="radio_DPKQWIHWIS" value="answer"> <span>The order of the rows in the matrix</span></label><label><input type="radio" autocomplete="off" name="radio_DPKQWIHWIS" value> <span>The alphabetical order of the feature names</span></label><label><input type="radio" autocomplete="off" name="radio_DPKQWIHWIS" value> <span>The longitude of each vertex, from west to east</span></label><label><input type="radio" autocomplete="off" name="radio_DPKQWIHWIS" value> <span>The CRS of the object</span></label>
+<div id="radio_ZFWJMADLUI" class="webex-radiogroup">
+<label><input type="radio" autocomplete="off" name="radio_ZFWJMADLUI" value="answer"> <span>The order of the rows in the matrix</span></label><label><input type="radio" autocomplete="off" name="radio_ZFWJMADLUI" value> <span>The alphabetical order of the feature names</span></label><label><input type="radio" autocomplete="off" name="radio_ZFWJMADLUI" value> <span>The longitude of each vertex, from west to east</span></label><label><input type="radio" autocomplete="off" name="radio_ZFWJMADLUI" value> <span>The CRS of the object</span></label>
 </div>
 </div>
 </section>
@@ -27419,7 +27419,7 @@ Geodetic CRS:  NAD83
 1 ((-90.0216 33.65646), (-79.07005 35.91097), (-78.16464 38.88697), (-74.00044 …</code></pre>
 </div>
 </div>
-<p>Here, <code>st_combine()</code> collects the geometries without resolving their boundaries. In <strong><em>3.6 Geometric operations with sf</em></strong>, we will use <code>st_union()</code> to calculate a geometric union, which dissolves shared polygon boundaries. For now, we just want to collect our points before connecting them.</p>
+<p>Here, <code>st_combine()</code> collects the geometries without resolving their boundaries. We will use <code>st_union()</code> to dissolve shared polygon boundaries in <strong><em>3.6 Geometric operations with sf</em></strong> and return to it in <strong><em>5.2 Memory management when using shapefiles</em></strong>. For now, we just want to collect our points before connecting them.</p>
 <p>We can then cast these data to a linestring geometry with <code>st_cast()</code>:</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb47"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a>landmarks <span class="sc">%&gt;%</span></span>
@@ -27677,8 +27677,8 @@ Geodetic CRS:  NAD83
 <p>The result has one feature with <code>LINESTRING</code> geometry. Its coordinates start at B (-80, 35), pass through A (-79, 36), and end at C (-78, 37). The order comes from the rows supplied to <code>st_linestring()</code>.</p>
 </div></li>
 <li><p>Two state polygons cover a similar area. One has a detailed coastline stored with thousands of vertices, while the other has straight borders stored with only a few vertices. Which statement is true?</p>
-<div id="radio_ECKDLLCWDS" class="webex-radiogroup">
-<label><input type="radio" autocomplete="off" name="radio_ECKDLLCWDS" value="answer"> <span>The polygon with more vertices requires more memory to store its coordinates</span></label><label><input type="radio" autocomplete="off" name="radio_ECKDLLCWDS" value> <span>The two polygons contain the same number of vertices</span></label><label><input type="radio" autocomplete="off" name="radio_ECKDLLCWDS" value> <span>The polygon with fewer vertices requires more memory to store its coordinates</span></label><label><input type="radio" autocomplete="off" name="radio_ECKDLLCWDS" value> <span>The number of vertices is determined by the CRS</span></label>
+<div id="radio_PZCHUPETEZ" class="webex-radiogroup">
+<label><input type="radio" autocomplete="off" name="radio_PZCHUPETEZ" value="answer"> <span>The polygon with more vertices requires more memory to store its coordinates</span></label><label><input type="radio" autocomplete="off" name="radio_PZCHUPETEZ" value> <span>The two polygons contain the same number of vertices</span></label><label><input type="radio" autocomplete="off" name="radio_PZCHUPETEZ" value> <span>The polygon with fewer vertices requires more memory to store its coordinates</span></label><label><input type="radio" autocomplete="off" name="radio_PZCHUPETEZ" value> <span>The number of vertices is determined by the CRS</span></label>
 </div></li>
 <li><p>Match each function to its role in constructing or converting a simple features object:</p>
 <script>// Two-column "matching game" exercises for course lesson pages.

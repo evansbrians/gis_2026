@@ -26957,8 +26957,8 @@ First 10 features:
 <p>True or false: A projected CRS expresses locations in angular units, usually decimal degrees.</p>
 <p><select class="webex-select"><option value="blank"></option><option value>TRUE</option><option value="answer">FALSE</option></select></p>
 <p>The bounding box of a simple features object spans values from roughly 300,000 to 330,000 along the X axis. What should you do before interpreting those values?</p>
-<div id="radio_RLVSMDSBPG" class="webex-radiogroup">
-<label><input type="radio" autocomplete="off" name="radio_RLVSMDSBPG" value="answer"> <span>Check the CRS and its units with st_crs()</span></label><label><input type="radio" autocomplete="off" name="radio_RLVSMDSBPG" value> <span>Assume the values are meters because they are large</span></label><label><input type="radio" autocomplete="off" name="radio_RLVSMDSBPG" value> <span>Assign EPSG 4326 without consulting the metadata</span></label><label><input type="radio" autocomplete="off" name="radio_RLVSMDSBPG" value> <span>Divide by 1,000 to convert the values to degrees</span></label>
+<div id="radio_XGOXIVOXQB" class="webex-radiogroup">
+<label><input type="radio" autocomplete="off" name="radio_XGOXIVOXQB" value="answer"> <span>Check the CRS and its units with st_crs()</span></label><label><input type="radio" autocomplete="off" name="radio_XGOXIVOXQB" value> <span>Assume the values are meters because they are large</span></label><label><input type="radio" autocomplete="off" name="radio_XGOXIVOXQB" value> <span>Assign EPSG 4326 without consulting the metadata</span></label><label><input type="radio" autocomplete="off" name="radio_XGOXIVOXQB" value> <span>Divide by 1,000 to convert the values to degrees</span></label>
 </div>
 </div>
 </section>
@@ -27162,8 +27162,8 @@ PROJCRS[&quot;WGS 84 / UTM zone 18N&quot;,
 <p>True or false: An equal-area projection also preserves every distance on the map.</p>
 <p><select class="webex-select"><option value="blank"></option><option value>TRUE</option><option value="answer">FALSE</option></select></p>
 <p>Which is an advantage of a suitable projected CRS for local planar operations?</p>
-<div id="radio_PMEGDDGEEJ" class="webex-radiogroup">
-<label><input type="radio" autocomplete="off" name="radio_PMEGDDGEEJ" value="answer"> <span>Coordinates are in linear units on a flat grid, with small distortion over the study area</span></label><label><input type="radio" autocomplete="off" name="radio_PMEGDDGEEJ" value> <span>The results are always more accurate</span></label><label><input type="radio" autocomplete="off" name="radio_PMEGDDGEEJ" value> <span>Every operation uses less time and memory</span></label><label><input type="radio" autocomplete="off" name="radio_PMEGDDGEEJ" value> <span>Projected data do not require a datum</span></label>
+<div id="radio_TLJGBTDNUT" class="webex-radiogroup">
+<label><input type="radio" autocomplete="off" name="radio_TLJGBTDNUT" value="answer"> <span>Coordinates are in linear units on a flat grid, with small distortion over the study area</span></label><label><input type="radio" autocomplete="off" name="radio_TLJGBTDNUT" value> <span>The results are always more accurate</span></label><label><input type="radio" autocomplete="off" name="radio_TLJGBTDNUT" value> <span>Every operation uses less time and memory</span></label><label><input type="radio" autocomplete="off" name="radio_TLJGBTDNUT" value> <span>Projected data do not require a datum</span></label>
 </div>
 </div>
 </section>
@@ -27446,18 +27446,18 @@ Note
 <p><i class="fa-solid fa-user-circle fa-2x" aria-label="user-circle"></i> <span style="font-size: 1.25em; padding-left: 0.5em;">Test your knowledge!</span></p>
 <ol type="1">
 <li><p>In the WKT of a projected CRS, which section describes the projection and its parameters?</p>
-<div id="radio_IZLAXDKEZX" class="webex-radiogroup">
-<label><input type="radio" autocomplete="off" name="radio_IZLAXDKEZX" value> <span>BASEGEOGCRS</span></label><label><input type="radio" autocomplete="off" name="radio_IZLAXDKEZX" value="answer"> <span>CONVERSION</span></label><label><input type="radio" autocomplete="off" name="radio_IZLAXDKEZX" value> <span>DATUM</span></label><label><input type="radio" autocomplete="off" name="radio_IZLAXDKEZX" value> <span>USAGE</span></label>
+<div id="radio_KZWJNLFPWT" class="webex-radiogroup">
+<label><input type="radio" autocomplete="off" name="radio_KZWJNLFPWT" value> <span>BASEGEOGCRS</span></label><label><input type="radio" autocomplete="off" name="radio_KZWJNLFPWT" value="answer"> <span>CONVERSION</span></label><label><input type="radio" autocomplete="off" name="radio_KZWJNLFPWT" value> <span>DATUM</span></label><label><input type="radio" autocomplete="off" name="radio_KZWJNLFPWT" value> <span>USAGE</span></label>
 </div></li>
 <li><p>True or false: <code>st_transform()</code> and the <code>crs =</code> argument of <code>st_as_sf()</code> both recalculate the coordinate values of an object.</p>
 <p><select class="webex-select"><option value="blank"></option><option value>TRUE</option><option value="answer">FALSE</option></select></p></li>
 <li><p>A colleague recorded animal locations with a GPS unit set to EPSG 4326 and would like to analyze them in EPSG 32618. Which sequence of operations produces a correct simple features object?</p>
-<div id="radio_LLAGYAVUIV" class="webex-radiogroup">
-<label><input type="radio" autocomplete="off" name="radio_LLAGYAVUIV" value="answer"> <span>Convert the data with st_as_sf(), supplying crs = 4326, then transform the object with st_transform(), supplying crs = 32618</span></label><label><input type="radio" autocomplete="off" name="radio_LLAGYAVUIV" value> <span>Convert the data with st_as_sf(), supplying crs = 32618</span></label><label><input type="radio" autocomplete="off" name="radio_LLAGYAVUIV" value> <span>Convert the data with st_as_sf(), supplying crs = 32618, then transform the object with st_transform(), supplying crs = 4326</span></label><label><input type="radio" autocomplete="off" name="radio_LLAGYAVUIV" value> <span>Transform the data frame with st_transform(), supplying crs = 32618, then convert it with st_as_sf()</span></label>
+<div id="radio_HASGHQCGLJ" class="webex-radiogroup">
+<label><input type="radio" autocomplete="off" name="radio_HASGHQCGLJ" value="answer"> <span>Convert the data with st_as_sf(), supplying crs = 4326, then transform the object with st_transform(), supplying crs = 32618</span></label><label><input type="radio" autocomplete="off" name="radio_HASGHQCGLJ" value> <span>Convert the data with st_as_sf(), supplying crs = 32618</span></label><label><input type="radio" autocomplete="off" name="radio_HASGHQCGLJ" value> <span>Convert the data with st_as_sf(), supplying crs = 32618, then transform the object with st_transform(), supplying crs = 4326</span></label><label><input type="radio" autocomplete="off" name="radio_HASGHQCGLJ" value> <span>Transform the data frame with st_transform(), supplying crs = 32618, then convert it with st_as_sf()</span></label>
 </div></li>
 <li><p>You want to compare the areas of protected lands across the conterminous United States. Which kind of projection minimizes distortion for this task?</p>
-<div id="radio_IHCUNVOZYO" class="webex-radiogroup">
-<label><input type="radio" autocomplete="off" name="radio_IHCUNVOZYO" value> <span>A conformal projection</span></label><label><input type="radio" autocomplete="off" name="radio_IHCUNVOZYO" value="answer"> <span>An equal-area projection</span></label><label><input type="radio" autocomplete="off" name="radio_IHCUNVOZYO" value> <span>An equidistant projection</span></label><label><input type="radio" autocomplete="off" name="radio_IHCUNVOZYO" value> <span>An azimuthal projection</span></label>
+<div id="radio_ASQQIRVGAC" class="webex-radiogroup">
+<label><input type="radio" autocomplete="off" name="radio_ASQQIRVGAC" value> <span>A conformal projection</span></label><label><input type="radio" autocomplete="off" name="radio_ASQQIRVGAC" value="answer"> <span>An equal-area projection</span></label><label><input type="radio" autocomplete="off" name="radio_ASQQIRVGAC" value> <span>An equidistant projection</span></label><label><input type="radio" autocomplete="off" name="radio_ASQQIRVGAC" value> <span>An azimuthal projection</span></label>
 </div></li>
 <li><p>Match each task to a suitable choice. The choices assume that the CRS covers the study area:</p>
 <script>// Two-column "matching game" exercises for course lesson pages.
@@ -27829,8 +27829,8 @@ window.matchingGames = window.matchingGames || [];
 window.matchingGames.push({"id":"match-3-4-crs","osSwitch":false,"pairs":[{"left":"Map a single city","right":"A suitable UTM CRS for the city"},{"left":"Measure distances from one central field station","right":"An azimuthal equidistant projection centered on the station"},{"left":"Conduct distance and buffer operations","right":"A suitable projected CRS for the task and extent"},{"left":"Compare the areas of features","right":"An equal-area projection"}]});
 </script></li>
 <li><p>Two simple features objects are assigned different coordinate reference systems. Why can their coordinate values not be compared directly?</p>
-<div id="radio_MLNKMXTSPY" class="webex-radiogroup">
-<label><input type="radio" autocomplete="off" name="radio_MLNKMXTSPY" value="answer"> <span>The same coordinate values describe different locations in different reference systems</span></label><label><input type="radio" autocomplete="off" name="radio_MLNKMXTSPY" value> <span>Objects with different CRSs cannot be printed together</span></label><label><input type="radio" autocomplete="off" name="radio_MLNKMXTSPY" value> <span>A geodetic CRS contains no coordinate values</span></label><label><input type="radio" autocomplete="off" name="radio_MLNKMXTSPY" value> <span>Coordinate values can only be compared when both objects are geodetic</span></label>
+<div id="radio_YINDGNRNCN" class="webex-radiogroup">
+<label><input type="radio" autocomplete="off" name="radio_YINDGNRNCN" value="answer"> <span>The same coordinate values describe different locations in different reference systems</span></label><label><input type="radio" autocomplete="off" name="radio_YINDGNRNCN" value> <span>Objects with different CRSs cannot be printed together</span></label><label><input type="radio" autocomplete="off" name="radio_YINDGNRNCN" value> <span>A geodetic CRS contains no coordinate values</span></label><label><input type="radio" autocomplete="off" name="radio_YINDGNRNCN" value> <span>Coordinate values can only be compared when both objects are geodetic</span></label>
 </div></li>
 </ol>
 </div>
