@@ -746,6 +746,187 @@ const PARTS = [
    }
   ],
   "hasIntro": true
+ },
+ {
+  "n": 3,
+  "kicker": "Module 3",
+  "title": "Introduction to spatial vector data",
+  "startSlug": "module_3/3.0_module_intro/",
+  "startLabel": "Module introduction",
+  "note": "Problem set: Cicada emergence, due 10 Nov",
+  "intro": "Our first foray into spatial data. The sf package end to end — reading and building geometries, the coordinate reference system, mapping with tmap, and geometric operations.",
+  "chapters": [
+   {
+    "id": "3.1",
+    "title": "What is a GIS?",
+    "slug": "module_3/3.1_what_is_a_gis/",
+    "kind": "Video, 13:17",
+    "blurb": "A video overview of the foundational GIS concepts: types of spatial data, file formats, and coordinate systems.",
+    "mins": 10,
+    "search": "library source",
+    "sections": []
+   },
+   {
+    "id": "3.2",
+    "title": "Introduction to spatial vector data",
+    "slug": "module_3/3.2_introduction_to_shapefiles/",
+    "kind": "Tutorial + video",
+    "blurb": "Read spatial files, pre-process simple features objects, and transform a coordinate reference system — the first full sf workflow of the course.",
+    "mins": 55,
+    "search": "c clean_names count_vertices everything filter geom_sf ggplot library list names nrow pull read_csv select source st_as_sf st_crs st_geometry st_read st_transform tribble unique",
+    "sections": [
+     [
+      "Putting it all together",
+      "putting-it-all-together"
+     ],
+     [
+      "Optional video tutorial",
+      "optional-video-tutorial"
+     ]
+    ]
+   },
+   {
+    "id": "3.3",
+    "title": "Constructing and converting simple features",
+    "slug": "module_3/3.3_constructing_and_converting_shapefiles/",
+    "kind": "Tutorial",
+    "blurb": "Build sf points, lines, and polygons from the ground up, then convert one geometry type into another.",
+    "mins": 50,
+    "search": "aes arrange as.matrix bind_rows c class filter geom_sf geom_sf_text ggplot library list mutate select slice source st_as_sf st_cast st_combine st_linestring st_point st_polygon st_read st_sf st_sfc summarize theme_set theme_void tibble tribble",
+    "sections": [
+     [
+      "Simple features anatomy",
+      "simple-features-anatomy"
+     ],
+     [
+      "Interlude: tibbles and tribbles",
+      "interlude-tibbles-and-tribbles"
+     ],
+     [
+      "Geometry types",
+      "geometry-types"
+     ],
+     [
+      "Converting geometries",
+      "converting-geometries"
+     ],
+     [
+      "Putting it all together",
+      "putting-it-all-together"
+     ]
+    ]
+   },
+   {
+    "id": "3.4",
+    "title": "The coordinate reference system",
+    "slug": "module_3/3.4_crs/",
+    "kind": "Tutorial",
+    "blurb": "What a CRS is, how to read its well-known text, how to transform one, and how to choose the right one for the task at hand.",
+    "mins": 40,
+    "search": "c clean_names geom_sf ggplot library lonlat_to_utm read_csv select source st_as_sf st_crs st_read st_transform theme_bw tribble",
+    "sections": [
+     [
+      "The components of a CRS",
+      "the-components-of-a-crs"
+     ],
+     [
+      "Read a CRS",
+      "read-a-crs"
+     ],
+     [
+      "Geodetic coordinate reference systems",
+      "geodetic-coordinate-reference-systems"
+     ],
+     [
+      "Projected coordinate reference systems",
+      "projected-coordinate-reference-systems"
+     ],
+     [
+      "Transform data to another CRS",
+      "transform-data-to-another-crs"
+     ],
+     [
+      "Choose a CRS",
+      "choose-a-crs"
+     ],
+     [
+      "Putting it all together",
+      "putting-it-all-together"
+     ]
+    ]
+   },
+   {
+    "id": "3.5",
+    "title": "Introduction to tmap",
+    "slug": "module_3/3.5_introduction_to_tmap/",
+    "kind": "Tutorial",
+    "blurb": "Join attributes to a simple features object, then build static and interactive maps — basemaps, colors, titles, legends, and layered geometries.",
+    "mins": 20,
+    "search": "as_tibble c c4a_gui clean_names filter join_by left_join library list read_csv select source st_as_sf st_read tm_basemap tm_dots tm_legend tm_polygons tm_scale_continuous tm_shape tm_title tmap_mode tmap_options",
+    "sections": [
+     [
+      "Build a tmap",
+      "build-a-tmap"
+     ],
+     [
+      "Add a basemap",
+      "add-a-basemap"
+     ],
+     [
+      "Legends, titles, and colors",
+      "legends-titles-and-colors"
+     ],
+     [
+      "Layer geometries",
+      "layer-geometries"
+     ],
+     [
+      "From static maps to interactive maps",
+      "from-static-maps-to-interactive-maps"
+     ],
+     [
+      "Putting it all together",
+      "putting-it-all-together"
+     ]
+    ]
+   },
+   {
+    "id": "3.6",
+    "title": "Geometric operations with sf",
+    "slug": "module_3/3.6_geometric_operations/",
+    "kind": "Tutorial",
+    "blurb": "Aggregate geometries, compute centroids, distances, and areas, work with the units of spatial measurement, and build spatial buffers.",
+    "mins": 35,
+    "search": "c clean_names filter library list mutate names select set_names set_units source st_area st_buffer st_centroid st_convex_hull st_crs st_distance st_point st_read st_sf st_sfc st_transform st_union summarize tm_borders tm_dots tm_legend tm_polygons tm_scale tm_shape tolower tribble",
+    "sections": [
+     [
+      "Spatial aggregation",
+      "spatial-aggregation"
+     ],
+     [
+      "Centroids",
+      "centroids"
+     ],
+     [
+      "Distance",
+      "distance"
+     ],
+     [
+      "Area",
+      "area"
+     ],
+     [
+      "Spatial buffers",
+      "spatial-buffers"
+     ],
+     [
+      "Putting it all together",
+      "putting-it-all-together"
+     ]
+    ]
+   }
+  ],
+  "hasIntro": true
  }
 ];
 
