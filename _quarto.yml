@@ -17,11 +17,15 @@ format:
     self-contained: true
     standalone: true
     toc: true
+    toc-depth: 4
     toc-location: left
     number-sections: false
     search: true
     include-in-header: src/includes/header_includes.html
-    include-after-body: src/includes/accordion_script.html
+    include-after-body:
+      - src/includes/accordion_script.html
+      - src/includes/figure_modal.html
+      - src/includes/answer_modal.html
     theme:
       - cosmo
       - src/css/custom_style.scss
@@ -30,6 +34,7 @@ format:
     self-contained: true
     standalone: true
     toc: true
+    toc-depth: 4
     toc-location: left
     number-sections: false
     search: true
@@ -39,6 +44,8 @@ format:
       - src/includes/accordion_script.html
       - src/includes/webex.js
       - src/includes/parsons_includes.html
+      - src/includes/figure_modal.html
+      - src/includes/answer_modal.html
     theme:
       - cosmo
       - src/css/custom_style.scss

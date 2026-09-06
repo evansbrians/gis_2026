@@ -1,28 +1,20 @@
 ---
 title: "4.3 Applying iteration to GIS in R"
-format:
-  html:
-    embed-resouces: true
-    self-contained: true
-    standalone: true
-    toc: true
-    toc-location: left
-    number-sections: false
-    search: true
-    include-in-header: ../../src/includes/header_includes.html
-    include-after-body: ../../src/includes/accordion_script.html
-    theme: 
-      - cosmo
-      - ../../src/css/custom_style.scss
-editor: source
-editor_options: 
-  chunk_output_type: console
+format: live-html
 ---
 
-```{r, include = FALSE}
+```{r}
+#| include: false
+
 source("src/r/course_functions.R")
+source("src/r/reference_lookup.R")
+
+lesson_refs <- find_lesson_references()
 ```
-```{r setup, include=FALSE}
+```{r}
+#| label: setup
+#| include: false
+
 library(tidyverse)
 library(DT)
 
@@ -56,32 +48,13 @@ You will also get an opportunity to review many of the shapefile operations that
 <button class="accordion">Please click this button to explore the metadata for this lesson!</button>
 ::: panel
 
-**[counties_east.geojson]{.mono}**: A polygon shapefile of all eastern counties in the United States. The data are in an projected Coordinate Reference System (Conus Albers) with the datum NAD83 and EPSG code 5070. Fields include (but are not limited to!):
+```{r}
+#| echo: false
+#| output: asis
 
-* [statefp]{.mono}, character: A **foreign key** to each US state in the [states]{.mono} data.
-* [countyfp]{.mono}, character: An ID assigned to a given county in a given state.
-* [geoid]{.mono}, character: The **primary key** key for each county (*Note: These values are a concatenation of [STATEFP]{.mono} and [COUNTYFP]{.mono}*).
-* [name]{.mono}, character: The name of each county.
-* [stusps]{.mono}, character: The two-letter postal code of the state each county is within.
-* [state_name]{.mono}, character: The name of the state each county is within.
-* [aland]{.mono}, numeric: The area covered by land in each census tract, in square meters.
-* [awater]{.mono}, numeric: The area covered by water in each census tract, in square meters.
-
-**[states_east.geojson]{.mono}**: A polygon shapefile of eastern US states. The data are in an projected Coordinate Reference System (Conus Albers) with the datum NAD83 and EPSG code 5070. The data include the following fields:
-
-* [geoid]{.mono}, character: The **primary key** key for each state.
-* [name]{.mono}, character: The name of each state.
-* [region]{.mono}, character: The region of the United States where each state is located.
-* [area]{.mono}, numeric: The total area of each state, in square kilometers.
-* [ttl__10]{.mono}, numeric: The total population of each state in 2010.
-* [ttl__15]{.mono}, numeric: The total population of each state in 2015.
-
-**[lanternfly_proc.rds]{.mono}**. These data represent a subset of our larger [spotted_lanternfly.rds]{.mono} file. The data are formatted as a tibble data frame object. Location data are recorded in an unprojected Coordinate Reference System (CRS) with the datum WGS84 and EPSG code 4326. The dataset includes the following variables:
-
-* [datetime]{.mono}, datetime: The date and time in which an observation took place.
-* [longitude]{.mono}, numeric: The longitudinal coordinates of an observation, in decimal degrees.
-* [latitude]{.mono}, numeric: The latitudinal coordinates of an observation, in decimal degrees.
-
+lesson_metadata(.dataset = c("counties_east.geojson", "states_east.geojson", "lanternfly_proc.rds")) %>%
+  cat()
+```
 :::
 
 ## Video content
@@ -97,46 +70,4 @@ Before you begin, please note:
     
 {{< video https://www.youtube.com/embed/pocipNxQuog?si=zANI8KbnGGC4-8ll >}}
 
-## Reference
-
-<button class="accordion">Glossary</button>
-::: panel
-
--   **Choropleth**: A thematic map where a shape's values are mapped to colors.
--   **Coordinate reference system (CRS)**: The reference system (may be projected or geographic) that allows us to define the location of a geometry on the surface of the Earth.
--   **Core tidyverse package** or **Core tidyverse**: Packages that are attached with `library(tidyverse)`.
--   **Geodetic** or **Geographic Coordinate Reference System**: An unprojected coordinate reference system where locations are expressed in angular units, usually decimal degrees.
--   **Geometry**: The coordinates of points or vertices of an sfg object.
--   **Iteration**: The repeating of a given process a set number of times.
--   **Polygon** (shapefiles): Two-dimensional geometry containing a sequence of vertices (points) forming a closed ring of straight lines.
--   **Projected Coordinate Reference System**: A coordinate reference system where the data are transformed to a projection and the locations are expressed in linear units relative to some origin point (typically in meters).
--   **Projection** (GIS): A model used to transform data and the coordinate system on a flat surface.
-
-:::
-
-<button class="accordion">Functions</button>
-::: panel
-**Important!** Primitive functions as well as functions in the *base* and *utils* packages, are loaded by default when you start an R session. Functions in *dplyr*, *readr*, *tibble*, *tidyr*, and *tidyverse* are loaded with `library(tidyverse)`.
-
-::: function_table
-
-```{r, message = FALSE, echo = FALSE}
-render_function_table("functions_4.3_applying_iteration_to_gis_in_r.csv")
-```
-
-:::
-
-:::
-
-
-<button class="accordion">Keyboard shortcuts</button>
-::: panel
-
-{{< include ../../src/includes/keyboard_shortcuts.qmd >}}
-:::
-
-<button class="accordion">R Studio panes</button>
-::: panel
-{{< include ../../src/includes/rstudio_panes.qmd >}}
-:::
-
+{{< include /src/includes/_reference_section.qmd >}}

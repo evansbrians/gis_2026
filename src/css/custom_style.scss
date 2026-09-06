@@ -26,6 +26,18 @@ h1, h2 {
   margin-bottom: 4px;
 }
 
+/* Tighten transitions after sections that end with a nested checklist. */
+.compact-section-end > ul,
+.compact-section-end > ul > li:last-child > ul,
+.compact-section-end > ul > li:last-child > ul > li:last-child > p {
+  margin-bottom: 0;
+  padding-bottom: 0;
+}
+
+.workflow-list > ol > li:last-child > p:first-child {
+  margin-bottom: 0;
+}
+
 h1 {
   font-size: 5em;
 }
@@ -227,11 +239,13 @@ code {
 /* Parsons drag-and-drop problems (js-parsons, see src/lib/js-parsons/) */
 
 .parsons-problem {
-  /* Single source of truth for the row pitch. Each draggable capsule is
-     one "slot" tall, and the answer box draws one bin per slot, so the
-     capsules drop into the bins like objects into buckets. */
-  --slot-height: 1.9rem;
-  --slot-gap: 0.22rem;
+  /* JavaScript measures the tallest wrapped card in each problem and sets
+     --parsons-card-height and --slot-height. These defaults prevent a layout
+     jump while the component initializes. */
+  --parsons-card-min-height: 3rem;
+  --parsons-card-height: var(--parsons-card-min-height);
+  --slot-height: 3.5rem;
+  --slot-gap: 0.25rem;
   margin-top: 10px;
   margin-bottom: 1.25em;
 }
@@ -256,52 +270,81 @@ code {
 .parsons-problem .sortable-code ul {
   font-family: monospace;
   list-style: none;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
   background-color: #ffffff;
   border: 1px dashed #b9b9c9;
   border-radius: 6px;
   min-height: var(--slot-height);
-  padding: 0 8px;
+  padding: 0;
   margin-left: 0;
 }
 
-/* "Build your answer here" column: tint it and draw one bin per expected
-   answer line (--parsons-slots is set in parsons_init.js). The bin pitch
-   equals --slot-height, so bins and dropped capsules line up exactly. */
+/* "Build your answer here" column: draw one full-width, clearly separated
+   bin per expected answer line. JavaScript sets the total answer height in
+   pixels after measuring the wrapped cards, so filled cards cannot outgrow
+   the guide rows. */
 
 .parsons-problem .parsons-answer ul {
-  border-color: #7a8bd8;
-  min-height: calc(var(--parsons-slots, 1) * var(--slot-height));
-  background-color: #f4f7ff;
+  border: 2px solid #7a8bd8;
+  min-height: var(--parsons-answer-height, var(--slot-height));
+  background-color: #ffffff;
   background-image: repeating-linear-gradient(
     to bottom,
-    #eef2fd 0,
-    #eef2fd calc(var(--slot-height) - 1px),
-    #b9c4ec calc(var(--slot-height) - 1px),
+    #b9c4ec 0,
+    #b9c4ec 2px,
+    #f4f7ff 2px,
+    #f4f7ff calc(var(--slot-height) - 2px),
+    #b9c4ec calc(var(--slot-height) - 2px),
     #b9c4ec var(--slot-height)
   );
-  background-origin: content-box;
-  background-clip: content-box;
+  background-position: top left;
+  background-size: 100% var(--slot-height);
 }
 
-/* Draggable code capsules: one slot tall, centered in their bin, with the
-   text at half the previous size. */
+/* Draggable cards wrap long text. Once JavaScript has measured the natural
+   wrapped height of every card, all cards in the problem use the height of
+   the tallest one. */
 
 .parsons-problem .sortable-code li {
   box-sizing: border-box;
-  height: calc(var(--slot-height) - 2 * var(--slot-gap));
+  width: 100%;
+  max-width: 100%;
+  min-height: var(--parsons-card-min-height);
+  height: auto;
   margin: var(--slot-gap) 0;
   display: flex;
   align-items: center;
-  font-size: 0.6rem;
-  line-height: 1.2;
+  font-size: 0.72rem;
+  line-height: 1.25;
   background-color: #eaf0ff;
   border: 1px solid #9db0e6;
   border-radius: 6px;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.12);
-  padding: 0 10px 0 20px;
+  padding: 0.35rem 10px 0.35rem 22px;
   position: relative;
-  white-space: nowrap;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  word-break: normal;
   cursor: grab;
+}
+
+/* Keyboard route: cards take focus, so the focus ring has to be obvious. */
+
+.parsons-problem .sortable-code li:focus-visible {
+  outline: 3px solid #292093;
+  outline-offset: 2px;
+}
+
+.parsons-keyboard-help {
+  margin: 0 0 0.5rem 0;
+  font-size: 0.8rem;
+  color: #4f4f4f;
+}
+
+.parsons-problem.parsons-sized .sortable-code li {
+  height: var(--parsons-card-height) !important;
 }
 
 .parsons-problem .sortable-code li:active {
@@ -410,6 +453,15 @@ code {
 .matching-item:hover {
   border-color: #6b7fd0;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.16);
+}
+
+.matching-item:focus-visible {
+  outline: 3px solid #292093;
+  outline-offset: 3px;
+}
+
+.matching-keyboard-help {
+  font-size: 0.85rem;
 }
 
 /* Selected (left item awaiting a right-column click) */

@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 957 521" width="957" height="521" font-family="Helvetica Neue,Helvetica,Arial,sans-serif" role="img">
+<rect width="957" height="521" fill="#ffffff"/>
+<text x="478" y="34" text-anchor="middle" font-size="19" font-weight="700" fill="#292093">Decision tree: Converting geometries</text>
+<line x1="40" y1="50" x2="917" y2="50" stroke="#9db0e6" stroke-width="1.2"/>
+<g transform="translate(0,52)">
+<path d="M 472.5 187.0 V 208.0" fill="none" stroke="#9db0e6" stroke-width="1.8"/>
+<polygon points="472.5,219.0 467.5,207.0 477.5,207.0" fill="#9db0e6"/>
+<rect x="455.7" y="197.0" width="33.6" height="17.0" rx="3" fill="#ffffff"/>
+<text x="472.5" y="208.0" text-anchor="middle" font-size="12" fill="#4a5aa0">then</text>
+<path d="M 472.5 299.0 V 328.5" fill="none" stroke="#9db0e6" stroke-width="1.8"/>
+<polygon points="472.5,339.5 467.5,327.5 477.5,327.5" fill="#9db0e6"/>
+<rect x="455.7" y="313.2" width="33.6" height="17.0" rx="3" fill="#ffffff"/>
+<text x="472.5" y="324.2" text-anchor="middle" font-size="12" fill="#4a5aa0">then</text>
+<path d="M 124.0 104.0 H 136.0 V 52.0 H 334.0" fill="none" stroke="#9db0e6" stroke-width="1.8" stroke-linejoin="round"/>
+<polygon points="345.0,52.0 333.0,47.0 333.0,57.0" fill="#9db0e6"/>
+<path d="M 124.0 104.0 H 136.0 V 156.0 H 334.0" fill="none" stroke="#9db0e6" stroke-width="1.8" stroke-linejoin="round"/>
+<polygon points="345.0,156.0 333.0,151.0 333.0,161.0" fill="#9db0e6"/>
+<path d="M 598.0 364.0 H 610.0 V 320.0 H 712.0" fill="none" stroke="#9db0e6" stroke-width="1.8" stroke-linejoin="round"/>
+<polygon points="723.0,320.0 711.0,315.0 711.0,325.0" fill="#9db0e6"/>
+<path d="M 598.0 364.0 H 610.0 V 408.0 H 712.0" fill="none" stroke="#9db0e6" stroke-width="1.8" stroke-linejoin="round"/>
+<polygon points="723.0,408.0 711.0,403.0 711.0,413.0" fill="#9db0e6"/>
+<rect x="147.8" y="18.0" width="185.4" height="30.0" rx="3" fill="#ffffff"/>
+<text x="240.5" y="29.0" text-anchor="middle" font-size="12" fill="#4a5aa0">a linestring or a polygon,</text>
+<text x="240.5" y="42.0" text-anchor="middle" font-size="12" fill="#4a5aa0">to points</text>
+<rect x="158.1" y="122.0" width="164.7" height="30.0" rx="3" fill="#ffffff"/>
+<text x="240.5" y="133.0" text-anchor="middle" font-size="12" fill="#4a5aa0">points, to a linestring</text>
+<text x="240.5" y="146.0" text-anchor="middle" font-size="12" fill="#4a5aa0">or a polygon</text>
+<rect x="622.1" y="299.0" width="88.8" height="17.0" rx="3" fill="#ffffff"/>
+<text x="666.5" y="310.0" text-anchor="middle" font-size="12" fill="#4a5aa0">a linestring</text>
+<rect x="632.5" y="387.0" width="68.1" height="17.0" rx="3" fill="#ffffff"/>
+<text x="666.5" y="398.0" text-anchor="middle" font-size="12" fill="#4a5aa0">a polygon</text>
+<rect x="8.0" y="72.0" width="116" height="64" rx="9" fill="#eaf0ff" stroke="#292093" stroke-width="2.0"/>
+<text x="66.0" y="99.0" text-anchor="middle" font-size="15" fill="#333333">What are you</text>
+<text x="66.0" y="118.0" text-anchor="middle" font-size="15" fill="#333333">converting?</text>
+<rect x="347.0" y="21.0" width="251" height="62" rx="9" fill="#ffffff" stroke="#9db0e6" stroke-width="1.6"/>
+<text x="472.5" y="49.0" text-anchor="middle" font-size="15" font-weight="700" font-family="Menlo,Consolas,monospace" fill="#292093">st_cast("POINT")</text>
+<text x="472.5" y="66.0" text-anchor="middle" font-size="12" fill="#5d5d70">returns the vertices</text>
+<rect x="347.0" y="125.0" width="251" height="62" rx="9" fill="#ffffff" stroke="#9db0e6" stroke-width="1.6"/>
+<text x="472.5" y="153.0" text-anchor="middle" font-size="15" font-weight="700" font-family="Menlo,Consolas,monospace" fill="#292093">arrange()</text>
+<text x="472.5" y="170.0" text-anchor="middle" font-size="12" fill="#5d5d70">sets the vertex order</text>
+<rect x="347.0" y="221.0" width="251" height="78" rx="9" fill="#ffffff" stroke="#9db0e6" stroke-width="1.6"/>
+<text x="472.5" y="249.0" text-anchor="middle" font-size="15" font-weight="700" font-family="Menlo,Consolas,monospace" fill="#292093">summarize()</text>
+<text x="472.5" y="266.0" text-anchor="middle" font-size="12" fill="#5d5d70">geometry = st_combine(geometry)</text>
+<text x="472.5" y="282.0" text-anchor="middle" font-size="12" fill="#5d5d70">group the data for several features</text>
+<rect x="347.0" y="341.5" width="251" height="45" rx="9" fill="#eaf0ff" stroke="#292093" stroke-width="2.0"/>
+<text x="472.5" y="368.5" text-anchor="middle" font-size="15" fill="#333333">Which geometry?</text>
+<rect x="725.0" y="289.0" width="224" height="62" rx="9" fill="#ffffff" stroke="#9db0e6" stroke-width="1.6"/>
+<text x="837.0" y="317.0" text-anchor="middle" font-size="15" font-weight="700" font-family="Menlo,Consolas,monospace" fill="#292093">st_cast("LINESTRING")</text>
+<text x="837.0" y="334.0" text-anchor="middle" font-size="12" fill="#5d5d70">one line through the vertices</text>
+<rect x="725.0" y="377.0" width="224" height="62" rx="9" fill="#ffffff" stroke="#9db0e6" stroke-width="1.6"/>
+<text x="837.0" y="405.0" text-anchor="middle" font-size="15" font-weight="700" font-family="Menlo,Consolas,monospace" fill="#292093">st_cast("POLYGON")</text>
+<text x="837.0" y="422.0" text-anchor="middle" font-size="12" fill="#5d5d70">closed by default</text>
+</g>
+</svg>

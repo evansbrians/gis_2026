@@ -144,44 +144,6 @@ chickadees %>%
   )
 ```
 
-::: now_you
-{{< fa user-circle size=2x >}} [Now you!]{style="font-size: 1.25em; padding-left: 0.5em;"}
-
-Every function below was used to build the plot above. Match each one to the element of the grammar of graphics that it represents. Click a function, then click its element; when you are finished, select **Check My Matches**.
-
-```{r}
-#| echo: false
-#| results: asis
-
-matching_game(
-  .id = "m-2-5-01",
-  .pairs =
-    tibble(
-      left =
-        c(
-          "<code>ggplot()</code>",
-          "<code>aes()</code>",
-          "<code>geom_bar()</code>",
-          "<code>scale_y_continuous()</code>",
-          "<code>coord_flip()</code>",
-          "<code>facet_wrap()</code>",
-          "<code>element_text()</code>"
-        ),
-      right =
-        c(
-          "Data",
-          "Aesthetic mappings",
-          "Geometries",
-          "Scales",
-          "Coordinate system",
-          "Facets",
-          "Theme"
-        )
-    )
-)
-```
-:::
-
 ## Set up your session
 
 Please do the following to ensure that you are working in a clean session:
@@ -1066,17 +1028,49 @@ As in ***2.1 Introduction to subsetting and extraction***, this tree is a visual
 ::: now_you
 {{< fa user-circle size=2x >}} [Test your knowledge!]{style="padding-left: 0.5em;"}
 
-1. You want to keep species mapped to color but replace ggplot2's default colors with two colorblind-safe colors. Which element of the grammar of graphics should you alter?
+1. Every function below was used to build the plot above. Match each one to the element of the grammar of graphics that it represents. Click a function, then click its element; when you are finished, select **Check My Matches**.
+
+```{r}
+#| echo: false
+#| results: asis
+
+matching_game(
+  .id = "m-2-5-01",
+  .pairs =
+    tibble(
+      left =
+        c(
+          "<code>ggplot()</code>",
+          "<code>aes()</code>",
+          "<code>geom_bar()</code>",
+          "<code>scale_y_continuous()</code>",
+          "<code>coord_flip()</code>",
+          "<code>facet_wrap()</code>",
+          "<code>element_text()</code>"
+        ),
+      right =
+        c(
+          "Data",
+          "Aesthetic mappings",
+          "Geometries",
+          "Scales",
+          "Coordinate system",
+          "Facets",
+          "Theme"
+        )
+    )
+)
+```
+:::
+
+
+2. You want to keep species mapped to color but replace ggplot2's default colors with two colorblind-safe colors. Which element of the grammar of graphics should you alter?
 
 `r longmcq(c("Aesthetic mappings", "Geometries", answer = "Scales", "Theme"))`
 
-2. You want the points in a scatterplot colored by species, and you want that same coloring to apply to a line of best fit drawn on the same plot. Where should the color mapping go?
+3. You want the points in a scatterplot colored by species, and you want that same coloring to apply to a line of best fit drawn on the same plot. Where should the color mapping go?
 
 `r longmcq(c(answer = "In the aes() call that follows ggplot(), so that both geometries inherit it", "In geom_point() only", "In geom_smooth() only", "In labs(), because color is a label"))`
-
-3. True or false: The `+` used to add ggplot elements is the same operator as the pipe, `%>%`.
-
-`r torf(FALSE)`
 
 4. Parsons Problem: Reorder the lines below to plot mass against wing length, color the points by species, facet by sex, label the axes, and apply `theme_bw()`. One line pipes a geometry rather than adding it. Leave it in the trash.
 
@@ -1098,7 +1092,7 @@ window.parsonsProblems = window.parsonsProblems || [];
 window.parsonsProblems.push({
   id: "p-2-5-01",
   maxDistractors: 1,
-  code: "chickadees %>%\n  ggplot() +\n  aes(\n    x = wing,\n    y = mass,\n    color = spp\n  ) +\n  geom_point() +\n  scale_color_manual(\n    \"Species\",\n    values = c(\"#0072B2\", \"#D55E00\")\n  ) +\n  facet_wrap(~ sex) +\n  labs(\n    x = \"Wing length (mm)\",\n    y = \"Mass (g)\"\n  ) +\n  theme_bw()\n  %>% geom_point() #distractor"
+  code: "chickadees %>%\n  ggplot() +\n  aes(\n    x = wing,\n    y = mass,\n    color = spp\n  ) +\n  geom_point() +\n  facet_wrap(~ sex) +\n  labs(\n    x = \"Wing length (mm)\",\n    y = \"Mass (g)\"\n  ) +\n  theme_bw()\n  %>% geom_point() #distractor"
 });
 </script>
 :::

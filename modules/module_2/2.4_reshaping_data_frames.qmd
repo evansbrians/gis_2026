@@ -908,9 +908,9 @@ As in ***2.1 Introduction to subsetting and extraction***, this tree is a visual
 ::: now_you
 {{< fa user-circle size=2x >}} [Test your knowledge!]{style="padding-left: 0.5em;"}
 
-1. A table of iNaturalist observations repeats the class, order, and family of each species on every row. Which pair of functions would you use to split the taxonomy into its own table?
+1. A tibble of iNaturalist observations contains a `date` column and columns representing taxonomy (`class`, `order`, `family`, `species`). Values in the taxonomy columns are repeated because a species can be observed more than once. Assuming no other functions are used, which of the below could generate a tibble that only includes unique combinations of class, order, family, and species?
 
-`r longmcq(c(answer = "select(), then distinct()", "unite(), then separate_wider_delim()", "pivot_wider(), then count()", "bind_cols(), then left_join()"))`
+`r longmcq(c(answer = "distinct()", "unite(), then separate_wider_delim()", "pivot_wider(), then count()", "unique()", "bind_cols(), then left_join()"))`
 
 2. Why is `left_join()` usually safer than `bind_cols()` for combining two tables that describe the same observations?
 

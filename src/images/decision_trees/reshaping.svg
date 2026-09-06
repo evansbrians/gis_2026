@@ -1,0 +1,97 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 972 885" width="972" height="885" font-family="Helvetica Neue,Helvetica,Arial,sans-serif" role="img">
+<rect width="972" height="885" fill="#ffffff"/>
+<text x="486" y="34" text-anchor="middle" font-size="19" font-weight="700" fill="#292093">Decision tree: Reshaping a data frame</text>
+<line x1="40" y1="50" x2="932" y2="50" stroke="#9db0e6" stroke-width="1.2"/>
+<g transform="translate(0,52)">
+<path d="M 156.0 438.0 H 168.0 V 140.0 H 325.0" fill="none" stroke="#9db0e6" stroke-width="1.8" stroke-linejoin="round"/>
+<polygon points="336.0,140.0 324.0,135.0 324.0,145.0" fill="#9db0e6"/>
+<path d="M 542.0 140.0 H 554.0 V 52.0 H 718.0" fill="none" stroke="#9db0e6" stroke-width="1.8" stroke-linejoin="round"/>
+<polygon points="729.0,52.0 717.0,47.0 717.0,57.0" fill="#9db0e6"/>
+<path d="M 542.0 140.0 H 554.0 V 140.0 H 718.0" fill="none" stroke="#9db0e6" stroke-width="1.8" stroke-linejoin="round"/>
+<polygon points="729.0,140.0 717.0,135.0 717.0,145.0" fill="#9db0e6"/>
+<path d="M 542.0 140.0 H 554.0 V 228.0 H 718.0" fill="none" stroke="#9db0e6" stroke-width="1.8" stroke-linejoin="round"/>
+<polygon points="729.0,228.0 717.0,223.0 717.0,233.0" fill="#9db0e6"/>
+<path d="M 156.0 438.0 H 168.0 V 368.0 H 325.0" fill="none" stroke="#9db0e6" stroke-width="1.8" stroke-linejoin="round"/>
+<polygon points="336.0,368.0 324.0,363.0 324.0,373.0" fill="#9db0e6"/>
+<path d="M 542.0 368.0 H 554.0 V 324.0 H 718.0" fill="none" stroke="#9db0e6" stroke-width="1.8" stroke-linejoin="round"/>
+<polygon points="729.0,324.0 717.0,319.0 717.0,329.0" fill="#9db0e6"/>
+<path d="M 542.0 368.0 H 554.0 V 412.0 H 718.0" fill="none" stroke="#9db0e6" stroke-width="1.8" stroke-linejoin="round"/>
+<polygon points="729.0,412.0 717.0,407.0 717.0,417.0" fill="#9db0e6"/>
+<path d="M 156.0 438.0 H 168.0 V 552.0 H 325.0" fill="none" stroke="#9db0e6" stroke-width="1.8" stroke-linejoin="round"/>
+<polygon points="336.0,552.0 324.0,547.0 324.0,557.0" fill="#9db0e6"/>
+<path d="M 542.0 552.0 H 554.0 V 508.0 H 718.0" fill="none" stroke="#9db0e6" stroke-width="1.8" stroke-linejoin="round"/>
+<polygon points="729.0,508.0 717.0,503.0 717.0,513.0" fill="#9db0e6"/>
+<path d="M 542.0 552.0 H 554.0 V 596.0 H 718.0" fill="none" stroke="#9db0e6" stroke-width="1.8" stroke-linejoin="round"/>
+<polygon points="729.0,596.0 717.0,591.0 717.0,601.0" fill="#9db0e6"/>
+<path d="M 156.0 438.0 H 168.0 V 736.0 H 325.0" fill="none" stroke="#9db0e6" stroke-width="1.8" stroke-linejoin="round"/>
+<polygon points="336.0,736.0 324.0,731.0 324.0,741.0" fill="#9db0e6"/>
+<path d="M 542.0 736.0 H 554.0 V 692.0 H 718.0" fill="none" stroke="#9db0e6" stroke-width="1.8" stroke-linejoin="round"/>
+<polygon points="729.0,692.0 717.0,687.0 717.0,697.0" fill="#9db0e6"/>
+<path d="M 542.0 736.0 H 554.0 V 780.0 H 718.0" fill="none" stroke="#9db0e6" stroke-width="1.8" stroke-linejoin="round"/>
+<polygon points="729.0,780.0 717.0,775.0 717.0,785.0" fill="#9db0e6"/>
+<rect x="211.1" y="119.0" width="81.9" height="17.0" rx="3" fill="#ffffff"/>
+<text x="252.0" y="130.0" text-anchor="middle" font-size="12" fill="#4a5aa0">the columns</text>
+<rect x="586.8" y="18.0" width="109.5" height="30.0" rx="3" fill="#ffffff"/>
+<text x="641.5" y="29.0" text-anchor="middle" font-size="12" fill="#4a5aa0">combine several</text>
+<text x="641.5" y="42.0" text-anchor="middle" font-size="12" fill="#4a5aa0">into one</text>
+<rect x="590.2" y="106.0" width="102.6" height="30.0" rx="3" fill="#ffffff"/>
+<text x="641.5" y="117.0" text-anchor="middle" font-size="12" fill="#4a5aa0">split one into</text>
+<text x="641.5" y="130.0" text-anchor="middle" font-size="12" fill="#4a5aa0">several</text>
+<rect x="583.3" y="194.0" width="116.4" height="30.0" rx="3" fill="#ffffff"/>
+<text x="641.5" y="205.0" text-anchor="middle" font-size="12" fill="#4a5aa0">add columns from</text>
+<text x="641.5" y="218.0" text-anchor="middle" font-size="12" fill="#4a5aa0">another table</text>
+<rect x="221.4" y="347.0" width="61.2" height="17.0" rx="3" fill="#ffffff"/>
+<text x="252.0" y="358.0" text-anchor="middle" font-size="12" fill="#4a5aa0">the rows</text>
+<rect x="593.6" y="290.0" width="95.7" height="30.0" rx="3" fill="#ffffff"/>
+<text x="641.5" y="301.0" text-anchor="middle" font-size="12" fill="#4a5aa0">add rows from</text>
+<text x="641.5" y="314.0" text-anchor="middle" font-size="12" fill="#4a5aa0">another table</text>
+<rect x="566.0" y="391.0" width="150.9" height="17.0" rx="3" fill="#ffffff"/>
+<text x="641.5" y="402.0" text-anchor="middle" font-size="12" fill="#4a5aa0">remove duplicate rows</text>
+<rect x="180.0" y="531.0" width="144.0" height="17.0" rx="3" fill="#ffffff"/>
+<text x="252.0" y="542.0" text-anchor="middle" font-size="12" fill="#4a5aa0">the number of tables</text>
+<rect x="586.8" y="474.0" width="109.5" height="30.0" rx="3" fill="#ffffff"/>
+<text x="641.5" y="485.0" text-anchor="middle" font-size="12" fill="#4a5aa0">split one table</text>
+<text x="641.5" y="498.0" text-anchor="middle" font-size="12" fill="#4a5aa0">into two</text>
+<rect x="576.4" y="562.0" width="130.2" height="30.0" rx="3" fill="#ffffff"/>
+<text x="641.5" y="573.0" text-anchor="middle" font-size="12" fill="#4a5aa0">combine two tables</text>
+<text x="641.5" y="586.0" text-anchor="middle" font-size="12" fill="#4a5aa0">into one</text>
+<rect x="190.3" y="715.0" width="123.3" height="17.0" rx="3" fill="#ffffff"/>
+<text x="252.0" y="726.0" text-anchor="middle" font-size="12" fill="#4a5aa0">long or wide form</text>
+<rect x="579.9" y="671.0" width="123.3" height="17.0" rx="3" fill="#ffffff"/>
+<text x="641.5" y="682.0" text-anchor="middle" font-size="12" fill="#4a5aa0">columns into rows</text>
+<rect x="579.9" y="759.0" width="123.3" height="17.0" rx="3" fill="#ffffff"/>
+<text x="641.5" y="770.0" text-anchor="middle" font-size="12" fill="#4a5aa0">rows into columns</text>
+<rect x="8.0" y="406.0" width="148" height="64" rx="9" fill="#eaf0ff" stroke="#292093" stroke-width="2.0"/>
+<text x="82.0" y="433.0" text-anchor="middle" font-size="15" fill="#333333">What do you want</text>
+<text x="82.0" y="452.0" text-anchor="middle" font-size="15" fill="#333333">to change?</text>
+<rect x="338.0" y="117.5" width="204" height="45" rx="9" fill="#eaf0ff" stroke="#292093" stroke-width="2.0"/>
+<text x="440.0" y="144.5" text-anchor="middle" font-size="15" fill="#333333">Combine, split, or add?</text>
+<rect x="731.0" y="29.0" width="233" height="46" rx="9" fill="#ffffff" stroke="#9db0e6" stroke-width="1.6"/>
+<text x="847.5" y="57.0" text-anchor="middle" font-size="15" font-weight="700" font-family="Menlo,Consolas,monospace" fill="#292093">unite()</text>
+<rect x="731.0" y="117.0" width="233" height="46" rx="9" fill="#ffffff" stroke="#9db0e6" stroke-width="1.6"/>
+<text x="847.5" y="145.0" text-anchor="middle" font-size="15" font-weight="700" font-family="Menlo,Consolas,monospace" fill="#292093">separate_wider_delim()</text>
+<rect x="731.0" y="197.0" width="233" height="62" rx="9" fill="#ffffff" stroke="#9db0e6" stroke-width="1.6"/>
+<text x="847.5" y="225.0" text-anchor="middle" font-size="15" font-weight="700" font-family="Menlo,Consolas,monospace" fill="#292093">bind_cols()</text>
+<text x="847.5" y="242.0" text-anchor="middle" font-size="12" fill="#5d5d70">matched on row position</text>
+<rect x="338.0" y="345.5" width="204" height="45" rx="9" fill="#eaf0ff" stroke="#292093" stroke-width="2.0"/>
+<text x="440.0" y="372.5" text-anchor="middle" font-size="15" fill="#333333">Add or remove?</text>
+<rect x="731.0" y="301.0" width="233" height="46" rx="9" fill="#ffffff" stroke="#9db0e6" stroke-width="1.6"/>
+<text x="847.5" y="329.0" text-anchor="middle" font-size="15" font-weight="700" font-family="Menlo,Consolas,monospace" fill="#292093">bind_rows()</text>
+<rect x="731.0" y="389.0" width="233" height="46" rx="9" fill="#ffffff" stroke="#9db0e6" stroke-width="1.6"/>
+<text x="847.5" y="417.0" text-anchor="middle" font-size="15" font-weight="700" font-family="Menlo,Consolas,monospace" fill="#292093">distinct()</text>
+<rect x="338.0" y="529.5" width="204" height="45" rx="9" fill="#eaf0ff" stroke="#292093" stroke-width="2.0"/>
+<text x="440.0" y="556.5" text-anchor="middle" font-size="15" fill="#333333">Split or combine?</text>
+<rect x="731.0" y="477.0" width="233" height="62" rx="9" fill="#ffffff" stroke="#9db0e6" stroke-width="1.6"/>
+<text x="847.5" y="505.0" text-anchor="middle" font-size="15" font-weight="700" font-family="Menlo,Consolas,monospace" fill="#292093">select()</text>
+<text x="847.5" y="522.0" text-anchor="middle" font-size="12" fill="#5d5d70">then distinct()</text>
+<rect x="731.0" y="565.0" width="233" height="62" rx="9" fill="#ffffff" stroke="#9db0e6" stroke-width="1.6"/>
+<text x="847.5" y="593.0" text-anchor="middle" font-size="15" font-weight="700" font-family="Menlo,Consolas,monospace" fill="#292093">left_join()</text>
+<text x="847.5" y="610.0" text-anchor="middle" font-size="12" fill="#5d5d70">matched on a shared key</text>
+<rect x="338.0" y="713.5" width="204" height="45" rx="9" fill="#eaf0ff" stroke="#292093" stroke-width="2.0"/>
+<text x="440.0" y="740.5" text-anchor="middle" font-size="15" fill="#333333">Which direction?</text>
+<rect x="731.0" y="669.0" width="233" height="46" rx="9" fill="#ffffff" stroke="#9db0e6" stroke-width="1.6"/>
+<text x="847.5" y="697.0" text-anchor="middle" font-size="15" font-weight="700" font-family="Menlo,Consolas,monospace" fill="#292093">pivot_longer()</text>
+<rect x="731.0" y="757.0" width="233" height="46" rx="9" fill="#ffffff" stroke="#9db0e6" stroke-width="1.6"/>
+<text x="847.5" y="785.0" text-anchor="middle" font-size="15" font-weight="700" font-family="Menlo,Consolas,monospace" fill="#292093">pivot_wider()</text>
+</g>
+</svg>

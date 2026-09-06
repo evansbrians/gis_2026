@@ -1,0 +1,67 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 840 641" width="840" height="641" font-family="Helvetica Neue,Helvetica,Arial,sans-serif" role="img">
+<rect width="840" height="641" fill="#ffffff"/>
+<text x="420" y="34" text-anchor="middle" font-size="19" font-weight="700" fill="#292093">Decision tree: Choosing a spatial predicate</text>
+<line x1="40" y1="50" x2="800" y2="50" stroke="#9db0e6" stroke-width="1.2"/>
+<g transform="translate(0,52)">
+<path d="M 148.0 290.0 H 160.0 V 52.0 H 317.0" fill="none" stroke="#9db0e6" stroke-width="1.8" stroke-linejoin="round"/>
+<polygon points="328.0,52.0 316.0,47.0 316.0,57.0" fill="#9db0e6"/>
+<path d="M 148.0 290.0 H 160.0 V 130.0 H 317.0" fill="none" stroke="#9db0e6" stroke-width="1.8" stroke-linejoin="round"/>
+<polygon points="328.0,130.0 316.0,125.0 316.0,135.0" fill="#9db0e6"/>
+<path d="M 148.0 290.0 H 160.0 V 364.0 H 317.0" fill="none" stroke="#9db0e6" stroke-width="1.8" stroke-linejoin="round"/>
+<polygon points="328.0,364.0 316.0,359.0 316.0,369.0" fill="#9db0e6"/>
+<path d="M 148.0 290.0 H 160.0 V 442.0 H 317.0" fill="none" stroke="#9db0e6" stroke-width="1.8" stroke-linejoin="round"/>
+<polygon points="328.0,442.0 316.0,437.0 316.0,447.0" fill="#9db0e6"/>
+<path d="M 148.0 290.0 H 160.0 V 528.0 H 317.0" fill="none" stroke="#9db0e6" stroke-width="1.8" stroke-linejoin="round"/>
+<polygon points="328.0,528.0 316.0,523.0 316.0,533.0" fill="#9db0e6"/>
+<path d="M 148.0 290.0 H 160.0 V 247.0 H 317.0" fill="none" stroke="#9db0e6" stroke-width="1.8" stroke-linejoin="round"/>
+<polygon points="328.0,247.0 316.0,242.0 316.0,252.0" fill="#9db0e6"/>
+<path d="M 573.0 247.0 H 585.0 V 208.0 H 673.0" fill="none" stroke="#9db0e6" stroke-width="1.8" stroke-linejoin="round"/>
+<polygon points="684.0,208.0 672.0,203.0 672.0,213.0" fill="#9db0e6"/>
+<path d="M 573.0 247.0 H 585.0 V 286.0 H 673.0" fill="none" stroke="#9db0e6" stroke-width="1.8" stroke-linejoin="round"/>
+<polygon points="684.0,286.0 672.0,281.0 672.0,291.0" fill="#9db0e6"/>
+<rect x="206.5" y="18.0" width="75.0" height="30.0" rx="3" fill="#ffffff"/>
+<text x="244.0" y="29.0" text-anchor="middle" font-size="12" fill="#4a5aa0">they share</text>
+<text x="244.0" y="42.0" text-anchor="middle" font-size="12" fill="#4a5aa0">any space</text>
+<rect x="206.5" y="96.0" width="75.0" height="30.0" rx="3" fill="#ffffff"/>
+<text x="244.0" y="107.0" text-anchor="middle" font-size="12" fill="#4a5aa0">they share</text>
+<text x="244.0" y="120.0" text-anchor="middle" font-size="12" fill="#4a5aa0">no space</text>
+<rect x="189.2" y="330.0" width="109.5" height="30.0" rx="3" fill="#ffffff"/>
+<text x="244.0" y="341.0" text-anchor="middle" font-size="12" fill="#4a5aa0">they share only</text>
+<text x="244.0" y="354.0" text-anchor="middle" font-size="12" fill="#4a5aa0">boundary points</text>
+<rect x="189.2" y="408.0" width="109.5" height="30.0" rx="3" fill="#ffffff"/>
+<text x="244.0" y="419.0" text-anchor="middle" font-size="12" fill="#4a5aa0">they lie within</text>
+<text x="244.0" y="432.0" text-anchor="middle" font-size="12" fill="#4a5aa0">a distance</text>
+<rect x="172.0" y="494.0" width="144.0" height="30.0" rx="3" fill="#ffffff"/>
+<text x="244.0" y="505.0" text-anchor="middle" font-size="12" fill="#4a5aa0">one is the closest</text>
+<text x="244.0" y="518.0" text-anchor="middle" font-size="12" fill="#4a5aa0">feature to the other</text>
+<rect x="189.2" y="213.0" width="109.5" height="30.0" rx="3" fill="#ffffff"/>
+<text x="244.0" y="224.0" text-anchor="middle" font-size="12" fill="#4a5aa0">one lies inside</text>
+<text x="244.0" y="237.0" text-anchor="middle" font-size="12" fill="#4a5aa0">the other</text>
+<rect x="600.5" y="187.0" width="68.1" height="17.0" rx="3" fill="#ffffff"/>
+<text x="634.5" y="198.0" text-anchor="middle" font-size="12" fill="#4a5aa0">the first</text>
+<rect x="597.0" y="265.0" width="75.0" height="17.0" rx="3" fill="#ffffff"/>
+<text x="634.5" y="276.0" text-anchor="middle" font-size="12" fill="#4a5aa0">the second</text>
+<rect x="8.0" y="258.0" width="140" height="64" rx="9" fill="#eaf0ff" stroke="#292093" stroke-width="2.0"/>
+<text x="78.0" y="285.0" text-anchor="middle" font-size="15" fill="#333333">When do two</text>
+<text x="78.0" y="304.0" text-anchor="middle" font-size="15" fill="#333333">features match?</text>
+<rect x="330.0" y="29.0" width="243" height="46" rx="9" fill="#ffffff" stroke="#9db0e6" stroke-width="1.6"/>
+<text x="451.5" y="57.0" text-anchor="middle" font-size="15" font-weight="700" font-family="Menlo,Consolas,monospace" fill="#292093">st_intersects()</text>
+<rect x="330.0" y="107.0" width="243" height="46" rx="9" fill="#ffffff" stroke="#9db0e6" stroke-width="1.6"/>
+<text x="451.5" y="135.0" text-anchor="middle" font-size="15" font-weight="700" font-family="Menlo,Consolas,monospace" fill="#292093">st_disjoint()</text>
+<rect x="330.0" y="341.0" width="243" height="46" rx="9" fill="#ffffff" stroke="#9db0e6" stroke-width="1.6"/>
+<text x="451.5" y="369.0" text-anchor="middle" font-size="15" font-weight="700" font-family="Menlo,Consolas,monospace" fill="#292093">st_touches()</text>
+<rect x="330.0" y="411.0" width="243" height="62" rx="9" fill="#ffffff" stroke="#9db0e6" stroke-width="1.6"/>
+<text x="451.5" y="439.0" text-anchor="middle" font-size="15" font-weight="700" font-family="Menlo,Consolas,monospace" fill="#292093">st_is_within_distance()</text>
+<text x="451.5" y="456.0" text-anchor="middle" font-size="12" fill="#5d5d70">dist = , in the units of the CRS</text>
+<rect x="330.0" y="497.0" width="243" height="62" rx="9" fill="#ffffff" stroke="#9db0e6" stroke-width="1.6"/>
+<text x="451.5" y="525.0" text-anchor="middle" font-size="15" font-weight="700" font-family="Menlo,Consolas,monospace" fill="#292093">st_nearest_feature()</text>
+<text x="451.5" y="542.0" text-anchor="middle" font-size="12" fill="#5d5d70">always exactly one match</text>
+<rect x="330.0" y="215.0" width="243" height="64" rx="9" fill="#eaf0ff" stroke="#292093" stroke-width="2.0"/>
+<text x="451.5" y="242.0" text-anchor="middle" font-size="15" fill="#333333">Which object</text>
+<text x="451.5" y="261.0" text-anchor="middle" font-size="15" fill="#333333">is inside?</text>
+<rect x="686.0" y="185.0" width="146" height="46" rx="9" fill="#ffffff" stroke="#9db0e6" stroke-width="1.6"/>
+<text x="759.0" y="213.0" text-anchor="middle" font-size="15" font-weight="700" font-family="Menlo,Consolas,monospace" fill="#292093">st_within()</text>
+<rect x="686.0" y="263.0" width="146" height="46" rx="9" fill="#ffffff" stroke="#9db0e6" stroke-width="1.6"/>
+<text x="759.0" y="291.0" text-anchor="middle" font-size="15" font-weight="700" font-family="Menlo,Consolas,monospace" fill="#292093">st_contains()</text>
+</g>
+</svg>

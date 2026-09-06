@@ -1,29 +1,20 @@
 ---
 title: "6.2 Factors are forcats"
-format:
-  html:
-    embed-resouces: true
-    self-contained: true
-    standalone: true
-    toc: true
-    toc-location: left
-    toc-depth: 4
-    number-sections: false
-    search: true
-    include-in-header: ../../src/includes/header_includes.html
-    include-after-body: ../../src/includes/accordion_script.html
-    theme: 
-      - cosmo
-      - ../../src/css/custom_style.scss
-editor: source
-editor_options: 
-  chunk_output_type: console
+format: live-html
 ---
 
-```{r, include = FALSE}
+```{r}
+#| include: false
+
 source("src/r/course_functions.R")
+source("src/r/reference_lookup.R")
+
+lesson_refs <- find_lesson_references()
 ```
-```{r setup, include=FALSE}
+```{r}
+#| label: setup
+#| include: false
+
 library(tidyverse)
 
 knitr::opts_chunk$set(
@@ -56,23 +47,18 @@ I am going to admit that I spent years avoiding factors in my R coding. Working 
 <button class="accordion">Please click this button to explore the metadata for this lesson!
 </button>
 ::: panel
-In this lesson, we will explore the file [forcats_data.rds]{.mono}. The data are formatted as a list of the following tibble data frame and three character vectors:
+In this lesson, we will explore:
 
-**[bird_measures]{.mono}**: A subset of records from the Smithsonian Migratory Bird Center's [Neighborhood Nestwatch](https://nationalzoo.si.edu/migratory-birds/neighborhood-nestwatch) (NN) program. The data are formatted as a tibble data frame object comprised of the following variables:
+```{r}
+#| echo: false
+#| output: asis
 
-* [visit_id]{.mono}, character: The primary key for a unique visit record.
-* [month]{.mono}, character: The month in which a visit occurred. 
-* [common_name]{.mono}, character: The common names for each species, as used in the United States.
-* [age]{.mono}, character: A code representing the age of a bird, where: "AHY" is an adult, "ASY" is an adult that is more than two years old, "HY" is a juvenile, "SY" is two years old, and "U" is unknown.
-* [sex]{.mono}, character: A code representing the sex of a bird, where: "F" is female, "M" is male, and "U" is unknown.
-* [wing]{.mono}, numeric: The length of a bird's wing (unflattened wing chord), in millimeters.
-* [mass]{.mono}, numeric: The weight of a bird, in grams.
-
-**[age]{.mono}**: A character vector of ages.
-
-**[bad_age]{.mono}**: A character vector of ages that contain varied values for the same age class.
-
-**[spring]{.mono}**: A character vector of spring months.
+lesson_metadata(
+  .dataset = "forcats_data.rds",
+  .tables = "bird_measures"
+) %>%
+  cat()
+```
 :::
 
 ## Set up your video session
@@ -1462,36 +1448,7 @@ bird_measures %>%
 
 Fin!
 
-## Reference
-
-<button class="accordion">Glossary</button>
-::: panel
-* **Literal character**: In regex, this is used to search for exact character matches in the case (i.e., lower vs. upper) and order of characters.
-* **Metacharacter**: Special characters used to modify the conditions of a regex search string (such as a choice of letters or position of literal characters in a string). Note: Metacharacters are not R functions!
-* **Regular expressions (regex)**: An algorithm used to search strings (character values).
-:::
-
-<button class="accordion">Functions</button>
-::: panel
-
-::: mysecret
-
-{{< fa user-secret size=2x >}} [**Important!**]{style="font-size: 1.25em; padding-left: 0.5em;"}
-
-* Primitive functions, as well as functions in the *base*, *stats*, and *utils* packages, are loaded by default when you start an R session. Functions in *dplyr*, *ggplot2*, *lubridate*, *purrr*, *readr*, *stringr*, *tibble*, *tidyr*, and *tidyverse* are loaded with `library(tidyverse)`.
-* I do not include functions that I recommend avoiding.
-* Regular expressions metacharacters are not functions!
-:::
-
-::: function_table
-
-```{r, message = FALSE, echo = FALSE}
-render_function_table("functions_5.3_factors_are_forcats.csv")
-```
-
-:::
-
-:::
+{{< include /src/includes/_reference_section.qmd >}}
 
 <button class="accordion">Metacharacters in regex</button>
 ::: panel
@@ -1516,16 +1473,3 @@ When you are given a list of functions that you may use in a given problem set, 
 * **Repetition**, `{...,...}`: Specify that a symbol may appear within a range of repetitions
 * **Wild card**, `.`: Specify that a character value at a given location can be any symbol
 :::
-
-
-<button class="accordion">Keyboard shortcuts</button>
-::: panel
-
-{{< include ../../src/includes/keyboard_shortcuts.qmd >}}
-:::
-
-<button class="accordion">R Studio panes</button>
-::: panel
-{{< include ../../src/includes/rstudio_panes.qmd >}}
-:::
-

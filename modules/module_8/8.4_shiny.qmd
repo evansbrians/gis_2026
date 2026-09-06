@@ -1,25 +1,11 @@
 ---
 title: "8.4. Introduction to shiny apps"
-format:
-  html:
-    embed-resouces: true
-    self-contained: true
-    standalone: true
-    toc: true
-    toc-location: left
-    number-sections: false
-    search: true
-    include-in-header: ../../src/includes/header_includes.html
-    include-after-body: ../../src/includes/accordion_script.html
-    theme: 
-      - cosmo
-      - ../../src/css/custom_style.scss
-editor: source
-editor_options: 
-  chunk_output_type: console
+format: live-html
 ---
 
-```{r, include = FALSE}
+```{r}
+#| include: false
+
 source("src/r/course_functions.R")
 ```
 <hr>

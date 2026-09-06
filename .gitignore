@@ -20,6 +20,10 @@ logistics/
 
 .DS_Store
 
+# FUSE (created when a file is replaced while still open in an editor)
+
+.fuse_hidden*
+
 # Other stuff:
 
 *.html
@@ -34,4 +38,9 @@ logistics/
 # Exclude *.html but roll out learning content as it's developed
 
 !modules/module_0/*/index.html
+!modules/module_1/*/index.html
 !logistics/index.html
+
+# Student work: submissions, graded files, keys and grading runs
+
+problem_sets/

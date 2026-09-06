@@ -1,28 +1,20 @@
 ---
 title: "5.2 Memory management when using shapefiles"
-format:
-  html:
-    embed-resouces: true
-    self-contained: true
-    standalone: true
-    toc: true
-    toc-location: left
-    number-sections: false
-    search: true
-    include-in-header: ../../src/includes/header_includes.html
-    include-after-body: ../../src/includes/accordion_script.html
-    theme: 
-      - cosmo
-      - ../../src/css/custom_style.scss
-editor: source
-editor_options: 
-  chunk_output_type: console
+format: live-html
 ---
 
-```{r, include = FALSE}
+```{r}
+#| include: false
+
 source("src/r/course_functions.R")
+source("src/r/reference_lookup.R")
+
+lesson_refs <- find_lesson_references()
 ```
-```{r setup, include=FALSE}
+```{r}
+#| label: setup
+#| include: false
+
 library(tidyverse)
 library(DT)
 
@@ -64,37 +56,22 @@ Please click on the buttons below to explore the metadata for this lesson!
 
 ::: panel
 
-In this lesson, we will explore the following files:
+In this lesson, we will explore:
 
-**[census]{.mono} ([.dbf]{.mono}, [.prj]{.mono}, [.shp]{.mono}, [.shx]{.mono})**: A polygon shapefile of US Census tracts in the District of Columbia, Maryland, and Virginia. The data are in an unprojected coordinate system (datum = NAD83) with the EPSG code 4269 The data include (but are not limited to!) the following fields:
+```{r}
+#| echo: false
+#| output: asis
 
-* [GEOID]{.mono}, character: The **primary key** key for each census tract.
-* [STATEFP]{.mono}, character: A **foreign key** to the US state in the [states]{.mono} data.
-* [ALAND]{.mono}, numeric: The area covered by land in each census tract, in square meters.
-* [AWATER]{.mono}, numeric: The area covered by water in each census tract, in square meters.
-* [income]{.mono}, numeric: The median income of each census tract.
-* [population]{.mono}, numeric: The total population of each census tract.
-
-**[counties.geojson]{.mono}** and **[counties_low_res.geojson]{.mono}**: A polygon shapefile of all counties in the United States obtained from US Census data using the *tigris* package. The data are in a projected Coordinate Reference System with the datum NAD83 and EPSG code 5070. Fields include (but are not limited to):
-
-* [statefp]{.mono}, character: A **foreign key** to each US state in the [states]{.mono} data.
-* [countyfp]{.mono}, character: An ID assigned to a given county in a given state.
-* [geoid]{.mono}, character: The **primary key** key for each county (*Note: These values are a concatenation of [STATEFP]{.mono} and [COUNTYFP]{.mono}*).
-* [name]{.mono}, character: The name of each county.
-* [stusps]{.mono}, character: The two-letter postal code of the state each county is within.
-* [state_name]{.mono}, character: The name of the state each county is within.
-* [aland]{.mono}, numeric: The area covered by land in each census tract, in square meters.
-* [awater]{.mono}, numeric: The area covered by water in each census tract, in square meters.
-
-**[states]{.mono} ([.dbf]{.mono}, [.prj]{.mono}, [.shp]{.mono}, [.shx]{.mono})**: A polygon shapefile of US states (not including Hawaii). The data are in an unprojected Coordinate Reference System with the datum NAD83 and EPSG code 4269. The data include the following fields:
-
-* [GEOID]{.mono}, character: The **primary key** key for each state.
-* [NAME]{.mono}, character: The name of each state.
-* [REGION]{.mono}, character: The region of the United States where each state is located.
-* [AREA]{.mono}, numeric: The total area of each state, in square kilometers.
-* [ttl__10]{.mono}, numeric: The total population of each state in 2010.
-* [ttl__15]{.mono}, numeric: The total population of each state in 2015.
-
+lesson_metadata(
+  .dataset = c("census", "counties.geojson", "states"),
+  .variables =
+    list(
+      `census` = c("GEOID", "STATEFP", "ALAND", "AWATER", "income", "population"),
+      `counties.geojson` = c("statefp", "countyfp", "geoid", "name", "stusps", "state_name", "aland", "awater")
+    )
+) %>%
+  cat()
+```
 :::
 
 ## Before you begin
@@ -143,7 +120,11 @@ If you observe that your system is occupying a lot of memory, you might want to 
 3. After a space between your section break, include and run the following:
 
 :::{style="margin-left: 40px"}
-```{r results = 'hide', message = FALSE, warning = FALSE}
+```{r}
+#| results: hide
+#| message: false
+#| warning: false
+
 library(bench)
 library(lobstr)
 library(sf)
@@ -312,7 +293,9 @@ Another important tool for optimizing your code is **benchmarking**. Benchmarkin
 
 Let's use benchmarking to explore the memory usage and time of execution for our line of code that read in `counties.geojson`. We supply the code that we would like to benchmark and the number of iterations. Iteration is this context means repeating the same process a set number of times in order to obtain accurate summary statistics:
 
-```{r, eval = TRUE}
+```{r}
+#| eval: true
+
 mark(
   st_read("data/raw/shapefiles/counties.geojson", quiet = TRUE),
   iterations = 5
@@ -323,7 +306,9 @@ mark(
 
 The results above provided more information than we need for the purposes of this lesson. Here, I'm interested in the median execution time, `median`, and the memory allocated to run the code, `mem_alloc`. Let's reduce our results to just those two variables:
 
-```{r, eval = FALSE}
+```{r}
+#| eval: false
+
 mark(
   st_read("data/raw/shapefiles/counties.geojson", quiet = TRUE),
   iterations = 5
@@ -331,7 +316,9 @@ mark(
   select(median, mem_alloc)
 ```
 
-```{r, include = FALSE}
+```{r}
+#| include: false
+
 mark1 <-
   mark(
     st_read("data/raw/shapefiles/counties.geojson", quiet = TRUE),
@@ -340,7 +327,9 @@ mark1 <-
   select(median, mem_alloc)
 ```
 
-```{r, echo = FALSE}
+```{r}
+#| echo: false
+
 mark1
 ```
 
@@ -348,7 +337,9 @@ It took `r round(mark1$median*1E3, 0)` milliseconds (1 x 10<sup>-3</sup> seconds
 
 You might suspect that, because `counties` is much larger than `states`, R will read in the `states` file more quickly and the process will require less memory. Let's find out:
 
-```{r, eval = FALSE}
+```{r}
+#| eval: false
+
 mark(
   st_read("data/raw/shapefiles/states.shp", quiet = TRUE),
   iterations = 5
@@ -356,7 +347,9 @@ mark(
   select(median, mem_alloc)
 ```
 
-```{r, include = FALSE}
+```{r}
+#| include: false
+
 mark2 <-
   mark(
     st_read("data/raw/shapefiles/states.shp", quiet = TRUE),
@@ -365,7 +358,9 @@ mark2 <-
   select(median, mem_alloc)
 ```
 
-```{r, echo = FALSE}
+```{r}
+#| echo: false
+
 mark2
 ```
 
@@ -389,7 +384,9 @@ mark(
 
 :::
 
-```{r, echo = FALSE}
+```{r}
+#| echo: false
+
 rm(mark1, mark2)
 ```
 
@@ -556,7 +553,10 @@ st_geometry_type(
 
 Each feature is a "MULTIPOLYGON" geometry -- thus each feature contains a number of nodes (and, in fact, a number of polygons). To see how many nodes are present, we can use the function `npts()` from the package *mapview*:
 
-```{r, warning = FALSE, message = FALSE}
+```{r}
+#| warning: false
+#| message: false
+
 mapview::npts(states)
 ```
 
@@ -567,7 +567,10 @@ We can see that, although there are only 49 features present in the data, the ge
 
 ::: panel
 
-```{r, warning = FALSE, message = FALSE}
+```{r}
+#| warning: false
+#| message: false
+
 mapview::npts(counties)
 ```
 
@@ -581,7 +584,10 @@ Over 200 thousand nodes!
 
 ::: panel
 
-```{r, warning = FALSE, message = FALSE}
+```{r}
+#| warning: false
+#| message: false
+
 mapview::npts(census)
 ```
 
@@ -1079,7 +1085,9 @@ Spatial join operations are reasonably fast and memory efficient *if* the data a
 
 Let's transform our `census` and `classroom` shapefiles to an unprojected CRS (EPSG 4326):
 
-```{r, warning = FALSE}
+```{r}
+#| warning: false
+
 census_4326 <-
   census %>% 
   st_transform(crs = 4326)
@@ -1091,7 +1099,9 @@ classroom_4326 <-
 
 ... and compare the length of time and memory allocated to conducting the `st_join()` with projected and unprojected data:
 
-```{r, warning = FALSE}
+```{r}
+#| warning: false
+
 mark(
   census %>% 
     st_join(
@@ -1115,7 +1125,9 @@ Although the memory allocated to the unprojected data was lower than that of the
 
 Let's see what it takes to run `st_intersection()` with projected and unprojected data:
 
-```{r, warning = FALSE}
+```{r}
+#| warning: false
+
 mark(
   census %>% 
     st_intersection(classroom),
@@ -1156,7 +1168,9 @@ We have discussed this a bit -- unless your intent is to combine shapefiles, it 
 
 Let's start by using a spatial join to add the `state_name` field (from `states_dmv`) to the `census` shapefile. This takes a bit of time due to the size of `census`, so we will globally assign the resultant object with the name `census_states`:
 
-```{r, warning = FALSE}
+```{r}
+#| warning: false
+
 census_states <- 
   census %>% 
   st_join(
@@ -1203,45 +1217,4 @@ Unless you like waiting and the occasional out-of-memory error, using `summarize
 
 I know I like to misuse quotes for the sake of nerd glory, but I think this is a good one. I have observed that lots of R users who dabble in the spatial realm have a split personality when it comes to dealing with spatial data. They are either working with spatial data or they are working with non-spatial data. It is important to recognize that it is possible to work with spatial and non-spatial data *at the same time*. Most spatial datasets have a non-spatial component. It is much more memory and time efficient to utilize the non-spatial elements as every-day-run-of-the-mill tibbles rather than force them into a spatial context. Elegant and memory-efficient GIS coding relies on maintaining objects as non-spatial files (or transforming them to non-spatial files), and bringing in the spatial components only when necessary.
 
-## Reference
-
-<button class="accordion">Glossary</button>
-::: panel
-
--   **Conterminous**: Shapes (e.g., states in the United States or adjacent polygons) that share a boundary.
--   **Coordinate reference system (CRS)**: The reference system (may be projected or geographic) that allows us to define the location of a geometry on the surface of the Earth.
--   **Filtering join**: Subset a target table to only rows in which key values match (or are absent from) the keys within a source table.
--   **Foreign key**: A variable in a data frame that refers to the primary key of another data frame.
--   **Memory (RAM)**: A temporary storage location for instructions (functions) and data.
--   **Mutating join**: Use matching keys to add columns to a target table from a source table.
--   **Primary key**: A variable in a data frame that is used to identify unique records.
--   **Resolution** (shapefiles): The smallest distance between adjacent nodes.
--   **Spatial join**: A join conducted between two shapefile objects based on overlapping or non-overlapping geometries.
-:::
-
-<button class="accordion">Functions</button>
-::: panel
-**Important!** Primitive functions as well as functions in the *base* and *utils* packages, are loaded by default when you start an R session. Functions in *dplyr*, *readr*, *tibble*, *tidyr*, and *tidyverse* are loaded with `library(tidyverse)`.
-
-::: function_table
-
-```{r, message = FALSE, echo = FALSE}
-render_function_table("functions_5.2_memory_and_shapefiles.csv")
-```
-
-:::
-
-:::
-
-
-<button class="accordion">Keyboard shortcuts</button>
-::: panel
-
-{{< include ../../src/includes/keyboard_shortcuts.qmd >}}
-:::
-
-<button class="accordion">R Studio panes</button>
-::: panel
-{{< include ../../src/includes/rstudio_panes.qmd >}}
-:::
-
+{{< include /src/includes/_reference_section.qmd >}}

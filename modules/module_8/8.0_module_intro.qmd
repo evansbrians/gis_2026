@@ -1,24 +1,11 @@
 ---
 title: "Module 8 (optional): Communicating data"
-format:
-  html:
-    embed-resouces: true
-    self-contained: true
-    standalone: true
-    toc: false
-    number-sections: false
-    search: true
-    include-in-header: ../../src/includes/header_includes.html
-    include-after-body: ../../src/includes/accordion_script.html
-    theme: 
-      - cosmo
-      - ../../src/css/custom_style.scss
-editor: source
-editor_options: 
-  chunk_output_type: console
+format: live-html
 ---
 
-```{r, include = FALSE}
+```{r}
+#| include: false
+
 source("src/r/course_functions.R")
 ```
 <hr>
@@ -52,7 +39,9 @@ Please complete the following steps *prior* to beginning this week's lessons:
 4. **Download** [covid_app_guide.zip]{.mono} and unzip the contents (not the parent folder) to the output folder. This contains a tutorial that will walk you through making a shiny dashboard (and cover the basics of shiny app development). The tutorial is also available via a provided link in ***8.4 Introduction to shiny apps***.
 5. Run the following to install several new packages!
 
-```{r, eval = FALSE}
+```{r}
+#| eval: false
+
 install.packages(
   c(
     "RCurl",
@@ -65,7 +54,9 @@ install.packages(
 
 6. The package *ShinySky* (aka *shinysky*) is not on CRAN. Please install the package from the developer's GitHub account:
 
-```{r, eval = FALSE}
+```{r}
+#| eval: false
+
 remotes::install_github("AnalytixWare/ShinySky")
 ```
 

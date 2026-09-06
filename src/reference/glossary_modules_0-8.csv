@@ -99,14 +99,14 @@ Moran's I statistic,Represents the degree of similarity in space (how spatially 
 Multipoint,A geometry that contains one or more points within a single geometry object.
 Mutating join,Use matching keys to add columns to a target table from a source table.
 Mutation,The process of adding columns to a data frame and/or modifying existing columns (or adding/modifying list items to/in a list).
-Name,"A reference that R uses to call data from your computer’s memory (also called an ""assignment"", ""key"", or ""binding"")."
+Name,A symbol that R evaluates to retrieve the object associated with it through a binding in an environment.
 Negated selection,"The use of the negative symbol (`-`) or, more recently, the *not* operator (`!`) to select all columns *except* the supplied column or columns."
 Negative spatial autocorrelation,Near values are less similar than would be expected by random chance.
 Neighbors weights object,"The degree of similarity between polygons; Weigh polygons based on how close they are, with closer polygons receiving a higher weight (This is similar to an inverse distance matrix)."
 Nested function,A function that is run inside of another function.
 Nugget,"The expected difference in semivariance between infinitesimally close distances. If spatial processes are the only determinant of variance in the data, then we would expect the nugget to be zero."
 Object,A collection of one or more values or functions.
-Observation,A row within a data frame.
+Observation,The full set of values measured on the same observational unit across attributes.
 One-dimensional object,Objects where data are arranged in a single line.
 Open boundary,"When classifying numeric values, a boundary that does not include the boundary value (signified with `(` or `)`)."
 Operator,A function expressed that is expressed as a symbol and is not followed by parentheses.
@@ -154,7 +154,7 @@ Script,"A text file that contains a set of commands to read, manipulate, and ana
 Semivariance,"The proportion of total variance explained at a given distance between sample locations. In other words, this represents the degree of dissimilarity in the measured variable between points."
 Semivariogram,A type of plot used to assess the scale at which a variable is spatially independent.
 Session,The time spent and operations conducted since opening R.
-Session history,All lines of code that have been sent to R since the beginning of a session (or since the session history was last cleared)
+Session history,All lines of code that have been sent to R since the beginning of a session (or since the session history was last cleared).
 Shapefile,"A spatial object comprised of points or vertices, typically mapped to the surface of the earth via a coordinate reference system."
 Sill,The value of semivariance when samples are spatially independent.
 Simple Features Geometry (sfg),The geometry of an individual simple feature.
@@ -185,7 +185,7 @@ Two-dimensional object,An object where data are arranged as rows and columns.
 Type,How an object is stored in your computer.
 Universal Transverse Mercator (UTM),"A common class of projected coordinate reference systems used primarily for relative small areas (e.g., for a given city)."
 Unix shell,A command line interface to the Unix operating system.
-Variable,A column in a data frame.
+Variable,The full set of values that measure the same underlying attribute across observational units.
 Vector,A one-dimensional object.
 Version history,Changes to a package since its inception.
 Vertex (plural: vertices),A point where two or more lines (also called edges) meet.

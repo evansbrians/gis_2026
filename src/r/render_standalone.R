@@ -1,10 +1,12 @@
-# Render a standalone (non-module) .qmd to <doc_name>/index.html.
+# Render a standalone (non-module) .qmd to index.html, in place.
 #
-# For .qmd files that live outside modules/ (e.g.
-# logistics/course_logistics.qmd), mirroring render_module()'s
-# <lesson_name>/index.html convention: the .qmd is rendered in place,
-# then its output is moved into a sibling folder named after it. The
-# source .qmd itself is left untouched.
+# For .qmd files that live alone in their own folder outside modules/
+# (e.g. logistics/course_logistics.qmd), this renders normally and then
+# renames the output to index.html in that same folder -- e.g.
+# logistics/course_logistics.qmd -> logistics/index.html. The source
+# .qmd itself is left untouched. (Lessons that share a module folder
+# still use render_module()'s <lesson_name>/index.html convention,
+# since those need a folder per lesson to avoid colliding.)
 #
 # Usage (from the project root):
 #
@@ -26,17 +28,10 @@ render_standalone <-
       cli::cli_abort("No .qmd file at {.path {.qmd_path}}.")
     }
 
-    doc_dir <- fs::path_dir(.qmd_path)
-    doc_name <- fs::path_ext_remove(fs::path_file(.qmd_path))
-
     quarto::quarto_render(.qmd_path)
 
     rendered_html <- fs::path_ext_set(.qmd_path, "html")
-    index_path <- fs::path(doc_dir, doc_name, "index.html")
-
-    fs::dir_create(
-      fs::path(doc_dir, doc_name)
-    )
+    index_path <- fs::path(fs::path_dir(.qmd_path), "index.html")
 
     if (fs::file_exists(index_path)) {
       fs::file_delete(index_path)

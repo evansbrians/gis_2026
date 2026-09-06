@@ -1,0 +1,101 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 958 1093" width="958" height="1093" font-family="Helvetica Neue,Helvetica,Arial,sans-serif" role="img">
+<rect width="958" height="1093" fill="#ffffff"/>
+<text x="479" y="34" text-anchor="middle" font-size="19" font-weight="700" fill="#292093">Decision tree: Building a map with tmap</text>
+<line x1="40" y1="50" x2="918" y2="50" stroke="#9db0e6" stroke-width="1.2"/>
+<g transform="translate(0,52)">
+<path d="M 164.0 494.0 H 176.0 V 52.0 H 347.0" fill="none" stroke="#9db0e6" stroke-width="1.8" stroke-linejoin="round"/>
+<polygon points="358.0,52.0 346.0,47.0 346.0,57.0" fill="#9db0e6"/>
+<path d="M 164.0 494.0 H 176.0 V 192.0 H 347.0" fill="none" stroke="#9db0e6" stroke-width="1.8" stroke-linejoin="round"/>
+<polygon points="358.0,192.0 346.0,187.0 346.0,197.0" fill="#9db0e6"/>
+<path d="M 565.0 192.0 H 577.0 V 148.0 H 713.0" fill="none" stroke="#9db0e6" stroke-width="1.8" stroke-linejoin="round"/>
+<polygon points="724.0,148.0 712.0,143.0 712.0,153.0" fill="#9db0e6"/>
+<path d="M 565.0 192.0 H 577.0 V 236.0 H 713.0" fill="none" stroke="#9db0e6" stroke-width="1.8" stroke-linejoin="round"/>
+<polygon points="724.0,236.0 712.0,231.0 712.0,241.0" fill="#9db0e6"/>
+<path d="M 164.0 494.0 H 176.0 V 332.0 H 347.0" fill="none" stroke="#9db0e6" stroke-width="1.8" stroke-linejoin="round"/>
+<polygon points="358.0,332.0 346.0,327.0 346.0,337.0" fill="#9db0e6"/>
+<path d="M 164.0 494.0 H 176.0 V 428.0 H 347.0" fill="none" stroke="#9db0e6" stroke-width="1.8" stroke-linejoin="round"/>
+<polygon points="358.0,428.0 346.0,423.0 346.0,433.0" fill="#9db0e6"/>
+<path d="M 164.0 494.0 H 176.0 V 612.0 H 347.0" fill="none" stroke="#9db0e6" stroke-width="1.8" stroke-linejoin="round"/>
+<polygon points="358.0,612.0 346.0,607.0 346.0,617.0" fill="#9db0e6"/>
+<path d="M 565.0 612.0 H 577.0 V 524.0 H 713.0" fill="none" stroke="#9db0e6" stroke-width="1.8" stroke-linejoin="round"/>
+<polygon points="724.0,524.0 712.0,519.0 712.0,529.0" fill="#9db0e6"/>
+<path d="M 565.0 612.0 H 577.0 V 612.0 H 713.0" fill="none" stroke="#9db0e6" stroke-width="1.8" stroke-linejoin="round"/>
+<polygon points="724.0,612.0 712.0,607.0 712.0,617.0" fill="#9db0e6"/>
+<path d="M 565.0 612.0 H 577.0 V 700.0 H 713.0" fill="none" stroke="#9db0e6" stroke-width="1.8" stroke-linejoin="round"/>
+<polygon points="724.0,700.0 712.0,695.0 712.0,705.0" fill="#9db0e6"/>
+<path d="M 164.0 494.0 H 176.0 V 796.0 H 347.0" fill="none" stroke="#9db0e6" stroke-width="1.8" stroke-linejoin="round"/>
+<polygon points="358.0,796.0 346.0,791.0 346.0,801.0" fill="#9db0e6"/>
+<path d="M 164.0 494.0 H 176.0 V 936.0 H 347.0" fill="none" stroke="#9db0e6" stroke-width="1.8" stroke-linejoin="round"/>
+<polygon points="358.0,936.0 346.0,931.0 346.0,941.0" fill="#9db0e6"/>
+<path d="M 565.0 936.0 H 577.0 V 892.0 H 713.0" fill="none" stroke="#9db0e6" stroke-width="1.8" stroke-linejoin="round"/>
+<polygon points="724.0,892.0 712.0,887.0 712.0,897.0" fill="#9db0e6"/>
+<path d="M 565.0 936.0 H 577.0 V 980.0 H 713.0" fill="none" stroke="#9db0e6" stroke-width="1.8" stroke-linejoin="round"/>
+<polygon points="724.0,980.0 712.0,975.0 712.0,985.0" fill="#9db0e6"/>
+<rect x="201.9" y="31.0" width="130.2" height="17.0" rx="3" fill="#ffffff"/>
+<text x="267.0" y="42.0" text-anchor="middle" font-size="12" fill="#4a5aa0">the object to draw</text>
+<rect x="222.6" y="171.0" width="88.8" height="17.0" rx="3" fill="#ffffff"/>
+<text x="267.0" y="182.0" text-anchor="middle" font-size="12" fill="#4a5aa0">the geometry</text>
+<rect x="619.9" y="127.0" width="61.2" height="17.0" rx="3" fill="#ffffff"/>
+<text x="650.5" y="138.0" text-anchor="middle" font-size="12" fill="#4a5aa0">polygons</text>
+<rect x="626.8" y="215.0" width="47.4" height="17.0" rx="3" fill="#ffffff"/>
+<text x="650.5" y="226.0" text-anchor="middle" font-size="12" fill="#4a5aa0">points</text>
+<rect x="188.1" y="311.0" width="157.8" height="17.0" rx="3" fill="#ffffff"/>
+<text x="267.0" y="322.0" text-anchor="middle" font-size="12" fill="#4a5aa0">the fields you can map</text>
+<rect x="226.1" y="407.0" width="81.9" height="17.0" rx="3" fill="#ffffff"/>
+<text x="267.0" y="418.0" text-anchor="middle" font-size="12" fill="#4a5aa0">the basemap</text>
+<rect x="195.0" y="591.0" width="144.0" height="17.0" rx="3" fill="#ffffff"/>
+<text x="267.0" y="602.0" text-anchor="middle" font-size="12" fill="#4a5aa0">the color of a shape</text>
+<rect x="588.9" y="503.0" width="123.3" height="17.0" rx="3" fill="#ffffff"/>
+<text x="650.5" y="514.0" text-anchor="middle" font-size="12" fill="#4a5aa0">the field it maps</text>
+<rect x="609.5" y="591.0" width="81.9" height="17.0" rx="3" fill="#ffffff"/>
+<text x="650.5" y="602.0" text-anchor="middle" font-size="12" fill="#4a5aa0">the palette</text>
+<rect x="613.0" y="679.0" width="75.0" height="17.0" rx="3" fill="#ffffff"/>
+<text x="650.5" y="690.0" text-anchor="middle" font-size="12" fill="#4a5aa0">the legend</text>
+<rect x="232.9" y="775.0" width="68.1" height="17.0" rx="3" fill="#ffffff"/>
+<text x="267.0" y="786.0" text-anchor="middle" font-size="12" fill="#4a5aa0">the title</text>
+<rect x="236.4" y="915.0" width="61.2" height="17.0" rx="3" fill="#ffffff"/>
+<text x="267.0" y="926.0" text-anchor="middle" font-size="12" fill="#4a5aa0">the mode</text>
+<rect x="626.8" y="871.0" width="47.4" height="17.0" rx="3" fill="#ffffff"/>
+<text x="650.5" y="882.0" text-anchor="middle" font-size="12" fill="#4a5aa0">static</text>
+<rect x="609.5" y="959.0" width="81.9" height="17.0" rx="3" fill="#ffffff"/>
+<text x="650.5" y="970.0" text-anchor="middle" font-size="12" fill="#4a5aa0">interactive</text>
+<rect x="8.0" y="462.0" width="156" height="64" rx="9" fill="#eaf0ff" stroke="#292093" stroke-width="2.0"/>
+<text x="86.0" y="489.0" text-anchor="middle" font-size="15" fill="#333333">What do you want</text>
+<text x="86.0" y="508.0" text-anchor="middle" font-size="15" fill="#333333">to add or change?</text>
+<rect x="360.0" y="21.0" width="205" height="62" rx="9" fill="#ffffff" stroke="#9db0e6" stroke-width="1.6"/>
+<text x="462.5" y="49.0" text-anchor="middle" font-size="15" font-weight="700" font-family="Menlo,Consolas,monospace" fill="#292093">tm_shape()</text>
+<text x="462.5" y="66.0" text-anchor="middle" font-size="12" fill="#5d5d70">pipe the object in</text>
+<rect x="360.0" y="169.5" width="205" height="45" rx="9" fill="#eaf0ff" stroke="#292093" stroke-width="2.0"/>
+<text x="462.5" y="196.5" text-anchor="middle" font-size="15" fill="#333333">Which geometry?</text>
+<rect x="726.0" y="125.0" width="224" height="46" rx="9" fill="#ffffff" stroke="#9db0e6" stroke-width="1.6"/>
+<text x="838.0" y="153.0" text-anchor="middle" font-size="15" font-weight="700" font-family="Menlo,Consolas,monospace" fill="#292093">tm_polygons()</text>
+<rect x="726.0" y="213.0" width="224" height="46" rx="9" fill="#ffffff" stroke="#9db0e6" stroke-width="1.6"/>
+<text x="838.0" y="241.0" text-anchor="middle" font-size="15" font-weight="700" font-family="Menlo,Consolas,monospace" fill="#292093">tm_dots()</text>
+<rect x="360.0" y="301.0" width="205" height="62" rx="9" fill="#ffffff" stroke="#9db0e6" stroke-width="1.6"/>
+<text x="462.5" y="329.0" text-anchor="middle" font-size="15" font-weight="700" font-family="Menlo,Consolas,monospace" fill="#292093">left_join()</text>
+<text x="462.5" y="346.0" text-anchor="middle" font-size="12" fill="#5d5d70">matched on a shared key</text>
+<rect x="360.0" y="397.0" width="205" height="62" rx="9" fill="#ffffff" stroke="#9db0e6" stroke-width="1.6"/>
+<text x="462.5" y="425.0" text-anchor="middle" font-size="15" font-weight="700" font-family="Menlo,Consolas,monospace" fill="#292093">tm_basemap()</text>
+<text x="462.5" y="442.0" text-anchor="middle" font-size="12" fill="#5d5d70">add it below the data layers</text>
+<rect x="360.0" y="589.5" width="205" height="45" rx="9" fill="#eaf0ff" stroke="#292093" stroke-width="2.0"/>
+<text x="462.5" y="616.5" text-anchor="middle" font-size="15" fill="#333333">Which property?</text>
+<rect x="726.0" y="493.0" width="224" height="62" rx="9" fill="#ffffff" stroke="#9db0e6" stroke-width="1.6"/>
+<text x="838.0" y="521.0" text-anchor="middle" font-size="15" font-weight="700" font-family="Menlo,Consolas,monospace" fill="#292093">fill = </text>
+<text x="838.0" y="538.0" text-anchor="middle" font-size="12" fill="#5d5d70">name the field, in quotes</text>
+<rect x="726.0" y="579.0" width="224" height="66" rx="9" fill="#ffffff" stroke="#9db0e6" stroke-width="1.6"/>
+<text x="838.0" y="607.0" text-anchor="middle" font-size="15" font-weight="700" font-family="Menlo,Consolas,monospace" fill="#292093">fill.scale = </text>
+<text x="838.0" y="627.0" text-anchor="middle" font-size="15" font-weight="700" font-family="Menlo,Consolas,monospace" fill="#292093">tm_scale_continuous()</text>
+<rect x="726.0" y="667.0" width="224" height="66" rx="9" fill="#ffffff" stroke="#9db0e6" stroke-width="1.6"/>
+<text x="838.0" y="695.0" text-anchor="middle" font-size="15" font-weight="700" font-family="Menlo,Consolas,monospace" fill="#292093">fill.legend = </text>
+<text x="838.0" y="715.0" text-anchor="middle" font-size="15" font-weight="700" font-family="Menlo,Consolas,monospace" fill="#292093">tm_legend()</text>
+<rect x="360.0" y="773.0" width="205" height="46" rx="9" fill="#ffffff" stroke="#9db0e6" stroke-width="1.6"/>
+<text x="462.5" y="801.0" text-anchor="middle" font-size="15" font-weight="700" font-family="Menlo,Consolas,monospace" fill="#292093">tm_title()</text>
+<rect x="360.0" y="913.5" width="205" height="45" rx="9" fill="#eaf0ff" stroke="#292093" stroke-width="2.0"/>
+<text x="462.5" y="940.5" text-anchor="middle" font-size="15" fill="#333333">Static or interactive?</text>
+<rect x="726.0" y="869.0" width="224" height="46" rx="9" fill="#ffffff" stroke="#9db0e6" stroke-width="1.6"/>
+<text x="838.0" y="897.0" text-anchor="middle" font-size="15" font-weight="700" font-family="Menlo,Consolas,monospace" fill="#292093">tmap_mode("plot")</text>
+<rect x="726.0" y="949.0" width="224" height="62" rx="9" fill="#ffffff" stroke="#9db0e6" stroke-width="1.6"/>
+<text x="838.0" y="977.0" text-anchor="middle" font-size="15" font-weight="700" font-family="Menlo,Consolas,monospace" fill="#292093">tmap_mode("view")</text>
+<text x="838.0" y="994.0" text-anchor="middle" font-size="12" fill="#5d5d70">name layers with group = </text>
+</g>
+</svg>

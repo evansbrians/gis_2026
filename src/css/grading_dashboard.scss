@@ -1,0 +1,527 @@
+/*-- scss:defaults --*/
+
+// Palette. Every colour the dashboard uses is named here, and every rule
+// below sets both a background and a text colour, never one of the two.
+//
+// The reason is that this document inherits the course stylesheet whether it
+// asks to or not: _quarto.yml applies src/css/custom_style.scss to every
+// document in the project, and that file styles bare class names -- .active,
+// .panel, .score -- written for a lesson page. In a lesson those names only
+// ever land on the accordions they were meant for. In an application they
+// land on whatever Bootstrap happens to call .active, which is how the
+// question text came out white on pale blue. Inheriting a colour here is a
+// bug waiting to happen, so nothing inherits one.
+//
+// Every name here is prefixed. Quarto's own bootstrap layer reads variables
+// out of this block: it sets the background of inline code from `$code-bg`,
+// so a plain `$code-bg` defined for the answer panels also repainted every
+// piece of inline code in the question -- dark on dark, which is what made
+// the question unreadable.
+
+$gd-ink:            #1f2328;
+$gd-ink-soft:       #57606a;
+$gd-ink-faint:      #8b949e;
+$gd-page:           #f4f5f7;
+$gd-surface:        #ffffff;
+$gd-line:           #e2e5e9;
+$gd-line-soft:      #eef0f3;
+$gd-accent:         #292093;
+$gd-accent-soft:    #edf0fb;
+$gd-code-bg:        #14161a;
+$gd-code-ink:       #f2f4f7;
+
+$body-bg:        $gd-page;
+$body-color:     $gd-ink;
+$link-color:     $gd-accent;
+$border-radius:  0.5rem;
+
+/*-- scss:rules --*/
+
+// undoing the lesson stylesheet ------------------------------------------
+
+// `.active` is Bootstrap's class for the selected item in a nav, a dropdown
+// or a button group. custom_style.scss paints it #80b3ff with white text,
+// for its accordions. Put back something an application can live with.
+
+.active,
+.nav-link.active,
+.dropdown-item.active,
+.dropdown-item:active {
+  background-color: transparent;
+  color: $gd-accent;
+  font-weight: 600;
+}
+
+// `.panel` is `display: none` in the course stylesheet, which is right for a
+// collapsed accordion and wrong for anything else.
+
+.panel {
+  display: block;
+  background-color: transparent;
+  overflow: visible;
+  padding: 0;
+}
+
+h1 {
+  font-size: 1.75rem;
+  font-weight: 600;
+  color: $gd-ink;
+}
+
+hr {
+  margin: 1.1rem 0;
+  border-top: 1px solid $gd-line;
+}
+
+// The lesson sheet puts a 0.25em margin on inline code, which reads as a
+// stray space before the punctuation after it.
+
+// Quarto styles inline code as `p code:not(.sourceCode)`, which outranks a
+// bare `code` selector, so these match its specificity.
+
+code:not(.sourceCode),
+p code:not(.sourceCode),
+li code:not(.sourceCode),
+td code:not(.sourceCode) {
+  margin: 0;
+  padding: 0.05em 0.3em;
+  color: $gd-accent;
+  background-color: $gd-accent-soft;
+}
+
+// layout -----------------------------------------------------------------
+
+// Quarto's bootstrap bundle does not carry the grid: `.row` and `.col-*`,
+// which is what shiny's fluidRow() and column() emit, compute to
+// `display: block` in this document and stack. Checked in the browser --
+// no rule in the rendered page sets a display on `.row` at all. So the
+// dashboard lays itself out and never calls fluidRow().
+
+.gd-grid {
+  display: grid;
+  gap: 1rem;
+  align-items: end;
+}
+
+.gd-grid-controls {
+  grid-template-columns: 1fr auto auto;
+  align-items: center;
+}
+
+.gd-grid-controls > .btn,
+.gd-grid-controls > .shiny-input-container {
+  justify-self: end;
+  width: auto;
+}
+
+.gd-grid-mark {
+  grid-template-columns: minmax(7rem, 1fr) 3fr;
+  align-items: start;
+}
+
+.gd-grid-two {
+  grid-template-columns: 1fr 1fr;
+}
+
+@media (max-width: 950px) {
+  .gd-grid-controls,
+  .gd-grid-mark,
+  .gd-grid-two {
+    grid-template-columns: 1fr;
+  }
+}
+
+// The shiny input containers carry their own bottom margin, which fights a
+// grid that is already spacing its cells.
+
+.gd-grid .form-group,
+.gd-grid .shiny-input-container {
+  margin-bottom: 0;
+  width: 100%;
+}
+
+// frame ------------------------------------------------------------------
+
+body {
+  background-color: $gd-page;
+  color: $gd-ink;
+}
+
+.gd-bar {
+  background-color: $gd-surface;
+  color: $gd-ink;
+  border: 1px solid $gd-line;
+  border-radius: $border-radius;
+  padding: 0.85rem 1.15rem 0.1rem;
+  margin-bottom: 1rem;
+}
+
+.gd-card {
+  background-color: $gd-surface;
+  color: $gd-ink;
+  border: 1px solid $gd-line;
+  border-radius: $border-radius;
+  padding: 1.1rem 1.25rem;
+  margin-bottom: 1rem;
+
+  p,
+  li,
+  strong {
+    color: $gd-ink;
+  }
+
+  > :last-child {
+    margin-bottom: 0;
+  }
+}
+
+.gd-label {
+  color: $gd-ink-soft;
+  font-size: 0.74rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin-bottom: 0.45rem;
+}
+
+.gd-where {
+  color: $gd-ink-soft;
+  font-size: 0.9rem;
+}
+
+.gd-where strong {
+  color: $gd-ink;
+}
+
+// the question -----------------------------------------------------------
+
+.gd-stem {
+  background-color: $gd-surface;
+  color: $gd-ink;
+  font-size: 1rem;
+
+  p,
+  li {
+    color: $gd-ink;
+  }
+
+  > :last-child {
+    margin-bottom: 0;
+  }
+}
+
+.gd-criterion {
+  color: $gd-ink;
+  font-weight: 600;
+  font-size: 1.05rem;
+  margin: 0.9rem 0 0.2rem;
+
+  p {
+    color: $gd-ink;
+    margin-bottom: 0;
+  }
+}
+
+.gd-points {
+  color: $gd-ink-soft;
+  font-size: 0.85rem;
+  margin-bottom: 0;
+}
+
+// key beside answer ------------------------------------------------------
+
+.gd-compare {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: start;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+@media (max-width: 1100px) {
+  .gd-compare {
+    grid-template-columns: 1fr;
+  }
+}
+
+.gd-compare > .gd-card {
+  margin-bottom: 0;
+}
+
+.gd-response-card {
+  border-color: $gd-accent;
+}
+
+// code -------------------------------------------------------------------
+
+// custom_style.scss sets `pre { background-color: #efefef !important }` for
+// every document in the project, so these carry !important to match it.
+
+pre.gd-code {
+  background-color: $gd-code-bg !important;
+  color: $gd-code-ink !important;
+  border: none !important;
+  border-radius: $border-radius;
+  padding: 0.9rem 1rem;
+  margin: 0;
+  white-space: pre-wrap;
+  overflow-x: auto;
+  font-size: 0.92rem;
+  line-height: 1.5;
+}
+
+pre.gd-code-key {
+  background-color: $gd-line-soft !important;
+  color: $gd-ink !important;
+  border: 1px solid $gd-line !important;
+}
+
+pre.gd-code + pre.gd-code,
+pre.gd-code-key + pre.gd-code-key {
+  margin-top: 0.6rem;
+}
+
+// findings ---------------------------------------------------------------
+
+.gd-badge {
+  display: inline-block;
+  border-radius: 999px;
+  padding: 0.14rem 0.7rem;
+  font-size: 0.76rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  margin: 0 0.35rem 0.35rem 0;
+}
+
+.gd-badge-review  { background-color: #fbf0d4; color: #6b4f00; }
+.gd-badge-correct { background-color: #ddefe3; color: #17592e; }
+.gd-badge-wrong   { background-color: #f9dcd8; color: #7f261c; }
+.gd-badge-saved   { background-color: $gd-accent-soft; color: $gd-accent; }
+.gd-badge-edited  { background-color: #e7e3f6; color: $gd-accent; }
+
+.gd-finding {
+  color: $gd-ink-soft;
+  font-size: 0.9rem;
+  margin: 0.75rem 0 0;
+}
+
+.gd-finding strong {
+  color: $gd-ink;
+}
+
+.gd-empty {
+  color: $gd-ink-faint;
+  font-style: italic;
+  margin: 0;
+}
+
+// progress ---------------------------------------------------------------
+
+.gd-progress {
+  background-color: $gd-line-soft;
+  border-radius: 999px;
+  height: 6px;
+  margin: 0.5rem 0 0;
+  overflow: hidden;
+}
+
+.gd-progress-fill {
+  background-color: $gd-accent;
+  height: 100%;
+}
+
+// navigation -------------------------------------------------------------
+
+.gd-nav {
+  background-color: $gd-surface;
+  color: $gd-ink;
+  border: 1px solid $gd-line;
+  border-radius: $border-radius;
+  padding: 0.9rem 1.15rem;
+  margin-bottom: 1rem;
+}
+
+.gd-nav-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.gd-nav-row + .gd-nav-row {
+  border-top: 1px solid $gd-line-soft;
+  margin-top: 0.9rem;
+  padding-top: 0.9rem;
+}
+
+.gd-counter {
+  color: $gd-ink;
+  font-size: 1.05rem;
+  font-weight: 600;
+  text-align: center;
+  min-width: 12rem;
+}
+
+.gd-counter span {
+  display: block;
+  color: $gd-ink-soft;
+  font-size: 0.82rem;
+  font-weight: 400;
+}
+
+.gd-unsaved {
+  color: $gd-ink-soft;
+  font-size: 0.88rem;
+  margin-right: 0.75rem;
+}
+
+// controls ---------------------------------------------------------------
+
+.btn {
+  border-radius: 0.4rem;
+  font-weight: 500;
+}
+
+.btn-primary {
+  background-color: $gd-accent;
+  border-color: $gd-accent;
+  color: #ffffff;
+}
+
+.btn-primary:hover,
+.btn-primary:focus {
+  background-color: #1c1668;
+  border-color: #1c1668;
+  color: #ffffff;
+}
+
+.gd-nav .btn-default,
+.gd-bar .btn-default,
+.gd-nav .btn:not(.btn-primary),
+.gd-bar .btn:not(.btn-primary) {
+  background-color: $gd-surface;
+  border: 1px solid $gd-line;
+  color: $gd-ink;
+}
+
+.gd-nav .btn:not(.btn-primary):hover,
+.gd-bar .btn:not(.btn-primary):hover {
+  background-color: $gd-line-soft;
+  color: $gd-ink;
+}
+
+.form-label,
+label {
+  color: $gd-ink-soft;
+  font-size: 0.82rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+textarea.form-control,
+input.form-control,
+select.form-select {
+  background-color: $gd-surface;
+  color: $gd-ink;
+  border: 1px solid $gd-line;
+}
+
+textarea.form-control:focus,
+input.form-control:focus,
+select.form-select:focus {
+  border-color: $gd-accent;
+  box-shadow: 0 0 0 3px rgba(41, 32, 147, 0.12);
+}
+
+details.gd-cohort {
+  background-color: $gd-surface;
+  color: $gd-ink;
+  border: 1px solid $gd-line;
+  border-radius: $border-radius;
+  padding: 0.9rem 1.15rem;
+  margin-bottom: 2rem;
+}
+
+details.gd-cohort > summary {
+  color: $gd-ink;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+// the answer in its file ---------------------------------------------------
+
+pre.gd-context {
+  padding: 0.9rem 0.6rem;
+}
+
+.gd-line {
+  display: block;
+  padding: 0 0.4rem;
+  border-radius: 3px;
+}
+
+.gd-line-context {
+  color: #7d8590;
+}
+
+.gd-lineno {
+  display: inline-block;
+  width: 2.5rem;
+  color: #59616b;
+  user-select: none;
+}
+
+.gd-line:not(.gd-line-context) {
+  background-color: rgba(255, 255, 255, 0.06);
+}
+
+// style credit -------------------------------------------------------------
+
+.gd-style-figure {
+  font-size: 1.35rem;
+  font-weight: 700;
+  margin: 0;
+  line-height: 1.2;
+}
+
+.gd-style-figure span {
+  display: block;
+  font-size: 0.82rem;
+  font-weight: 400;
+  color: $gd-ink-soft;
+}
+
+.gd-style-earned { color: $gd-accent; }
+
+.gd-style-lost   { color: #8d2b20; }
+
+.gd-grid-mark {
+  grid-template-columns: minmax(6rem, 0.8fr) minmax(9rem, 1fr) 3fr;
+}
+
+@media (max-width: 950px) {
+  .gd-grid-mark {
+    grid-template-columns: 1fr;
+  }
+}
+
+// findings and the style note ---------------------------------------------
+
+.gd-finding-list {
+  color: $gd-ink-soft;
+  font-size: 0.9rem;
+  margin: 0.2rem 0 0.6rem 1.1rem;
+  padding: 0;
+}
+
+.gd-finding-list li {
+  color: $gd-ink-soft;
+  padding-bottom: 0.15rem;
+}
+
+.gd-style-note {
+  color: $gd-ink-soft;
+  font-size: 0.82rem;
+  margin: -0.4rem 0 0;
+}

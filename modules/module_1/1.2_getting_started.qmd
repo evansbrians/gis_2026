@@ -1,299 +1,291 @@
 ---
 title: "1.2 Getting started"
-format:
-  html:
-    embed-resouces: true
-    self-contained: true
-    standalone: true
-    toc: true
-    toc-location: left
-    toc-depth: 3
-    number-sections: false
-    search: true
-    include-in-header: ../../src/includes/header_includes.html
-    include-after-body: ../../src/includes/accordion_script.html
-    theme: 
-      - cosmo
-      - ../../src/css/custom_style.scss
-editor: source
-editor_options: 
-  chunk_output_type: inline
+format: live-html
 ---
 
-```{r, include = FALSE}
-source("../../src/r/course_functions.R")
+```{r}
+#| include: false
+
+source("src/r/course_functions.R")
+source("src/r/reference_lookup.R")
+
+lesson_refs <- find_lesson_references()
 ```
 <hr>
 
 <div>
-![](../../src/images/hex_complex.png){.intro_image}
+![](../../src/images/hex_complex.png){.intro_image fig-alt="Course logo"}
 
-All course modules will start with a *Before you begin* section. In these sections, you will download data and scripts required to complete the module, install any required packages, and take other necessary steps before diving into the material. Because we are just starting our journey, this "before you begin" section will be a bit more in-depth -- in this lesson, you will learn:
+All course modules will start with a *Before you begin* section. In these sections, you will download data and scripts required to complete the module, install any required packages, and take other necessary steps before diving into the material. Because we are just starting our journey, this *Before you begin* section will be a bit more in-depth — in this lesson, you will learn:
 
--   How to open an RStudio project;
+-   How to open an RStudio project.
 -   Steps that you should take each time you initiate a session.
 
-[{{< fa exclamation-triangle size=2x >}} **Important!**]{style="color: red;"} This lesson assumes that you have completed [Preliminary Lesson 1: R & RStudio](../module_0/0.1_intro_to_r_and_rstudio.qmd){target="_blank"}, have set your global options as illustrated in that lesson, and are familiar with the concepts and terminology covered in its RStudio IDE section.
+::: {.callout-important}
+
+This lesson assumes that you have completed the preliminary lessons, have set your global options as illustrated in those lessons, and are familiar with the concepts and terminology covered in the RStudio IDE section.
+
+:::
 
 </div>
 
-## Download content for Module 1
+## Before you begin
 
-I have created an RStudio project for you. We will use the same project throughout most of the course. 
+### 1. Check your version of R and RStudio
 
-::: now_you
-{{< fa user-circle size=2x >}} [Please complete the following steps to set up your project for this course:]{style="padding-left: 0.5em;"}
-
-1. **Download** the attached file "gis_in_r.zip". 
-2. **Save** the file to a location on your computer that is: 
-* Easy to find: For Windows users, I suggest saving the file to your Desktop. Mac users, I suggest saving the file to the top level of your user folder (this level can be accessed in Finder with Command+Shift+H). 
-* Not in a folder with a space in the name: R abhors spaces in names (e.g., "My documents") -- and you should too!
-* Not in a folder associated with cloud storage: Saving the project file in a cloud drive (e.g., OneDrive, Dropbox, or Google Drive) or a on drive that is backed up in the cloud (e.g., on Macs your desktop folder is backed up in iCloud by default) can introduce problems when executing code.
-3. **Unzip** the file: As the extension "\*.zip" suggests, this is a compressed folder (i.e., "zipped"). Mac users can unzip the file just by double-clicking on the zipped folder. Windows users must *explicitly* unzip the file (e.g., with the free [7-Zip](https://www.7-zip.org/){target="_blank"} program).
-:::
-
-## Check your version of R and RStudio
-
-R is the program that we will be writing in and running throughout this course and RStudio is an "Integrated Development Environment" -- the interface that we will be using for running program R. In other words, we will be writing R code (not RStudio code) and using RStudio as our medium for talking to R. It is important to recognize that these are two different programs. As such, we need to ensure that both programs are up-to-date before proceeding with course content.
+R is a programming language and software environment that we will use throughout this course. RStudio is an integrated development environment — it is the interface that we will use to run R. In other words, we will write R code (not RStudio code) and use RStudio as our medium for talking to R. It is important to recognize that R and RStudio are separate pieces of software. As such, we need to ensure that both are up-to-date before proceeding with course content.
 
 ::: now_you
 {{< fa user-circle size=2x >}} [Check your RStudio and R versions]{style="padding-left: 0.5em;"}
 
 1. Please open RStudio.
-2. **RStudio**: In the top menu bar, click on "Help/Check for Updates". If a new version is available, please go to [this link](https://posit.co/download/rstudio-desktop/){target="_blank"} and follow the website's instructions to download and install the latest version.
-3. **R**: Please type `R.version.string` into your console pane and run the code. Go to [this link](https://www.r-project.org/){target="_blank"} to view the most current version of R. If the version information printed in your console differs from the current version listed on the website, please follow the website's instructions to download and install the latest version of R.
+2. **RStudio**: In the top menu bar, select **Help > Check for Updates**. If a new version is available, [download RStudio Desktop](https://posit.co/download/rstudio-desktop/){target="_blank"} and follow the website's installation instructions.
+3. **R**: Type `R.version.string` into your console pane and run the code. Visit the [R Project website](https://www.r-project.org/){target="_blank"} to view the most current version of R. If the version printed in your console differs from the current version listed on the website, follow the website's instructions to download and install the latest version of R.
 :::
 
-*Note: It is considered to be best practice to check for RStudio and R updates at least once every three months. I try to regularly visit the R NEWS ([link](https://cran.r-project.org/doc/manuals/r-release/NEWS.html){target="_blank"}) and RStudio Workbench Release notes ([link](https://docs.posit.co/ide/news/){target="_blank"}) to read about any updates to the programs.*
+*Note: For this course, I recommend checking for RStudio and R updates at least once every three months. I also recommend regularly reading the [R release notes](https://cran.r-project.org/doc/manuals/r-release/NEWS.html){target="_blank"} and [RStudio release notes](https://docs.posit.co/ide/news/){target="_blank"}.*
 
-## Your RStudio session
+### 2. Download content for Module 1
 
-An R Studio **session** represents the time spent and operations conducted since opening R. The following steps should be followed each time you conduct an R session (each covered in some depth below):
-
-1. Open your project: A session should always be initiated by opening a **project** in RStudio. 
-2. Conduct housekeeping steps: Ensuring that you are working in a clean environment really helps!
-3. Install packages (if necessary)
-4. Add or open an R script -- because that's where the magic happens!
-
-### 1. Open the RStudio project
-
-A project is a folder that contains a collection of files (e.g., scripts, data, output) and sub-folders. The parent folder is designated as a project if it includes a [.Rproj]{style="font-family: monospace"} file. All content for this course will be stored in a project and all code will be executed from within this project.
+I have created an RStudio project for you. We will use the same project throughout most of the course.
 
 ::: now_you
-{{< fa user-circle size=2x >}} [Please open our course project using one of the four following methods.]{style="padding-left: 0.5em;"}
+{{< fa user-circle size=2x >}} [Please complete the following steps to set up your project for this course:]{style="padding-left: 0.5em;"}
+
+1. **Download** the file `gis_in_r.zip`, located on the Canvas page for this module.
+2. **Save** the file to a location on your computer that, if possible, meets the following criteria:
+    * Easy to find: For Windows users, I suggest saving the file to your Desktop. For Mac users, I suggest saving the file to the top level of your user folder (this level can be accessed in Finder with Command + Shift + H).
+    * Not in a folder with a space in its name — spaces can present challenges when using command-line tools to read and write files.
+    * Not in a cloud-synced folder (e.g., OneDrive, Dropbox, or Google Drive): Automatically synced folders can introduce problems when executing code. If this is your only option, pause syncing while you are working in the project.
+3. **Unzip** the file: The `.zip` extension indicates that this is a compressed archive. Extracting the archive will create the course project folder, `gis_in_r`. Mac users can unzip the archive by double-clicking it. Windows users must explicitly extract its contents, either with the built-in extraction tool or a program such as [7-Zip](https://www.7-zip.org/){target="_blank"}.
 :::
 
-[The project menu (![](../../src/images/project_button.png))]{style="font-size: 1.5em"}
+### 3. Open the RStudio project
 
-![](../../src/images/open_project_upper_right.gif)
+An RStudio project consists of a project directory and a [.Rproj]{style="font-family: monospace"} file within it. The project directory contains the files and subfolders associated with the project (e.g., scripts, data, and output). When you open the [.Rproj]{style="font-family: monospace"} file, RStudio opens the associated directory as the project and sets it as the working directory. All course content will be stored and all course code will be executed within this project.
+
+::: now_you
+{{< fa user-circle size=2x >}} [Please open our course project.]{style="padding-left: 0.5em;"}
+
+#### Windows File Explorer or macOS Finder
+
+![](../../src/images/open_project_finder.gif){fig-alt="Opening an RStudio project from Windows File Explorer or macOS Finder"}
+
+1.  Open your system's file explorer (e.g., Finder on macOS).
+2.  Navigate to your project in the window that opens.
+3.  Double-click on the [.Rproj]{style="font-family: monospace;"} file.
+
+To confirm that you are working in a project, check the upper-right corner of your RStudio window. It should say `gis_in_r`.
+
+:::
+
+<button class="accordion">Click here for alternative ways to open an RStudio project</button>
+::: panel
+[The project menu (![](../../src/images/project_button.png))]{style="font-size: 1.5em"}
 
 *Note: If you use this method, you can open a recent project by simply clicking on the name from the list of options at the bottom of the dropdown menu.*
 
-1.  Open RStudio
-2.  Click the blue square in the upper right of the window
+1.  Open RStudio.
+2.  Click the blue square in the upper-right corner of the window.
 3.  Navigate to "Open Project..."
-4.  Navigate to your project in the window that opens
+4.  Navigate to your project in the window that opens.
 5.  Double-click on the [.Rproj]{style="font-family: monospace;"} file.
 
-[The ![](../../src/images/rstudio_logo.png){style="height: 1.5em; width: auto; padding-right: 0.25em;"} file menu]{style="font-size: 1.5em"}
+![](../../src/images/open_project_upper_right.gif){fig-alt="Opening an RStudio project from the project menu"}
 
-![](../../src/images/open_project_file_menu.gif)
+[The ![](../../src/images/rstudio_logo.png){style="height: 1.5em; width: auto; padding-right: 0.25em;"} file menu]{style="font-size: 1.5em" fig-alt="rstudio logo"}
 
-1.  Open RStudio
-2.  In the top menu bar, click "File"
+1.  Open RStudio.
+2.  In the top menu bar, click **File**.
 3.  Navigate to "Open Project..."
-4.  Navigate to your project in the window that opens
+4.  Navigate to your project in the window that opens.
 5.  Double-click on the [.Rproj]{style="font-family: monospace;"} file.
+
+![](../../src/images/open_project_file_menu.gif){fig-alt="Opening an RStudio project from the file menu"}
 
 [Using a keyboard shortcut]{style="font-size: 1.5em"}
 
+1.  Open RStudio.
+2.  Use the keyboard shortcut Control + O (Windows) or Command + O (Mac).
+3.  Navigate to your project in the window that opens.
+4.  Double-click on the [.Rproj]{style="font-family: monospace;"} file.
+5.  Press Enter in the following pop-up menu.
+
 ![](../../src/images/open_project_keyboard_shortcut.gif)
 
-1.  Open RStudio
-2.  Hit the keyboard shortcut Control + O (Windows) or Command + O (Mac)
-3.  Navigate to your project in the window that opens
-4.  Double-click on the [.Rproj]{style="font-family: monospace;"} file.
-5.  Hit enter on the following pop-up menu.
+:::
 
-[Windows Explorer (![](../../src/images/win_explorer_icon.png){style="height: 1.25em; width: auto;"}) or Finder (![](../../src/images/mac_finder.png){style="height: 1.25em; width: auto;"})]{style="font-size: 1.5em"}
+### 4. Install packages
 
-![](../../src/images/open_project_finder.gif)
+In this course, we will use the *renv* package to manage package versions. The project folder contains a file called `renv.lock`, which records the package versions used for the course and helps ensure that students use those versions.
 
-1.  Open your system's file explorer (e.g. "Finder" on Macs)
-2.  Navigate to your project in the window that opens
-3.  Double-click on the [.Rproj]{style="font-family: monospace;"} file.
+::: now_you
+{{< fa user-circle size=2x >}} [Restore the course packages]{style="padding-left: 0.5em;"}
+
+Please run the following in your console pane to install the recorded versions of the packages that we will use in this course:
+
+```{r}
+#| eval: false
+
+renv::restore()
+```
+
+*Note: This may take a long time. If it produces an error, ensure that you have opened the course's RStudio project, that your R version is up-to-date, and that you have network access. If you are still experiencing issues, visit the Canvas Discussion Board, and we will help diagnose the problem.*
+
+After the restoration is complete, verify that the project library is consistent with `renv.lock` by running:
+
+```{r}
+renv::status()
+```
+
+Your message should report that no issues were found. If it does not, contact us on the Canvas Discussion Board.
+
+:::
+
+::: {.callout-tip}
+
+## On R packages and renv
+
+An R package is a collection of reusable R code that may include functions, documentation, data, metadata, methods, and compiled code. When you **install** a package, its contents are downloaded to your computer. Packages are typically installed with the `install.packages()` function — when installing a single package, you simply supply the name of the package inside of quotes.
+
+Using *renv* enhances reproducibility because the package versions recorded in `renv.lock` can be installed on another computer.
+
+:::
 
 ::: mysecret
-{{< fa user-secret size=2x >}} [Always work within a project!]{style="font-size: 1.25em; padding-left: 0.5em;"}
 
-Please be sure to follow one of the steps above *every time* you open your project. When opening R Studio, have a look at the project icon on the upper-right hand corner of your screen -- if it says "Project: none" or is open to a different project, be sure to open the project before continuing.
+{{< fa user-secret size=2x >}} [Always install packages from the console pane!]{style="font-size: 1.25em; padding-left: 0.5em;"}
+
+More precisely: **Do not install packages in R script files!** Installing a package changes the software available on your computer and may change package versions. Doing so in a script file should be avoided because:
+
+* It does not need to happen every time you run a script;
+* It can "break" the script if your code relies on a previous package version;
+* You might change your mind and decide that the package is not required for the script;
+* If a collaborator runs the script, an installation command may unexpectedly change the packages or package versions available in their environment.
+
+:::
+
+## Successful coding sessions
+
+An **R session** begins when the R process starts and ends when it closes or restarts. In this course, use the following routine for each R session:
+
+1. Open your project: Always start your coding sessions for this course by opening the project (as above).
+2. Conduct housekeeping steps: Ensuring that you are working in a clean environment really helps!
+3. Add or open script files.
+
+### Why work in an RStudio project?
+
+Please be sure to follow one of the steps above *every time* you open your project in this course. When opening RStudio, have a look at the project icon in the upper-right corner of your screen — if it says "Project: none" or is open to a different project, be sure to open the project before continuing.
 
 Working in an RStudio project offers lots of advantages. These include (but are not limited to):
 
--   Your project folder is the root directory for reading and writing files. In other words, you read in files relative to their location within the project folder.
--   Projects ensure that your data and scripts are stored in one, easy-to-find, space.
--   Through sharing projects, rather than individual files, it is easy to generate reproducible scripts.
--   Projects provide you with the opportunity to use different versions of packages for various applications.
+-   Your project folder is the working directory for reading and writing files. In other words, you can refer to files using paths relative to the project folder. This is known as a **relative file path**.
+-   Projects ensure that your data and scripts are stored in one easy-to-find space.
+-   Sharing complete projects, rather than individual files, makes it easier to create reproducible scripts.
+-   Projects, when paired with a dependency management system such as [renv](https://rstudio.github.io/renv/){target="_blank"}, allow you to use different package versions for different projects.
+
+Let's look at that first point in a little more depth. I am currently working in `gis_in_r`. The absolute path to my project directory is:
+
+```
+/Users/brianevans/gits/teaching/gis_in_r
+```
+
+R always has a working directory, even when I have not opened an RStudio project. If that working directory were somewhere outside of `gis_in_r`, the project-relative path `data/raw/my_covid_garden.csv` would not refer to this file. I could use the following computer-specific absolute path, but it would not work on another computer:
+
+```{r}
+#| eval: false
+
+readr::read_csv("/Users/brianevans/gits/teaching/gis_in_r/data/raw/my_covid_garden.csv")
+```
+
+Because I opened the RStudio project, my working directory is the project directory. I can therefore read the file using a relative path:
+
+```{r}
+#| eval: false
+
+readr::read_csv("data/raw/my_covid_garden.csv")
+```
+
+Using a project-relative path enhances reproducibility because the same path can work when the complete project is moved to or opened on another computer. The project's `renv.lock` file addresses a separate part of reproducibility by recording the R package versions used for the course.
 
 We will explore these advantages and more in coming lessons!
-:::
 
-### 2. Housekeeping steps
+### Housekeeping steps
 
-At the beginning of each session, I like to do a series of what I call "housekeeping steps". These include clearing any open scripts, any names assigned to your global environment, and your code history. Doing so helps you better organize your workflow, may reduce your computer's memory usage, and ensures that you can make the most out of RStudio's tools for managing your code and data during a session.
+At the beginning of each coding **session**, I like to do a series of what I call "housekeeping steps." These include closing open scripts, removing names assigned in your global environment, and clearing your command history. Doing so helps you better organize your workflow, may reduce your computer's memory usage, and ensures that you can make the most out of RStudio's tools for managing your code and data during a session.
 
 I *strongly* recommend following the steps below at the start of each session:
 
-1.  If there are any script files open in your source pane. Close them. *Note: If any of your script titles are blue, you might want to save them prior to closing!*
+1.  If there are any script files open in your source pane, close them. *Note: If a script contains unsaved changes, save it before closing if you want to keep those changes.*
 
 ![](../../src/images/close_scripts.gif){style="margin-left: 2em;" width="93%" height="auto"}
 
 2.  In the *Environment* **tab** of your **workspace pane**, ensure that your **Global Environment** is empty. If it is not, click the *broom* to remove all objects.
 
-![](../../src/images/clear_environment.gif){style="margin-left: 2em;" width="93%" height="auto"}
+![](../../src/images/clear_environment.gif){style="margin-left: 2em;" width="93%" height="auto" fig-alt="clear environment"}
 
 3.  In the *History* tab of your **workspace pane**, ensure that your history is empty. If it is not, click the *broom* to remove your history.
 
-![](../../src/images/clear_history.gif){style="margin-left: 2em;" width="93%" height="auto"}
+![](../../src/images/clear_history.gif){style="margin-left: 2em;" width="93%" height="auto" fig-alt="clear history"}
 
-By completing the steps above, your current session will always be dedicated, in its entirety, to the task at hand!
+Completing the steps above will help ensure that your current session can be dedicated to the task at hand!
 
-### 3. Install packages
-
-An R package contains a series of functions (i.e., instructions) and sometimes data. When you **install** a package, the functions and data are downloaded to your computer. Packages are installed with the `install.packages` function -- when installing a single package, you simply supply the name of the package inside of quotes.
-
-::: now_you
-{{< fa user-circle size=2x >}} [Install the *lobstr* package]{style="padding-left: 0.5em;"}
-
-Copy-and-paste the code below into your console pane and run it to install the *lobstr* package:
-
-```{r, eval=FALSE}
-install.packages("lobstr")
-```
-:::
-
-If you wish to install more than one package at a time, you must provide a character vector of package names to install. To do so, you use the function `c`, provide the name of each package in quotes, and separate each name with a comma:
-
-::: now_you
-{{< fa user-circle size=2x >}} [Install multiple packages]{style="padding-left: 0.5em;"}
-
-Copy-and-paste the code below into your console pane and run it to install the *janitor* and *arrow* packages:
-
-```{r, eval=FALSE}
-install.packages(
-  c(
-    "janitor", "arrow"
-  )
-)
-```
-:::
-
-::: mysecret
-{{< fa user-secret size=2x >}} [Always install packages from the console pane!]{style="font-size: 1.25em; padding-left: 0.5em;"}
-
-... or more to the point: **Do not install packages in R script files!**. Installing packages is a big move. Doing so in a script file should be avoided because:
-
-* It does not need to happen every time you run a script;
-* It can "break" the script if the your code relies on a previous package version;
-* You might change your mind and decide that the package is not required for the script;
-* If you share the script, you can override your collaborator's version of the package.
-:::
-
-*Note: When coding outside of this course, you will sometimes need to install packages during an R session (instead of before). That is completely acceptable ... just make sure to install them from your console pane!*
-
-#### **Updating installed packages**
-
-Because packages are often updated (e.g., fixing bugs), keeping your packages up-to-date is important. If you already have a package installed on your computer, installing that package again will typically update the packages to the most recent version.
-
-For the packages in the tidyverse, things are a little different -- because *tidyverse* is a metapackage, simply re-installing *tidyverse* does not update all of the package. Instead, for tidyverse packages, we use the function `tidyverse_update`. This will check whether each of the packages in the tidyverse are up-to-date and provide you with an opportunity to update them.
-
-::: now_you
-{{< fa user-circle size=2x >}} [Update the packages in the tidyverse]{style="padding-left: 0.5em;"}
-
-```{r, eval = FALSE}
-tidyverse_update()
-```
-:::
-
-You can check to see if your packages are up-to-date in the Tools menu ("Tools/Check for Package Updates..."). If you find packages that require updates, you may either install the packages by following the prompts in the Tools menu or installing the package again in the console pane (my preference).
-
-::: mysecret
-{{< fa user-secret size=2x >}} [Update your packages often!]{style="font-size: 1.25em; padding-left: 0.5em;"}
-
-For packages that you use less than one day per week, I suggest checking for new versions at the beginning of each session. For packages that you use more often, it is considered best practice to check for updates at least once per week. 
-
-To view potential changes to the package since your last installation, I strongly recommend reading the "NEWS" file associated with the package. The NEWS file typically shows any changes to the package across the history of the package -- this is known as a package's **version history**. To do so, we use the function `news` with the argument `package = ...` and the name of the package in quotes. 
-
-For example, to view the version history of the *dplyr* package, run the following code:
-
-```{r, eval=FALSE}
-news(package = "dplyr")
-```
-
-*Note: Pay close attention to functions or arguments that have been deprecated or superseded, as these often suggest that significant improvements have been made and the functions or arguments should be avoided.*
-:::
-
-### 4. Add or open an R script
+### Add or open an R script
 
 Most of the script files for this course will be provided for you.
 
-**Open existing script files**: To open an existing R script file in your source pane, use the keyboard shortcut Ctrl+O (Windows or Mac) or Command+O (Mac). You *could* go to the top menu bar, then click on the "File" dropdown menu, then click on "Open File...", but that should really be avoided.
+**Open existing script files:** To open an existing R script file in your source pane, use the keyboard shortcut Ctrl + O (Windows) or Command + O (Mac). Alternatively, select **File > Open File...** from the top menu bar.
 
-**Create a new script file**: To create a new script file, use the keyboard shortcut Ctrl+shift+N (Windows or Mac) or Command+shift+N (Mac).
+**Create a new script file:** To create a new script file, use the keyboard shortcut Ctrl + Shift + N (Windows) or Command + Shift + N (Mac).
 
 ::: mysecret
 {{< fa user-secret size=2x >}} [Use keyboard shortcuts!]{style="font-size: 1.25em; padding-left: 0.5em;"}
 
-It is important to get your fingers to remember keyboard shortcuts like the above because it will save you loads of time in the long run! 
+Learning keyboard shortcuts like those above will save you time in the long run!
 :::
 
-## Reference
+## Exercises
 
-<button class="accordion">Glossary of terms (I am a button ... click me!)</button>
-::: panel
+::: now_you
+{{< fa user-circle size=2x >}} [Test your knowledge!]{style="padding-left: 0.5em;"}
 
-::: glossary_table
-```{r, message = FALSE, echo = FALSE}
-library(tidyverse)
+1. Which action opens the course project and sets its project directory as R's working directory?
 
-source("../../dev_scripts/glossary/glossary_source.R")
+`r longmcq(c("Opening an R script stored in the course folder", answer = "Opening the gis_in_r.Rproj file", "Extracting gis_in_r.zip", "Opening RStudio without selecting a project"))`
 
-get_glossary_table_lesson(
-  module = 1, 
-  lesson = "1.2_getting_started.qmd"
-) %>% 
-  kableExtra::kable(
-    align = c("c", "l")
-  ) %>%
-  kableExtra::kable_styling(
-    font_size = 12,
-    bootstrap_options = "hover")
-```
-:::
-:::
+2. Which function checks whether the project library is consistent with `renv.lock`?
 
-<button class="accordion">Functions</button>
-::: panel
-**Important!** Primitive functions and functions in the *utils* packages are attached by default when you start an R session.
+`r longmcq(c("renv::restore()", answer = "renv::status()", "install.packages()", "R.version.string"))`
 
-::: function_table
+3. True or false: If the complete project is moved to another computer, its project-relative file paths will generally need to be rewritten.
 
-```{r, message = FALSE, echo = FALSE}
-render_function_table("functions_1.2_getting_started.csv")
-```
+`r torf(FALSE)`
 
-:::
-:::
+4. Parsons Problem: Reorder the lines below to complete the initial course-project setup and begin a coding session after downloading and extracting the archive. One line does not belong — leave it in the trash.
 
+<div class="parsons-problem">
+<div id="p-1-2-01-trash" class="sortable-code"></div>
+<div id="p-1-2-01-sortable" class="sortable-code"></div>
+<div style="clear: both;"></div>
+<button id="p-1-2-01-check" class="parsons-btn parsons-btn-check" type="button">Check My Order</button>
+<button id="p-1-2-01-reset" class="parsons-btn parsons-btn-reset" type="button">Shuffle Again</button>
+<p id="p-1-2-01-feedback" class="parsons-feedback"></p>
+</div>
 
-<button class="accordion">Keyboard shortcuts</button>
-::: panel
-
-{{< include ../../src/includes/keyboard_shortcuts.qmd >}}
+<script>
+window.parsonsProblems = window.parsonsProblems || [];
+window.parsonsProblems.push({
+  id: "p-1-2-01",
+  maxDistractors: 1,
+  code: "Open gis_in_r.Rproj in RStudio\nrenv::restore()\nrenv::status()\nOpen or create the R script you need\nsetwd(\"/Users/your_name/gis_in_r\") #distractor"
+});
+</script>
 :::
 
-<button class="accordion">R Studio panes</button>
-::: panel
-{{< include ../../src/includes/rstudio_panes.qmd >}}
-:::
+## Take-home points
 
+* Open `gis_in_r.Rproj` and confirm that RStudio displays `gis_in_r` as the current project; the project directory will then serve as the working directory.
+* Use `renv::restore()` to install the package versions recorded in `renv.lock`, and use `renv::status()` to verify the project library.
+* Start each coding session in the course project, complete the housekeeping steps, and then open or create the R script you need.
+
+{{< include /src/includes/_reference_section.qmd >}}

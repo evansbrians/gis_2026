@@ -1,32 +1,20 @@
 ---
 title: "3.1 What is a GIS?"
-format:
-  html:
-    embed-resouces: true
-    self-contained: true
-    standalone: true
-    toc: true
-    toc-location: left
-    number-sections: false
-    search: true
-    include-in-header: ../../src/includes/header_includes.html
-    include-after-body: ../../src/includes/accordion_script.html
-    theme: 
-      - cosmo
-      - ../../src/css/custom_style.scss
-editor: source
-editor_options: 
-  chunk_output_type: console
+format: live-html
 ---
 
-```{r, include = FALSE}
+```{r}
+#| include: false
+
+library(webexercises)
+
 source("src/r/course_functions.R")
 ```
 <hr>
 
 ![](../../src/images/hex_complex.png){.intro_image}
 
-R is a GIS ... or at least it can be! In this video lesson, which is a lecture rather than a code-along-video, I cover:
+R is a GIS ... or at least it can be! In this video lesson, which is a lecture rather than a code-along video, I cover:
 
 * What a GIS is
 * Coordinate Reference Systems (CRSs) ... this is super important
@@ -40,3 +28,34 @@ R is a GIS ... or at least it can be! In this video lesson, which is a lecture r
 
 :::
 
+## Take-home points
+
+* A **geographic information system** (GIS) is a system for storing, managing, analyzing, and visualizing spatial data. R can serve as a GIS.
+* A **coordinate reference system** (CRS) is the reference system that allows us to define the location of a geometry on the surface of the Earth. A pair of coordinates has no location without one.
+* **Shapefiles** represent discrete features as points, lines, or polygons.
+* A **raster** represents a region as a continuous grid of equally sized cells, where each cell stores a value.
+* The **spatial extent** of a dataset is the area that the data cover, and the **spatial grain** is the finest spatial resolution of the data.
+
+## Exercises
+
+::: now_you
+{{< fa user-circle size=2x >}} [Test your knowledge!]{style="font-size: 1.25em; padding-left: 0.5em;"}
+
+After watching the lecture, use the questions below to evaluate your understanding. If an answer surprises you, please watch the relevant section of the video again!
+
+1. True or false: A pair of coordinates defines a location on the surface of the Earth, with or without a coordinate reference system.
+
+   `r torf(FALSE)`
+
+2. A set of bird sampling locations is best represented by which type of shapefile?
+
+   `r longmcq(c("Lines", answer = "Points", "Polygons", "A raster"))`
+
+3. Elevation varies continuously across a landscape, and every location has a value. Which data model best represents it?
+
+   `r longmcq(c("Points", "Lines", "Polygons", answer = "A raster"))`
+
+4. A land cover dataset covers the conterminous United States with cells that are 30 meters on each side. Which term describes the area that the dataset covers?
+
+   `r longmcq(c("The spatial grain", answer = "The spatial extent", "The coordinate reference system", "The geometry"))`
+:::

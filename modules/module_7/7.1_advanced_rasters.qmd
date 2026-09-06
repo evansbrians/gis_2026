@@ -1,28 +1,20 @@
 ---
 title: "7.1 Advanced rasters"
-format:
-  html:
-    embed-resouces: true
-    self-contained: true
-    standalone: true
-    toc: true
-    toc-location: left
-    number-sections: false
-    search: true
-    include-in-header: ../../src/includes/header_includes.html
-    include-after-body: ../../src/includes/accordion_script.html
-    theme: 
-      - cosmo
-      - ../../src/css/custom_style.scss
-editor: source
-editor_options: 
-  chunk_output_type: console
+format: live-html
 ---
 
-```{r, include = FALSE}
-source("../../src/r/course_functions.R")
+```{r}
+#| include: false
+
+source("src/r/course_functions.R")
+source("src/r/reference_lookup.R")
+
+lesson_refs <- find_lesson_references()
 ```
-```{r setup, include=FALSE}
+```{r}
+#| label: setup
+#| include: false
+
 library(tidyverse)
 
 knitr::opts_chunk$set(
@@ -59,42 +51,13 @@ Please click on the buttons below to explore the metadata for this lesson!
 
 ::: panel
 
-**[dc_census.geojson]{.mono}**: A polygon shapefile of census tracts in the District of Columbia. The data are in a projected coordinate system (datum = WGS84, projection is UTM, Zone 18N) with the EPSG code 32618. The data include the following fields:
+```{r}
+#| echo: false
+#| output: asis
 
-* [GEOID]{.mono}, character: The **primary key** key for each census tract.
-* [STATEFP]{.mono}, character: A **foreign key** to the US state in the [states]{.mono} data.
-* [ALAND]{.mono}, numeric: The area covered by land in each census tract, in square meters.
-* [AWATER]{.mono}, numeric: The area covered by water in each census tract, in square meters.
-* [INCOME]{.mono}, numeric: The median income of each census tract.
-* [POPULATION]{.mono}, numeric: The total population of each census tract.
-
-**[dc_crimes.csv]{.mono}**: Crime data were obtained from <a href="https://opendata.dc.gov/" target="_blank">Open Data DC</a>. This is a tabular dataset and each row represents the record for an individual crime committed. Relevant fields (columns) include:
-
-* [id]{.mono}, character: The primary key for each observation;
-* [offense]{.mono}, character: The type of crime committed.
-
-**[dc_forests.geojson]{.mono}**: This is a polygon shapefile of forested land in Washington DC. Each polygon represents an individual forest and represent a subset of the original file (to polygon areas greater than 9 hectares). The data were obtained from Open Data DC and the CRS is EPSG 4326. See the original metadata at this link.
-
-**[dc_land.geojson]{.mono}**: This is a multipolygon shapefile of land (as opposed to water) in Washington DC. We made this (or something very similar) in one of the earlier video lessons. The CRS is projected (NAD83/Conus Albers; EPSG 5070).
-
-**[dc_rivers.geojson]{.mono}**:This is a polygon shapefile of water bodies that are classified as "River" in Washington DC. The data were derived from the Water Bodies shapefile obtained from Open Data DC and the CRS is EPSG 4326. See the original metadata at this link.
-
-**[dc_stack.tif]{.mono}**: This is geotiff a raster stack of land cover files from Multi-Resolution Land Characteristics Consortium (MRLC). The resolution of the stack is 30 by 30 meters and the CRS of the object is EPSG 5070. Layers include canopy (proportion of canopy cover), imp (proportion of impervious surface), nlcd (classified land cover of each cell), and land (binary raster representing cells over land (as opposed to water).
-
-**[dem_dc_10m.tif]{.mono}**: This is geotiff raster of elevation in Washington DC. Elevation values are provided in meters above sea level. The data were obtained from the National Map. The resolution of the raster is approximately 9 x 9 m and the CRS is EPSG 5070 (NAD83/Conus Albers).
-
-**[inat_scbi.geojson]{.mono}**:  iNaturalist point shapefile observations from the campus of the Smithsonian-Mason School of Conservation in 2024. The data were downloaded using the R package *rinat* and are in the unprojected coordinate reference system EPSG 4326.
-
-**[roads_scbi.geojson]{.mono}**: Linestring shapefile of roads within the spatial extent of the Smithsonian Conservation Biology Institute. The data were obtained using the [National Map download tool](https://apps.nationalmap.gov/downloader/){target="_blank"} and are in an unprojected CRS (EPSG 4326).
-
-**[scbi_canopy_cover.tif]{.mono}**: Proportion of canopy cover within a 30m resolution map pixel, subset to the spatial extent of the Smithsonian Conservation Biology Institute. The data were obtained using the [MRLC viewer tool](https://www.mrlc.gov/viewer/){target="_blank} and are in an unprojected CRS (EPSG 4269).
-
-**[scbi_dem.tif]{.mono}**: Digital elevation model (raster; 10m resolution), subset to the spatial extent of the Smithsonian Conservation Biology Institute. The data were obtained using the [National Map download tool](https://apps.nationalmap.gov/downloader/){target="_blank"} and are in an unprojected CRS (EPSG 4269).
-
-**[scbi_lc.tif]{.mono}**: Classified land cover (raster; 1m resolution), subset to the spatial extent of the Smithsonian Conservation Biology Institute. The data were obtained using the [Chesapeake Conservancy tool](https://cicgis.org/portal/apps/webappviewer/index.html?id=bdf7ca3e249a40fd9a9d83d6e16100ea&extent=-88.252,35.0981,-62.3462,45.7489){target="_blank"} and are in an unprojected CRS (EPSG 4269)
-
-**[smsc_campus_scbi.geojson]{.mono}**: Shapefile that describes the boundaries of the Smithsonian-Mason-School of Conservation campus. Brian digitized this file by hand (poorly) and the data are in an unprojected CRS (EPSG 4326).
-
+lesson_metadata(.dataset = c("dc_census.geojson", "dc_crimes.csv", "dc_forests.geojson", "dc_land.geojson", "dc_rivers.geojson", "dc_stack.tif", "dem_dc_10m.tif", "inat_scbi.geojson", "roads_scbi.geojson", "scbi_canopy_cover.tif", "scbi_dem.tif", "scbi_lc.tif", "smsc_campus_scbi.geojson")) %>%
+  cat()
+```
 :::
 
 ## Video lesson
@@ -118,7 +81,10 @@ Please do the following to ensure that you are working in a clean session:
 
 Now we will start the written tutorial with a couple of our typical setup steps, loading libraries and setting the *tmap* mode to "view":
 
-```{r, message = FALSE, warning = FALSE}
+```{r}
+#| message: false
+#| warning: false
+
 # setup -------------------------------------------------------------------
 
 library(sf)
@@ -143,7 +109,8 @@ lc_key <-
 
 Things get a little more interesting with the below. The `.` is a **metacharacter**. We can "escape" a metacharacter (i.e., treat it as a **literal character**) by preceding the symbol with `\\`. In `list.files()` below, I search for any file that ends with `scbi.geojson` (using the argument `pattern = ...`):
 
-```{r, results = "hide"}
+```{r}
+#| results: hide
 
 # Read in the shapefiles:
 
@@ -171,7 +138,9 @@ Things get even more interesting with my search pattern below. To read in the ra
 * The `*` metacharacter -- this is a repetition metacharacter that allows us to repeat the metacharacter `.` any number of times;
 * The `tif$` to specify that the filename should end in `"tif"`.
 
-```{r, results = "hide"}
+```{r}
+#| results: hide
+
 # Read in the raster files:
 
 list.files(
@@ -1106,7 +1075,9 @@ There are a ton of applications for distance rasters! Luckily, the process of ge
 
 For this, we will calculate the distance to `roads` across the Smithsonian Conservation Biology Institute.
 
-```{r, eval = FALSE}
+```{r}
+#| eval: false
+
 road_distance <- 
   terra::distance(
     elevation,
@@ -1114,7 +1085,9 @@ road_distance <-
   )
 ```
 
-```{r, include = FALSE}
+```{r}
+#| include: false
+
 road_distance <- 
   terra::distance(
     elevation,
@@ -1168,12 +1141,16 @@ buildings_resampled <-
 
 To calculate the distance here, we do not need to specify `y = ...`. We calculate the distance between cells that are not `NA` and any that are `NA`:
 
-```{r, eval = FALSE}
+```{r}
+#| eval: false
+
 building_distance <- 
   terra::distance(buildings_resampled)
 ```
 
-```{r, include = FALSE}
+```{r}
+#| include: false
+
 building_distance <- 
   terra::distance(buildings_resampled)
 ```
@@ -1199,35 +1176,7 @@ tm_basemap("Esri.WorldImagery") +
 
 Cool, yeah?
 
-## Reference
-
-<button class="accordion">Glossary</button>
-::: panel
-* **Literal character**: In regex, this is used to search for exact character matches in the case (i.e., lower vs. upper) and order of characters.
-* **Metacharacter**: Special characters used to modify the conditions of a regex search string (such a a choice of letters or position of literal characters in a string). Note: Metacharacters are not R functions!
-* **Regular expressions (regex)**: An algorithm used to search strings (character values).
-:::
-
-<button class="accordion">Functions</button>
-::: panel
-
-::: mysecret
-
-{{< fa user-secret size=2x >}} [**Important!**]{style="font-size: 1.25em; padding-left: 0.5em;"}
-
-* Primitive functions, as well as functions in the *base*, *stats*, and *utils* packages, are loaded by default when you start an R session. Functions in *dplyr*, *ggplot2*, *lubridate*, *purrr*, *readr*, *stringr*, *tibble*, *tidyr*, and *tidyverse* are loaded with `library(tidyverse)`.
-* I do not include functions that I recommend avoiding.
-* Regular expressions metacharacters are not functions!
-:::
-
-::: function_table
-
-```{r, message = FALSE, echo = FALSE}
-render_function_table("functions_7.1_advanced_rasters.csv")
-```
-
-:::
-:::
+{{< include /src/includes/_reference_section.qmd >}}
 
 <button class="accordion">Metacharacters in regex</button>
 ::: panel
@@ -1252,15 +1201,3 @@ When you are given a list of functions that you may use in a given problem set, 
 * **Repetition**, `{...,...}`: Specify that a symbol may appear within a range of repetitions
 * **Wild card**, `.`: Specify that a character value at a given location can be any symbol
 :::
-
-<button class="accordion">Keyboard shortcuts</button>
-::: panel
-
-{{< include ../../src/includes/keyboard_shortcuts.qmd >}}
-:::
-
-<button class="accordion">R Studio panes</button>
-::: panel
-{{< include ../../src/includes/rstudio_panes.qmd >}}
-:::
-

@@ -1,48 +1,39 @@
 ---
-title: "Module 3: Introduction to shapefiles"
-format:
-  html:
-    embed-resouces: true
-    self-contained: true
-    standalone: true
-    toc: false
-    number-sections: false
-    search: true
-    include-in-header: ../../src/includes/header_includes.html
-    include-after-body: ../../src/includes/accordion_script.html
-    theme: 
-      - cosmo
-      - ../../src/css/custom_style.scss
-editor: source
-editor_options: 
-  chunk_output_type: console
+title: "Module 3: Introduction to spatial vector data"
+format: live-html
 ---
 
-```{r, include = FALSE}
+```{r}
+#| include: false
+
+source("src/r/reference_lookup.R")
 source("src/r/course_functions.R")
+
+module_refs <- find_module_references(3)
 ```
 <hr>
 
 ![](../../src/images/hex_complex.png){.intro_image}
 
-This module will be our first foray into working with spatial data (this is, after all, a class about GIS)! We will be learning the basics of the *sf* package and then use spatial and non-spatial joins to maximize the efficiency of our spatial data workflow. You will learn:
+This module will be our first foray into working with spatial data (this is, after all, a class about GIS)! We will learn the basics of the *sf* package, use the geometries of simple features objects to make measurements and create new spatial objects, and create static and interactive maps with *tmap*. You will learn:
 
-* Classes of GIS data (shapefiles and rasters)
-* The all-important Coordinate Reference System (CRS) 
-* How to read, pre-process, and write shapefiles
-* How to create point, line, and polygon shapefiles and convert between them
-* How to conduct spatial and non-spatial joins
+* The distinction between vector and raster data
+* The all-important coordinate reference system (CRS)
+* How to read and preprocess spatial vector data
+* How to create point, line, and polygon geometries and convert among them
+* How to create static and interactive maps with *tmap*
+* How to aggregate, measure, and buffer geometries
 
 *Note: Please continue to ignore references to the folder structure from our data science class.*
 
 ## Module overview
 
-* **3.1 What is a GIS?**: This video lesson  (runtime: 13:17) provides a brief overview of foundational concepts of Geographic Information Systems, including types of spatial data files and coordinate systems.
-* **3.2 Introduction to shapefiles with sf**: In this video lesson (runtime: 35:33), we provide an overview of the most common shapefile operations, including reading shapefiles, pre-processing steps, and transforming a Coordinate Reference System (CRS). This will also be our first use of [source_script.R]{.mono}!
-* **3.3 Constructing and converting shapefiles**: This written tutorial will really help you understand what simple features objects are by building sf points, lines, and polygons from the ground up. You will also learn how to convert one type of geometry to another (e.g., points to polygons).
-* **3.4 Joins**: Joining data gives us the ability to apply database-like power when referencing data stored in multiple data frames. In this lesson, which includes a video (runtime: 28:57), you will learn the basics of joining data with *dplyr*.
-* **3.5 Spatial and non-spatial joins with sf**: In this video lesson (runtime: 27:02), we will apply our understanding of joins to shapefiles. You will learn how to join data to shapefiles based on primary and foreign keys in the data frames and via spatial operations (e.g., spatial overlap).
-* **3.5 Course style guide, part 3**: The complete set of code formatting rules that I ask you to follow in the course. The provided rules are closely aligned with the [tidyverse style guide](https://style.tidyverse.org/){target="_blank"}.
+* **3.1 What is a GIS?**: This video lesson (runtime: 13:17) provides a brief overview of foundational concepts of Geographic Information Systems, including types of spatial data files and coordinate systems.
+* **3.2 Introduction to spatial vector data with sf**: This written tutorial and *optional* video (runtime: 35:33) provide an overview of common spatial vector data operations, including reading spatial files, pre-processing simple features objects, and transforming a coordinate reference system. This will also be our first use of [source_script_module_3.R]{.mono}!
+* **3.3 Constructing and converting simple features**: This written tutorial will really help you understand what simple features objects are by building sf points, lines, and polygons from the ground up. You will also learn how to convert one geometry type to another (e.g., points to polygons).
+* **3.4 The coordinate reference system**: In this written tutorial, you will learn what a CRS is, how to read its well-known text representation, how to transform a CRS, and how to choose a CRS that is appropriate for a given task.
+* **3.5 Introduction to tmap**: In this written tutorial, you will use `left_join()` to add attributes to a simple features object, create static and interactive maps, layer polygon and point geometries, and control the basemap, colors, title, and legend.
+* **3.6 Geometric operations with sf**: In this written tutorial, you will aggregate geometries, calculate centroids, distances, and areas, work with the units of spatial measurements, and create spatial buffers.
 
 **Problem Set** (due 10 Nov): Cicada emergence
 
@@ -53,66 +44,38 @@ Please complete the following steps *prior* to beginning this week's lessons:
 * Download [module_3_files.zip]{.mono} and:
     * Place the folder [shapefiles]{.mono} (and its contents) inside of the folder [data/raw]{.mono}
     * Place capital_bike_share_locations.csv, messy_birds.rds, and sites.csv in [data/raw]{.mono}
-    * Place the R script files ([*.R]) inside of the [scripts]{.mono} folder 
-* Install the package *sf*: `install.packages("sf")`
+* Place the R script files ([*.R]{.mono}) inside of the [scripts]{.mono} folder
+* Install the packages *sf* and *tmap*: `install.packages(c("sf", "tmap"))`
 
 ## About this week's data
 
 This week we will use the following data files in our exercises:
 
-[**census ([.dbf]{.mono}, [.prj]{.mono}, [.shp]{.mono}, [.shx]{.mono})**]{.mono}: This is a shapefile from the US Census Bureau that provides tract-level census data for the District of Columbia, Maryland, and Virginia. The data were downloaded using the *tigris* and *tidycensus* packages in R.
+```{r}
+#| echo: false
+#| output: asis
 
-[**cicadas_brood_x_2021.csv**]{.mono}: This is a tabular dataset of iNaturalist observations of the Brood X cicadas in 2021. Each row is an observation submitted by a community science participant via a web or smartphone application. I downloaded these data using the R package *rinat*.
-
-[**counties.geojson**]{.mono}: This is a shapefile of United States counties obtained from the US Census Bureau using the *tigris* package. The resolution of this file is 1:5 million. Each row in the dataset represents a US county.
-
-[**counties_low_res.geojson**]{.mono}: This is a lower resolution (1:20 million) version of the US counties shapefile above. This will be very useful if you have memory or processing limitations on your screen.
-
-[**capital_bike_share_locations.csv**]{.mono}: This is a tabular dataset that provides information (and coordinates) associated with bike share docking stations from the Capital Bikeshare DC group. Location data were recorded in a geodetic CRS (EPSG:4326). The data were downloaded from [Open Data DC](https://opendata.dc.gov/).
-
-[**dc_census ([.dbf]{.mono}, [.prj]{.mono}, [.shp]{.mono}, [.shx]{.mono})**]{.mono}: This is a shapefile from the US Census Bureau that provides tract-level census data for the District of Columbia. The data were downloaded using the *tigris* and *tidycensus* packages in R.
-
-[**district_birds.rds**]{.mono}: This is a tidy dataset that contains a subset of records from the Smithsonian Migratory Bird Center's [Neighborhood Nestwatch](https://nationalzoo.si.edu/migratory-birds/neighborhood-nestwatch) (NN) program. NN is a community science project where scientists visit backyards, neighborhoods, and schools to conduct bird banding demonstrations and sample bird populations. The data include tables for sites, visits, point counts, and capture events, and a table that provides natural history information for observed birds. Geographic coordinate values have been jittered to protect the privacy of NN participants.
-
-[**messy_birds.rds**]{.mono}: This is a very small subset of tabular data associated with birds banded by the [Neighborhood Nestwatch](https://nationalzoo.si.edu/migratory-birds/neighborhood-nestwatch) community science program.
-
-[**sites.csv**]{.mono}: This is simple tabular dataset that contains three variables: a site name and the longitude and latitude of site locations. The sites and their locations in this file are derived from [Neighborhood Nestwatch](https://nationalzoo.si.edu/migratory-birds/neighborhood-nestwatch) data and represent the locations of banding stations in the greater Washington DC region.
-
-[**states ([.dbf]{.mono}, [.prj]{.mono}, [.shp]{.mono}, [.shx]{.mono})**]{.mono}: This is shapefile of US states that I obtained from the R package *spData*.
-
-[**spotted_lanternfly.rds**]{.mono}: This is a tabular dataset of [iNaturalist observations of spotted lanternfly (*Lycorma delicatula*)](https://www.inaturalist.org/projects/spotted-lanternfly), an invasive pest species whose spread is of commercial and ecological concern. Each row is an observation submitted by a community science participant via a web or smartphone application.
-
-[**weather_tidy.rds**]{.mono}: These data are formatted as a list of two tibble data frames that represent the normalized (i.e., tidy data version) of messy_weather.csv.
+cat(dataset_markdown(.module = 3))
+```
 
 ## Readings and resources
 
-<button class="accordion">Functions used through the end of this module (I am a button ... click me!)</button>
-::: panel
-**Important!** Primitive functions as well as functions in the *base* and *utils* packages, are loaded by default when you start an R session. Functions in *tibble* and *tidyverse* are loaded with `library(tidyverse)`. Although the *magrittr* package is not a part of the core tidyverse, the `%>%` function is imported by the *dplyr* (core tidyverse) library.
-
-::: function_table
-
-```{r, message = FALSE, echo = FALSE}
-render_function_table("functions_through_module_3.csv", .align = c("c", "c", "l", "l"))
-```
-
-:::
-
-:::
-
-### **Required readings:**
-
-Wickham & Grolemund:
-
--   [13: Relational data](https://r4ds.had.co.nz/relational-data.html){target="_blank"}
+### **Optional readings:**
 
 Lovelace:
 
 -   [2.2-2.4: Simple features](https://r.geocompx.org/spatial-class#vector-data){target="_blank"}
 
--   [4.2.5: Spatial joining](https://geocompr.robinlovelace.net/spatial-operations.html#spatial-joining){target="_blank"}
+-   [5.2: Geometric operations on vector data](https://r.geocompx.org/geometry-operations.html){target="_blank"}
+
+-   [9: Making maps with R](https://r.geocompx.org/adv-map){target="_blank"}
+
+Tennekes:
+
+-   [tmap: Get started](https://r-tmap.github.io/tmap/articles/tmap-getstarted.html){target="_blank"}
 
 ### **Cheatsheets**:
 
 -   [Spatial manipulation with sf](https://github.com/rstudio/cheatsheets/blob/main/sf.pdf){target="_blank"}
 
+{{< include /src/includes/_reference_section_intro.qmd >}}

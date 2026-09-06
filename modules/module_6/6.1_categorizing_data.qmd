@@ -1,28 +1,20 @@
 ---
 title: "6.1 Categorizing data"
-format:
-  html:
-    embed-resouces: true
-    self-contained: true
-    standalone: true
-    toc: true
-    toc-location: left
-    number-sections: false
-    search: true
-    include-in-header: ../../src/includes/header_includes.html
-    include-after-body: ../../src/includes/accordion_script.html
-    theme: 
-      - cosmo
-      - ../../src/css/custom_style.scss
-editor: source
-editor_options: 
-  chunk_output_type: console
+format: live-html
 ---
 
-```{r, include = FALSE}
+```{r}
+#| include: false
+
 source("src/r/course_functions.R")
+source("src/r/reference_lookup.R")
+
+lesson_refs <- find_lesson_references()
 ```
-```{r setup, include=FALSE}
+```{r}
+#| label: setup
+#| include: false
+
 library(tidyverse)
 
 knitr::opts_chunk$set(
@@ -54,39 +46,15 @@ Classifying and reclassifying objects is a common task associated with cleaning,
 <button class="accordion">Please click this button to explore the metadata for this lesson!
 </button>
 ::: panel
-In this lesson, we will explore the file [birds_cicadas_lc.rds]{.mono}. The data are formatted as a list of the following tibble data frames:
+In this lesson, we will explore:
 
-**[birds]{.mono}**: This is a point shapefile that represents sick birds that were brought to City Wildlife, a wildlife rehabilitation center in the District of Columbia, in the spring of 2021. These data were obtained directly from City Wildlife staff. Location information for birds brought into the center were obtained by Brian through geocoding addresses via the Google Maps API with the R package *ggmap*. Relevant variables include:
+```{r}
+#| echo: false
+#| output: asis
 
-* [patient_id]{.mono}, character: The **primary key** for each patient, assigned to bird upon intake.
-* [admission_date]{.mono}, date: The date that a bird was brought to City Wildlife.
-* [common_name]{.mono}, character: The common name for the species of bird. 
-* [age]{.mono}, character: The age of a given bird. 
-* [attitude]{.mono}, character: Behavioral observations of a given bird upon intake.
-* [canopy]{.mono}, numeric: The proportion of canopy cover at the location where a bird was found. 
-* [imp]{.mono}, numeric: The proportion of impervious surface (e.g., pavement, rooftops) at the location where a bird was found. 
-* [nlcd]{.mono}, numeric: The dominant land cover class at the location where a bird was found.
-
-**[cicadas]{.mono}**: iNaturalist observations of Brood X cicadas in 2021.
-
-* [datetime]{.mono}, datetime: The date and time that a cicada was observed.
-* [canopy]{.mono}, numeric: The proportion of canopy cover at the location where a cicada was observed. 
-* [imp]{.mono}, numeric: The proportion of impervious surface (e.g., pavement, rooftops) at the location where a cicada was observed. 
-* [nlcd]{.mono}, numeric: The dominant land cover class at the location where a cicada was observed.
-
-**[bad_coords]{.mono}**: Coordinates of birds that were brought to the wildlife rehabilitation center. Brian intentionally messied these data to prove a point!
-
-* [id]{.mono}, character: The **primary key** for each patient, assigned to bird upon intake.
-* [longitude]{.mono}, numeric: The longitudinal coordinate of where a bird was found... note that longitudes in the Western Hemisphere should always be negative!
-* [latitude]{.mono}, numeric: The latitudinal coordinate of where a bird was found... note that latitudes in the Northern Hemisphere should always be positive!
-
-**[nlcd_key]{.mono}**: A key to the [Multi-Resolution Land Characteristics (MRLC) Consortium](https://www.mrlc.gov/){target="_blank"} land cover classes. Variables include:
-
-* [id]{.mono}, numeric: The value assigned to each land cover class.
-* [name]{.mono}, character: A name assigned to each land cover class.
-* [color_value]{.mono}, character: The recommended color to use for each land cover class.
-* [description]{.mono}, character: A description of the type of land cover that each land cover class represents.
-
+lesson_metadata(.dataset = "birds_cicadas_lc.rds") %>%
+  cat()
+```
 :::
 
 ## Set up your video session
@@ -1074,40 +1042,7 @@ example_df %>%
 I have just barely scratched the surface of using stringr and regex here. I consider stringr and regex to be crucial tools for working with spatial and non-spatial data alike! I **strongly** suggest exploring these tools further!
 :::
 
-## Reference
-
-<button class="accordion">Glossary</button>
-::: panel
-* **Boundary value** (when classifying numeric vectors): The value that represents the minimum and maximum values of a class.
-* **Literal character**: In regex, this is used to search for exact character matches in the case (i.e., lower vs. upper) and order of characters.
-* **Metacharacter**: Special characters used to modify the conditions of a regex search string (such a a choice of letters or position of literal characters in a string). Note: Metacharacters are not R functions!
-* **Ordinal factor** (or, more generally, variable): A variable that is represented as ordered levels.
-* **Closed boundary**: When classifying numeric values, this describes a boundary that includes the boundary value.
-* **Open boundary**: When classifying numeric values, this describes a boundary that does not include the boundary value.
-* **Regular expressions (regex)**: An algorithm used to search strings (character values).
-:::
-
-<button class="accordion">Functions</button>
-::: panel
-
-::: mysecret
-
-{{< fa user-secret size=2x >}} [**Important!**]{style="font-size: 1.25em; padding-left: 0.5em;"}
-
-* Primitive functions, as well as functions in the *base*, *stats*, and *utils* packages, are loaded by default when you start an R session. Functions in *dplyr*, *ggplot2*, *lubridate*, *purrr*, *readr*, *stringr*, *tibble*, *tidyr*, and *tidyverse* are loaded with `library(tidyverse)`.
-* I do not include functions that I recommend avoiding.
-* Regular expressions metacharacters are not functions!
-:::
-
-::: function_table
-
-```{r, message = FALSE, echo = FALSE}
-render_function_table("functions_5.2_categorizing_data.csv")
-```
-
-:::
-
-:::
+{{< include /src/includes/_reference_section.qmd >}}
 
 <button class="accordion">Metacharacters in regex</button>
 ::: panel
@@ -1132,15 +1067,3 @@ When you are given a list of functions that you may use in a given problem set, 
 * **Repetition**, `{...,...}`: Specify that a symbol may appear within a range of repetitions
 * **Wild card**, `.`: Specify that a character value at a given location can be any symbol
 :::
-
-<button class="accordion">Keyboard shortcuts</button>
-::: panel
-
-{{< include ../../src/includes/keyboard_shortcuts.qmd >}}
-:::
-
-<button class="accordion">R Studio panes</button>
-::: panel
-{{< include ../../src/includes/rstudio_panes.qmd >}}
-:::
-

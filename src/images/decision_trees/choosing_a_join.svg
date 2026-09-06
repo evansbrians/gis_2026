@@ -1,0 +1,89 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1155 661" width="1155" height="661" font-family="Helvetica Neue,Helvetica,Arial,sans-serif" role="img">
+<rect width="1155" height="661" fill="#ffffff"/>
+<text x="578" y="34" text-anchor="middle" font-size="19" font-weight="700" fill="#292093">Decision tree: Choosing a join</text>
+<line x1="40" y1="50" x2="1115" y2="50" stroke="#9db0e6" stroke-width="1.2"/>
+<g transform="translate(0,52)">
+<path d="M 132.0 346.8 H 144.0 V 192.5 H 301.0" fill="none" stroke="#9db0e6" stroke-width="1.8" stroke-linejoin="round"/>
+<polygon points="312.0,192.5 300.0,187.5 300.0,197.5" fill="#9db0e6"/>
+<path d="M 454.0 192.5 H 466.0 V 91.0 H 609.0" fill="none" stroke="#9db0e6" stroke-width="1.8" stroke-linejoin="round"/>
+<polygon points="620.0,91.0 608.0,86.0 608.0,96.0" fill="#9db0e6"/>
+<path d="M 814.0 91.0 H 826.0 V 52.0 H 949.0" fill="none" stroke="#9db0e6" stroke-width="1.8" stroke-linejoin="round"/>
+<polygon points="960.0,52.0 948.0,47.0 948.0,57.0" fill="#9db0e6"/>
+<path d="M 814.0 91.0 H 826.0 V 130.0 H 949.0" fill="none" stroke="#9db0e6" stroke-width="1.8" stroke-linejoin="round"/>
+<polygon points="960.0,130.0 948.0,125.0 948.0,135.0" fill="#9db0e6"/>
+<path d="M 454.0 192.5 H 466.0 V 294.0 H 609.0" fill="none" stroke="#9db0e6" stroke-width="1.8" stroke-linejoin="round"/>
+<polygon points="620.0,294.0 608.0,289.0 608.0,299.0" fill="#9db0e6"/>
+<path d="M 814.0 294.0 H 826.0 V 216.0 H 949.0" fill="none" stroke="#9db0e6" stroke-width="1.8" stroke-linejoin="round"/>
+<polygon points="960.0,216.0 948.0,211.0 948.0,221.0" fill="#9db0e6"/>
+<path d="M 814.0 294.0 H 826.0 V 294.0 H 949.0" fill="none" stroke="#9db0e6" stroke-width="1.8" stroke-linejoin="round"/>
+<polygon points="960.0,294.0 948.0,289.0 948.0,299.0" fill="#9db0e6"/>
+<path d="M 814.0 294.0 H 826.0 V 372.0 H 949.0" fill="none" stroke="#9db0e6" stroke-width="1.8" stroke-linejoin="round"/>
+<polygon points="960.0,372.0 948.0,367.0 948.0,377.0" fill="#9db0e6"/>
+<path d="M 132.0 346.8 H 144.0 V 501.0 H 301.0" fill="none" stroke="#9db0e6" stroke-width="1.8" stroke-linejoin="round"/>
+<polygon points="312.0,501.0 300.0,496.0 300.0,506.0" fill="#9db0e6"/>
+<path d="M 454.0 501.0 H 466.0 V 462.0 H 609.0" fill="none" stroke="#9db0e6" stroke-width="1.8" stroke-linejoin="round"/>
+<polygon points="620.0,462.0 608.0,457.0 608.0,467.0" fill="#9db0e6"/>
+<path d="M 454.0 501.0 H 466.0 V 540.0 H 609.0" fill="none" stroke="#9db0e6" stroke-width="1.8" stroke-linejoin="round"/>
+<polygon points="620.0,540.0 608.0,535.0 608.0,545.0" fill="#9db0e6"/>
+<rect x="166.3" y="171.5" width="123.3" height="17.0" rx="3" fill="#ffffff"/>
+<text x="228.0" y="182.5" text-anchor="middle" font-size="12" fill="#4a5aa0">shared key values</text>
+<rect x="488.2" y="57.0" width="109.5" height="30.0" rx="3" fill="#ffffff"/>
+<text x="543.0" y="68.0" text-anchor="middle" font-size="12" fill="#4a5aa0">a subset of the</text>
+<text x="543.0" y="81.0" text-anchor="middle" font-size="12" fill="#4a5aa0">target table</text>
+<rect x="862.4" y="31.0" width="61.2" height="17.0" rx="3" fill="#ffffff"/>
+<text x="893.0" y="42.0" text-anchor="middle" font-size="12" fill="#4a5aa0">matching</text>
+<rect x="848.6" y="109.0" width="88.8" height="17.0" rx="3" fill="#ffffff"/>
+<text x="893.0" y="120.0" text-anchor="middle" font-size="12" fill="#4a5aa0">non-matching</text>
+<rect x="477.9" y="260.0" width="130.2" height="30.0" rx="3" fill="#ffffff"/>
+<text x="543.0" y="271.0" text-anchor="middle" font-size="12" fill="#4a5aa0">the target table,</text>
+<text x="543.0" y="284.0" text-anchor="middle" font-size="12" fill="#4a5aa0">with new variables</text>
+<rect x="838.2" y="195.0" width="109.5" height="17.0" rx="3" fill="#ffffff"/>
+<text x="893.0" y="206.0" text-anchor="middle" font-size="12" fill="#4a5aa0">all target rows</text>
+<rect x="845.1" y="273.0" width="95.7" height="17.0" rx="3" fill="#ffffff"/>
+<text x="893.0" y="284.0" text-anchor="middle" font-size="12" fill="#4a5aa0">matching only</text>
+<rect x="862.4" y="351.0" width="61.2" height="17.0" rx="3" fill="#ffffff"/>
+<text x="893.0" y="362.0" text-anchor="middle" font-size="12" fill="#4a5aa0">all rows</text>
+<rect x="156.0" y="480.0" width="144.0" height="17.0" rx="3" fill="#ffffff"/>
+<text x="228.0" y="491.0" text-anchor="middle" font-size="12" fill="#4a5aa0">shared location only</text>
+<rect x="481.4" y="428.0" width="123.3" height="30.0" rx="3" fill="#ffffff"/>
+<text x="543.0" y="439.0" text-anchor="middle" font-size="12" fill="#4a5aa0">a subset of the</text>
+<text x="543.0" y="452.0" text-anchor="middle" font-size="12" fill="#4a5aa0">target's features</text>
+<rect x="484.8" y="506.0" width="116.4" height="30.0" rx="3" fill="#ffffff"/>
+<text x="543.0" y="517.0" text-anchor="middle" font-size="12" fill="#4a5aa0">the target, with</text>
+<text x="543.0" y="530.0" text-anchor="middle" font-size="12" fill="#4a5aa0">new fields</text>
+<rect x="8.0" y="314.8" width="124" height="64" rx="9" fill="#eaf0ff" stroke="#292093" stroke-width="2.0"/>
+<text x="70.0" y="341.8" text-anchor="middle" font-size="15" fill="#333333">What connects</text>
+<text x="70.0" y="360.8" text-anchor="middle" font-size="15" fill="#333333">the tables?</text>
+<rect x="314.0" y="160.5" width="140" height="64" rx="9" fill="#eaf0ff" stroke="#292093" stroke-width="2.0"/>
+<text x="384.0" y="187.5" text-anchor="middle" font-size="15" fill="#333333">What do you</text>
+<text x="384.0" y="206.5" text-anchor="middle" font-size="15" fill="#333333">want to return?</text>
+<rect x="622.0" y="59.0" width="192" height="64" rx="9" fill="#eaf0ff" stroke="#292093" stroke-width="2.0"/>
+<text x="718.0" y="86.0" text-anchor="middle" font-size="15" fill="#333333">Which rows</text>
+<text x="718.0" y="105.0" text-anchor="middle" font-size="15" fill="#333333">survive?</text>
+<rect x="962.0" y="29.0" width="185" height="46" rx="9" fill="#ffffff" stroke="#9db0e6" stroke-width="1.6"/>
+<text x="1054.5" y="57.0" text-anchor="middle" font-size="15" font-weight="700" font-family="Menlo,Consolas,monospace" fill="#292093">semi_join()</text>
+<rect x="962.0" y="107.0" width="185" height="46" rx="9" fill="#ffffff" stroke="#9db0e6" stroke-width="1.6"/>
+<text x="1054.5" y="135.0" text-anchor="middle" font-size="15" font-weight="700" font-family="Menlo,Consolas,monospace" fill="#292093">anti_join()</text>
+<rect x="622.0" y="262.0" width="192" height="64" rx="9" fill="#eaf0ff" stroke="#292093" stroke-width="2.0"/>
+<text x="718.0" y="289.0" text-anchor="middle" font-size="15" fill="#333333">Which rows are</text>
+<text x="718.0" y="308.0" text-anchor="middle" font-size="15" fill="#333333">maintained?</text>
+<rect x="962.0" y="185.0" width="185" height="62" rx="9" fill="#ffffff" stroke="#9db0e6" stroke-width="1.6"/>
+<text x="1054.5" y="213.0" text-anchor="middle" font-size="15" font-weight="700" font-family="Menlo,Consolas,monospace" fill="#292093">left_join()</text>
+<text x="1054.5" y="230.0" text-anchor="middle" font-size="12" fill="#5d5d70">unmatched rows receive NA</text>
+<rect x="962.0" y="271.0" width="185" height="46" rx="9" fill="#ffffff" stroke="#9db0e6" stroke-width="1.6"/>
+<text x="1054.5" y="299.0" text-anchor="middle" font-size="15" font-weight="700" font-family="Menlo,Consolas,monospace" fill="#292093">inner_join()</text>
+<rect x="962.0" y="341.0" width="185" height="62" rx="9" fill="#ffffff" stroke="#9db0e6" stroke-width="1.6"/>
+<text x="1054.5" y="369.0" text-anchor="middle" font-size="15" font-weight="700" font-family="Menlo,Consolas,monospace" fill="#292093">full_join()</text>
+<text x="1054.5" y="386.0" text-anchor="middle" font-size="12" fill="#5d5d70">unmatched rows receive NA</text>
+<rect x="314.0" y="469.0" width="140" height="64" rx="9" fill="#eaf0ff" stroke="#292093" stroke-width="2.0"/>
+<text x="384.0" y="496.0" text-anchor="middle" font-size="15" fill="#333333">What do you</text>
+<text x="384.0" y="515.0" text-anchor="middle" font-size="15" fill="#333333">want to return?</text>
+<rect x="622.0" y="431.0" width="192" height="62" rx="9" fill="#ffffff" stroke="#9db0e6" stroke-width="1.6"/>
+<text x="718.0" y="459.0" text-anchor="middle" font-size="15" font-weight="700" font-family="Menlo,Consolas,monospace" fill="#292093">st_filter()</text>
+<text x="718.0" y="476.0" text-anchor="middle" font-size="12" fill="#5d5d70">predicate via .predicate =</text>
+<rect x="622.0" y="501.0" width="192" height="78" rx="9" fill="#ffffff" stroke="#9db0e6" stroke-width="1.6"/>
+<text x="718.0" y="529.0" text-anchor="middle" font-size="15" font-weight="700" font-family="Menlo,Consolas,monospace" fill="#292093">st_join()</text>
+<text x="718.0" y="546.0" text-anchor="middle" font-size="12" fill="#5d5d70">predicate via join = ;</text>
+<text x="718.0" y="562.0" text-anchor="middle" font-size="12" fill="#5d5d70">a row for every match</text>
+</g>
+</svg>

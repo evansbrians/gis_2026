@@ -491,18 +491,27 @@ Our data now satisfy all three tidy data rules, and the measurements are still c
 observations
 ```
 
-Converting those columns to numeric is a **data cleaning** step. Cleaning corrects the *content* of a dataset, which includes classes, units, misspellings, impossible values, and missing data codes. Tidying corrects the *structure* of a dataset, which is what the three rules govern. A dataset can be perfectly tidy and full of errors, and it can be scrupulously clean and completely untidy.
+Converting those columns to numeric is a **data cleaning** step. Cleaning corrects the *content* of a dataset, which includes classes, units, misspellings, impossible values, and missing data codes. Tidying corrects the *structure* of a dataset, which is what the three rules govern. A dataset can be perfectly tidy and full of errors, and it can be scrupulously clean and completely untidy. The distinction matters because:
 
-The distinction matters because the two are done for different reasons and at different points in a workflow, and because a tidy dataset is far easier to clean than a messy one. Now that each variable has a column, we can convert all four of them in one step. The *dplyr* function `across()` applies the same change to a selection of columns, and we call it inside `mutate()`. To `across()` we supply the following arguments:
+* Tidying and cleaning are done for different reasons  
+* Tidying and cleaning are typically done at different points in a workflow
+* A tidy dataset is far easier to clean than a messy one. 
+
+Now that each variable has a column, we can convert all four of them in one step. The *dplyr* function `across()` applies the same change to a selection of columns, and we call it inside `mutate()`. Within `across()` we supply the following arguments:
 
 * The columns that we would like to modify
-* The function to apply to each of them
+* `~` to initiate a formula
+* The function to apply to the columns
+* `.x` as a variable that indicates the column name
 
 ```{r}
 observations <-
   observations %>%
   mutate(
-    across(precip:temperature_max, as.numeric)
+    across(
+      precip:temperature_max, 
+      ~ as.numeric(.x)
+    )
   )
 
 observations
@@ -518,9 +527,10 @@ Both temperatures shared a column at the start, and a single day at a single sta
 
 ```{r}
 observations %>%
+  drop_na(temperature_min, temperature_max) %>% 
   summarize(
-    mean_min = mean(temperature_min, na.rm = TRUE),
-    mean_max = mean(temperature_max, na.rm = TRUE),
+    mean_min = mean(temperature_min),
+    mean_max = mean(temperature_max),
     .by = station
   )
 ```
@@ -585,7 +595,8 @@ observations %>%
     by = "station"
   ) %>%
   summarize(
-    max_temperature = max(temperature_max, na.rm = TRUE),
+    max_temperature =
+      max(temperature_max, na.rm = TRUE),
     .by = name
   )
 ```

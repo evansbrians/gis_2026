@@ -1,0 +1,75 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 884 692" width="884" height="692" font-family="Helvetica Neue,Helvetica,Arial,sans-serif" role="img">
+<rect width="884" height="692" fill="#ffffff"/>
+<text x="442" y="34" text-anchor="middle" font-size="19" font-weight="700" fill="#292093">Decision tree: Choosing a CRS</text>
+<line x1="40" y1="50" x2="844" y2="50" stroke="#9db0e6" stroke-width="1.2"/>
+<g transform="translate(0,52)">
+<path d="M 132.0 338.0 H 144.0 V 104.0 H 287.0" fill="none" stroke="#9db0e6" stroke-width="1.8" stroke-linejoin="round"/>
+<polygon points="298.0,104.0 286.0,99.0 286.0,109.0" fill="#9db0e6"/>
+<path d="M 445.0 104.0 H 457.0 V 56.0 H 635.0" fill="none" stroke="#9db0e6" stroke-width="1.8" stroke-linejoin="round"/>
+<polygon points="646.0,56.0 634.0,51.0 634.0,61.0" fill="#9db0e6"/>
+<path d="M 445.0 104.0 H 457.0 V 152.0 H 635.0" fill="none" stroke="#9db0e6" stroke-width="1.8" stroke-linejoin="round"/>
+<polygon points="646.0,152.0 634.0,147.0 634.0,157.0" fill="#9db0e6"/>
+<path d="M 132.0 338.0 H 144.0 V 365.0 H 287.0" fill="none" stroke="#9db0e6" stroke-width="1.8" stroke-linejoin="round"/>
+<polygon points="298.0,365.0 286.0,360.0 286.0,370.0" fill="#9db0e6"/>
+<path d="M 445.0 365.0 H 457.0 V 248.0 H 635.0" fill="none" stroke="#9db0e6" stroke-width="1.8" stroke-linejoin="round"/>
+<polygon points="646.0,248.0 634.0,243.0 634.0,253.0" fill="#9db0e6"/>
+<path d="M 445.0 365.0 H 457.0 V 326.0 H 635.0" fill="none" stroke="#9db0e6" stroke-width="1.8" stroke-linejoin="round"/>
+<polygon points="646.0,326.0 634.0,321.0 634.0,331.0" fill="#9db0e6"/>
+<path d="M 445.0 365.0 H 457.0 V 404.0 H 635.0" fill="none" stroke="#9db0e6" stroke-width="1.8" stroke-linejoin="round"/>
+<polygon points="646.0,404.0 634.0,399.0 634.0,409.0" fill="#9db0e6"/>
+<path d="M 445.0 365.0 H 457.0 V 482.0 H 635.0" fill="none" stroke="#9db0e6" stroke-width="1.8" stroke-linejoin="round"/>
+<polygon points="646.0,482.0 634.0,477.0 634.0,487.0" fill="#9db0e6"/>
+<path d="M 132.0 338.0 H 144.0 V 572.0 H 287.0" fill="none" stroke="#9db0e6" stroke-width="1.8" stroke-linejoin="round"/>
+<polygon points="298.0,572.0 286.0,567.0 286.0,577.0" fill="#9db0e6"/>
+<rect x="200.8" y="83.0" width="40.5" height="17.0" rx="3" fill="#ffffff"/>
+<text x="221.0" y="94.0" text-anchor="middle" font-size="12" fill="#4a5aa0">a map</text>
+<rect x="479.5" y="35.0" width="144.0" height="17.0" rx="3" fill="#ffffff"/>
+<text x="551.5" y="46.0" text-anchor="middle" font-size="12" fill="#4a5aa0">small (e.g., a city)</text>
+<rect x="469.1" y="131.0" width="164.7" height="17.0" rx="3" fill="#ffffff"/>
+<text x="551.5" y="142.0" text-anchor="middle" font-size="12" fill="#4a5aa0">large (e.g., a country)</text>
+<rect x="173.2" y="344.0" width="95.7" height="17.0" rx="3" fill="#ffffff"/>
+<text x="221.0" y="355.0" text-anchor="middle" font-size="12" fill="#4a5aa0">a measurement</text>
+<rect x="534.7" y="227.0" width="33.6" height="17.0" rx="3" fill="#ffffff"/>
+<text x="551.5" y="238.0" text-anchor="middle" font-size="12" fill="#4a5aa0">area</text>
+<rect x="520.9" y="305.0" width="61.2" height="17.0" rx="3" fill="#ffffff"/>
+<text x="551.5" y="316.0" text-anchor="middle" font-size="12" fill="#4a5aa0">distance</text>
+<rect x="531.2" y="383.0" width="40.5" height="17.0" rx="3" fill="#ffffff"/>
+<text x="551.5" y="394.0" text-anchor="middle" font-size="12" fill="#4a5aa0">shape</text>
+<rect x="517.5" y="461.0" width="68.1" height="17.0" rx="3" fill="#ffffff"/>
+<text x="551.5" y="472.0" text-anchor="middle" font-size="12" fill="#4a5aa0">direction</text>
+<rect x="155.9" y="551.0" width="130.2" height="17.0" rx="3" fill="#ffffff"/>
+<text x="221.0" y="562.0" text-anchor="middle" font-size="12" fill="#4a5aa0">planar operations</text>
+<rect x="8.0" y="306.0" width="124" height="64" rx="9" fill="#eaf0ff" stroke="#292093" stroke-width="2.0"/>
+<text x="70.0" y="333.0" text-anchor="middle" font-size="15" fill="#333333">What does the</text>
+<text x="70.0" y="352.0" text-anchor="middle" font-size="15" fill="#333333">task require?</text>
+<rect x="300.0" y="72.0" width="145" height="64" rx="9" fill="#eaf0ff" stroke="#292093" stroke-width="2.0"/>
+<text x="372.5" y="99.0" text-anchor="middle" font-size="15" fill="#333333">What is the</text>
+<text x="372.5" y="118.0" text-anchor="middle" font-size="15" fill="#333333">spatial extent?</text>
+<rect x="648.0" y="25.5" width="228" height="61" rx="9" fill="#ffffff" stroke="#9db0e6" stroke-width="1.6"/>
+<text x="762.0" y="52.5" text-anchor="middle" font-size="15" fill="#333333">a local projected CRS</text>
+<text x="762.0" y="69.5" text-anchor="middle" font-size="12" fill="#5d5d70">e.g., a suitable UTM zone</text>
+<rect x="648.0" y="104.0" width="228" height="96" rx="9" fill="#ffffff" stroke="#9db0e6" stroke-width="1.6"/>
+<text x="762.0" y="131.0" text-anchor="middle" font-size="15" fill="#333333">a projected CRS built</text>
+<text x="762.0" y="150.0" text-anchor="middle" font-size="15" fill="#333333">for the region</text>
+<text x="762.0" y="167.0" text-anchor="middle" font-size="12" fill="#5d5d70">e.g., EPSG 5070 for the</text>
+<text x="762.0" y="183.0" text-anchor="middle" font-size="12" fill="#5d5d70">conterminous US</text>
+<rect x="300.0" y="333.0" width="145" height="64" rx="9" fill="#eaf0ff" stroke="#292093" stroke-width="2.0"/>
+<text x="372.5" y="360.0" text-anchor="middle" font-size="15" fill="#333333">Which</text>
+<text x="372.5" y="379.0" text-anchor="middle" font-size="15" fill="#333333">measure?</text>
+<rect x="648.0" y="225.5" width="228" height="45" rx="9" fill="#ffffff" stroke="#9db0e6" stroke-width="1.6"/>
+<text x="762.0" y="252.5" text-anchor="middle" font-size="15" fill="#333333">an equal-area projection</text>
+<rect x="648.0" y="295.5" width="228" height="61" rx="9" fill="#ffffff" stroke="#9db0e6" stroke-width="1.6"/>
+<text x="762.0" y="313.0" text-anchor="middle" font-size="14" fill="#333333">local UTM or geodesic</text>
+<text x="762.0" y="330.0" text-anchor="middle" font-size="12" fill="#5d5d70">equidistant: check which</text>
+<text x="762.0" y="347.0" text-anchor="middle" font-size="12" fill="#5d5d70">distances are preserved</text>
+<rect x="648.0" y="381.5" width="228" height="45" rx="9" fill="#ffffff" stroke="#9db0e6" stroke-width="1.6"/>
+<text x="762.0" y="408.5" text-anchor="middle" font-size="15" fill="#333333">conformal: local shapes</text>
+<rect x="648.0" y="451.5" width="228" height="61" rx="9" fill="#ffffff" stroke="#9db0e6" stroke-width="1.6"/>
+<text x="762.0" y="478.0" text-anchor="middle" font-size="15" fill="#333333">an azimuthal projection</text>
+<text x="762.0" y="495.0" text-anchor="middle" font-size="12" fill="#5d5d70">directions from its center</text>
+<rect x="300.0" y="533.5" width="145" height="77" rx="9" fill="#ffffff" stroke="#9db0e6" stroke-width="1.6"/>
+<text x="372.5" y="560.5" text-anchor="middle" font-size="15" fill="#333333">a projected CRS</text>
+<text x="372.5" y="577.5" text-anchor="middle" font-size="12" fill="#5d5d70">suitable for the task</text>
+<text x="372.5" y="593.5" text-anchor="middle" font-size="12" fill="#5d5d70">and extent first</text>
+</g>
+</svg>

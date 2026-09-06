@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 864 349" width="864" height="349" font-family="Helvetica Neue,Helvetica,Arial,sans-serif" role="img">
+<rect width="864" height="349" fill="#ffffff"/>
+<text x="432" y="34" text-anchor="middle" font-size="19" font-weight="700" fill="#292093">Decision tree: The anatomy of a simple features object</text>
+<line x1="40" y1="50" x2="824" y2="50" stroke="#9db0e6" stroke-width="1.2"/>
+<g transform="translate(0,52)">
+<path d="M 730.5 171.0 V 192.0" fill="none" stroke="#9db0e6" stroke-width="1.8"/>
+<polygon points="730.5,203.0 725.5,191.0 735.5,191.0" fill="#9db0e6"/>
+<rect x="713.7" y="181.0" width="33.6" height="17.0" rx="3" fill="#ffffff"/>
+<text x="730.5" y="192.0" text-anchor="middle" font-size="12" fill="#4a5aa0">then</text>
+<path d="M 505.0 52.0 H 517.0" fill="none" stroke="#9db0e6" stroke-width="1.8"/>
+<path d="M 505.0 140.0 H 517.0" fill="none" stroke="#9db0e6" stroke-width="1.8"/>
+<path d="M 505.0 228.0 H 517.0" fill="none" stroke="#9db0e6" stroke-width="1.8"/>
+<path d="M 517.0 52.0 V 228.0" fill="none" stroke="#9db0e6" stroke-width="1.8"/>
+<path d="M 517.0 140.0 H 592.0" fill="none" stroke="#9db0e6" stroke-width="1.8"/>
+<polygon points="603.0,140.0 591.0,135.0 591.0,145.0" fill="#9db0e6"/>
+<rect x="543.2" y="119.0" width="33.6" height="17.0" rx="3" fill="#ffffff"/>
+<text x="560.0" y="130.0" text-anchor="middle" font-size="12" fill="#4a5aa0">then</text>
+<path d="M 140.0 140.0 H 152.0 V 52.0 H 254.0" fill="none" stroke="#9db0e6" stroke-width="1.8" stroke-linejoin="round"/>
+<polygon points="265.0,52.0 253.0,47.0 253.0,57.0" fill="#9db0e6"/>
+<path d="M 140.0 140.0 H 152.0 V 140.0 H 254.0" fill="none" stroke="#9db0e6" stroke-width="1.8" stroke-linejoin="round"/>
+<polygon points="265.0,140.0 253.0,135.0 253.0,145.0" fill="#9db0e6"/>
+<path d="M 140.0 140.0 H 152.0 V 228.0 H 254.0" fill="none" stroke="#9db0e6" stroke-width="1.8" stroke-linejoin="round"/>
+<polygon points="265.0,228.0 253.0,223.0 253.0,233.0" fill="#9db0e6"/>
+<rect x="181.3" y="31.0" width="54.3" height="17.0" rx="3" fill="#ffffff"/>
+<text x="208.5" y="42.0" text-anchor="middle" font-size="12" fill="#4a5aa0">a point</text>
+<rect x="164.1" y="119.0" width="88.8" height="17.0" rx="3" fill="#ffffff"/>
+<text x="208.5" y="130.0" text-anchor="middle" font-size="12" fill="#4a5aa0">a linestring</text>
+<rect x="174.4" y="207.0" width="68.1" height="17.0" rx="3" fill="#ffffff"/>
+<text x="208.5" y="218.0" text-anchor="middle" font-size="12" fill="#4a5aa0">a polygon</text>
+<rect x="8.0" y="108.0" width="132" height="64" rx="9" fill="#eaf0ff" stroke="#292093" stroke-width="2.0"/>
+<text x="74.0" y="135.0" text-anchor="middle" font-size="15" fill="#333333">Which geometry</text>
+<text x="74.0" y="154.0" text-anchor="middle" font-size="15" fill="#333333">do you want?</text>
+<rect x="267.0" y="21.0" width="238" height="62" rx="9" fill="#ffffff" stroke="#9db0e6" stroke-width="1.6"/>
+<text x="386.0" y="49.0" text-anchor="middle" font-size="15" font-weight="700" font-family="Menlo,Consolas,monospace" fill="#292093">st_point()</text>
+<text x="386.0" y="66.0" text-anchor="middle" font-size="12" fill="#5d5d70">supply a vector: X, then Y</text>
+<rect x="267.0" y="109.0" width="238" height="62" rx="9" fill="#ffffff" stroke="#9db0e6" stroke-width="1.6"/>
+<text x="386.0" y="137.0" text-anchor="middle" font-size="15" font-weight="700" font-family="Menlo,Consolas,monospace" fill="#292093">st_linestring()</text>
+<text x="386.0" y="154.0" text-anchor="middle" font-size="12" fill="#5d5d70">supply a matrix of coordinates</text>
+<rect x="267.0" y="197.0" width="238" height="62" rx="9" fill="#ffffff" stroke="#9db0e6" stroke-width="1.6"/>
+<text x="386.0" y="225.0" text-anchor="middle" font-size="15" font-weight="700" font-family="Menlo,Consolas,monospace" fill="#292093">st_polygon()</text>
+<text x="386.0" y="242.0" text-anchor="middle" font-size="12" fill="#5d5d70">supply a ring matrix, in a list</text>
+<rect x="605.0" y="109.0" width="251" height="62" rx="9" fill="#ffffff" stroke="#9db0e6" stroke-width="1.6"/>
+<text x="730.5" y="137.0" text-anchor="middle" font-size="15" font-weight="700" font-family="Menlo,Consolas,monospace" fill="#292093">st_sfc(crs = )</text>
+<text x="730.5" y="154.0" text-anchor="middle" font-size="12" fill="#5d5d70">holds the geometries and the CRS</text>
+<rect x="605.0" y="205.0" width="251" height="62" rx="9" fill="#ffffff" stroke="#9db0e6" stroke-width="1.6"/>
+<text x="730.5" y="233.0" text-anchor="middle" font-size="15" font-weight="700" font-family="Menlo,Consolas,monospace" fill="#292093">st_sf()</text>
+<text x="730.5" y="250.0" text-anchor="middle" font-size="12" fill="#5d5d70">a data frame, so it can hold fields</text>
+</g>
+</svg>

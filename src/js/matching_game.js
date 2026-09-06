@@ -76,6 +76,25 @@
       return;
     }
 
+    var help = document.createElement("p");
+    help.id = config.id + "-keyboard-help";
+    help.className = "matching-keyboard-help";
+    help.textContent = "Choose a left item, then a right item to pair them. Keyboard: use Tab to reach an item and Enter or Space to choose it. Choose a matched right item with no left item selected to clear that pair.";
+    root.insertBefore(help, leftBox);
+    var status = document.createElement("span");
+    status.className = "visually-hidden";
+    status.setAttribute("role", "status");
+    status.setAttribute("aria-atomic", "true");
+    root.appendChild(status);
+    if (feedback) {
+      feedback.setAttribute("role", "status");
+      feedback.setAttribute("aria-atomic", "true");
+    }
+
+    function announce(message) {
+      status.textContent = message;
+    }
+
     var pairs = config.pairs || [];
     var leftOrder = pairs.map(function (_p, i) { return i; });   // source order
     var rightOrder = shuffle(leftOrder);                         // shuffled
@@ -117,6 +136,18 @@
       var el = document.createElement("div");
       el.className = "matching-item matching-" + side + "-item";
       el.dataset.pair = pairIdx;
+      el.tabIndex = 0;
+      el.setAttribute("role", "button");
+      el.setAttribute("aria-describedby", help.id);
+      if (side === "left") {
+        el.setAttribute("aria-pressed", String(selectedLeft === pairIdx));
+      }
+      el.addEventListener("keydown", function (event) {
+        if (event.key === "Enter" || event.key === " ") {
+          event.preventDefault();
+          el.click();
+        }
+      });
 
       var badge = document.createElement("span");
       badge.className = "matching-badge";
@@ -125,6 +156,12 @@
       label.className = "matching-label";
       label.innerHTML = side === "left" ? leftHTML(pairIdx) : pairs[pairIdx].right;
 
+      badge.setAttribute("aria-hidden", "true");
+      var owner = side === "left"
+        ? (Object.prototype.hasOwnProperty.call(matches, pairIdx) ? pairIdx : null)
+        : rightOwner(pairIdx);
+      var state = owner === null ? "Unmatched. " : "Pair " + numForLeft(owner) + ". ";
+      el.setAttribute("aria-label", (side === "left" ? "Left item. " : "Right item. ") + state + label.textContent);
       el.appendChild(badge);
       el.appendChild(label);
       return { el: el, badge: badge };
@@ -145,6 +182,9 @@
     }
 
     function render() {
+      var active = document.activeElement;
+      var focusSide = leftBox.contains(active) ? "left" : rightBox.contains(active) ? "right" : null;
+      var focusPair = focusSide ? active.dataset.pair : null;
       leftBox.innerHTML = "";
       rightBox.innerHTML = "";
 
@@ -166,12 +206,18 @@
         made.el.addEventListener("click", function () { onRightClick(pairIdx); });
         rightBox.appendChild(made.el);
       });
+      if (focusSide && focusPair !== undefined) {
+        var box = focusSide === "left" ? leftBox : rightBox;
+        var target = box.querySelector('[data-pair="' + focusPair + '"]');
+        if (target) target.focus();
+      }
     }
 
     function onLeftClick(pairIdx) {
       clearFeedback();
       selectedLeft = (selectedLeft === pairIdx) ? null : pairIdx;
       render();
+      announce(selectedLeft === null ? "Selection cleared." : "Left item " + numForLeft(pairIdx) + " selected. Choose a right item.");
     }
 
     function onRightClick(pairIdx) {
@@ -181,9 +227,14 @@
         if (owner !== null) {
           delete matches[owner];
           render();
+          announce("Pair " + numForLeft(owner) + " cleared.");
+        } else {
+          announce("Choose a left item first.");
         }
         return;
       }
+      var pairNumber = numForLeft(selectedLeft);
+      var removing = matches[selectedLeft] === pairIdx;
       if (matches[selectedLeft] === pairIdx) {
         delete matches[selectedLeft];
       } else {
@@ -195,6 +246,7 @@
       }
       selectedLeft = null;
       render();
+      announce("Pair " + pairNumber + (removing ? " cleared." : " matched. Choose another left item or check your matches."));
     }
 
     function check() {
@@ -242,6 +294,7 @@
       rightOrder = shuffle(leftOrder);
       clearFeedback();
       render();
+      announce("All matches cleared and the right column shuffled.");
     }
 
     // Optional macOS / Windows-Linux toggle, shown above the columns.

@@ -25,13 +25,17 @@ connect_course_db <-
   }
 
 # Split a lesson's raw .qmd text into its individual R/webr code chunks
-# (each element is one chunk's full body, chunk options included).
+# (each element is one chunk's full body, chunk options included). A chunk
+# inside a list item is indented, so both fences may carry leading whitespace
+# -- the pattern is anchored to a line start and allows it. Without that, the
+# closing fence is missed and the match runs on to the next unindented one,
+# pulling the prose in between (`:::` fences included) into the code text.
 
 extract_code_chunk_list <-
   function(.lesson_text) {
     .lesson_text %>%
       str_match_all(
-        "(?s)```\\{(?:r|webr)[^\\n]*\\n(.*?)\\n```"
+        "(?sm)^[ \\t]*```\\{(?:r|webr)[^\\n]*\\n(.*?)\\n[ \\t]*```"
       ) %>%
       pluck(1) %>%
       as_tibble(.name_repair = "unique") %>%
@@ -89,7 +93,7 @@ remove_code_chunks <-
   function(.lesson_text) {
     .lesson_text %>%
       str_remove_all(
-        "(?s)```\\{(?:r|webr)[^\\n]*\\n.*?\\n```"
+        "(?sm)^[ \\t]*```\\{(?:r|webr)[^\\n]*\\n.*?\\n[ \\t]*```"
       )
   }
 
@@ -99,6 +103,69 @@ remove_code_chunks <-
 is_named_function <-
   function(.function_name) {
     str_detect(.function_name, "^[a-zA-Z._][a-zA-Z0-9._]*$")
+  }
+
+# A lesson bolds a term in the form its sentence needs, which is often not
+# the form the glossary stores: "**vertices**" against "Vertex",
+# "**Shapefiles**" against "Shapefile", "**false easting**" against "False
+# eastings". Matching on the literal string drops those terms from the
+# accordion without any sign that it has happened, so both sides are reduced
+# to a common form first, one word at a time.
+#
+# A gerund rule is deliberately absent. "Easting", "northing", "string",
+# "grouping" and "mapping" are all nouns in this course, and a rule that
+# strips "-ing" turns each of them into nonsense. The one gerund that has to
+# match a glossary entry is carried by the glossary's own "X or Y"
+# convention instead (see glossary_aliases() below).
+
+irregular_singulars <-
+  c(
+    vertices = "vertex",
+    indices  = "index",
+    matrices = "matrix",
+    analyses = "analysis",
+    axes     = "axis",
+    bases    = "basis"
+  )
+
+singularize_word <-
+  function(.word) {
+    lower <- str_to_lower(.word)
+
+    unname(
+      case_when(
+        lower %in% names(irregular_singulars) ~ irregular_singulars[lower],
+        str_detect(lower, "ies$") & str_length(lower) > 4 ~
+          str_replace(lower, "ies$", "y"),
+        str_detect(lower, "(ss|sh|ch|x|z)es$") ~ str_remove(lower, "es$"),
+        str_detect(lower, "s$") &
+          !str_detect(lower, "(ss|is|us)$") &
+          str_length(lower) > 3 ~ str_remove(lower, "s$"),
+        TRUE ~ lower
+      )
+    )
+  }
+
+normalize_term <-
+  function(.text) {
+    if (length(.text) == 0) return(character(0))
+
+    .text %>%
+      str_squish() %>%
+      str_split(" ") %>%
+      map_chr(\(.words) str_c(singularize_word(.words), collapse = " "))
+  }
+
+# A glossary term written as "X or Y" ("Line or Linestring", "Dissolve or
+# Dissolving") records one definition under two names. Each name is matched
+# on its own, so a lesson that bolds either one reaches the same entry.
+
+glossary_aliases <-
+  function(.terms) {
+    tibble(term = .terms) %>%
+      mutate(alias = str_split(term, " or ")) %>%
+      unnest(alias) %>%
+      mutate(alias = normalize_term(str_trim(alias)))
   }
 
 # Bracket-style operator entries stand in for a symbol that can't be
@@ -197,12 +264,19 @@ find_lesson_references <-
 
     prose_text <- remove_code_chunks(lesson_text)
 
+    # A call written as units::set_units() is extracted with its package
+    # prefix, and the functions table stores the bare name, so the
+    # namespaced form is kept alongside the name it resolves to. Without
+    # this, a function that a lesson only ever calls with :: is absent from
+    # the accordion.
+
     called_functions <-
       code_text %>%
       str_extract_all(
         "(?:[a-zA-Z0-9._]+::)?[a-zA-Z._][a-zA-Z0-9._]*(?=\\()"
       ) %>%
       unlist() %>%
+      c(str_remove(., "^[a-zA-Z0-9._]+::")) %>%
       unique()
 
     bolded_terms <-
@@ -227,10 +301,17 @@ find_lesson_references <-
       filter(!is_named_function(function_name)) %>%
       detect_operators(code_text, operators = .)
 
-    matched_terms <-
+    glossary_terms <-
       tbl(con, "glossary") %>%
-      collect() %>%
-      filter(str_to_lower(term) %in% str_to_lower(bolded_terms))
+      collect()
+
+    matched_aliases <-
+      glossary_aliases(glossary_terms$term) %>%
+      filter(alias %in% normalize_term(bolded_terms))
+
+    matched_terms <-
+      glossary_terms %>%
+      filter(term %in% matched_aliases$term)
 
     list(
       functions = bind_rows(named_matches, operator_matches),
@@ -300,7 +381,7 @@ first_lesson_used <-
 glossary_panel_html <-
   function(
     .terms,
-    .button_label = "Glossary of terms (I am a button ... click me!)",
+    .button_label = "Glossary of terms",
     .db_path = course_db_path
   ) {
     term_defs <- resolve_glossary_terms(.terms, .db_path)
@@ -373,4 +454,43 @@ function_table_kable <-
         font_size = 12,
         bootstrap_options = "hover"
       )
+  }
+
+# Every function/term used across a module's own lessons; .cumulative
+# also rolls in every earlier module (the module-intro "through this
+# module" view).
+
+find_module_references <-
+  function(.module_number, .cumulative = TRUE, .db_path = course_db_path) {
+    con <- connect_course_db(.db_path)
+    on.exit(DBI::dbDisconnect(con))
+
+    functions_view <-
+      if (.cumulative) {
+        "module_functions_cumulative"
+      } else {
+        "module_functions"
+      }
+
+    glossary_view <-
+      if (.cumulative) {
+        "module_glossary_cumulative"
+      } else {
+        "module_glossary"
+      }
+
+    matched_functions <-
+      tbl(con, functions_view) %>%
+      filter(module_number == .module_number) %>%
+      collect()
+
+    matched_terms <-
+      tbl(con, glossary_view) %>%
+      filter(module_number == .module_number) %>%
+      collect()
+
+    list(
+      functions = matched_functions,
+      terms = matched_terms
+    )
   }

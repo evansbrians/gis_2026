@@ -670,9 +670,9 @@ As in ***2.1 Introduction to subsetting and extraction***, these trees are a vis
 
    `r longmcq(c("replace_na() may only be used inside of mutate()", answer = "The .by argument uses tidy selection, which matches column names rather than supplying the values in those columns", "The sex column contains NA values, which cannot be grouped", "c() may not be used with .by"))`
 
-5. You group `measures` by `spp` and `sex` with `group_by()`, summarize, and pipe the result into `slice_max(n, n = 1, with_ties = FALSE)` without removing the grouping. What is returned?
+5. You group `measures` by `spp` and `sex` with `group_by()`, pipe the object into `summarize()` with the default arguments for that function, and pipe the result into `slice_max(n, n = 1, with_ties = FALSE)` without removing the grouping. What is returned?
 
-   `r longmcq(c("An error, because the data frame is still grouped", "A single row: the largest group in the dataset", answer = "A row for each species, because slice_max() ran within each group", "The summary, unchanged"))`
+   `r longmcq(c("An error, because the data frame is still grouped", "A single row: the largest group in the dataset", answer = "A row for each species, because slice_max() ran within each group", "A row for each species and sex"))`
 
 6. You want the number of capture records of each species and the mean mass of each species, in a single data frame. Which function do you need?
 

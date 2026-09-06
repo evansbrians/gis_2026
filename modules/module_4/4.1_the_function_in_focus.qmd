@@ -1,28 +1,20 @@
 ---
 title: "4.1 The function in focus"
-format:
-  html:
-    embed-resouces: true
-    self-contained: true
-    standalone: true
-    toc: true
-    toc-location: left
-    number-sections: false
-    search: true
-    include-in-header: ../../src/includes/header_includes.html
-    include-after-body: ../../src/includes/accordion_script.html
-    theme: 
-      - cosmo
-      - ../../src/css/custom_style.scss
-editor: source
-editor_options: 
-  chunk_output_type: console
+format: live-html
 ---
 
-```{r, include = FALSE}
+```{r}
+#| include: false
+
 source("src/r/course_functions.R")
+source("src/r/reference_lookup.R")
+
+lesson_refs <- find_lesson_references()
 ```
-```{r setup, include=FALSE}
+```{r}
+#| label: setup
+#| include: false
+
 library(tidyverse)
 
 knitr::opts_chunk$set(
@@ -59,45 +51,13 @@ In this lesson we are going to learn how to avoid package hunting by building ou
 <button class="accordion">Please click on the buttons below to explore the metadata for this lesson!</button>
 ::: panel
 
-**[earley.csv]{.mono}**: A subset of locations in greater Washington DC where the artist/architect John Joseph Earley installed polychrome concrete mosaics. Locations were recorded with a handheld GPS unit set to the projected Coordinate Reference System (CRS) with the datum WGS84 and EPSG code 32618 (UTM Zone 18N). Fields include:
+```{r}
+#| echo: false
+#| output: asis
 
-* [LOCATION]{.mono}, character: A character description of the location where the artwork was installed.
-* [X]{.mono}, numeric: The longitudinal coordinates of each location, in decimal degrees.
-* [Y]{.mono}, numeric: The latitudinal coordinates of each location, in decimal degrees. 
-
-**[sites.csv]{.mono}**: Locations of Neighborhood Nestwatch sampling sites, provided as a tabular dataset. Locations were  recorded with a handheld GPS unit set to the unprojected Coordinate Reference System (CRS) with the datum WGS84 and EPSG code 4326. The data include the following variables:
-
-* [site]{.mono}, character: The **primary key** for each site, which here is a fruit name assigned to each site.
-* [lon]{.mono}, numeric: The longitudinal coordinates of each site, in decimal degrees. 
-* [lat]{.mono}, numeric: The latitudinal coordinates of each site, in decimal degrees.
-
-**[populations_co2.rds]{.mono}**: These data were compiled by the [World Bank DataBank](https://databank.worldbank.org/home.aspx) {target="_blank"} and provide information on the emissions of greenhouse gases and the populations of countries around the world. I normalized these data (the original version was *extremely* untidy) and saved them as a list file: [data/processed/population_co2.rds]{.mono}. The list contains two named objects:
-
-* [countries]{.mono}: A tibble that provides country reference information from the World Bank. Variables include:
-* [country_code]{.mono}, character: A three-letter code assigned to each country (this can be considered the **primary key** of the table)
-* [country_name]{.mono}, character: A name (in English) for each country
-* [country_region]{.mono}, character: The general region where each country is located
-* [country_georegion]{.mono}, character: A finer-scale region within the larger region
-* [land_area]{.mono}, double numeric: The area of a country, in square kilometers
-
-* [populations_co2]{.mono}: A tibble with the population and per capita CO~2~ emissions from 1960-2020 for all countries in the dataset.
-* [country_code]{.mono}, character: A **foreign key **to the country code in `countries`
-* [year]{.mono}, numeric: The year of a given record -- this variable, in combination with [country_code]{.mono} represents the **compound primary key** of this table
-* [population]{.mono}, numeric: The population of a given country in a given year
-* [co2]{.mono}, numeric: The per capita CO~2~ emissions, in metric tons per year
-
-**[spotted_lanternfly.rds]{.mono}**. The data are formatted as a tibble data frame object. Location data are recorded in an unprojected Coordinate Reference System (CRS) with the datum WGS84 and EPSG code 4326. The dataset includes the following variables:
-
-* [datetime]{.mono}, datetime: The date and time in which an observation took place.
-* [user]{.mono}, character: The user id for a given iNaturalist user (*Note: In combination with `datetime`, this variable represents the **compound key** for this table -- a compound key is a set of variables in a data frame that, combined, represent the primary key of the data frame.*).
-* [state]{.mono}, character: The state in which an observation was made.
-* [place_guess]{.mono}, character: The location in which an observation was made (based on the coordinates of the observation).
-* [longitude]{.mono}, numeric: The longitudinal coordinates of an observation, in decimal degrees.
-* [latitude]{.mono}, numeric: The latitudinal coordinates of an observation, in decimal degrees.
-* [image_url]{.mono}, character: The web address of the picture submitted with an observation.
-* [quality_grade]{.mono}, character: Whether the observation was verified by experts ("research" grade) or has not been able to be verified ("casual" grade).
-* [description]{.mono}, character: A notes column where users can input comments about their observation
-
+lesson_metadata(.dataset = c("earley.csv", "sites.csv", "populations_co2.rds", "spotted_lanternfly.rds")) %>%
+  cat()
+```
 :::
 
 ## Set up your session
@@ -137,7 +97,9 @@ iris <-
 
 ... and the `populations_co2.rds`:
 
-```{r, results = "hide"}
+```{r}
+#| results: hide
+
 # Population and CO2 data:
 
 read_rds("data/processed/populations_co2.rds") %>% 
@@ -375,7 +337,9 @@ environment(get_mean_sepal_length)
 
 There is a catch though! Unless specified otherwise, only the last object in the body will be passed to the global environment. Let's explore this by creating an intermediate assignment within the function's body:
 
-```{r, error = TRUE}
+```{r}
+#| error: true
+
 fun_with_internal_assignments <-
   function(spp) {
     iris_spp <-
@@ -392,7 +356,9 @@ fun_with_internal_assignments(spp = "virginica")
 
 Does `iris_spp` exist in our global environment? Let's see:
 
-```{r, error = TRUE}
+```{r}
+#| error: true
+
 iris_spp
 ```
 
@@ -423,7 +389,9 @@ So we can see that, due to the curly braces, a function *sort of* has its own in
 
 When debugging/quality controlling big functions, I sometimes use `return()` to view values at various points in the **body**. Have a look at the below and give a thought to the output:
 
-```{r, error = TRUE}
+```{r}
+#| error: true
+
 fun_with_internal_assignments <-
   function(spp) {
     iris_spp <-
@@ -876,40 +844,4 @@ earley_works %>%
 
 Hopefully it is fully apparent that writing custom functions can really help simplify your code. If I considered this function complete (I do not), I would even put this in my source script (`source_script.R`) for use in many of my scripts!
 
-## Reference
-
-<button class="accordion">Glossary</button>
-::: panel
-* **Body**: The set of instructions inside the function (determines what happens when you run a function).
-* **Environment**: The location of a function's variables.
-* **Formals**: Arguments within a function.
-* **Code section**:  A portion of an R script file that is delineated by a section header.
-* **Core tidyverse package** or **Core tidyverse**: Packages that are attached with `library(tidyverse)`.
-:::
-
-<button class="accordion">Functions</button>
-::: panel
-**Important!** Primitive functions as well as functions in the *base* and *utils* packages, are loaded by default when you start an R session. Functions in *dplyr*, *ggplot2*, *lubridate*, *purrr*, *readr*, *tibble*, *tidyr*, and *tidyverse* are loaded with `library(tidyverse)`.
-
-::: function_table
-
-```{r, message = FALSE, echo = FALSE}
-render_function_table("functions_4.1_the_function_in_focus.csv")
-```
-
-:::
-
-:::
-
-
-<button class="accordion">Keyboard shortcuts</button>
-::: panel
-
-{{< include ../../src/includes/keyboard_shortcuts.qmd >}}
-:::
-
-<button class="accordion">R Studio panes</button>
-::: panel
-{{< include ../../src/includes/rstudio_panes.qmd >}}
-:::
-
+{{< include /src/includes/_reference_section.qmd >}}

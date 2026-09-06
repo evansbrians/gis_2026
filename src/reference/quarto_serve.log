@@ -1,0 +1,67 @@
+- The project is out-of-sync -- use `]8;;x-r-run:renv::status()renv::status()]8;;` for details.
+[31mLoading required namespace: shiny
+[39m[31m
+
+processing file: grading_dashboard.qmd
+[39m  |                                                                   |                                                           |   0%  |                                                                   |.......                                                    |  11%             |                                                                   |.............                                              |  22% [setup]     |                                                                   |....................                                       |  33%             |                                                                   |..........................                                 |  44% [controls]  |                                                                   |.................................                          |  56%             |                                                                   |.......................................                    |  67% [mark]      |                                                                   |..............................................             |  78%             |                                                                   |....................................................       |  89% [server]    |                                                                   |...........................................................| 100%                                                                                                                
+[31moutput file: grading_dashboard.knit.md
+
+[39m[1mpandoc [22m
+  to: html
+  output-file: grading_dashboard.html
+  standalone: true
+  embed-resources: false
+  self-contained: false
+  section-divs: true
+  html-math-method: mathjax
+  wrap: none
+  default-image-extension: png
+  toc: false
+  toc-depth: 4
+  number-sections: false
+  variables: {}
+  
+[1mmetadata[22m
+  document-css: false
+  link-citations: true
+  date-format: long
+  lang: en
+  editor: source
+  editor_options:
+    chunk_output_type: console
+  engines:
+    - path: /Users/brianevans/Applications/RStudio Project Launchers/gis_2026.app/Contents/Resources/app/quarto/share/extension-subtrees/julia-engine/_extensions/julia-engine/julia-engine.js
+  toc-location: left
+  search: false
+  theme:
+    - cosmo
+    - ../../src/css/custom_style.scss
+    - ../css/grading_dashboard.scss
+  title: Grading dashboard
+  server:
+    type: shiny
+  page-layout: full
+  
+- The project is out-of-sync -- use `]8;;x-r-run:renv::status()renv::status()]8;;` for details.
+[31mLoading required package: shiny
+[39m[31m
+Attaching package: ‘DT’
+
+[39m[31mThe following objects are masked from ‘package:shiny’:
+
+    dataTableOutput, renderDataTable
+
+[39m[31m── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──
+✔ dplyr     1.2.1     ✔ readr     2.2.0
+✔ forcats   1.0.1     ✔ stringr   1.6.0
+✔ ggplot2   4.0.3     ✔ tibble    3.3.1
+✔ lubridate 1.9.5     ✔ tidyr     1.3.2
+✔ purrr     1.2.2     
+[39m[31m── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
+✖ dplyr::filter() masks stats::filter()
+✖ dplyr::lag()    masks stats::lag()
+ℹ Use the conflicted package (<http://conflicted.r-lib.org/>) to force all conflicts to become errors
+[39mListening on http://localhost:4243/
+[31m
+
+[39m

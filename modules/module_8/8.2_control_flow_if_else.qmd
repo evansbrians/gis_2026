@@ -1,29 +1,20 @@
 ---
 title: "8.2. Control flow with if else"
-format:
-  html:
-    embed-resouces: true
-    self-contained: true
-    standalone: true
-    toc: true
-    toc-location: left
-    toc-depth: 4
-    number-sections: false
-    search: true
-    include-in-header: ../../src/includes/header_includes.html
-    include-after-body: ../../src/includes/accordion_script.html
-    theme: 
-      - cosmo
-      - ../../src/css/custom_style.scss
-editor: source
-editor_options: 
-  chunk_output_type: console
+format: live-html
 ---
 
-```{r, include = FALSE}
+```{r}
+#| include: false
+
 source("src/r/course_functions.R")
+source("src/r/reference_lookup.R")
+
+lesson_refs <- find_lesson_references()
 ```
-```{r setup, include=FALSE}
+```{r}
+#| label: setup
+#| include: false
+
 library(tidyverse)
 
 knitr::opts_chunk$set(
@@ -49,36 +40,18 @@ rm(has_annotations)
 
 <button class="accordion">Metadata</button>
 ::: panel
-In this lesson, we will explore the file [district_birds.rds]{.mono}. The data are a formatted as a list object comprised of the following tibble data frames and variables that we will use in this lesson:
+In this lesson, we will explore:
 
-[birds]{.mono}
+```{r}
+#| echo: false
+#| output: asis
 
-* [species]{.mono}, character: A four-letter code for each species that serves as a primary key for this table.
-* [common_name]{.mono}, character: The common names for each species, as used in the United States.
-* [foraging]{.mono}, character: The foraging strategy of each species.
-* [diet]{.mono}, character: The dietary niche of each species.
-
-[captures]{.mono}
-
-* [capture_id]{.mono}, character: The primary key for a unique capture record.
-* [visit_id]{.mono}, character: A foreign key to the [visits]{.mono} table.
-* [band_number]{.mono}, character: The numbers assigned to an aluminum band that has been placed on a bird.
-* [color_combo]{.mono}, character: The combination of aluminum and color bands placed on a bird
-* [spp]{.mono}, character: A species code that acts as a foreign key to the [birds]{.mono} table.
-* [sex]{.mono}, character: A code representing the sex of a bird, where: "F" is female, "M" is male, "U" is unknown, and [NA]{.mono} represents missing data.
-* [age]{.mono}, character: A code representing the age of a bird, where: "AHY" is an adult, "ASY" is an adult that is more than two years old, "HY" is a juvenile, "L" is a nestling, "SY" is two years old, and "U" is unknown.
-* [wing]{.mono}, numeric: The length of a bird's wing (unflattened wing chord), in millimeters.
-* [tl]{.mono}, numeric: The length of a bird's tail, in millimeters.
-* [mass]{.mono}, numeric: The weight of a bird, in grams.
-* [bp_cp]{.mono}, chr: The breeding condition of a bird, where: "-" stands for a bird that is not in breeding condition, "BP" is a brood patch, "CP" is a cloacal protuberance, "U" is unknown, and [NA]{.mono} represents missing data.
-* [fat]{.mono}, chr: The fat measured on a bird, that ranges from "0" for no fat, "T" for trace fat, and up to "5" for the maximum amount of fat. [NA]{.mono} values represent missing data.
-
-[counts]{.mono}
-
-* [species]{.mono}, character: The primary key of the table
-* [visit_id]{.mono}, character: A foreign key to the [visits]{.mono} table.
-* [spp]{.mono}, character: A species code that acts as a foreign key to the [birds]{.mono} table.
-* [count]{.mono}, numeric: The number of birds observed of a given species, on a given visit.
+lesson_metadata(
+  .dataset = "district_birds.rds",
+  .tables = c("birds", "captures", "counts")
+) %>%
+  cat()
+```
 :::
 
 ## Set up your video session
@@ -95,60 +68,7 @@ Note: In this lesson, we use the triple colon operator (i.e., `tidyselect:::sele
 
 {{< video https://www.youtube.com/embed/ct3dBs3uCXM >}}
 
-## Reference
-
-<button class="accordion">Glossary</button>
-::: panel
-* **Control flow**: A process that modifies the order in which your computer executes code (and sometimes whether that code is executed at all!).
-:::
-
-<button class="accordion">Functions</button>
-::: panel
-
-::: mysecret
-
-{{< fa user-secret size=2x >}} [**Important!**]{style="font-size: 1.25em; padding-left: 0.5em;"}
-
-* Primitive functions, as well as functions in the *base*, *stats*, and *utils* packages, are loaded by default when you start an R session. Functions in *dplyr*, *ggplot2*, *lubridate*, *purrr*, *readr*, *stringr*, *tibble*, *tidyr*, and *tidyverse* are loaded with `library(tidyverse)`.
-* I do not include functions that I recommend avoiding.
-* Regular expressions metacharacters are not functions!
-:::
-
-* `.Primitive, <-`: Infix operator that assigns a name (LHS) to the object on the right-hand-side (RHS) -- this should be used for global assignments!
-* `.Primitive, ()`: Operator that evaluates the function name on the left-hand-side (LHS) of the opening parentheses using the arguments enclosed by the parentheses
-* `.Primitive, {`: Operator that passes the last operation in `{...}` to the global environment
-* `.Primitive, <-`: Infix operator that assigns a name (LHS) to the object on the right-hand-side (RHS) -- this should be used for global assignments!
-* `.Primitive, =`: Infix operator that assigns a name (LHS) to the object on the RHS -- this should not be used for global assignments!
-* `.Primitive, ~`: The formula operator separates the left- and right-hand sides (LHS and RHS) in a formula.
-* `.Primitive, :`: Infix operator that generates a regular sequence of adjacent values
-* `.Primitive, :::`: Infix operator that can be used to access a function that is not meant to be exported!
-* `.Primitive, !`: Prefix logical operator (not)
-* `.Primitive, c`: Combine values to form an atomic vector
-* `.Primitive, else`: Used in conjunction with `if`, evaluate a statement when `if` evaluates to FALSE.
-* `.Primitive, if`: If a logical value is TRUE, evaluate a statement
-* `base::rm`: Remove a name from a specified environment (default is the global environment)
-* `base::sum`: Calculate the sum of a numeric vector
-* `base::summary`: Print summary stats for a data object
-* `dplyr::if_else`: Classify or reclassify a vector into two classes by applying a logical test and assigning one value if the test evaluates to `TRUE` and another if it evaluates to `FALSE`
-* `dplyr::left_join`: A mutating join that joins a source table to a target table and maintains all records found in the target table, regardless of matching key values
-* `dplyr::select`: Subset columns in a data frame by name
-* `dplyr::summarize`: Calculate one or more summary statistics on a variable or variables in a data frame (often used in conjunction with `group_by()` but may also be used with `.by = ...`)
-* `ggplot2::aes`: Define aesthetics
-* `ggplot2::geom_bar`: Create a bar geometry
-* `ggplot2::geom_boxplot`: Create a boxplot geometry
-* `ggplot2::ggplot`: Set the data and, potentially, the aesthetics of a plot
-* `lubridate::as_date`: Convert properly formatted date, stored as a character or datetime vector, to a date class object
-* `lubridate::dmy`: Convert a date formatted as day, month, year (European date format) to a date class object
-* `magrittr::%>%`: The pipe operator passes the output of the LHS argument to the function on the right
-* `purrr::map`: Iterate across a vector and return a list
-* `purrr::map_vec`: Iterate across a vector and return a vector of values of the same length
-* `purrr::pluck`: Extract a list item from a list
-* `readr::read_rds`: Read an RDS file into R
-* `stringr::str_detect`: Logical test of whether a pattern (string) is contained within a character value
-* `tidyselect::matches`: When used with select, this allows you to subset names with string matching
-* `tidyr::drop_na`: Remove rows that contain NA values
-* `tidyselect:::select`: Extract by name from any named object (without quotes!)
-:::
+{{< include /src/includes/_reference_section.qmd >}}
 
 <button class="accordion">Metacharacters in regex</button>
 ::: panel
@@ -173,16 +93,3 @@ When you are given a list of functions that you may use in a given problem set, 
 * **Repetition**, `{...,...}`: Specify that a symbol may appear within a range of repetitions
 * **Wild card**, `.`: Specify that a character value at a given location can be any symbol
 :::
-
-
-<button class="accordion">Keyboard shortcuts</button>
-::: panel
-
-{{< include ../../src/includes/keyboard_shortcuts.qmd >}}
-:::
-
-<button class="accordion">R Studio panes</button>
-::: panel
-{{< include ../../src/includes/rstudio_panes.qmd >}}
-:::
-

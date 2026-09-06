@@ -1,0 +1,30 @@
+## Reference
+
+```{r}
+#| label: glossary
+#| message: false
+#| echo: false
+#| results: "asis"
+
+module_refs$terms %>%
+  glossary_panel_html() %>%
+  cat()
+```
+
+<button class="accordion">Functions introduced through the end of this module</button>
+::: panel
+**Important!** Primitive functions, as well as functions in the packages that R attaches by default (e.g., *base*, *utils*, *stats*, and *graphics*), are available as soon as you start an R session.
+
+::: function_table
+
+```{r}
+#| label: functions
+#| message: false
+#| echo: false
+
+module_refs$functions %>%
+  function_table_kable(.cumulative = TRUE)
+```
+
+:::
+:::

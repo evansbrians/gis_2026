@@ -1,28 +1,17 @@
 ---
 title: "8.5 Introduction to tmap version 4"
-format:
-  html:
-    embed-resouces: true
-    self-contained: true
-    standalone: true
-    toc: true
-    toc-location: left
-    number-sections: false
-    search: true
-    include-in-header: ../../src/includes/header_includes.html
-    include-after-body: ../../src/includes/accordion_script.html
-    theme: 
-      - cosmo
-      - ../../src/css/custom_style.scss
-editor: source
-editor_options: 
-  chunk_output_type: console
+format: live-html
 ---
 
-```{r, include = FALSE}
+```{r}
+#| include: false
+
 source("src/r/course_functions.R")
 ```
-```{r setup, include=FALSE}
+```{r}
+#| label: setup
+#| include: false
+
 library(tidyverse)
 library(DT)
 
@@ -64,21 +53,13 @@ Please click on the buttons below to explore the metadata for this lesson!
 
 ::: panel
 
-**[lanternfly_proc.rds]{.mono}**. These data represent a subset of our larger [spotted_lanternfly.rds]{.mono} file. The data are formatted as a tibble data frame object. Location data are recorded in an unprojected Coordinate Reference System (CRS) with the datum WGS84 and EPSG code 4326. The dataset includes the following variables:
+```{r}
+#| echo: false
+#| output: asis
 
-* [datetime]{.mono}, datetime: The date and time in which an observation took place.
-* [longitude]{.mono}, numeric: The longitudinal coordinates of an observation, in decimal degrees.
-* [latitude]{.mono}, numeric: The latitudinal coordinates of an observation, in decimal degrees.
-
-[**states_east.geojson**]{.mono}: A polygon shapefile of states in the Eastern US. The data are in a projected Coordinate Reference System with the datum NAD83 and EPSG code 5070. Fields include:
-
-* [geoid]{.mono}, character: The **primary key** key for each state.
-* [name]{.mono}, character: The name of each state.
-* [region]{.mono}, character: The region of the United States where each state is located.
-* [area]{.mono}, numeric: The total area of each state, in square kilometers.
-* [ttl__10]{.mono}, numeric: The total population of each state in 2010.
-* [ttl__15]{.mono}, numeric: The total population of each state in 2015.
-
+lesson_metadata(.dataset = c("lanternfly_proc.rds", "states_east.geojson")) %>%
+  cat()
+```
 :::
 
 ## Set up your session
@@ -93,7 +74,9 @@ Please do the following to ensure that you are working in a clean session:
 
 4. Please run the following in your console pane to load required packages:
 
-```{r, eval = FALSE}
+```{r}
+#| eval: false
+
 install.packages(
   c(
     "colorblindcheck",
@@ -106,7 +89,10 @@ install.packages(
 
 5. Run the setup section of the script.
 
-```{r eval = TRUE, message = FALSE, warning = FALSE}
+```{r}
+#| eval: true
+#| message: false
+#| warning: false
 
 # setup -------------------------------------------------------------------
 
@@ -860,7 +846,9 @@ tm_basemap("OpenStreetMap") +
 
 Although the warning message might seem annoying at first, it reveals something cool -- we have more choices! Under-the-hood, Version 4 now uses the cols4all package to specify color palettes. Previously we used `tmaptools::palette_explorer()` to search for the ideal palette. We now have `cols4all::c4a_gui()`:
 
-```{r, eval = FALSE}
+```{r}
+#| eval: false
+
 cols4all::c4a_gui()
 ```
 

@@ -1,0 +1,1567 @@
+---
+title: "Course reference"
+format:
+  html:
+    theme:
+      - darkly
+      - ../css/reference_gui.scss
+    embed-resources: false
+    self-contained: false
+    page-layout: full
+    toc: false
+    search: false
+server: shiny
+editor: source
+---
+
+```{r}
+#| label: setup
+#| context: setup
+#| include: false
+
+library(DBI)
+library(RSQLite)
+library(dbplyr)
+library(DT)
+library(shiny)
+library(tidyverse)
+
+# Resolve project files whether the app is served from the project root or from
+# src/reference:
+
+c("src/r/reference_gui_db.R", "../r/reference_gui_db.R") %>%
+  keep(fs::file_exists) %>%
+  first() %>%
+  source()
+
+con <- reference_connect()
+
+onStop(
+  function() {
+    dbDisconnect(con)
+  }
+)
+
+# Browser-side helpers (copy to clipboard, unsaved-edit guard, Ctrl/Cmd + S):
+
+gui_dependency <-
+  htmltools::htmlDependency(
+    name = "reference-gui",
+    version = "1.1.0",
+    src =
+      c("src/js", "../js") %>%
+      keep(fs::dir_exists) %>%
+      first() %>%
+      fs::path_abs(),
+    script = "reference_gui.js"
+  )
+
+comment_classes <- c("formatting", "parsimony", "best_practice")
+
+assignment_types <- c("problem_set", "extra_credit", "final_exam")
+
+item_types <- c("question", "policy")
+
+# A titled card -- the single building block of every tab:
+
+gui_card <-
+  function(.title, .body, .foot = NULL) {
+    div(
+      class = "gui-card",
+      div(class = "gui-card-head", .title),
+      div(class = "gui-card-body", .body),
+      .foot
+    )
+  }
+
+# The left column of a tab: a search box, the record list, and its buttons:
+
+record_list <-
+  function(.prefix, .title, .extra = NULL) {
+    gui_card(
+      .title,
+      tagList(
+        .extra,
+        textInput(
+          str_c(.prefix, "_search"),
+          NULL,
+          placeholder = "Search",
+          width = "100%"
+        ),
+        div(
+          class = "gui-record-list",
+          selectInput(
+            str_c(.prefix, "_record"),
+            NULL,
+            choices = NULL,
+            selectize = FALSE,
+            size = 14,
+            width = "100%"
+          )
+        ),
+        div(
+          class = "gui-list-actions",
+          actionButton(
+            str_c(.prefix, "_new"),
+            "New",
+            class = "gui-btn gui-btn-ghost"
+          ),
+          actionButton(
+            str_c(.prefix, "_delete"),
+            "Delete",
+            class = "gui-btn gui-btn-danger"
+          )
+        )
+      )
+    )
+  }
+
+# The action bar that closes an editing card:
+
+card_foot <-
+  function(.prefix, .buttons) {
+    div(
+      class = "gui-card-foot",
+      .buttons,
+      div(
+        id = str_c(.prefix, "_message"),
+        class = "gui-message",
+        textOutput(str_c(.prefix, "_status"), inline = TRUE)
+      )
+    )
+  }
+
+# The right column of a record tab: the fields, save, and a status line:
+
+record_editor <-
+  function(.prefix, .title, .fields, .save_label, .copy_label = NULL) {
+    gui_card(
+      .title,
+      .fields,
+      card_foot(
+        .prefix,
+        tagList(
+          actionButton(
+            str_c(.prefix, "_save"),
+            .save_label,
+            class = "gui-btn gui-btn-primary gui-save"
+          ),
+          if (is.null(.copy_label)) {
+            NULL
+          } else {
+            actionButton(
+              str_c(.prefix, "_copy"),
+              .copy_label,
+              class = "gui-btn gui-btn-ghost"
+            )
+          }
+        )
+      )
+    )
+  }
+
+# A picker-only left column, for tabs that select a parent record:
+
+picker_card <-
+  function(.title, .input_id, .size = 14) {
+    gui_card(
+      .title,
+      div(
+        class = "gui-record-list",
+        selectInput(
+          .input_id,
+          NULL,
+          choices = NULL,
+          selectize = FALSE,
+          size = .size,
+          width = "100%"
+        )
+      )
+    )
+  }
+
+# A tab holding a left column beside a right column:
+
+split_tab <-
+  function(.title, .left, .right) {
+    tabPanel(
+      title = .title,
+      div(
+        class = "gui-pane",
+        .left,
+        .right
+      )
+    )
+  }
+
+# A row of side-by-side fields:
+
+field_row <-
+  function(...) {
+    div(class = "gui-field-row", ...)
+  }
+
+# A table styled for the dark theme:
+
+gui_table <-
+  function(.data, .selection = "none", .page_length = 12, .editable = FALSE) {
+    datatable(
+      .data,
+      rownames = FALSE,
+      selection = .selection,
+      editable = .editable,
+      class = "compact stripe hover",
+      options =
+        list(
+          dom = "ftp",
+          pageLength = .page_length,
+          scrollX = TRUE
+        )
+    )
+  }
+```
+
+```{r}
+#| label: ui-functions
+#| echo: false
+
+functions_tab <-
+  split_tab(
+    "Functions",
+    record_list("fn", "Functions"),
+    record_editor(
+      "fn",
+      "Function definition",
+      tagList(
+        field_row(
+          textInput(
+            "fn_package",
+            "Package",
+            width = "100%"
+          ),
+          textInput(
+            "fn_name",
+            "Function name",
+            width = "100%"
+          )
+        ),
+        textAreaInput(
+          "fn_definition",
+          "Definition",
+          rows = 5,
+          width = "100%",
+          resize = "vertical"
+        ),
+        selectizeInput(
+          "fn_lessons",
+          "Taught in lessons",
+          choices = NULL,
+          multiple = TRUE,
+          width = "100%"
+        )
+      ),
+      .save_label = "Save function",
+      .copy_label = "Copy definition"
+    )
+  )
+```
+
+```{r}
+#| label: ui-glossary
+#| echo: false
+
+glossary_tab <-
+  split_tab(
+    "Glossary",
+    record_list("gl", "Glossary terms"),
+    record_editor(
+      "gl",
+      "Term definition",
+      tagList(
+        textInput(
+          "gl_term",
+          "Term",
+          width = "100%"
+        ),
+        textAreaInput(
+          "gl_definition",
+          "Definition",
+          rows = 5,
+          width = "100%",
+          resize = "vertical"
+        ),
+        selectizeInput(
+          "gl_lessons",
+          "Introduced in lessons",
+          choices = NULL,
+          multiple = TRUE,
+          width = "100%"
+        )
+      ),
+      .save_label = "Save term",
+      .copy_label = "Copy definition"
+    )
+  )
+```
+
+```{r}
+#| label: ui-datasets
+#| echo: false
+
+datasets_tab <-
+  split_tab(
+    "Datasets",
+    record_list("ds", "Datasets"),
+    record_editor(
+      "ds",
+      "Dataset description",
+      tagList(
+        field_row(
+          textInput(
+            "ds_name",
+            "Dataset name",
+            width = "100%"
+          ),
+          textInput(
+            "ds_display",
+            "Display name",
+            width = "100%"
+          )
+        ),
+        textInput(
+          "ds_files",
+          "Files",
+          width = "100%"
+        ),
+        textAreaInput(
+          "ds_description",
+          "Description",
+          rows = 7,
+          width = "100%",
+          resize = "vertical"
+        )
+      ),
+      .save_label = "Save dataset",
+      .copy_label = "Copy description"
+    )
+  )
+```
+
+```{r}
+#| label: ui-grading
+#| echo: false
+
+grading_tab <-
+  split_tab(
+    "Grading comments",
+    record_list(
+      "gc",
+      "Grading comments",
+      .extra =
+        selectInput(
+          "gc_filter",
+          "Class",
+          choices = c("all", comment_classes),
+          width = "100%"
+        )
+    ),
+    record_editor(
+      "gc",
+      "Comment text",
+      tagList(
+        field_row(
+          textInput(
+            "gc_short_name",
+            "Short name",
+            width = "100%"
+          ),
+          selectInput(
+            "gc_class",
+            "Class",
+            choices = comment_classes,
+            width = "100%"
+          ),
+          selectizeInput(
+            "gc_subclass",
+            "Subclass",
+            choices = NULL,
+            options = list(create = TRUE),
+            width = "100%"
+          )
+        ),
+        textAreaInput(
+          "gc_text",
+          "Comment",
+          rows = 7,
+          width = "100%",
+          resize = "vertical"
+        )
+      ),
+      .save_label = "Save comment",
+      .copy_label = "Copy comment"
+    )
+  )
+```
+
+```{r}
+#| label: ui-assignments
+#| echo: false
+
+assignments_tab <-
+  split_tab(
+    "Assignments",
+    record_list("rb", "Assignments"),
+    record_editor(
+      "rb",
+      "Assignment",
+      tagList(
+        field_row(
+          textInput(
+            "rb_name",
+            "Assignment name",
+            width = "100%"
+          ),
+          selectInput(
+            "rb_type",
+            "Type",
+            choices = assignment_types,
+            width = "100%"
+          ),
+          numericInput(
+            "rb_total",
+            "Total points",
+            value = 10,
+            min = 0,
+            step = 0.25,
+            width = "100%"
+          )
+        ),
+        textAreaInput(
+          "rb_description",
+          "Description",
+          rows = 4,
+          width = "100%",
+          resize = "vertical"
+        )
+      ),
+      .save_label = "Save assignment"
+    )
+  )
+```
+
+```{r}
+#| label: ui-rubric-items
+#| echo: false
+
+rubric_items_tab <-
+  split_tab(
+    "Rubric items",
+    picker_card("Assignment", "ri_assignment", .size = 10),
+    gui_card(
+      "Rubric items (click any cell to edit)",
+      tagList(
+        DTOutput("ri_items"),
+        div(
+          class = "mt-4",
+          field_row(
+            selectInput(
+              "ri_type",
+              "Type",
+              choices = item_types,
+              width = "100%"
+            ),
+            textInput(
+              "ri_label",
+              "Label",
+              width = "100%"
+            ),
+            numericInput(
+              "ri_points",
+              "Points",
+              value = NA,
+              step = 0.25,
+              width = "100%"
+            ),
+            numericInput(
+              "ri_pct",
+              "Deduct %",
+              value = NA,
+              step = 5,
+              width = "100%"
+            )
+          ),
+          textInput(
+            "ri_criterion",
+            "Criterion",
+            width = "100%"
+          )
+        )
+      ),
+      card_foot(
+        "ri",
+        tagList(
+          actionButton(
+            "ri_add",
+            "Add item",
+            class = "gui-btn gui-btn-primary gui-save"
+          ),
+          actionButton(
+            "ri_delete",
+            "Delete selected",
+            class = "gui-btn gui-btn-danger"
+          )
+        )
+      )
+    )
+  )
+```
+
+```{r}
+#| label: ui-rubric-comments
+#| echo: false
+
+rubric_comments_tab <-
+  split_tab(
+    "Rubric comments",
+    picker_card("Rubric item", "rc_item", .size = 18),
+    gui_card(
+      "Grading comments linked to this rubric item",
+      tagList(
+        DTOutput("rc_links"),
+        div(
+          class = "mt-4",
+          selectizeInput(
+            "rc_comment",
+            "Grading comment",
+            choices = NULL,
+            width = "100%"
+          ),
+          numericInput(
+            "rc_deduction",
+            "Deduction",
+            value = 0.1,
+            step = 0.05,
+            width = "100%"
+          )
+        )
+      ),
+      card_foot(
+        "rc",
+        tagList(
+          actionButton(
+            "rc_link",
+            "Link comment",
+            class = "gui-btn gui-btn-primary gui-save"
+          ),
+          actionButton(
+            "rc_unlink",
+            "Unlink selected",
+            class = "gui-btn gui-btn-danger"
+          )
+        )
+      )
+    )
+  )
+```
+
+```{r}
+#| label: ui-lessons
+#| echo: false
+
+lessons_tab <-
+  split_tab(
+    "Lessons",
+    record_list("ls", "Lessons"),
+    record_editor(
+      "ls",
+      "Lesson",
+      tagList(
+        field_row(
+          selectInput(
+            "ls_module",
+            "Module",
+            choices = NULL,
+            width = "100%"
+          ),
+          textInput(
+            "ls_title",
+            "Lesson title",
+            width = "100%"
+          )
+        ),
+        textInput(
+          "ls_slug",
+          "Slug",
+          width = "100%"
+        ),
+        textInput(
+          "ls_path",
+          "File path",
+          width = "100%"
+        )
+      ),
+      .save_label = "Save lesson"
+    )
+  )
+```
+
+```{r}
+#| label: ui-modules
+#| echo: false
+
+modules_tab <-
+  tabPanel(
+    title = "Modules",
+    div(
+      class = "gui-pane-wide",
+      gui_card(
+        "Modules (click a title to edit)",
+        DTOutput("md_modules"),
+        card_foot("md", NULL)
+      )
+    )
+  )
+```
+
+```{r}
+#| label: ui-app
+#| echo: false
+
+tagList(
+  gui_dependency,
+  div(
+    class = "gui-header",
+    div(
+      h1("Course reference", class = "gui-title"),
+      div(class = "gui-subtitle", reference_db_path())
+    ),
+    uiOutput("status_bar", class = "gui-stats")
+  ),
+  tabsetPanel(
+    id = "gui_tabs",
+    type = "tabs",
+    functions_tab,
+    glossary_tab,
+    datasets_tab,
+    grading_tab,
+    assignments_tab,
+    rubric_items_tab,
+    rubric_comments_tab,
+    lessons_tab,
+    modules_tab
+  )
+)
+```
+
+```{r}
+#| label: server
+#| context: server
+
+# status messages ---------------------------------------------------------
+
+fn_note <- reactiveVal("")
+gl_note <- reactiveVal("")
+ds_note <- reactiveVal("")
+gc_note <- reactiveVal("")
+rb_note <- reactiveVal("")
+ri_note <- reactiveVal("")
+rc_note <- reactiveVal("")
+ls_note <- reactiveVal("")
+md_note <- reactiveVal("")
+
+output$fn_status <- renderText(fn_note())
+output$gl_status <- renderText(gl_note())
+output$ds_status <- renderText(ds_note())
+output$gc_status <- renderText(gc_note())
+output$rb_status <- renderText(rb_note())
+output$ri_status <- renderText(ri_note())
+output$rc_status <- renderText(rc_note())
+output$ls_status <- renderText(ls_note())
+output$md_status <- renderText(md_note())
+
+# reactive reads ----------------------------------------------------------
+
+refresh <- reactiveVal(0)
+
+bump <-
+  function() {
+    refresh(isolate(refresh()) + 1)
+    session$sendCustomMessage("reference_gui_clean", list())
+  }
+
+functions_data <-
+  reactive({
+    refresh()
+    read_reference(con, "functions") %>%
+      arrange(package, function_name)
+  })
+
+glossary_data <-
+  reactive({
+    refresh()
+    read_reference(con, "glossary") %>%
+      arrange(term)
+  })
+
+datasets_data <-
+  reactive({
+    refresh()
+    read_reference(con, "datasets") %>%
+      arrange(dataset_name)
+  })
+
+comments_data <-
+  reactive({
+    refresh()
+    read_reference(con, "grading_comments") %>%
+      arrange(comment_class, comment_subclass, short_name)
+  })
+
+assignments_data <-
+  reactive({
+    refresh()
+    read_reference(con, "assignments") %>%
+      arrange(assignment_type, assignment_name)
+  })
+
+all_items_data <-
+  reactive({
+    refresh()
+    read_reference(con, "rubric_items") %>%
+      left_join(assignments_data(), by = "assignment_id") %>%
+      arrange(assignment_name, item_type, item_order)
+  })
+
+lessons_data <-
+  reactive({
+    refresh()
+    read_reference(con, "lessons") %>%
+      arrange(module_number, slug)
+  })
+
+modules_data <-
+  reactive({
+    refresh()
+    read_reference(con, "modules") %>%
+      arrange(module_number)
+  })
+
+lesson_choices <-
+  reactive({
+    lessons_data() %>%
+      select(slug, lesson_id) %>%
+      deframe()
+  })
+
+# header ------------------------------------------------------------------
+
+output$status_bar <-
+  renderUI({
+    reference_counts(con) %>%
+      imap(
+        \(.n, .table) {
+          span(
+            class = "gui-stat",
+            str_replace_all(.table, "_", " "),
+            tags$strong(.n)
+          )
+        }
+      )
+  })
+
+# functions ---------------------------------------------------------------
+
+fn_id <- reactiveVal(NA_integer_)
+
+observe({
+  choices <-
+    functions_data() %>%
+    mutate(label = str_c(package, "::", function_name)) %>%
+    filter(str_like(label, str_c("%", coalesce(input$fn_search, ""), "%"))) %>%
+    select(label, function_id) %>%
+    deframe()
+
+  updateSelectInput(
+    session,
+    "fn_record",
+    choices = choices,
+    selected = fn_id()
+  )
+})
+
+observe({
+  updateSelectizeInput(
+    session,
+    "fn_lessons",
+    choices = lesson_choices(),
+    selected = isolate(input$fn_lessons),
+    server = TRUE
+  )
+})
+
+observeEvent(input$fn_record, {
+  fn_id(as.integer(input$fn_record))
+
+  record <-
+    functions_data() %>%
+    filter(function_id == as.integer(input$fn_record))
+
+  updateTextInput(session, "fn_package", value = record$package)
+  updateTextInput(session, "fn_name", value = record$function_name)
+  updateTextAreaInput(session, "fn_definition", value = record$definition)
+
+  updateSelectizeInput(
+    session,
+    "fn_lessons",
+    choices = lesson_choices(),
+    selected = usage_lessons(con, "function_usage", "function_id", fn_id()),
+    server = TRUE
+  )
+})
+
+observeEvent(input$fn_new, {
+  fn_id(NA_integer_)
+  updateTextInput(session, "fn_package", value = "")
+  updateTextInput(session, "fn_name", value = "")
+  updateTextAreaInput(session, "fn_definition", value = "")
+
+  updateSelectizeInput(
+    session,
+    "fn_lessons",
+    choices = lesson_choices(),
+    selected = character(0),
+    server = TRUE
+  )
+
+  fn_note("New function -- fill the fields and save.")
+})
+
+observeEvent(input$fn_save, {
+  values <-
+    tibble(
+      package = input$fn_package,
+      function_name = input$fn_name,
+      definition = input$fn_definition
+    )
+
+  if (is.na(fn_id())) {
+    append_reference(con, "functions", values)
+    fn_id(last_reference_id(con))
+  } else {
+    update_reference(
+      con,
+      "functions",
+      values %>% mutate(function_id = fn_id()),
+      .by = "function_id"
+    )
+  }
+
+  sync_usage(con, "function_usage", "function_id", fn_id(), input$fn_lessons)
+  bump()
+  fn_note(str_c("Saved ", input$fn_name, "()."))
+})
+
+observeEvent(input$fn_delete, {
+  delete_with_usage(con, "functions", "function_usage", "function_id", fn_id())
+  fn_id(NA_integer_)
+  bump()
+  fn_note("Deleted.")
+})
+
+observeEvent(input$fn_copy, {
+  session$sendCustomMessage(
+    "reference_gui_copy",
+    list(
+      text = input$fn_definition,
+      flash = "fn_message"
+    )
+  )
+
+  fn_note("Definition copied.")
+})
+
+# glossary ----------------------------------------------------------------
+
+gl_id <- reactiveVal(NA_integer_)
+
+observe({
+  choices <-
+    glossary_data() %>%
+    filter(str_like(term, str_c("%", coalesce(input$gl_search, ""), "%"))) %>%
+    select(term, term_id) %>%
+    deframe()
+
+  updateSelectInput(
+    session,
+    "gl_record",
+    choices = choices,
+    selected = gl_id()
+  )
+})
+
+observeEvent(input$gl_record, {
+  gl_id(as.integer(input$gl_record))
+
+  record <-
+    glossary_data() %>%
+    filter(term_id == as.integer(input$gl_record))
+
+  updateTextInput(session, "gl_term", value = record$term)
+  updateTextAreaInput(session, "gl_definition", value = record$definition)
+
+  updateSelectizeInput(
+    session,
+    "gl_lessons",
+    choices = lesson_choices(),
+    selected = usage_lessons(con, "term_usage", "term_id", gl_id()),
+    server = TRUE
+  )
+})
+
+observeEvent(input$gl_new, {
+  gl_id(NA_integer_)
+  updateTextInput(session, "gl_term", value = "")
+  updateTextAreaInput(session, "gl_definition", value = "")
+
+  updateSelectizeInput(
+    session,
+    "gl_lessons",
+    choices = lesson_choices(),
+    selected = character(0),
+    server = TRUE
+  )
+
+  gl_note("New term -- fill the fields and save.")
+})
+
+observeEvent(input$gl_save, {
+  values <-
+    tibble(
+      term = input$gl_term,
+      definition = input$gl_definition
+    )
+
+  if (is.na(gl_id())) {
+    append_reference(con, "glossary", values)
+    gl_id(last_reference_id(con))
+  } else {
+    update_reference(
+      con,
+      "glossary",
+      values %>% mutate(term_id = gl_id()),
+      .by = "term_id"
+    )
+  }
+
+  sync_usage(con, "term_usage", "term_id", gl_id(), input$gl_lessons)
+  bump()
+  gl_note(str_c("Saved ", input$gl_term, "."))
+})
+
+observeEvent(input$gl_delete, {
+  delete_with_usage(con, "glossary", "term_usage", "term_id", gl_id())
+  gl_id(NA_integer_)
+  bump()
+  gl_note("Deleted.")
+})
+
+observeEvent(input$gl_copy, {
+  session$sendCustomMessage(
+    "reference_gui_copy",
+    list(
+      text = input$gl_definition,
+      flash = "gl_message"
+    )
+  )
+
+  gl_note("Definition copied.")
+})
+
+# datasets ----------------------------------------------------------------
+
+ds_id <- reactiveVal(NA_integer_)
+
+observe({
+  choices <-
+    datasets_data() %>%
+    filter(
+      str_like(dataset_name, str_c("%", coalesce(input$ds_search, ""), "%"))
+    ) %>%
+    select(dataset_name, dataset_id) %>%
+    deframe()
+
+  updateSelectInput(
+    session,
+    "ds_record",
+    choices = choices,
+    selected = ds_id()
+  )
+})
+
+observeEvent(input$ds_record, {
+  ds_id(as.integer(input$ds_record))
+
+  record <-
+    datasets_data() %>%
+    filter(dataset_id == as.integer(input$ds_record))
+
+  updateTextInput(session, "ds_name", value = record$dataset_name)
+
+  updateTextInput(
+    session,
+    "ds_display",
+    value = coalesce(record$display_name, "")
+  )
+
+  updateTextInput(session, "ds_files", value = coalesce(record$files, ""))
+  updateTextAreaInput(session, "ds_description", value = record$description)
+})
+
+observeEvent(input$ds_new, {
+  ds_id(NA_integer_)
+  updateTextInput(session, "ds_name", value = "")
+  updateTextInput(session, "ds_display", value = "")
+  updateTextInput(session, "ds_files", value = "")
+  updateTextAreaInput(session, "ds_description", value = "")
+  ds_note("New dataset -- fill the fields and save.")
+})
+
+observeEvent(input$ds_save, {
+  values <-
+    tibble(
+      dataset_name = input$ds_name,
+      display_name = na_if(input$ds_display, ""),
+      files = na_if(input$ds_files, ""),
+      description = input$ds_description
+    )
+
+  if (is.na(ds_id())) {
+    append_reference(con, "datasets", values)
+    ds_id(last_reference_id(con))
+  } else {
+    update_reference(
+      con,
+      "datasets",
+      values %>% mutate(dataset_id = ds_id()),
+      .by = "dataset_id"
+    )
+  }
+
+  bump()
+  ds_note(str_c("Saved ", input$ds_name, "."))
+})
+
+observeEvent(input$ds_delete, {
+  delete_with_usage(con, "datasets", "dataset_usage", "dataset_id", ds_id())
+  ds_id(NA_integer_)
+  bump()
+  ds_note("Deleted.")
+})
+
+observeEvent(input$ds_copy, {
+  session$sendCustomMessage(
+    "reference_gui_copy",
+    list(
+      text = input$ds_description,
+      flash = "ds_message"
+    )
+  )
+
+  ds_note("Description copied.")
+})
+
+# grading comments --------------------------------------------------------
+
+gc_id <- reactiveVal(NA_integer_)
+
+observe({
+  choices <-
+    comments_data() %>%
+    filter(
+      coalesce(input$gc_filter, "all") %in% c("all", comment_class),
+      str_like(
+        str_c(short_name, comment_text),
+        str_c("%", coalesce(input$gc_search, ""), "%")
+      )
+    ) %>%
+    select(short_name, comment_id) %>%
+    deframe()
+
+  updateSelectInput(
+    session,
+    "gc_record",
+    choices = choices,
+    selected = gc_id()
+  )
+})
+
+observe({
+  updateSelectizeInput(
+    session,
+    "gc_subclass",
+    choices = sort(unique(comments_data()$comment_subclass)),
+    selected = isolate(input$gc_subclass)
+  )
+})
+
+observeEvent(input$gc_record, {
+  gc_id(as.integer(input$gc_record))
+
+  record <-
+    comments_data() %>%
+    filter(comment_id == as.integer(input$gc_record))
+
+  updateTextInput(session, "gc_short_name", value = record$short_name)
+  updateSelectInput(session, "gc_class", selected = record$comment_class)
+
+  updateSelectizeInput(
+    session,
+    "gc_subclass",
+    choices = sort(unique(comments_data()$comment_subclass)),
+    selected = record$comment_subclass
+  )
+
+  updateTextAreaInput(session, "gc_text", value = record$comment_text)
+})
+
+observeEvent(input$gc_new, {
+  gc_id(NA_integer_)
+  updateTextInput(session, "gc_short_name", value = "")
+  updateTextAreaInput(session, "gc_text", value = "")
+  gc_note("New comment -- fill the fields and save.")
+})
+
+observeEvent(input$gc_save, {
+  values <-
+    tibble(
+      short_name = input$gc_short_name,
+      comment_class = input$gc_class,
+      comment_subclass = input$gc_subclass,
+      comment_text = input$gc_text
+    )
+
+  if (is.na(gc_id())) {
+    append_reference(con, "grading_comments", values)
+    gc_id(last_reference_id(con))
+  } else {
+    update_reference(
+      con,
+      "grading_comments",
+      values %>% mutate(comment_id = gc_id()),
+      .by = "comment_id"
+    )
+  }
+
+  bump()
+  gc_note(str_c("Saved ", input$gc_short_name, "."))
+})
+
+observeEvent(input$gc_delete, {
+  delete_reference(con, "grading_comments", "comment_id", gc_id())
+  gc_id(NA_integer_)
+  bump()
+  gc_note("Deleted.")
+})
+
+observeEvent(input$gc_copy, {
+  session$sendCustomMessage(
+    "reference_gui_copy",
+    list(
+      text = input$gc_text,
+      flash = "gc_message"
+    )
+  )
+
+  gc_note("Comment copied.")
+})
+
+# assignments -------------------------------------------------------------
+
+rb_id <- reactiveVal(NA_integer_)
+
+observe({
+  choices <-
+    assignments_data() %>%
+    filter(
+      str_like(assignment_name, str_c("%", coalesce(input$rb_search, ""), "%"))
+    ) %>%
+    select(assignment_name, assignment_id) %>%
+    deframe()
+
+  updateSelectInput(
+    session,
+    "rb_record",
+    choices = choices,
+    selected = rb_id()
+  )
+})
+
+observeEvent(input$rb_record, {
+  rb_id(as.integer(input$rb_record))
+
+  record <-
+    assignments_data() %>%
+    filter(assignment_id == as.integer(input$rb_record))
+
+  updateTextInput(session, "rb_name", value = record$assignment_name)
+  updateSelectInput(session, "rb_type", selected = record$assignment_type)
+  updateNumericInput(session, "rb_total", value = record$total_points)
+
+  updateTextAreaInput(
+    session,
+    "rb_description",
+    value = coalesce(record$description, "")
+  )
+})
+
+observeEvent(input$rb_new, {
+  rb_id(NA_integer_)
+  updateTextInput(session, "rb_name", value = "")
+  updateNumericInput(session, "rb_total", value = 10)
+  updateTextAreaInput(session, "rb_description", value = "")
+  rb_note("New assignment -- fill the fields and save.")
+})
+
+observeEvent(input$rb_save, {
+  values <-
+    tibble(
+      assignment_name = input$rb_name,
+      assignment_type = input$rb_type,
+      total_points = input$rb_total,
+      description = na_if(input$rb_description, "")
+    )
+
+  if (is.na(rb_id())) {
+    append_reference(con, "assignments", values)
+    rb_id(last_reference_id(con))
+  } else {
+    update_reference(
+      con,
+      "assignments",
+      values %>% mutate(assignment_id = rb_id()),
+      .by = "assignment_id"
+    )
+  }
+
+  bump()
+  rb_note(str_c("Saved ", input$rb_name, "."))
+})
+
+observeEvent(input$rb_delete, {
+  delete_assignment(con, rb_id())
+  rb_id(NA_integer_)
+  bump()
+  rb_note("Deleted assignment and its rubric.")
+})
+
+# rubric items ------------------------------------------------------------
+
+observe({
+  updateSelectInput(
+    session,
+    "ri_assignment",
+    choices =
+      assignments_data() %>%
+      select(assignment_name, assignment_id) %>%
+      deframe(),
+    selected = isolate(input$ri_assignment)
+  )
+})
+
+ri_items_data <-
+  reactive({
+    all_items_data() %>%
+      filter(assignment_id == as.integer(input$ri_assignment)) %>%
+      arrange(item_type, item_order) %>%
+      select(
+        item_id,
+        item_type,
+        item_order,
+        item_label,
+        criterion,
+        max_points,
+        deduction_pct,
+        deduction_points,
+        deduction_note
+      )
+  })
+
+ri_selected <-
+  reactive({
+    ri_items_data() %>%
+      slice(coalesce(input$ri_items_rows_selected, 0L)) %>%
+      pull(item_id) %>%
+      first(default = NA_integer_)
+  })
+
+output$ri_items <-
+  renderDT({
+    gui_table(
+      ri_items_data(),
+      .selection = "single",
+      .page_length = 15,
+      .editable = list(target = "cell", disable = list(columns = c(0, 1)))
+    )
+  })
+
+observeEvent(input$ri_items_cell_edit, {
+  edit <- input$ri_items_cell_edit
+  column <- names(ri_items_data())[edit$col + 1]
+
+  values <-
+    tibble(
+      item_id = ri_items_data()$item_id[edit$row],
+      value =
+        if (column %in% c("item_label", "criterion", "deduction_note")) {
+          edit$value
+        } else {
+          as.numeric(edit$value)
+        }
+    ) %>%
+    rename("{column}" := value)
+
+  update_reference(con, "rubric_items", values, .by = "item_id")
+  bump()
+  ri_note(str_c("Updated ", column, "."))
+})
+
+observeEvent(input$ri_add, {
+  req(input$ri_assignment)
+
+  values <-
+    tibble(
+      assignment_id = as.integer(input$ri_assignment),
+      item_type = input$ri_type,
+      item_order = nrow(ri_items_data()) + 1L,
+      item_label = input$ri_label,
+      criterion = input$ri_criterion,
+      max_points = input$ri_points,
+      deduction_pct = input$ri_pct
+    )
+
+  append_reference(con, "rubric_items", values)
+  bump()
+  ri_note(str_c("Added ", input$ri_label, "."))
+})
+
+observeEvent(input$ri_delete, {
+  req(!is.na(ri_selected()))
+
+  delete_with_usage(
+    con,
+    "rubric_items",
+    "rubric_item_comments",
+    "item_id",
+    ri_selected()
+  )
+
+  bump()
+  ri_note("Deleted rubric item.")
+})
+
+# rubric comments ---------------------------------------------------------
+
+observe({
+  updateSelectInput(
+    session,
+    "rc_item",
+    choices =
+      all_items_data() %>%
+      mutate(
+        label =
+          str_c(
+            assignment_name, "  ",
+            item_label, "  ",
+            str_trunc(criterion, 40)
+          )
+      ) %>%
+      select(label, item_id) %>%
+      deframe(),
+    selected = isolate(input$rc_item)
+  )
+})
+
+observe({
+  updateSelectizeInput(
+    session,
+    "rc_comment",
+    choices =
+      comments_data() %>%
+      mutate(label = str_c(short_name, " -- ", str_trunc(comment_text, 70))) %>%
+      select(label, comment_id) %>%
+      deframe(),
+    selected = isolate(input$rc_comment),
+    server = TRUE
+  )
+})
+
+rc_links_data <-
+  reactive({
+    refresh()
+    req(input$rc_item)
+
+    tbl(con, "rubric_item_comments") %>%
+      filter(item_id == !!as.integer(input$rc_item)) %>%
+      left_join(tbl(con, "grading_comments"), by = "comment_id") %>%
+      select(link_id, short_name, comment_class, deduction, comment_text) %>%
+      arrange(short_name) %>%
+      collect()
+  })
+
+output$rc_links <-
+  renderDT({
+    gui_table(
+      rc_links_data(),
+      .selection = "single",
+      .page_length = 10
+    )
+  })
+
+observeEvent(input$rc_link, {
+  req(input$rc_item, input$rc_comment)
+
+  values <-
+    tibble(
+      item_id = as.integer(input$rc_item),
+      comment_id = as.integer(input$rc_comment),
+      deduction = input$rc_deduction
+    )
+
+  append_reference(con, "rubric_item_comments", values)
+  bump()
+  rc_note("Linked grading comment.")
+})
+
+observeEvent(input$rc_unlink, {
+  req(input$rc_links_rows_selected)
+
+  link <-
+    rc_links_data() %>%
+    slice(input$rc_links_rows_selected) %>%
+    pull(link_id)
+
+  delete_reference(con, "rubric_item_comments", "link_id", link)
+  bump()
+  rc_note("Unlinked grading comment.")
+})
+
+# lessons -----------------------------------------------------------------
+
+ls_id <- reactiveVal(NA_integer_)
+
+observe({
+  choices <-
+    lessons_data() %>%
+    filter(
+      str_like(
+        str_c(slug, lesson_title),
+        str_c("%", coalesce(input$ls_search, ""), "%")
+      )
+    ) %>%
+    select(slug, lesson_id) %>%
+    deframe()
+
+  updateSelectInput(
+    session,
+    "ls_record",
+    choices = choices,
+    selected = ls_id()
+  )
+})
+
+observe({
+  updateSelectInput(
+    session,
+    "ls_module",
+    choices =
+      modules_data() %>%
+      mutate(label = str_c(module_number, "  ", module_title)) %>%
+      select(label, module_number) %>%
+      deframe(),
+    selected = isolate(input$ls_module)
+  )
+})
+
+observeEvent(input$ls_record, {
+  ls_id(as.integer(input$ls_record))
+
+  record <-
+    lessons_data() %>%
+    filter(lesson_id == as.integer(input$ls_record))
+
+  updateSelectInput(session, "ls_module", selected = record$module_number)
+  updateTextInput(session, "ls_title", value = record$lesson_title)
+  updateTextInput(session, "ls_slug", value = record$slug)
+  updateTextInput(session, "ls_path", value = record$file_path)
+})
+
+observeEvent(input$ls_new, {
+  ls_id(NA_integer_)
+  updateTextInput(session, "ls_title", value = "")
+  updateTextInput(session, "ls_slug", value = "")
+  updateTextInput(session, "ls_path", value = "")
+  ls_note("New lesson -- fill the fields and save.")
+})
+
+observeEvent(input$ls_save, {
+  values <-
+    tibble(
+      module_number = as.integer(input$ls_module),
+      slug = input$ls_slug,
+      lesson_title = input$ls_title,
+      file_path = input$ls_path
+    )
+
+  if (is.na(ls_id())) {
+    append_reference(con, "lessons", values)
+    ls_id(last_reference_id(con))
+  } else {
+    update_reference(
+      con,
+      "lessons",
+      values %>% mutate(lesson_id = ls_id()),
+      .by = "lesson_id"
+    )
+  }
+
+  bump()
+  ls_note(str_c("Saved ", input$ls_slug, "."))
+})
+
+observeEvent(input$ls_delete, {
+  delete_with_usage(
+    con,
+    "lessons",
+    c("function_usage", "term_usage"),
+    "lesson_id",
+    ls_id()
+  )
+
+  ls_id(NA_integer_)
+  bump()
+  ls_note("Deleted lesson and its reference links.")
+})
+
+# modules -----------------------------------------------------------------
+
+output$md_modules <-
+  renderDT({
+    gui_table(
+      modules_data(),
+      .page_length = 10,
+      .editable = list(target = "cell", disable = list(columns = 0))
+    )
+  })
+
+observeEvent(input$md_modules_cell_edit, {
+  values <-
+    tibble(
+      module_number = modules_data()$module_number[input$md_modules_cell_edit$row],
+      module_title = input$md_modules_cell_edit$value
+    )
+
+  update_reference(con, "modules", values, .by = "module_number")
+  bump()
+  md_note("Updated module title.")
+})
+```

@@ -1,0 +1,399 @@
+---
+title: "Problem set grade summaries"
+format:
+  html:
+    toc: false
+    number-sections: false
+editor: source
+editor_options:
+  chunk_output_type: console
+---
+
+```{r}
+#| label: setup
+#| echo: false
+#| message: false
+#| warning: false
+
+library(tidyverse)
+
+source("src/r/grading_pipeline.R")
+
+# Everything below is read from the saved grading run, so re-rendering after
+# more marking is finished brings the numbers with it.
+
+run <- read_grading_results(1)
+
+students <- run$students
+
+questions <- run$questions
+
+slots <- run$slots
+
+question_text <-
+  questions_from_qmd(1) %>%
+  transmute(
+    question,
+    stem = str_squish(str_remove_all(stem, "[*`]"))
+  )
+
+# A part's own wording, so a table can say what was being asked rather than
+# only which number it was.
+
+part_text <-
+  slots %>%
+  distinct(
+    question,
+    answer_order,
+    criterion
+  ) %>%
+  left_join(question_text, by = "question") %>%
+  mutate(
+    asked = str_squish(str_remove_all(coalesce(criterion, stem), "[*`]"))
+  )
+
+standard_table <-
+  function(.data) {
+    .data %>%
+      kableExtra::kbl() %>%
+      kableExtra::kable_paper("hover", full_width = FALSE)
+  }
+```
+
+<button class="accordion">Problem set 1</button>
+
+::: panel
+
+:::{style="background-color: white; font-size: 14px;"}
+
+## Problem set 1: R foundations
+
+```{r}
+#| label: provisional
+#| echo: false
+#| message: false
+#| warning: false
+#| results: asis
+
+flagged <- sum(slots$needs_review)
+
+cat(
+  "::: callout-note\n",
+  "These numbers are provisional. ", flagged,
+  " answers are still being looked at by hand, and every one of them is",
+  " currently scored as **correct**, so a few marks may still come down.\n",
+  ":::\n",
+  sep = ""
+)
+```
+
+Descriptive statistics of scores for Problem set 1:
+
+```{r}
+#| label: descriptives
+#| echo: false
+#| message: false
+#| warning: false
+#| results: asis
+
+cat(
+  "* Submissions: ", nrow(students), "\n",
+  "* Mean: ", round(mean(students$total), 2), "\n",
+  "* Median: ", round(median(students$total), 2), "\n",
+  "* Standard deviation: ", round(sd(students$total), 2), "\n",
+  "* Standard error: ",
+  round(sd(students$total) / sqrt(nrow(students)), 2), "\n",
+  "* Range: ", round(min(students$total), 2), " to ",
+  round(max(students$total), 2), "\n",
+  sep = ""
+)
+```
+
+Scores are out of 10, plus up to 1 point of extra credit for following the
+course style guide.
+
+Here is the distribution of scores:
+
+```{r}
+#| label: distribution
+#| echo: false
+#| message: false
+#| warning: false
+#| fig-asp: 0.4
+
+students %>%
+  ggplot() +
+  aes(x = total) +
+  geom_histogram(
+    binwidth = 0.5,
+    fill = "#dcdcdc",
+    color = "black"
+  ) +
+  geom_vline(
+    xintercept = mean(students$total),
+    linetype = "dashed"
+  ) +
+  scale_x_continuous(
+    breaks = seq(0, 11, 1),
+    expand = expansion(mult = c(0.01, 0.01))
+  ) +
+  scale_y_continuous(expand = expansion(mult = c(0, 0.05))) +
+  coord_cartesian(xlim = c(0, 11.1)) +
+  labs(
+    x = "Score (out of 10, plus style credit)",
+    y = "Students"
+  ) +
+  theme_classic()
+```
+
+The dashed line is the class mean.
+
+### Which questions were hardest
+
+```{r}
+#| label: by_question_plot
+#| echo: false
+#| message: false
+#| warning: false
+#| fig-asp: 0.45
+
+by_question <-
+  questions %>%
+  group_by(question) %>%
+  summarize(
+    points = first(question_points),
+    share_lost = mean(deduction / question_points),
+    .groups = "drop"
+  )
+
+by_question %>%
+  ggplot() +
+  aes(
+    x = factor(question),
+    y = share_lost
+  ) +
+  geom_col(
+    fill = "#dcdcdc",
+    color = "black"
+  ) +
+  scale_y_continuous(
+    labels = scales::percent,
+    expand = expansion(mult = c(0, 0.05))
+  ) +
+  labs(
+    x = "Question",
+    y = "Average share of the question's points lost"
+  ) +
+  theme_classic()
+```
+
+```{r}
+#| label: by_question_table
+#| echo: false
+#| message: false
+#| warning: false
+
+by_question %>%
+  left_join(question_text, by = "question") %>%
+  arrange(desc(share_lost)) %>%
+  transmute(
+    Question = question,
+    Points = points,
+    `Average deduction (%)` = round(share_lost * 100, 1),
+    `What it asked` = str_trunc(stem, 90)
+  ) %>%
+  standard_table()
+```
+
+### The parts that gave the most trouble
+
+Several questions were made of a few separate parts. These are the individual
+parts that cost the class the most.
+
+```{r}
+#| label: hardest_parts
+#| echo: false
+#| message: false
+#| warning: false
+
+slots %>%
+  group_by(question, answer_order) %>%
+  summarize(
+    points = first(slot_points),
+    share_lost = mean(deduction / slot_points),
+    .groups = "drop"
+  ) %>%
+  left_join(
+    part_text,
+    by = c("question", "answer_order")
+  ) %>%
+  filter(share_lost > 0) %>%
+  arrange(desc(share_lost)) %>%
+  head(8) %>%
+  transmute(
+    Part = str_c(question, ".", answer_order),
+    Points = points,
+    `Average deduction (%)` = round(share_lost * 100, 1),
+    `What it asked` = str_trunc(asked, 90)
+  ) %>%
+  standard_table()
+```
+
+### Using the functions the assignment allows
+
+This was the single biggest source of lost points, and it runs through most of
+the questions below. Each problem set lists the functions you may use, and
+reaching outside that list costs half the question, however good the answer is
+otherwise.
+
+The extraction operator `$` accounted for most of it. The hints in the problem
+set called it out by name, and it still came up more than any other function.
+
+```{r}
+#| label: unapproved
+#| echo: false
+#| message: false
+#| warning: false
+
+used_outside <-
+  slots %>%
+  select(student_id, unapproved) %>%
+  unnest(unapproved)
+
+if (nrow(used_outside)) {
+  used_outside %>%
+    group_by(unapproved) %>%
+    summarize(
+      Uses = n(),
+      Students = n_distinct(student_id),
+      .groups = "drop"
+    ) %>%
+    arrange(desc(Students), desc(Uses)) %>%
+    rename(Function = unapproved) %>%
+    standard_table()
+}
+```
+
+`[[` does everything `$` does for these questions, and it is on the list.
+`filter()` is a fine way to subset rows in general; it just was not among the
+functions available for this problem set, which is about the operators
+underneath the tidyverse rather than the tidyverse itself.
+
+A useful habit: before submitting, read your answer against the list and check
+every function in it, operators included.
+
+### The reference tree
+
+Question 4 asked for a reference tree showing the objects associated with names
+in your global environment. That is the environment itself, `.GlobalEnv`, not
+one object inside it.
+
+```{r}
+#| label: reference_tree
+#| echo: false
+#| message: false
+#| warning: false
+
+slots %>%
+  filter(question == 4, answer_order == 4) %>%
+  mutate(
+    target =
+      if_else(
+        str_detect(answer, "GlobalEnv"),
+        "lobstr::ref(.GlobalEnv)",
+        "pointed at something else"
+      )
+  ) %>%
+  count(target, name = "Students") %>%
+  rename(`What was passed to ref()` = target) %>%
+  standard_table()
+```
+
+### The style guide
+
+Style is extra credit: 10% of a question's points, added when every answer in
+that question follows the guide.
+
+```{r}
+#| label: style_credit
+#| echo: false
+#| message: false
+#| warning: false
+#| results: asis
+
+cat(
+  "* Average style credit earned: ",
+  round(mean(students$style_credit), 2), " of 1.00\n",
+  "* Students earning all of it: ",
+  sum(near(students$style_credit, 1)), " of ", nrow(students), "\n",
+  sep = ""
+)
+```
+
+These are the conventions the class broke most often:
+
+```{r}
+#| label: style_violations
+#| echo: false
+#| message: false
+#| warning: false
+
+slots %>%
+  select(student_id, violations) %>%
+  unnest(violations) %>%
+  group_by(comment_text) %>%
+  summarize(
+    Times = n(),
+    Students = n_distinct(student_id),
+    .groups = "drop"
+  ) %>%
+  arrange(desc(Times)) %>%
+  head(8) %>%
+  rename(Convention = comment_text) %>%
+  standard_table()
+```
+
+Question 10 handed you a block with ten specific violations in it and asked you
+to repair them. These are the ones most often left in place:
+
+```{r}
+#| label: repairs_missed
+#| echo: false
+#| message: false
+#| warning: false
+
+repairs <-
+  slots %>%
+  filter(question == 10) %>%
+  filter(!is.na(repair_unfixed_names), repair_unfixed_names != "")
+
+if (nrow(repairs)) {
+  tibble(
+    fault = unlist(str_split(repairs$repair_unfixed_names, " \\| "))
+  ) %>%
+    count(fault, name = "Students") %>%
+    arrange(desc(Students)) %>%
+    rename(`Violation left unrepaired` = fault) %>%
+    standard_table()
+}
+```
+
+```{r}
+#| label: repairs_clean
+#| echo: false
+#| message: false
+#| warning: false
+#| results: asis
+
+clean <- sum(slots$question == 10 & slots$repair_unfixed == 0)
+
+cat(
+  clean, " of ", nrow(students),
+  " submissions repaired all ten.\n",
+  sep = ""
+)
+```
+
+:::
+
+:::

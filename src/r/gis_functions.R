@@ -11,8 +11,7 @@
 # since that lesson uses the file itself -- by name -- as a live teaching
 # example of what a source script is. That local copy was left as-is rather
 # than pointed at this file, so the pedagogical narrative in 3.2 stays
-# accurate. If you want 3.2 (and 5.2) to source from here instead, that's a
-# small follow-up edit to their source() calls.
+# accurate.
 
 # Clean object names:
 

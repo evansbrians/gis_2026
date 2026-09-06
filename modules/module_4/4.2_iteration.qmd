@@ -1,28 +1,20 @@
 ---
 title: "4.2 Introduction to iteration"
-format:
-  html:
-    embed-resouces: true
-    self-contained: true
-    standalone: true
-    toc: true
-    toc-location: left
-    number-sections: false
-    search: true
-    include-in-header: ../../src/includes/header_includes.html
-    include-after-body: ../../src/includes/accordion_script.html
-    theme: 
-      - cosmo
-      - ../../src/css/custom_style.scss
-editor: source
-editor_options: 
-  chunk_output_type: console
+format: live-html
 ---
 
-```{r, include = FALSE}
+```{r}
+#| include: false
+
 source("src/r/course_functions.R")
+source("src/r/reference_lookup.R")
+
+lesson_refs <- find_lesson_references()
 ```
-```{r setup, include=FALSE}
+```{r}
+#| label: setup
+#| include: false
+
 library(tidyverse)
 library(DT)
 
@@ -59,102 +51,32 @@ Please click on the buttons below to explore the metadata for this lesson!
 ::: panel
 In the video portion of this lesson, we will explore:
 
-**[counties.geojson]{.mono}** and **[counties_low_res.geojson]{.mono}**: A polygon shapefile of all counties in the United States. The data are in an unprojected Coordinate Reference System with the datum NAD83 and EPSG code 4269. Relevant fields include:
+```{r}
+#| echo: false
+#| output: asis
 
-* [STATEFP]{.mono}, character: A **foreign key** to each US state in the [states]{.mono} data.
-* [COUNTYFP]{.mono}, character: An ID assigned to a given county in a given state.
-* [GEOID]{.mono}, character: The **primary key** key for each county (*Note: These values are a concatenation of [STATEFP]{.mono} and [COUNTYFP]{.mono}*).
-* [NAME]{.mono}, character: The name of each county.
-* [STUSPS]{.mono}, character: The two-letter postal code of the state each county is within.
-* [STATE_NAME]{.mono}, character: The name of the state each county is within.
-* [ALAND]{.mono}, numeric: The area covered by land in each census tract, in square meters.
-* [AWATER]{.mono}, numeric: The area covered by water in each census tract, in square meters.
-
-**[iris.rds]{.mono}**: A modified version of the `iris` dataset that is provided with the *datasets* package in the base R distribution. This is a tibble data frame in which each row represents observations of an individual plant (*Note: There is no primary key for the data frame* ).
-
-* [species]{.mono}, character: The species of iris that was measured (*Note: There are three species in the dataset* ).
-* [sepal_length]{.mono}, double numeric: The sepal length of a measured flower, in centimeters.
-* [sepal_width]{.mono}, double numeric: The sepal width of a measured flower, in centimeters.
-* [petal_length]{.mono}, double numeric: The petal length of a measured flower, in centimeters.
-* [petal_width]{.mono}, double numeric: The petal width of a measured flower, in centimeters.
-
-**[states]{.mono} ([.dbf]{.mono}, [.prj]{.mono}, [.shp]{.mono}, [.shx]{.mono})**: A polygon shapefile of US states (not including Hawaii). The data are in an unprojected Coordinate Reference System with the datum NAD83 and EPSG code 4269. The data include the following fields:
-
-* [GEOID]{.mono}, character: The **primary key** key for each state.
-* [NAME]{.mono}, character: The name of each state.
-* [REGION]{.mono}, character: The region of the United States where each state is located.
-* [AREA]{.mono}, numeric: The total area of each state, in square kilometers.
-* [ttl__10]{.mono}, numeric: The total population of each state in 2010.
-* [ttl__15]{.mono}, numeric: The total population of each state in 2015.
-
+lesson_metadata(
+  .dataset = c("counties.geojson", "iris.rds", "states"),
+  .variables =
+    list(
+      `counties.geojson` = c("STATEFP", "COUNTYFP", "GEOID", "NAME", "STUSPS", "STATE_NAME", "ALAND", "AWATER")
+    )
+) %>%
+  cat()
+```
 :::
 
 <button class="accordion">Metadata: Written lesson</button>
 ::: panel
 In the written portion of this lesson, we will explore:
 
-**[census.shp]{.mono}**: A polygon shapefile of US Census tracts in the District of Columbia, Maryland, and Virginia. The data are in an unprojected Coordinate Reference System with the datum NAD83 and EPSG code 4269. The dataset includes *a lot* of fields, so here I will just describe a few of them that may be relevant (now or in the future):
+```{r}
+#| echo: false
+#| output: asis
 
-* [STATEFP]{.mono}, character: A **foreign key** to each US state in the [states]{.mono} data.
-* [COUNTYFP]{.mono}, character: An ID assigned to a given county in a given state. *Note: When [STATEFP]{.mono} and [COUNTYFP]{.mono} are concatenated, this represents a **foreign key** to each county in the [counties]{.mono} data.
-* [GEOID]{.mono}, character: The **primary key** key for each census tract.
-* [ALAND]{.mono}, numeric: The area covered by land in each census tract, in square meters.
-* [AWATER]{.mono}, numeric: The area covered by water in each census tract, in square meters.
-* [edu]{.mono}, numeric: The proportion of the population in each census tract with at least an Associate's degree.
-* [income]{.mono}, numeric: The median income of each census tract.
-* [population]{.mono}, numeric: The total population of each census tract.
-* [state_name]{.mono}, character: The name of each state (spelled out for Maryland and Virginia, but abbreviated as "DC" for the District of Columbia).
-
-**[dc_census.shp]{.mono}**: A polygon shapefile of census tracts in the District of Columbia. The data are in a projected coordinate system (datum = WGS84, projection is UTM, Zone 18N) with the EPSG code 32618. The data include the following fields:
-
-* [GEOID]{.mono}, character: The **primary key** key for each census tract.
-* [STATEFP]{.mono}, character: A **foreign key** to the US state in the [states]{.mono} data.
-* [ALAND]{.mono}, numeric: The area covered by land in each census tract, in square meters.
-* [AWATER]{.mono}, numeric: The area covered by water in each census tract, in square meters.
-* [INCOME]{.mono}, numeric: The median income of each census tract.
-* [POPULATION]{.mono}, numeric: The total population of each census tract.
-
-**[portal.csv]{.mono}**: A tabular dataset describing measurements taken in a long term study (the Portal project) on rodent traits in Portal, Arizona.
-
-* [record_id]{.mono}, double numeric: A unique identifier for each row (but not a good one!)
-* [date]{.mono}, date: The date in which a rodent was captured
-* [plot_id]{.mono}, character: The plot in which the rodent was captured
-* [sex]{.mono}, character: The sex of the rodent
-* [hindfoot_length]{.mono}, double numeric: The hindfoot length of the rodent, in mm
-* [species]{.mono}, character: The species of rodent observed
-
-**[spotted_lanternfly.rds]{.mono}**. The data are formatted as a tibble data frame object. Location data are recorded in an unprojected Coordinate Reference System (CRS) with the datum WGS84 and EPSG code 4326. The dataset includes the following variables:
-
-* [datetime]{.mono}, datetime: The date and time in which an observation took place.
-* [user]{.mono}, character: The user id for a given iNaturalist user (*Note: In combination with `datetime`, this variable represents the **compound key** for this table -- a compound key is a set of variables in a data frame that, combined, represent the primary key of the data frame.*).
-* [state]{.mono}, character: The state in which an observation was made.
-* [place_guess]{.mono}, character: The location in which an observation was made (based on the coordinates of the observation).
-* [longitude]{.mono}, numeric: The longitudinal coordinates of an observation, in decimal degrees.
-* [latitude]{.mono}, numeric: The latitudinal coordinates of an observation, in decimal degrees.
-* [image_url]{.mono}, character: The web address of the picture submitted with an observation.
-* [quality_grade]{.mono}, character: Whether the observation was verified by experts ("research" grade) or has not been able to be verified ("casual" grade).
-* [description]{.mono}, character: A notes column where users can input comments about their observation
-
-**[weather_tidy.rds]{.mono}**: The data are formatted as a list object comprised of the following tibble data frames and variables:
-
-[stations]{.mono}
-
-* [station]{.mono}, character: The **primary key** for each weather station -- recall that a primary key is a unique identifier for a row (i.e., observation) in a data frame.
-* [longitude]{.mono}, numeric: The longitudinal coordinates of a weather station, in decimal degrees.
-* [latitude]{.mono}, numeric: The latitudinal coordinates of a weather station, in decimal degrees.
-* [elevation]{.mono}, numeric: The elevation of a weather station, in meters above sea level.
-* [state]{.mono}, character: The state where a weather station is located
-* [name]{.mono}, character: The name of a weather station
-
-[observations]{.mono}
-
-* [station]{.mono}, character: The **foreign key** key to each weather station -- recall that a foreign key is a variable that refers to the primary key of another data frame.
-* [date]{.mono}, character: The date of an observation. Note that the [station]{.mono} and [date]{.mono} columns comprise the **compound key** for this table -- a compound key is a set of variables in a data frame that, combined, represent the primary key of the data frame.
-* [precip]{.mono}, character: The daily precipitation at a weather station, in millimeters.
-* [snow]{.mono}, character: The daily snowfall at a weather station, in millimeters.
-* [temperature_min]{.mono}, character: The daily minimum temperature ($^\circ$C) at a weather station.
-* [temperature_max]{.mono}, character: The daily maximum temperature ($^\circ$C) at a weather station.
-
+lesson_metadata(.dataset = c("census", "dc_census", "portal.csv", "spotted_lanternfly.rds", "weather_tidy.rds")) %>%
+  cat()
+```
 :::
 
 ## Video: Introduction to iteration with *purrr*
@@ -188,7 +110,11 @@ Now that we are working in a clean session:
 
 At this point, your script should look something like:
 
-```{r eval = TRUE, results = 'hide', message = FALSE}
+```{r}
+#| eval: true
+#| results: hide
+#| message: false
+
 # My code for the iteration tutorial
 
 # setup --------------------------------------------------------
@@ -491,7 +417,9 @@ Let's now focus our attention on how we might apply a `purrr::map()` to reading 
 
 Consider the following operations:
 
-```{r, eval = FALSE}
+```{r}
+#| eval: false
+
 census <-
   st_read("data/raw/shapefiles/census.shp") %>% 
   st_transform(5070)
@@ -509,7 +437,9 @@ We have read in and transformed the CRS of the three files using the same proces
 
 Let's remove those three files (there is a better way):
 
-```{r, eval = FALSE}
+```{r}
+#| eval: false
+
 rm(
   census,
   dc_census,
@@ -557,7 +487,9 @@ list.files(
 
 ... and read in and transform the data:
 
-```{r, eval = FALSE}
+```{r}
+#| eval: false
+
 list.files(
   path = "data/raw/shapefiles", 
   pattern = "shp",
@@ -570,7 +502,9 @@ list.files(
 
 *But*, it is no longer necessary to read in the individual files! We now have a vector of values upon which to iterate!
 
-```{r, eval = FALSE}
+```{r}
+#| eval: false
+
 list.files(
   path = "data/raw/shapefiles", 
   pattern = "shp",
@@ -716,7 +650,9 @@ The above can be considered to be an iteration. You might describe this operatio
 
 Because the first argument of `across()` is the selection of columns and the second argument is the function to apply to each variable, the names of each argument are rarely written out. Instead, I would typically write this as:
 
-```{r, eval = FALSE}
+```{r}
+#| eval: false
+
 weather_observations %>% 
   mutate(
     across(
@@ -807,7 +743,9 @@ Because `across()` uses tidy selection, we have all of the tidy selection tools 
 
 In our original application of `across()`, we provided the names of the columns that we wished to modify:
 
-```{r, eval = FALSE}
+```{r}
+#| eval: false
+
 weather_observations %>% 
   mutate(
     across(
@@ -924,40 +862,4 @@ When conducting repetitive filtering tasks, the use of iteration can greatly sim
 * Iterate `mutate()` or `summarize()` across variables in a data frame with `across()`
 * Iterate `summarize()`, `mutate()`, or `filter()` across a grouping variable with `.by = ...` or `group_by()`
 
-## Reference
-
-<button class="accordion">Glossary</button>
-::: panel
-* **Iteration**: The repeating of a given process a set number of times.
-* **Mutation**: The process of adding columns to a data frame and/or modifying existing columns (or adding/modifying list items to/in a list).
-* **NA** (value): A missing data value in an atomic vector.
-* **Structure**: The dimensionality and homogeneity of a data object (may also be used to describe the class of objects).
-* **Superseded** (function): A function for which a new function or argument has been added to a package (these functions should typically be avoided).
-:::
-
-<button class="accordion">Functions</button>
-::: panel
-**Important!** Primitive functions as well as functions in the *base* and *utils* packages, are loaded by default when you start an R session. Functions in *dplyr*, *readr*, *tibble*, *tidyr*, and *tidyverse* are loaded with `library(tidyverse)`.
-
-::: function_table
-
-```{r, message = FALSE, echo = FALSE}
-render_function_table("functions_4.2_iteration.csv")
-```
-
-:::
-
-:::
-
-
-<button class="accordion">Keyboard shortcuts</button>
-::: panel
-
-{{< include ../../src/includes/keyboard_shortcuts.qmd >}}
-:::
-
-<button class="accordion">R Studio panes</button>
-::: panel
-{{< include ../../src/includes/rstudio_panes.qmd >}}
-:::
-
+{{< include /src/includes/_reference_section.qmd >}}

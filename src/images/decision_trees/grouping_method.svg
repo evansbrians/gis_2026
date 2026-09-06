@@ -1,0 +1,85 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1346 741" width="1346" height="741" font-family="Helvetica Neue,Helvetica,Arial,sans-serif" role="img">
+<rect width="1346" height="741" fill="#ffffff"/>
+<text x="673" y="34" text-anchor="middle" font-size="19" font-weight="700" fill="#292093">Decision tree: Choosing how to group</text>
+<line x1="40" y1="50" x2="1306" y2="50" stroke="#9db0e6" stroke-width="1.2"/>
+<g transform="translate(0,52)">
+<path d="M 543.0 75.0 V 103.0" fill="none" stroke="#9db0e6" stroke-width="1.8"/>
+<polygon points="543.0,114.0 538.0,102.0 548.0,102.0" fill="#9db0e6"/>
+<rect x="526.2" y="88.5" width="33.6" height="17.0" rx="3" fill="#ffffff"/>
+<text x="543.0" y="99.5" text-anchor="middle" font-size="12" fill="#4a5aa0">then</text>
+<path d="M 543.0 180.0 V 199.0" fill="none" stroke="#9db0e6" stroke-width="1.8"/>
+<polygon points="543.0,210.0 538.0,198.0 548.0,198.0" fill="#9db0e6"/>
+<rect x="526.2" y="189.0" width="33.6" height="17.0" rx="3" fill="#ffffff"/>
+<text x="543.0" y="200.0" text-anchor="middle" font-size="12" fill="#4a5aa0">then</text>
+<path d="M 922.0 459.0 V 487.0" fill="none" stroke="#9db0e6" stroke-width="1.8"/>
+<polygon points="922.0,498.0 917.0,486.0 927.0,486.0" fill="#9db0e6"/>
+<rect x="905.2" y="472.5" width="33.6" height="17.0" rx="3" fill="#ffffff"/>
+<text x="922.0" y="483.5" text-anchor="middle" font-size="12" fill="#4a5aa0">then</text>
+<path d="M 922.0 564.0 V 584.0" fill="none" stroke="#9db0e6" stroke-width="1.8"/>
+<polygon points="922.0,595.0 917.0,583.0 927.0,583.0" fill="#9db0e6"/>
+<rect x="905.2" y="573.5" width="33.6" height="17.0" rx="3" fill="#ffffff"/>
+<text x="922.0" y="584.5" text-anchor="middle" font-size="12" fill="#4a5aa0">then</text>
+<path d="M 172.0 196.0 H 184.0 V 52.0 H 389.0" fill="none" stroke="#9db0e6" stroke-width="1.8" stroke-linejoin="round"/>
+<polygon points="400.0,52.0 388.0,47.0 388.0,57.0" fill="#9db0e6"/>
+<path d="M 172.0 196.0 H 184.0 V 340.0 H 389.0" fill="none" stroke="#9db0e6" stroke-width="1.8" stroke-linejoin="round"/>
+<polygon points="400.0,340.0 388.0,335.0 388.0,345.0" fill="#9db0e6"/>
+<path d="M 684.0 340.0 H 696.0 V 244.0 H 839.0" fill="none" stroke="#9db0e6" stroke-width="1.8" stroke-linejoin="round"/>
+<polygon points="850.0,244.0 838.0,239.0 838.0,249.0" fill="#9db0e6"/>
+<path d="M 992.0 244.0 H 1004.0 V 156.0 H 1161.0" fill="none" stroke="#9db0e6" stroke-width="1.8" stroke-linejoin="round"/>
+<polygon points="1172.0,156.0 1160.0,151.0 1160.0,161.0" fill="#9db0e6"/>
+<path d="M 992.0 244.0 H 1004.0 V 244.0 H 1161.0" fill="none" stroke="#9db0e6" stroke-width="1.8" stroke-linejoin="round"/>
+<polygon points="1172.0,244.0 1160.0,239.0 1160.0,249.0" fill="#9db0e6"/>
+<path d="M 992.0 244.0 H 1004.0 V 332.0 H 1161.0" fill="none" stroke="#9db0e6" stroke-width="1.8" stroke-linejoin="round"/>
+<polygon points="1172.0,332.0 1160.0,327.0 1160.0,337.0" fill="#9db0e6"/>
+<path d="M 684.0 340.0 H 696.0 V 436.0 H 839.0" fill="none" stroke="#9db0e6" stroke-width="1.8" stroke-linejoin="round"/>
+<polygon points="850.0,436.0 838.0,431.0 838.0,441.0" fill="#9db0e6"/>
+<rect x="195.8" y="18.0" width="192.3" height="30.0" rx="3" fill="#ffffff"/>
+<text x="292.0" y="29.0" text-anchor="middle" font-size="12" fill="#4a5aa0">the variable must be built,</text>
+<text x="292.0" y="42.0" text-anchor="middle" font-size="12" fill="#4a5aa0">recoded, or renamed</text>
+<rect x="220.0" y="306.0" width="144.0" height="30.0" rx="3" fill="#ffffff"/>
+<text x="292.0" y="317.0" text-anchor="middle" font-size="12" fill="#4a5aa0">the variable already</text>
+<text x="292.0" y="330.0" text-anchor="middle" font-size="12" fill="#4a5aa0">exists in the data</text>
+<rect x="725.1" y="223.0" width="95.7" height="17.0" rx="3" fill="#ffffff"/>
+<text x="773.0" y="234.0" text-anchor="middle" font-size="12" fill="#4a5aa0">one operation</text>
+<rect x="1016.0" y="122.0" width="144.0" height="30.0" rx="3" fill="#ffffff"/>
+<text x="1088.0" y="133.0" text-anchor="middle" font-size="12" fill="#4a5aa0">mutate(), filter(),</text>
+<text x="1088.0" y="146.0" text-anchor="middle" font-size="12" fill="#4a5aa0">slice(), summarize()</text>
+<rect x="1022.9" y="223.0" width="130.2" height="17.0" rx="3" fill="#ffffff"/>
+<text x="1088.0" y="234.0" text-anchor="middle" font-size="12" fill="#4a5aa0">a slice_*() helper</text>
+<rect x="1060.8" y="311.0" width="54.3" height="17.0" rx="3" fill="#ffffff"/>
+<text x="1088.0" y="322.0" text-anchor="middle" font-size="12" fill="#4a5aa0">count()</text>
+<rect x="707.9" y="415.0" width="130.2" height="17.0" rx="3" fill="#ffffff"/>
+<text x="773.0" y="426.0" text-anchor="middle" font-size="12" fill="#4a5aa0">several operations</text>
+<rect x="8.0" y="164.0" width="164" height="64" rx="9" fill="#eaf0ff" stroke="#292093" stroke-width="2.0"/>
+<text x="90.0" y="191.0" text-anchor="middle" font-size="15" fill="#333333">How will you group</text>
+<text x="90.0" y="210.0" text-anchor="middle" font-size="15" fill="#333333">the operation?</text>
+<rect x="402.0" y="29.0" width="282" height="46" rx="9" fill="#ffffff" stroke="#9db0e6" stroke-width="1.6"/>
+<text x="543.0" y="57.0" text-anchor="middle" font-size="15" font-weight="700" font-family="Menlo,Consolas,monospace" fill="#292093">group_by(new = calculation)</text>
+<rect x="402.0" y="116.0" width="282" height="64" rx="9" fill="#ffffff" stroke="#9db0e6" stroke-width="1.6"/>
+<text x="543.0" y="143.0" text-anchor="middle" font-size="15" fill="#333333">run the grouped operation</text>
+<text x="543.0" y="162.0" text-anchor="middle" font-size="15" fill="#333333">or operations</text>
+<rect x="402.0" y="212.0" width="282" height="64" rx="9" fill="#ffffff" stroke="#9db0e6" stroke-width="1.6"/>
+<text x="543.0" y="239.0" text-anchor="middle" font-size="15" fill="#333333">remove the grouping</text>
+<text x="543.0" y="258.0" text-anchor="middle" font-size="15" fill="#333333">when finished</text>
+<rect x="402.0" y="308.0" width="282" height="64" rx="9" fill="#eaf0ff" stroke="#292093" stroke-width="2.0"/>
+<text x="543.0" y="335.0" text-anchor="middle" font-size="15" fill="#333333">How many operations</text>
+<text x="543.0" y="354.0" text-anchor="middle" font-size="15" fill="#333333">need the grouping?</text>
+<rect x="852.0" y="221.5" width="140" height="45" rx="9" fill="#eaf0ff" stroke="#292093" stroke-width="2.0"/>
+<text x="922.0" y="248.5" text-anchor="middle" font-size="15" fill="#333333">Which function?</text>
+<rect x="1174.0" y="133.0" width="164" height="46" rx="9" fill="#ffffff" stroke="#9db0e6" stroke-width="1.6"/>
+<text x="1256.0" y="161.0" text-anchor="middle" font-size="15" font-weight="700" font-family="Menlo,Consolas,monospace" fill="#292093">.by = </text>
+<rect x="1174.0" y="221.0" width="164" height="46" rx="9" fill="#ffffff" stroke="#9db0e6" stroke-width="1.6"/>
+<text x="1256.0" y="249.0" text-anchor="middle" font-size="15" font-weight="700" font-family="Menlo,Consolas,monospace" fill="#292093">by = </text>
+<rect x="1174.0" y="300.0" width="164" height="64" rx="9" fill="#ffffff" stroke="#9db0e6" stroke-width="1.6"/>
+<text x="1256.0" y="327.0" text-anchor="middle" font-size="15" fill="#333333">name the grouping</text>
+<text x="1256.0" y="346.0" text-anchor="middle" font-size="15" fill="#333333">variables directly</text>
+<rect x="852.0" y="413.0" width="140" height="46" rx="9" fill="#ffffff" stroke="#9db0e6" stroke-width="1.6"/>
+<text x="922.0" y="441.0" text-anchor="middle" font-size="15" font-weight="700" font-family="Menlo,Consolas,monospace" fill="#292093">group_by()</text>
+<rect x="852.0" y="500.0" width="140" height="64" rx="9" fill="#ffffff" stroke="#9db0e6" stroke-width="1.6"/>
+<text x="922.0" y="527.0" text-anchor="middle" font-size="15" fill="#333333">run the grouped</text>
+<text x="922.0" y="546.0" text-anchor="middle" font-size="15" fill="#333333">operations</text>
+<rect x="852.0" y="597.0" width="140" height="62" rx="9" fill="#ffffff" stroke="#9db0e6" stroke-width="1.6"/>
+<text x="922.0" y="625.0" text-anchor="middle" font-size="15" font-weight="700" font-family="Menlo,Consolas,monospace" fill="#292093">ungroup()</text>
+<text x="922.0" y="642.0" text-anchor="middle" font-size="12" fill="#5d5d70">when finished</text>
+</g>
+</svg>

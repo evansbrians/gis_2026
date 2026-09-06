@@ -1,0 +1,70 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 653" width="960" height="653" font-family="Helvetica Neue,Helvetica,Arial,sans-serif" role="img">
+<rect width="960" height="653" fill="#ffffff"/>
+<text x="480" y="34" text-anchor="middle" font-size="19" font-weight="700" fill="#292093">Decision tree: Tidying a data frame</text>
+<line x1="40" y1="50" x2="920" y2="50" stroke="#9db0e6" stroke-width="1.2"/>
+<g transform="translate(0,52)">
+<path d="M 132.0 324.0 H 144.0 V 148.0 H 335.0" fill="none" stroke="#9db0e6" stroke-width="1.8" stroke-linejoin="round"/>
+<polygon points="346.0,148.0 334.0,143.0 334.0,153.0" fill="#9db0e6"/>
+<path d="M 544.0 148.0 H 556.0 V 52.0 H 706.0" fill="none" stroke="#9db0e6" stroke-width="1.8" stroke-linejoin="round"/>
+<polygon points="717.0,52.0 705.0,47.0 705.0,57.0" fill="#9db0e6"/>
+<path d="M 544.0 148.0 H 556.0 V 148.0 H 706.0" fill="none" stroke="#9db0e6" stroke-width="1.8" stroke-linejoin="round"/>
+<polygon points="717.0,148.0 705.0,143.0 705.0,153.0" fill="#9db0e6"/>
+<path d="M 544.0 148.0 H 556.0 V 244.0 H 706.0" fill="none" stroke="#9db0e6" stroke-width="1.8" stroke-linejoin="round"/>
+<polygon points="717.0,244.0 705.0,239.0 705.0,249.0" fill="#9db0e6"/>
+<path d="M 132.0 324.0 H 144.0 V 348.0 H 335.0" fill="none" stroke="#9db0e6" stroke-width="1.8" stroke-linejoin="round"/>
+<polygon points="346.0,348.0 334.0,343.0 334.0,353.0" fill="#9db0e6"/>
+<path d="M 132.0 324.0 H 144.0 V 500.0 H 335.0" fill="none" stroke="#9db0e6" stroke-width="1.8" stroke-linejoin="round"/>
+<polygon points="346.0,500.0 334.0,495.0 334.0,505.0" fill="#9db0e6"/>
+<path d="M 544.0 500.0 H 556.0 V 452.0 H 706.0" fill="none" stroke="#9db0e6" stroke-width="1.8" stroke-linejoin="round"/>
+<polygon points="717.0,452.0 705.0,447.0 705.0,457.0" fill="#9db0e6"/>
+<path d="M 544.0 500.0 H 556.0 V 548.0 H 706.0" fill="none" stroke="#9db0e6" stroke-width="1.8" stroke-linejoin="round"/>
+<polygon points="717.0,548.0 705.0,543.0 705.0,553.0" fill="#9db0e6"/>
+<rect x="166.1" y="114.0" width="157.8" height="30.0" rx="3" fill="#ffffff"/>
+<text x="245.0" y="125.0" text-anchor="middle" font-size="12" fill="#4a5aa0">rule 1: every variable</text>
+<text x="245.0" y="138.0" text-anchor="middle" font-size="12" fill="#4a5aa0">forms a column</text>
+<rect x="574.9" y="18.0" width="123.3" height="30.0" rx="3" fill="#ffffff"/>
+<text x="636.5" y="29.0" text-anchor="middle" font-size="12" fill="#4a5aa0">its values are in</text>
+<text x="636.5" y="42.0" text-anchor="middle" font-size="12" fill="#4a5aa0">the column names</text>
+<rect x="581.8" y="114.0" width="109.5" height="30.0" rx="3" fill="#ffffff"/>
+<text x="636.5" y="125.0" text-anchor="middle" font-size="12" fill="#4a5aa0">spread across</text>
+<text x="636.5" y="138.0" text-anchor="middle" font-size="12" fill="#4a5aa0">several columns</text>
+<rect x="578.3" y="210.0" width="116.4" height="30.0" rx="3" fill="#ffffff"/>
+<text x="636.5" y="221.0" text-anchor="middle" font-size="12" fill="#4a5aa0">sharing a column</text>
+<text x="636.5" y="234.0" text-anchor="middle" font-size="12" fill="#4a5aa0">with another</text>
+<rect x="155.8" y="314.0" width="178.5" height="30.0" rx="3" fill="#ffffff"/>
+<text x="245.0" y="325.0" text-anchor="middle" font-size="12" fill="#4a5aa0">rule 2: every observation</text>
+<text x="245.0" y="338.0" text-anchor="middle" font-size="12" fill="#4a5aa0">forms a row</text>
+<rect x="176.4" y="466.0" width="137.1" height="30.0" rx="3" fill="#ffffff"/>
+<text x="245.0" y="477.0" text-anchor="middle" font-size="12" fill="#4a5aa0">rule 3: every level</text>
+<text x="245.0" y="490.0" text-anchor="middle" font-size="12" fill="#4a5aa0">forms a table</text>
+<rect x="578.3" y="418.0" width="116.4" height="30.0" rx="3" fill="#ffffff"/>
+<text x="636.5" y="429.0" text-anchor="middle" font-size="12" fill="#4a5aa0">two levels share</text>
+<text x="636.5" y="442.0" text-anchor="middle" font-size="12" fill="#4a5aa0">one table</text>
+<rect x="568.0" y="514.0" width="137.1" height="30.0" rx="3" fill="#ffffff"/>
+<text x="636.5" y="525.0" text-anchor="middle" font-size="12" fill="#4a5aa0">one level is spread</text>
+<text x="636.5" y="538.0" text-anchor="middle" font-size="12" fill="#4a5aa0">across tables</text>
+<rect x="8.0" y="292.0" width="124" height="64" rx="9" fill="#eaf0ff" stroke="#292093" stroke-width="2.0"/>
+<text x="70.0" y="319.0" text-anchor="middle" font-size="15" fill="#333333">Which rule is</text>
+<text x="70.0" y="338.0" text-anchor="middle" font-size="15" fill="#333333">broken?</text>
+<rect x="348.0" y="125.5" width="196" height="45" rx="9" fill="#eaf0ff" stroke="#292093" stroke-width="2.0"/>
+<text x="446.0" y="152.5" text-anchor="middle" font-size="15" fill="#333333">Where is the variable?</text>
+<rect x="719.0" y="21.0" width="233" height="62" rx="9" fill="#ffffff" stroke="#9db0e6" stroke-width="1.6"/>
+<text x="835.5" y="49.0" text-anchor="middle" font-size="15" font-weight="700" font-family="Menlo,Consolas,monospace" fill="#292093">pivot_longer()</text>
+<text x="835.5" y="66.0" text-anchor="middle" font-size="12" fill="#5d5d70">names_prefix = drops a prefix</text>
+<rect x="719.0" y="117.0" width="233" height="62" rx="9" fill="#ffffff" stroke="#9db0e6" stroke-width="1.6"/>
+<text x="835.5" y="145.0" text-anchor="middle" font-size="15" font-weight="700" font-family="Menlo,Consolas,monospace" fill="#292093">unite()</text>
+<text x="835.5" y="162.0" text-anchor="middle" font-size="12" fill="#5d5d70">drops the columns it combined</text>
+<rect x="719.0" y="221.0" width="233" height="46" rx="9" fill="#ffffff" stroke="#9db0e6" stroke-width="1.6"/>
+<text x="835.5" y="249.0" text-anchor="middle" font-size="15" font-weight="700" font-family="Menlo,Consolas,monospace" fill="#292093">separate_wider_delim()</text>
+<rect x="348.0" y="317.0" width="196" height="62" rx="9" fill="#ffffff" stroke="#9db0e6" stroke-width="1.6"/>
+<text x="446.0" y="345.0" text-anchor="middle" font-size="15" font-weight="700" font-family="Menlo,Consolas,monospace" fill="#292093">pivot_wider()</text>
+<text x="446.0" y="362.0" text-anchor="middle" font-size="12" fill="#5d5d70">values become column names</text>
+<rect x="348.0" y="477.5" width="196" height="45" rx="9" fill="#eaf0ff" stroke="#292093" stroke-width="2.0"/>
+<text x="446.0" y="504.5" text-anchor="middle" font-size="15" fill="#333333">Split or combine?</text>
+<rect x="719.0" y="421.0" width="233" height="62" rx="9" fill="#ffffff" stroke="#9db0e6" stroke-width="1.6"/>
+<text x="835.5" y="449.0" text-anchor="middle" font-size="15" font-weight="700" font-family="Menlo,Consolas,monospace" fill="#292093">select()</text>
+<text x="835.5" y="466.0" text-anchor="middle" font-size="12" fill="#5d5d70">then distinct()</text>
+<rect x="719.0" y="525.0" width="233" height="46" rx="9" fill="#ffffff" stroke="#9db0e6" stroke-width="1.6"/>
+<text x="835.5" y="553.0" text-anchor="middle" font-size="15" font-weight="700" font-family="Menlo,Consolas,monospace" fill="#292093">bind_rows()</text>
+</g>
+</svg>

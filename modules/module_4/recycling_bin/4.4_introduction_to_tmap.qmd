@@ -1,0 +1,1069 @@
+---
+title: "4.4 Introduction to tmap"
+format: live-html
+---
+
+```{r}
+#| include: false
+
+source("src/r/course_functions.R")
+source("src/r/reference_lookup.R")
+
+lesson_refs <- find_lesson_references()
+```
+```{r}
+#| label: setup
+#| include: false
+
+library(tidyverse)
+library(DT)
+
+knitr::opts_chunk$set(
+  echo = TRUE,
+  eval = TRUE,
+  error = TRUE
+)
+
+tmap::tmap_options(
+  component.autoscale = FALSE
+)
+
+rm(has_annotations)
+```
+
+<hr>
+
+<div>
+![](../../src/images/hex_complex.png){.intro_image}
+
+Much of the content that we cover in this course is conceptually difficult (joins, functions, and iteration! Oh my!). Thankfully, making great spatial data visualizations with *tmap* is not one of them! As long as you have the basics of spatial and non-spatial processing under your hat, making elegant and useful maps is a breeze! In this lesson, which includes a video (runtime: 34:02) and written tutorial, you will:
+
+* Learn how to make static and interactive maps with *tmap*
+* Practice spatial and non-spatial joins
+* Practice using `purrr::map()`
+* Learn how to use a great tool, `cols4all::c4a_gui()`, for choosing plot colors
+
+*Note: This course uses **tmap version 4**, the current version of the package. Version 4 introduced several important changes to how fill colors, legends, color scales, titles, and basemaps are specified. The video below was recorded with tmap version 3; the written tutorial reflects current version 4 usage.*
+
+
+**Important!** Before starting this tutorial, be sure that you have completed all preliminary and  previous lessons.
+
+</div>
+
+## Data for this lesson
+
+Please click on the buttons below to explore the metadata for this lesson!
+
+<button class="accordion">Metadata: Video lesson</button>
+
+::: panel
+
+```{r}
+#| echo: false
+#| output: asis
+
+lesson_metadata(.dataset = c("counties_east.geojson", "lanternfly_proc.rds", "states_east.geojson")) %>%
+  cat()
+```
+:::
+
+<button class="accordion">Metadata: Written lesson</button>
+
+::: panel
+
+```{r}
+#| echo: false
+#| output: asis
+
+lesson_metadata(
+  .dataset = c("capital_bike_share_locations.csv", "census"),
+  .variables =
+    list(
+      `census` = c("GEOID", "STATEFP", "ALAND", "AWATER", "income", "population")
+    )
+) %>%
+  cat()
+```
+:::
+
+## Introductory video
+
+In this portion of the lesson, you will code along with the script file [tmap_lanternfly.R]{.mono} -- this file should be located in the [scripts]{.mono} folder of your project directory.
+
+This video was made in 2022, which is pretty old in code-years, so please take a moment to review the following notes on the video content:
+
+* **The video uses tmap version 3.** Since then, tmap has moved to version 4, which changes several key functions. Most importantly: the polygon fill color is now set with `fill = ...` (rather than `col = ...`), color scales are defined with `fill.scale = tm_scale(...)` (rather than the `palette`, `style`, and `breaks` arguments), and plot titles use `tm_title()` (rather than `tm_layout(main.title = ...)`). Watch the video for the concepts, but treat its tmap *syntax* as version 3 and follow the written tutorial below for current version 4 code.
+* The package *lubridate* is now part of the **core tidyverse** (as of 2023) and does not need to be loaded with `library(lubridate)` if `library(tidyverse)` is a part of your code.
+* I use single rather than double quotes (the latter is now my preference).
+* My indentation is not consistent -- all arguments in a function should be indented two space relative to the function call.
+* I used collapsed closing parentheses -- it is now my preference to use hanging parentheses.
+* I use the base R function `paste` in the code. I rarely use this function and much prefer the *stringr* (**core tidyverse**) function `str_c`.
+* In the video I use `tmaptools::palette_explorer()` to choose colors. In version 4, color palettes are managed by the *cols4all* package, so we now use `cols4all::c4a_gui()` instead.
+* Your [tmap_lanterfly.R]{.mono} file will look slightly different than the one used in the video tutorial. Your version of the file has been updated to adhere to the course style guide and more modern coding preferences.
+* Because we used an `inner_join()` at 30:11, it was not necessary to also include `st_filter(spotted_lanternfly)`. The `inner_join()` already reduces `shapes$counties` to those with observations of spotted lanternflies.
+
+{{< video https://www.youtube.com/embed/uTufFT75wT4?si=k6-NsLw1aQAMNTMH >}}
+
+## Set up your session (tutorial)
+
+**Important!** Before continuing, please save and close [tmap_lanternfly.R]{.mono}.
+
+Please do the following to ensure that you are working in a clean session:
+
+1. In the *Environment* tab of your *workspace pane*, ensure that your *Global Environment* is empty. If it is not, click the *broom* to remove all objects. *Note: Conversely, you can remove all items with `rm(list = ls())`*.
+2. In the *History* tab of your *workspace pane*, ensure that your history is empty. If it is not, click the *broom* to remove your history.
+
+Now that we are working in a clean session:
+
+1. Create a script file (Windows: [Ctrl + Shift + N]{.mono}; Mac: [Cmd + Shift + N]{.mono}).
+2. Save your script file as "[scripts/tmap_tutorial.R]{.mono}".
+3. Add metadata as a comment on the top of the file (e.g., `# My code for the tmap tutorial`).
+4. Following your metadata, create a new **code section** (Windows: [Ctrl + Shift + R]{.mono}; Mac: [Cmd + Shift + R]{.mono}) and call it "`setup`".
+5. Following your section header, attach the `sf` package, the `tmap` package, and packages that comprise the **core tidyverse** (`library(tidyverse)`)
+6. Read in the `census.shp` shapefile, subset to features in which `STATEFP` is 11, and subset to the fields `GEOID`, and `population`.
+7. Read in the `capital_bike_share_locations.csv` data set, change the field names to lowercase, and convert the data to a spatial points shapefile.
+
+*Note: In earlier versions of this lesson we also read in a saved basemap image (`osm_basemap.rds`). In tmap version 4 we can add basemaps directly with `tm_basemap()`, so that file is no longer needed.*
+
+At this point, your script should look something like:
+
+```{r}
+#| eval: true
+#| message: false
+#| warning: false
+
+# My code for the tmap tutorial
+
+# setup --------------------------------------------------------
+
+library(sf)
+library(tmap)
+library(tidyverse)
+
+# Set the tmap mode:
+
+tmap_mode("plot")
+
+# Census shapefile data:
+
+census <-
+  st_read("data/raw/shapefiles/census.shp") %>%
+  filter(STATEFP == 11) %>%
+  select(GEOID, population)
+
+# Bike share data:
+
+bikes <-
+  read_csv("data/raw/capital_bike_share_locations.csv") %>%
+  set_names(
+    names(.) %>%
+      tolower()
+  ) %>%
+
+  # Convert the data to a spatial points shapefile:
+
+  st_as_sf(
+    coords = c("longitude", "latitude"),
+    crs = 4326
+  )
+```
+
+## Written tutorial: Introduction to tmap
+
+The written portion of this tutorial is predominantly meant to provide you with a written reference to the basics of using *tmap* to generate maps but includes several additional bells-and-whistles along the way. We will look more deeply into this package in time.
+
+To generate a tmap, we should (but do not always have to) start with an *sf* object that is in EPSG 4326. Thus, our plotting script will begin with:
+
+```{r}
+census %>%
+  st_transform(crs = 4326)
+```
+
+Making a tmap requires us to:
+
+1) Use `tm_shape()` to initiate the plot
+2) Provide a geometry (e.g., `tm_polygons()` or `tm_dots()`)
+
+Let's pipe our *sf* object into the tmap function `tm_shape()`:
+
+```{r}
+census %>%
+  st_transform(crs = 4326) %>%
+  tm_shape()
+```
+
+We received an error because *tmap* will not generate output until we specify a layer to add to the map. Like ggplot, the plot layers are added with a `+` pipe. We use the `tm_polygons()` function to add a polygon:
+
+```{r}
+census %>%
+  st_transform(crs = 4326) %>%
+  tm_shape() +
+  tm_polygons()
+```
+
+Let’s add a fill color to our polygons, filling by population. In tmap version 4, the argument for the interior color of a shape is `fill = ...`. This aligns *tmap* with the language of *ggplot*, where `fill = ...` also refers to the color inside of a shape (and `col = ...`, as we will see, refers to the border). We specify the target column inside of quotes.
+
+```{r}
+census %>%
+  st_transform(crs = 4326) %>%
+  tm_shape() +
+  tm_polygons(
+    fill = "population"
+  )
+```
+
+*Note: In tmap version 3, the fill color was set with the `col = ...` argument. If you supply `col = ...` a variable name in version 4, you will get a border color and a `tmap v3 code detected` warning. If you want to set the polygon border color in version 4, you can do so with `col = ...`, for example* `tm_polygons(fill = "population", col = "#999999")`*.*
+
+### Changing the spatial extent of a map
+
+By default, *tmap* sets the **bounding box** of a map to the spatial extent of the largest map layer. To adjust this, we can:
+
+* Create a bounding box object
+* Add the argument `bbox = ...` to one of the layers created with `tm_shape()` (see `?tm_shape`)
+* Redraw the map
+
+A bounding box is defined by the minimum and maximum longitudes and latitudes of a given shape and the CRS of that shape.
+
+We can create a bounding box object for a given shape using the *sf* function `st_bbox`. For example, to create a bounding box object that describes the spatial extent of the shape `census`, we could run:
+
+```{r}
+st_bbox(census)
+```
+
+This returns the bounding box of the shape `census` but, in our case, we want to expand that bounding box. We will learn better ways of doing so in a future lesson but, for now, let's do this by hand. I will create a numeric vector that subtracts 0.01$^\circ$ from the minimum values and adds 0.01$^\circ$ to the maximum values:
+
+```{r}
+c(
+  xmin = -77.12976,
+  xmax = -76.89939,
+  ymin = 38.78106,
+  ymax = 39.00584
+)
+```
+
+... then pass this vector to `st_bbox()` and define the CRS of the points with `st_crs()`:
+
+```{r}
+c(
+  xmin = -77.12976,
+  xmax = -76.89939,
+  ymin = 38.78106,
+  ymax = 39.00584
+) %>%
+  st_bbox(
+    crs = st_crs(4326)
+  )
+```
+
+Let's globally assign this object to the name `my_dc_bbox`:
+
+```{r}
+my_dc_bbox <-
+  c(
+    xmin = -77.12976,
+    xmax = -76.89939,
+    ymin = 38.78106,
+    ymax = 39.00584
+  ) %>%
+  st_bbox(
+    crs = st_crs(4326)
+  )
+```
+
+... and apply it to the map with the `tm_shape()` argument `bbox = ...`:
+
+```{r}
+census %>%
+  st_transform(crs = 4326) %>%
+  tm_shape(bbox = my_dc_bbox) +
+  tm_polygons(
+    fill = "population"
+  )
+```
+
+### Adding basemaps to static maps
+
+In earlier versions of *tmap*, it was challenging to add a basemap to a static ("plot" mode) map. Version 4 makes this straightforward: we add a basemap with `tm_basemap()`. Because a basemap should sit *below* our data, we add it **first**, before our data layers.
+
+Let's add the "OpenStreetMap" basemap below our census polygons. Also, notice that I comment between each layer when using *tmap*:
+
+```{r}
+# Add basemap:
+
+tm_basemap("OpenStreetMap") +
+
+  # Add census data:
+
+  census %>%
+  st_transform(crs = 4326) %>%
+  tm_shape() +
+  tm_polygons(
+    fill = "population"
+  )
+```
+
+I find that the fully opaque polygons hide the basemap. If I want to see a bit of the basemap below the census polygons, I can add transparency to the polygons. In tmap version 4, the transparency of the fill is set with the `fill_alpha = ...` argument (note the underscore), where a value of 0 is fully transparent and 1 is fully opaque:
+
+```{r}
+# Add basemap:
+
+tm_basemap("OpenStreetMap") +
+
+  # Add census data:
+
+  census %>%
+  st_transform(crs = 4326) %>%
+  tm_shape() +
+  tm_polygons(
+    fill = "population",
+    fill_alpha = 0.5
+  )
+```
+
+### The legend
+
+In tmap version 3, we changed the title of a legend with the `title = ...` argument of `tm_polygons()`. In version 4, the legend is controlled as a property of the visual variable it describes. Because we are filling by population, we modify the *fill* legend with the argument `fill.legend = ...` and the function `tm_legend()`. Below, I change the legend title from the variable name, "population", to "Population":
+
+```{r}
+# Add basemap:
+
+tm_basemap("OpenStreetMap") +
+
+  # Add census data:
+
+  census %>%
+  st_transform(crs = 4326) %>%
+  tm_shape() +
+  tm_polygons(
+    fill = "population",
+    fill_alpha = 0.5,
+    fill.legend =
+      tm_legend(title = "Population")
+  )
+```
+
+Notice that, by default, the legend is placed *outside* of the map frame (this is a change from version 3, where the legend was placed inside the frame and often overlapped the map). We have a lot of control over the legend through `tm_legend()`. For example, we can move the legend *inside* the map frame with the `position = ...` argument and the function `tm_pos_in()`:
+
+```{r}
+# Add basemap:
+
+tm_basemap("OpenStreetMap") +
+
+  # Add census data:
+
+  census %>%
+  st_transform(crs = 4326) %>%
+  tm_shape() +
+  tm_polygons(
+    fill = "population",
+    fill_alpha = 0.5,
+    fill.legend =
+      tm_legend(
+        title = "Population",
+        position = tm_pos_in(pos.h = "left", pos.v = "bottom")
+      )
+  )
+```
+
+We can also change the position of a legend that sits outside of the map frame with `tm_pos_out()`, remove the legend frame with `frame = FALSE`, or switch to a horizontal ("landscape") orientation:
+
+```{r}
+# Add basemap:
+
+tm_basemap("OpenStreetMap") +
+
+  # Add census data:
+
+  census %>%
+  st_transform(crs = 4326) %>%
+  tm_shape() +
+  tm_polygons(
+    fill = "population",
+    fill_alpha = 0.5,
+    fill.legend =
+      tm_legend(
+        title = "Population",
+        orientation = "landscape",
+        position = tm_pos_out("center", "bottom"),
+        frame = FALSE
+      )
+  )
+```
+
+### Adding a title
+
+In tmap version 3, we added a title to a map with `tm_layout(main.title = ...)`. In version 4, we use the dedicated function `tm_title()`:
+
+```{r}
+# Add basemap:
+
+tm_basemap("OpenStreetMap") +
+
+  # Add census data:
+
+  census %>%
+  st_transform(crs = 4326) %>%
+  tm_shape() +
+  tm_polygons(
+    fill = "population",
+    fill_alpha = 0.5,
+    fill.legend =
+      tm_legend(title = "Population")
+  ) +
+
+  # Add a title:
+
+  tm_title("DC population by census tract")
+```
+
+We have plenty of control over the title element with `tm_title()` (see `?tm_title`):
+
+```{r}
+# Add basemap:
+
+tm_basemap("OpenStreetMap") +
+
+  # Add census data:
+
+  census %>%
+  st_transform(crs = 4326) %>%
+  tm_shape() +
+  tm_polygons(
+    fill = "population",
+    fill_alpha = 0.5,
+    fill.legend =
+      tm_legend(title = "Population")
+  ) +
+
+  # Add a title:
+
+  tm_title(
+    text = "DC population by census tract",
+    size = 1.25
+  )
+```
+
+*Note: Although we no longer use `tm_layout()` for the title, that function is still useful for many other thematic elements (see `?tm_layout`). For example, we can set the font family across all elements with* `tm_layout(text.fontfamily = "times")`*.*
+
+### Custom colors
+
+We should *almost* never accept the default color scheme provided to us by *tmap*. In tmap version 4, color palettes are provided by the *cols4all* package. I recommend exploring the available palettes with `cols4all::c4a_gui()`. This interactive tool allows us to choose different color ramps, map colors to a specific number of categories, and even subset to palettes that are friendly for different types of color blindness:
+
+```{r}
+#| eval: false
+
+cols4all::c4a_gui()
+```
+
+In version 4, the color scale is a property of the visual variable (here, `fill`), so we specify it with the argument `fill.scale = ...` and the function `tm_scale()`. The palette itself is passed to the `values = ...` argument of `tm_scale()`. Palette names take a `series.name` form; here I use the "plasma" palette from the *viridis* series (`"viridis.plasma"`):
+
+```{r}
+# Add basemap:
+
+tm_basemap("OpenStreetMap") +
+
+  # Add census data:
+
+  census %>%
+  st_transform(crs = 4326) %>%
+  tm_shape() +
+  tm_polygons(
+    fill = "population",
+    fill_alpha = 0.5,
+    fill.scale =
+      tm_scale(values = "viridis.plasma"),
+    fill.legend =
+      tm_legend(title = "Population")
+  ) +
+  tm_title("DC population by census tract")
+```
+
+*Note: If you supply a bare palette name (e.g., `"plasma"`) rather than the fully qualified name (`"viridis.plasma"`), the map will still render but you will get a `tmap v3 code detected` warning. Using the `series.name` form avoids the warning.*
+
+We can specify a method for defining the breakpoints between colors with the `style = ...` argument of `tm_scale()`. As an example, we can set the breaks to "equal" with:
+
+```{r}
+# Add basemap:
+
+tm_basemap("OpenStreetMap") +
+
+  # Add census data:
+
+  census %>%
+  st_transform(crs = 4326) %>%
+  tm_shape() +
+  tm_polygons(
+    fill = "population",
+    fill_alpha = 0.5,
+    fill.scale =
+      tm_scale(
+        values = "viridis.plasma",
+        style = "equal"
+      ),
+    fill.legend =
+      tm_legend(title = "Population")
+  ) +
+  tm_title("DC population by census tract")
+```
+
+We can also define our own custom breaks (I do this often) by providing a vector of breaks to the `breaks = ...` argument of `tm_scale()`:
+
+```{r}
+# Add basemap:
+
+tm_basemap("OpenStreetMap") +
+
+  # Add census data:
+
+  census %>%
+  st_transform(crs = 4326) %>%
+  tm_shape() +
+  tm_polygons(
+    fill = "population",
+    fill_alpha = 0.5,
+    fill.scale =
+      tm_scale(
+        values = "viridis.plasma",
+        breaks =
+          c(
+            0,
+            1000,
+            2000,
+            3000,
+            4000,
+            5000,
+            6000,
+            8000
+          )
+      ),
+    fill.legend =
+      tm_legend(title = "Population")
+  ) +
+  tm_title("DC population by census tract")
+```
+
+Both the number of breaks and the color palette are properties of the color *scale*, which is why version 4 gathers them together inside `tm_scale()`. If we would prefer a continuous color ramp (rather than a binned scale), we can use `tm_scale_continuous()`:
+
+```{r}
+# Add basemap:
+
+tm_basemap("OpenStreetMap") +
+
+  # Add census data:
+
+  census %>%
+  st_transform(crs = 4326) %>%
+  tm_shape() +
+  tm_polygons(
+    fill = "population",
+    fill_alpha = 0.5,
+    fill.scale =
+      tm_scale_continuous(values = "viridis.plasma"),
+    fill.legend =
+      tm_legend(title = "Population")
+  ) +
+  tm_title("DC population by census tract")
+```
+
+### Layering geometries
+
+To add a geometry, we need to add any additional layers above the base layer. For example, we can add points to a map using `tm_dots()`. Let’s add the locations of Capital Bikeshare racks to our map:
+
+```{r}
+# Add basemap:
+
+tm_basemap("OpenStreetMap") +
+
+  # Add census data:
+
+  census %>%
+  st_transform(crs = 4326) %>%
+  tm_shape() +
+  tm_polygons(
+    fill = "population",
+    fill_alpha = 0.5,
+    fill.scale =
+      tm_scale(
+        values = "viridis.plasma",
+        breaks =
+          c(
+            0,
+            1000,
+            2000,
+            3000,
+            4000,
+            5000,
+            6000,
+            8000
+          )
+      ),
+    fill.legend =
+      tm_legend(title = "Population")
+  ) +
+
+  # Add bikes:
+
+  bikes %>%
+  tm_shape() +
+  tm_dots() +
+
+  # Add a title:
+
+  tm_title("DC population and bikeshare locations")
+```
+
+The size of the dots is pretty small. We can make them larger with the `size = ...` argument (see `?tm_dots`):
+
+```{r}
+# Add basemap:
+
+tm_basemap("OpenStreetMap") +
+
+  # Add census data:
+
+  census %>%
+  st_transform(crs = 4326) %>%
+  tm_shape() +
+  tm_polygons(
+    fill = "population",
+    fill_alpha = 0.5,
+    fill.scale =
+      tm_scale(
+        values = "viridis.plasma",
+        breaks =
+          c(
+            0,
+            1000,
+            2000,
+            3000,
+            4000,
+            5000,
+            6000,
+            8000
+          )
+      ),
+    fill.legend =
+      tm_legend(title = "Population")
+  ) +
+
+  # Add bikes:
+
+  bikes %>%
+  st_transform(crs = 4326) %>%
+  tm_shape() +
+  tm_dots(size = 0.05) +
+
+  # Add a title:
+
+  tm_title("DC population and bikeshare locations")
+```
+
+### From static maps to interactive maps
+
+By default, *tmap* is in "plot" mode. We can define this as such with `tmap_mode()`:
+
+```{r}
+tmap_mode("plot")
+```
+
+The above is great for generating maps for publications, but I really like to explore my data. As such, I prefer interactive maps. We can create an interactive map by setting `tmap_mode()` to "view":
+
+```{r}
+tmap_mode("view")
+```
+
+Take a moment to explore the output when `tmap_mode()` is set to "view":
+
+```{r}
+# Add census data:
+
+census %>%
+  st_transform(crs = 4326) %>%
+  tm_shape() +
+  tm_polygons(
+    fill = "population",
+    fill_alpha = 0.5,
+    fill.scale =
+      tm_scale(
+        values = "viridis.plasma",
+        breaks =
+          c(
+            0,
+            1000,
+            2000,
+            3000,
+            4000,
+            5000,
+            6000,
+            8000
+          )
+      ),
+    fill.legend =
+      tm_legend(title = "Population")
+  ) +
+
+  # Add bikes:
+
+  bikes %>%
+  st_transform(crs = 4326) %>%
+  tm_shape() +
+  tm_dots(size = 0.05)
+```
+
+In the above, you can scroll through the various options for basemap, turn on or off the layers, and even zoom in and out of the map!
+
+#### Assigning layer names
+
+Notice in the above that our layer control turns on or off both layers at once. We can fix this by assigning names to our layers with the argument `group = ...`:
+
+```{r}
+# Add census data:
+
+census %>%
+  st_transform(crs = 4326) %>%
+  tm_shape() +
+  tm_polygons(
+    fill = "population",
+    fill_alpha = 0.5,
+    fill.scale =
+      tm_scale(
+        values = "viridis.plasma",
+        breaks =
+          c(
+            0,
+            1000,
+            2000,
+            3000,
+            4000,
+            5000,
+            6000,
+            8000
+          )
+      ),
+    fill.legend =
+      tm_legend(title = "Population"),
+    group = "Census tracts"
+  ) +
+
+  # Add bikes:
+
+  bikes %>%
+  st_transform(crs = 4326) %>%
+  tm_shape() +
+  tm_dots(
+    group = "Bikes",
+    size = 0.05
+  )
+```
+
+#### Clustering points
+
+One of my favorite features associated with interactive maps is our ability to "cluster" points into nearby groups with the argument `clustering = TRUE`:
+
+```{r}
+# Add census data:
+
+census %>%
+  st_transform(crs = 4326) %>%
+  tm_shape() +
+  tm_polygons(
+    fill = "population",
+    fill_alpha = 0.5,
+    fill.scale =
+      tm_scale(
+        values = "viridis.plasma",
+        breaks =
+          c(
+            0,
+            1000,
+            2000,
+            3000,
+            4000,
+            5000,
+            6000,
+            8000
+          )
+      ),
+    fill.legend =
+      tm_legend(title = "Population"),
+    group = "Census tracts"
+  ) +
+
+  # Add bikes:
+
+  bikes %>%
+  st_transform(crs = 4326) %>%
+  tm_shape() +
+  tm_dots(
+    group = "Bikes",
+    size = 0.05,
+    clustering = TRUE
+  )
+```
+
+In the above, the number inside of each colored circle represents the number of points per cluster. If you click on a circle, the map will zoom into that point and new clusters will be defined for a given scale (*Give it a try!*).
+
+#### Setting the zoom level
+
+The default bounding box of an interactive map is often much larger than we would want. For example, let's make an interactive map that shows the location of a single point -- our office at the Smithsonian's National Zoo and Conservation Biology Institute (where Tara and I host Friday Q & A sessions):
+
+```{r}
+tibble(
+  location = "Tara and Brian's office",
+  lon = -77.05213,
+  lat = 38.9297
+) %>%
+  st_as_sf(
+    coords = c("lon", "lat"),
+    crs = 4326
+  ) %>%
+  tm_shape() +
+  tm_dots(
+    group = "Tara and Brian's office",
+    size = 0.05
+  )
+```
+
+The above is not at a particularly useful scale for viewing the location of our office (our users would have to zoom way in).
+
+We could address this with a similar method as static maps (i.e., we *could* set a bounding box), but my preferred method is to set a default zoom level. We do so with the `set.view = ...` argument of the function `tm_view`, supplying a single numeric value that represents the zoom (higher numbers represent a closer look!)
+
+```{r}
+tibble(
+  location = "Tara and Brian's office",
+  lon = -77.05213,
+  lat = 38.9297
+) %>%
+  st_as_sf(
+    coords = c("lon", "lat"),
+    crs = 4326
+  ) %>%
+  tm_shape() +
+  tm_dots(
+    group = "Tara and Brian's office",
+    size = 0.05
+  ) +
+  tm_view(set.view = 16)
+```
+
+It should be noted that different basemaps have different maximum zoom levels. For example, if we set the zoom to 18, we receive the message "Map data not yet available" for the basemap layer Esri.WorldGrayCanvas:
+
+```{r}
+tibble(
+  location = "Tara and Brian's office",
+  lon = -77.05213,
+  lat = 38.9297
+) %>%
+  st_as_sf(
+    coords = c("lon", "lat"),
+    crs = 4326
+  ) %>%
+  tm_shape() +
+  tm_dots(
+    group = "Tara and Brian's office",
+    size = 0.05
+  ) +
+  tm_view(set.view = 18)
+```
+
+If you click the other basemap layers in the map above, however, you willsee that there *are* map data available at the higher zoom levels. This might raise a question ...
+
+::: mysecret
+
+{{< fa user-secret size=2x >}} [What the heck is a basemap?]{style="font-size: 1.25em; padding-left: 0.5em;"}
+
+Basemaps are constructed of multiple stacked "tiles" where each tile is a raster image at a given zoom level. Each tile has a different level of detail.
+
+```{r}
+
+# The location of Tara and Brian's office at zoom level 2:
+
+tibble(
+  location = "Tara and Brian's office",
+  lon = -77.05213,
+  lat = 38.9297
+) %>%
+  st_as_sf(
+    coords = c("lon", "lat"),
+    crs = 4326
+  ) %>%
+  tm_shape() +
+  tm_dots(
+    group = "Tara and Brian's office",
+    size = 0.05
+  ) +
+  tm_view(set.view = 2)
+
+# The location of Tara and Brian's office at zoom level 5:
+
+tibble(
+  location = "Tara and Brian's office",
+  lon = -77.05213,
+  lat = 38.9297
+) %>%
+  st_as_sf(
+    coords = c("lon", "lat"),
+    crs = 4326
+  ) %>%
+  tm_shape() +
+  tm_dots(
+    group = "Tara and Brian's office",
+    size = 0.05
+  ) +
+  tm_view(set.view = 5)
+
+# The location of Tara and Brian's office at zoom level 12:
+
+tibble(
+  location = "Tara and Brian's office",
+  lon = -77.05213,
+  lat = 38.9297
+) %>%
+  st_as_sf(
+    coords = c("lon", "lat"),
+    crs = 4326
+  ) %>%
+  tm_shape() +
+  tm_dots(
+    group = "Tara and Brian's office",
+    size = 0.05
+  ) +
+  tm_view(set.view = 12)
+```
+
+This system was developed for displaying spatial information online. It would be *super slow* if all of the detail at zoom level 12 needed to be loaded when you created a world map at zoom level 2!
+
+:::
+
+#### Changing the basemaps
+
+I often want to define the basemap that is plotted below my layers or provide a set of basemaps for my users to choose between. We can define a basemap of an interactive map using the function `tm_basemap` (see `?tm_basemap`).
+
+```{r}
+tm_basemap("Esri.WorldImagery") +
+  tibble(
+    location = "Tara and Brian's office",
+    lon = -77.05213,
+    lat = 38.9297
+  ) %>%
+  st_as_sf(
+    coords = c("lon", "lat"),
+    crs = 4326
+  ) %>%
+  tm_shape() +
+  tm_dots(
+    group = "Tara and Brian's office",
+    size = 0.05
+  ) +
+  tm_view(set.view = 18)
+```
+
+You can add additional layers by supplying a character vector of layers:
+
+```{r}
+tm_basemap(
+  c(
+    "Esri.WorldImagery",
+    "OpenStreetMap",
+    "Esri.WorldTopoMap"
+  )
+) +
+  tibble(
+    location = "Tara and Brian's office",
+    lon = -77.05213,
+    lat = 38.9297
+  ) %>%
+  st_as_sf(
+    coords = c("lon", "lat"),
+    crs = 4326
+  ) %>%
+  tm_shape() +
+  tm_dots(
+    group = "Tara and Brian's office",
+    size = 0.05
+  ) +
+  tm_view(set.view = 18)
+```
+
+... change the order in which the maps are provided:
+
+```{r}
+tm_basemap(
+  c(
+    "Esri.WorldImagery",
+    "Esri.WorldTopoMap",
+    "OpenStreetMap"
+  )
+) +
+  tibble(
+    location = "Tara and Brian's office",
+    lon = -77.05213,
+    lat = 38.9297
+  ) %>%
+  st_as_sf(
+    coords = c("lon", "lat"),
+    crs = 4326
+  ) %>%
+  tm_shape() +
+  tm_dots(
+    group = "Tara and Brian's office",
+    size = 0.05
+  ) +
+  tm_view(set.view = 18)
+```
+
+... and provide informative names for the layers!
+
+```{r}
+tm_basemap(
+  c(
+    `Aerial photo` = "Esri.WorldImagery",
+    `Topographical map` = "Esri.WorldTopoMap",
+    `Street map` = "OpenStreetMap"
+  )
+) +
+  tibble(
+    location = "Tara and Brian's office",
+    lon = -77.05213,
+    lat = 38.9297
+  ) %>%
+  st_as_sf(
+    coords = c("lon", "lat"),
+    crs = 4326
+  ) %>%
+  tm_shape() +
+  tm_dots(
+    group = "Tara and Brian's office",
+    size = 0.05
+  ) +
+  tm_view(set.view = 18)
+```
+
+<hr>
+
+Hopefully, the above gives you a good sense of how you can create publication-ready maps with *tmap* and also how you can explore spatial data in R just as you could any GIS!
+
+## Quick reference: *tmap* v3 → v4
+
+::: callout-note
+Because much older *tmap* code (and many online examples) uses version 3 syntax, this table summarizes how common v3 patterns translate into the version 4 syntax used throughout this course. (Left column = **what you want to do**, middle = **old v3 way**, right = **new v4 way**.)
+:::
+
+| Task / goal                            | tmap v3 syntax                                         | tmap v4 syntax                                                                 |
+|:---------------------------------------|:--------------------------------------------------------|:-------------------------------------------------------------------------------|
+| Fill polygons by a variable            | `tm_polygons(col = "n")`                               | `tm_polygons(fill = "n")`                                                     |
+| Set fill transparency                  | `tm_polygons(col = "n", alpha = 0.5)`                  | `tm_polygons(fill = "n", fill_alpha = 0.5)`                                   |
+| Set polygon border color               | `tm_polygons(border.col = "#999999")`                  | `tm_polygons(fill = "n", col = "#999999")`                                    |
+| Change legend title                    | `tm_polygons(col = "n", title = "Observations")`       | `tm_polygons(fill = "n", fill.legend = tm_legend(title = "Observations"))`    |
+| Put legend inside the map              | `tm_layout(legend.position = c("left", "top"))`        | `fill.legend = tm_legend(position = tm_pos_in(pos.h = "left", pos.v = "top"))`|
+| Put legend outside the map             | `tm_layout(legend.outside = TRUE, legend.outside.position = "right")` | `fill.legend = tm_legend(position = tm_pos_out("right"))`          |
+| Set a palette                          | `tm_polygons(col = "n", palette = "plasma")`           | `tm_polygons(fill = "n", fill.scale = tm_scale(values = "viridis.plasma"))`   |
+| Control breaks / number of classes     | `tm_polygons(col = "n", style = "fisher", n = 7)`      | `tm_polygons(fill = "n", fill.scale = tm_scale(values = "viridis.plasma", style = "fisher", n = 7))` |
+| Manually set breaks                    | `tm_polygons(col = "n", style = "fixed", breaks = c(0,1000,2000))`  | `tm_polygons(fill = "n", fill.scale = tm_scale(values = "viridis.plasma", breaks = c(0,1000,2000)))` |
+| Continuous color ramp                  | `tm_polygons(col = "n", palette = "plasma", style = "cont")` | `tm_polygons(fill = "n", fill.scale = tm_scale_continuous(values = "viridis.plasma"))` |
+| Basemap on a static map                | `tm_shape(basemap) + tm_rgb()`                         | `tm_basemap("OpenStreetMap")`                                                 |
+| Map title                              | `tm_layout(main.title = "My map title")`               | `tm_title("My map title")`                                                    |
+| Global font family                     | `tm_layout(fontfamily = "times")`                      | `tm_layout(text.fontfamily = "times")`                                        |
+| Explore color palettes                 | `tmaptools::palette_explorer()`                        | `cols4all::c4a_gui()`                                                         |
+
+{{< include /src/includes/_reference_section.qmd >}}

@@ -1,23 +1,11 @@
 ---
 title: "8.1 Building web documents with Quarto"
-format:
-  html:
-    embed-resouces: true
-    self-contained: true
-    standalone: true
-    toc: true
-    toc-location: left
-    number-sections: false
-    search: true
-    include-in-header: ../../src/includes/header_includes.html
-    include-after-body: ../../src/includes/accordion_script.html
-    theme: 
-      - cosmo
-      - ../../src/css/custom_style.scss
-editor: source
+format: live-html
 ---
 
-```{r, include = FALSE}
+```{r}
+#| include: false
+
 source("src/r/course_functions.R")
 ```
 <hr>
@@ -463,7 +451,7 @@ If you would like to add a caption to an image, place the caption inside of the 
 
 ### Adding code blocks and output
 
-The power of Quarto (and it's predecessor, R Markdown) is that you can include code and output within a document.
+The power of Quarto (and its predecessor, R Markdown) is that you can include code and output within a document.
 
 If we want to include our code and its output, we insert what is known as a **code chunk**. A code chunk can be used to execute code in a specified language. In the below, three backtick symbols at the start and end define the boundaries of the chunk and `{}` defines the program or language to use when executing the chunk:
 
@@ -479,10 +467,12 @@ This will render as:
 library(tidyverse)
 ```
 
-You can add instructions to the execution of the code block. For example, to remove the printed messages after attaching the tidyverse packages, you can use `message = FALSE` (please add to your document and knit):
+You can add instructions to the execution of the code block with chunk-option lines placed immediately below the opening code fence. For example, to remove the printed messages after attaching the tidyverse packages, you can use `#| message: false` (please add this to your document and render it):
 
 ````
-```{{r message = FALSE}}
+```{{r}}
+#| message: false
+
 library(tidyverse)
 ```
 ````
@@ -490,7 +480,9 @@ library(tidyverse)
 Let's add a tibble to our code block:
 
 ````
-```{{r message = FALSE}}
+```{{r}}
+#| message: false
+
 library(tidyverse)
 
 tibble(
@@ -502,7 +494,9 @@ tibble(
 
 Once rendered, this returns: 
 
-```{r message = FALSE}
+```{r}
+#| message: false
+
 library(tidyverse)
 
 tibble(
@@ -511,12 +505,14 @@ tibble(
 )
 ```
 
-We can see that, while `message = FALSE` suppressed the printed output of `library(tidyverse)`, knitting the code block still returned the output of the code and the code used to generate the output.
+We can see that, while `#| message: false` suppressed the printed messages from `library(tidyverse)`, rendering the code block still returned the code and the tibble it generated.
 
-Sometimes we want to include only the output (e.g., for public reports or when showing your data to non-R-savvy advisors). To include only the output of our code, but not the code itself, specify `{r echo = FALSE}`:
+Sometimes we want to include only the output (e.g., for public reports or when showing your data to non-R-savvy advisors). To include only the output of our code, but not the code itself, add `#| echo: false` immediately below the opening code fence:
 
 ````
-```{{r echo = FALSE}}
+```{{r}}
+#| echo: false
+
 library(tidyverse)
 
 tibble(
@@ -528,7 +524,9 @@ tibble(
 
 In the rendered document, this produces:
 
-```{r echo = FALSE}
+```{r}
+#| echo: false
+
 library(tidyverse)
 
 tibble(
@@ -537,10 +535,12 @@ tibble(
 )
 ```
 
-To display the code itself, without running it, we can specify `{r eval = FALSE}`:
+To display the code itself without running it, add `#| eval: false` immediately below the opening code fence:
 
 ````
-```{{r eval = FALSE}}
+```{{r}}
+#| eval: false
+
 library(tidyverse)
 
 tibble(
@@ -552,7 +552,9 @@ tibble(
 
 Which returns, when rendered:
 
-```{r eval = FALSE}
+```{r}
+#| eval: false
+
 library(tidyverse)
 
 tibble(
@@ -567,7 +569,7 @@ You can also include the output of code within the text of your document. This i
 
 For example, typing the following into Markdown ...
 
-```{eval = FALSE}
+```markdown
 The mean of the numbers 1 through 5 is `r mean(1:5)`.
 ```
 
@@ -650,15 +652,19 @@ It's not easy being [green]{style="color: green; font-family: Times;"}.
 We can define a style across our entire document by adding a CSS code chunk. Because this modifies the CSS of the entire document, I always do this at the beginning of my script. Similar to adding an R code chunk, the chunk is defined by opening and closing triple backtick quotes. Inside of curly braces, you specify that you are adding CSS.
 
 ````
-```{{css, echo = FALSE}}
+```{{css}}
+#| echo: false
+
 .tara_style {
   font-family: Times;
 }
 ```
 ````
-*Note on the above: We used* `echo = FALSE` *because we do not want show the reader our CSS! Also note that the period in* `.tara_style` *defines a uniquely identified class.*
+*Note on the above: We used* `#| echo: false` *because we do not want to show the reader our CSS! Also note that the period in* `.tara_style` *defines a uniquely identified class.*
 
-```{css, echo = FALSE}
+```{css}
+#| echo: false
+
 .tara_style {
   font-family: Times;
 }
@@ -730,10 +736,12 @@ Tara prefers to write documents in Times New Roman.
 ::: mysecret
 {{< fa user-secret size=2x >}} [Code chunks are evaluated before Markdown content!]{style="font-size: 1.25em; padding-left: 0.5em;"}
 
-While I prefer to place my CSS code chunk near the top of a document, you can actually place it anywhere. Styles defined by a CSS code chunk are applied across the whole document, regardless of the position of that chunk. For example, executing the following at any place in in the document ...
+While I prefer to place my CSS code chunk near the top of a document, you can actually place it anywhere. Styles defined by a CSS code chunk are applied across the whole document, regardless of the position of that chunk. For example, executing the following anywhere in the document ...
 
 ````
-```{{css, echo = FALSE}}
+```{{css}}
+#| echo: false
+
 p {
   font-family: Times;
 }

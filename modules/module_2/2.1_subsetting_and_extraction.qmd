@@ -319,29 +319,9 @@ We will explore metadata in much more depth in future lessons, as it is an impor
 
    `r longmcq(c("tbl_df, tbl, data.frame", answer = "list", "character", "birds"))`
 
-2. True or false: `list2env()` removes the list that you pass to it, leaving only the names of its items.
+2. True or false: `list2env()` assigns the names associated with the list items to the an environment.
 
-   `r torf(FALSE)`
-
-3. Parsons Problem: Reorder the lines below to build a character vector of the common names in the `birds` table of `district_birds`. One line refers to a list item without quoting its name. Leave it in the trash.
-
-   <div class="parsons-problem">
-   <div id="p-2-1-02-trash" class="sortable-code"></div>
-   <div id="p-2-1-02-sortable" class="sortable-code"></div>
-   <div style="clear: both;"></div>
-   <button id="p-2-1-02-check" class="parsons-btn parsons-btn-check" type="button">Check My Order</button>
-   <button id="p-2-1-02-reset" class="parsons-btn parsons-btn-reset" type="button">Shuffle Again</button>
-   <p id="p-2-1-02-feedback" class="parsons-feedback"></p>
-   </div>
-
-   <script>
-   window.parsonsProblems = window.parsonsProblems || [];
-   window.parsonsProblems.push({
-     id: "p-2-1-02",
-     maxDistractors: 1,
-     code: 'district_birds %>%\n  pluck("birds") %>%\n  pull(common_name)\n  pluck(birds) #distractor'
-   });
-   </script>
+   `r torf(TRUE)`
 :::
 
 ## Subsetting
@@ -961,7 +941,7 @@ A quick look at the data with `distinct()` (and some helper functions) has revea
 ::: now_you
 {{< fa user-circle size=2x >}} [Now you!]{style="font-size: 1.25em; padding-left: 0.5em;"}
 
-1. `select(captures, spp, sex)` and `select(captures, c(spp, sex))` return the same two columns, so the `c()` did no work. When is the `c()` **required**?
+1. `select(captures, spp, sex)` and `select(captures, c(spp, sex))` return the same two columns, suggesting that the `c()` was not necessary. When is the `c()` **required**?
 
    `r longmcq(c("Whenever you select more than one column", "Whenever you select a range of columns, as in select(captures, spp:age)", answer = "When you negate more than one column, as in select(captures, !c(spp, sex))", "Whenever the columns are not next to each other in the data frame"))`
 
@@ -1016,7 +996,7 @@ We will continue to build decision trees throughout this course. Please know tha
    <div id="p-2-1-02-trash" class="sortable-code"></div>
    <div id="p-2-1-02-sortable" class="sortable-code"></div>
    <div style="clear: both;"></div>
-   <button id="p-2-1-02-check" class="parsons-btn parsons-btn-check" type="button">Check My Answer</button>
+   <button id="p-2-1-02-check" class="parsons-btn parsons-btn-check" type="button">Check My Order</button>
    <button id="p-2-1-02-reset" class="parsons-btn parsons-btn-reset" type="button">Shuffle Again</button>
    <p id="p-2-1-02-feedback" class="parsons-feedback"></p>
    </div>
@@ -1025,10 +1005,8 @@ We will continue to build decision trees throughout this course. Please know tha
    window.parsonsProblems = window.parsonsProblems || [];
    window.parsonsProblems.push({
      id: "p-2-1-02",
-     unordered: true,
-     answerNoun: "functions",
-     maxDistractors: 4,
-     code: "pull()\npluck()\nlist2env()\nclass()\nnames()\ndim()\nselect() #distractor\nslice() #distractor\nfilter() #distractor\ndistinct() #distractor"
+     maxDistractors: 1,
+     code: 'district_birds %>%\n  pluck("birds") %>%\n  pull(common_name)\n  pluck(birds) #distractor'
    });
    </script>
 

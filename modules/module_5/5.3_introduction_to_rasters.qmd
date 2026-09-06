@@ -1,26 +1,15 @@
 ---
 title: "5.3 Introduction to rasters"
-format:
-  html:
-    embed-resouces: true
-    self-contained: true
-    standalone: true
-    toc: true
-    toc-location: left
-    number-sections: false
-    search: true
-    include-in-header: ../../src/includes/header_includes.html
-    include-after-body: ../../src/includes/accordion_script.html
-    theme: 
-      - cosmo
-      - ../../src/css/custom_style.scss
-editor: source
-editor_options: 
-  chunk_output_type: console
+format: live-html
 ---
 
-```{r, include = FALSE}
-source("../../src/r/course_functions.R")
+```{r}
+#| include: false
+
+source("src/r/course_functions.R")
+source("src/r/reference_lookup.R")
+
+lesson_refs <- find_lesson_references()
 ```
 ![](../../src/images/hex_complex.png){.intro_image}
 
@@ -39,41 +28,13 @@ Please click on the buttons below to explore the metadata for this lesson!
 <button class="accordion">Metadata: Video lesson</button>
 ::: panel
 
-**[canopy_cover.tif]{.mono}**: This is a geotiff raster obtained from the [Multi-Resolution Land Characteristics Consortium (MRLC)](https://www.mrlc.gov/data){target="_blank"} that describes the canopy cover in the greater Washington DC region. Cell values are continuous and represent the percentage of each cell that is covered by tree canopy. The resolution of the raster is approximately 30 x 30 m and the CRS is EPSG 5070 (datum = NAD83; projection = Albers Equal Area).
+```{r}
+#| echo: false
+#| output: asis
 
-**[cicadas_brood_x_2021.csv]{.mono}**: The cicada data is a tabular dataset collected by iNaturalist participants from February through September of 2021 and obtained using the R package *rinat*. The data represent iNaturalist observations of Brood X periodical cicadas from February through September of 2021. Location data are recorded in an unprojected Coordinate Reference System (CRS) with the datum WGS84 and EPSG code 4326. Relevant fields include:
-
-* [datetime]{.mono}, datetime: The date and time of the observation, formatted as an ISO 8601 (yyyy-mm-dd hh:mm:ss) datetime object and rep0orted in UTC;
-* [scientific_name]{.mono}, character: The genus and species of the observed cicada;
-* [longitude]{.mono}, numeric: The longitude of an observation;
-* [latitude]{.mono}, numeric: The latitude of an observation;
-* [quality_grade]{.mono}, character: Whether the species identification has been verified, based on expert opinion -- options include "casual", "needs_id", and "research" (verified by experts);
-
-**[dc_census.geojson]{.mono}**: A polygon shapefile of census tracts in the District of Columbia. The data are in a projected coordinate system (datum = WGS84, projection is UTM, Zone 18N) with the EPSG code 32618. The data include the following fields:
-
-* [GEOID]{.mono}, character: The **primary key** key for each census tract.
-* [STATEFP]{.mono}, character: A **foreign key** to the US state in the [states]{.mono} data.
-* [ALAND]{.mono}, numeric: The area covered by land in each census tract, in square meters.
-* [AWATER]{.mono}, numeric: The area covered by water in each census tract, in square meters.
-* [INCOME]{.mono}, numeric: The median income of each census tract.
-* [POPULATION]{.mono}, numeric: The total population of each census tract.
-
-**[impervious_surface.tif]{.mono}**: This is a geotiff raster obtained from the [Multi-Resolution Land Characteristics Consortium (MRLC)](https://www.mrlc.gov/data){target="_blank"} that describes the impervious surface cover cover in the greater Washington DC region. Cell values are continuous and represent the percentage of each cell that is covered by man-made materials (pavement, sidewalks, rooftops). The resolution of the raster is approximately 30 x 30 m and the CRS is EPSG 5070 (datum = NAD83; projection = Albers Equal Area).
-
-**[nlcd.tif]{.mono}**: This is a geotiff raster obtained from the [Multi-Resolution Land Characteristics Consortium (MRLC)](https://www.mrlc.gov/data){target="_blank"} that describes the land cover in the greater Washington DC region. Values are categorical and each value represents the dominant land cover class (link) of each cell. The resolution of the raster is approximately 30 x 30 m and the CRS is EPSG 5070 (datum = NAD83; projection = Albers Equal Area).
-
-**[rock_creek_park.geojson]{.mono}**: This is a multipolygon shapefile (EPSG 32618; UTM Zone 18N) that represent Washington DC's Rock Creek Park, a National Park that bisects the city.  The data were obtained from [https://opendata.dc.gov/](https://opendata.dc.gov/){target="_blank"}. We do not use any of the fields from this file, but feel free to explore them!
-
-**[sick_birds.geojson]{.mono}**: This is a point shapefile that represents sick birds that were brought to City Wildlife, a wildlife rehabilitation center in the District of Columbia, in the spring of 2021. These data were obtained directly from City Wildlife staff. Location information for birds brought into the center were obtained by Brian through geocoding addresses via the Google Maps API with the R package *ggmap*. The CRS for these data is EPSG 4326.
-
-* [patient_id]{.mono}, character: The **primary key** for each patient, assigned to bird upon intake.
-* [admission_date]{.mono}, date: The date that a bird was brought to City Wildlife.
-* [common_name]{.mono}, character: The common name for the species of bird. 
-* [age]{.mono}, character: The age of a given bird. 
-* [attitude]{.mono}, character: Behavioral observations of a given bird upon intake
-
-**[Waterbodies_2019.geojson]{.mono}** This is a polygon shapefile (EPSG 4326) that represents surface water in Washington DC.  The data were obtained from [https://opendata.dc.gov/](https://opendata.dc.gov/){target="_blank"}. We do not use any of the fields from this file, but feel free to explore them!
-
+lesson_metadata(.dataset = c("cicadas_brood_x_2021.csv", "dc_census.geojson", "sick_birds.geojson", "canopy_cover.tif", "impervious_surface.tif", "nlcd.tif", "rock_creek_park.geojson", "Waterbodies_2019.geojson")) %>%
+  cat()
+```
 :::
 
 ## Video content
@@ -97,7 +58,11 @@ A couple of things to note prior to watching the video:
 
 3. After a space between your section break, include and run the following:
 
-```{r results = 'hide', message = FALSE, warning = FALSE}
+```{r}
+#| results: hide
+#| message: false
+#| warning: false
+
 # setup -------------------------------------------------------------------
 
 library(tmap)
@@ -115,7 +80,9 @@ Explicitly loading the *terra* library will change R's search path to function n
 
 Load and pre-process the polygon shapefile data:
 
-```{r, warning = FALSE}
+```{r}
+#| warning: false
+
 # load polygons -----------------------------------------------------------
 
 # Polygon files:
@@ -192,7 +159,9 @@ census_no_water <-
 
 Load and pre-process the point shapefile data:
 
-```{r, quiet = TRUE}
+```{r}
+#| quiet: true
+
 # load points -------------------------------------------------------------
 
 points <-
@@ -487,7 +456,9 @@ rasters <-
   terra::rast()
 ```
 
-```{r, include = FALSE}
+```{r}
+#| include: false
+
 rasters
 ```
 
@@ -511,7 +482,9 @@ rasters_prj <-
   terra::project(y = "epsg:32618")
 ```
 
-```{r, include = FALSE}
+```{r}
+#| include: false
+
 rasters_prj
 ```
 
@@ -828,49 +801,4 @@ rasters %>%
 
 *Note: The operation above is much simpler (and faster) because `terra::extract()` is simply returning the raster cells that are at the same spatial location as the points.*
 
-## Reference
-
-<button class="accordion">Glossary</button>
-::: panel
-
--   **Coordinate reference system (CRS)**: The reference system (may be projected or geographic) that allows us to define the location of a geometry on the surface of the Earth.
--   **Extent** (of a raster): The size of a full raster, in the X and Y dimensions.
--   **Foreign key**: A variable in a data frame that refers to the primary key of another data frame.
--   **Global statistic** (in *terra*): A common statistic across all cells in a raster.
--   **Origin** (of a raster): The X and Y location of the lower left-hand corner.
--   **Primary key**: A variable in a data frame that is used to identify unique records.
--   **Raster**: A continuous surface of pixels (i.e., raster cells) arranged in a grid.
--   **Raster stack**: A single raster file with multiple raster layers that share the same CRS, resolution, and extent.
--   **Resolution** (rasters): The distance covered by each map pixel of a raster (can be expressed in one or two dimensions).
--   **Source table**: In a join, this is the table that is referenced by the target table (in a mutating join, the source table provides the new variables for the target table) -- this is typically the table with the primary key.
--   **Target table**: In a join, the target table is the table that you wish to join data to (usually the table with the foreign key).
--   **Spatial Interpolation**: The estimation of values based on adjacent values.
--   **SpatVector**: A shapefile in the *terra* package.
-:::
-
-<button class="accordion">Functions</button>
-::: panel
-**Important!** Primitive functions as well as functions in the *base* and *utils* packages, are loaded by default when you start an R session. Functions in *dplyr*, *readr*, *tibble*, *tidyr*, and *tidyverse* are loaded with `library(tidyverse)`.
-
-::: function_table
-
-```{r, message = FALSE, echo = FALSE}
-render_function_table("functions_5.3_introduction_to_rasters.csv")
-```
-
-:::
-
-:::
-
-
-<button class="accordion">Keyboard shortcuts</button>
-::: panel
-
-{{< include ../../src/includes/keyboard_shortcuts.qmd >}}
-:::
-
-<button class="accordion">R Studio panes</button>
-::: panel
-{{< include ../../src/includes/rstudio_panes.qmd >}}
-:::
-
+{{< include /src/includes/_reference_section.qmd >}}

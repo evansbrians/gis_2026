@@ -1,0 +1,655 @@
+---
+title: "3.6 Introduction to joining data frames"
+format: live-html
+---
+
+```{r}
+#| include: false
+
+library(webexercises)
+
+source("src/r/course_functions.R")
+source("src/r/reference_lookup.R")
+
+lesson_refs <- find_lesson_references()
+```
+```{r}
+#| label: setup
+#| include: false
+
+library(tidyverse)
+
+knitr::opts_chunk$set(
+  echo = TRUE,
+  eval = TRUE,
+  error = TRUE
+)
+
+rm(has_annotations)
+```
+
+<hr>
+
+<div>
+![](../../../src/images/hex_complex.png){.intro_image}
+
+Once data are tidy, they can often be difficult to use unless we are able to join information across tables. The keys that are shared between tables give us the power to do so. As I have stated throughout this course, a *key* is used to reference a set of values. When we store data in our global environment, the name of the data object is actually a **key** that R (and you) uses to retrieve the data. With tidy tabular data, two types of keys are of particular interest: primary and foreign keys. A **primary key** is a column that provides a unique identifier for each row of a dataset. A **foreign key** is a column that provides a reference to the primary key of another dataset. When we conduct a join, we are joining tables based on these two sets of keys.
+
+In this lesson, we will review our **tidy data** rules (every row represents an observation, every column represents a variable, and every level of observation represents a table) and you will learn how to:
+
+* Conduct mutating joins with `full_join()`, `inner_join()`, and `left_join()`
+* Conduct filtering joins with `anti_join()` and `semi_join()`
+* Join tables with **compound keys**
+* Join tables that are at the same level of observation
+
+**Important!** Before starting this tutorial, be sure that you have completed all preliminary and  previous lessons!
+
+</div>
+
+## Data for this lesson
+
+Please click on the buttons below to explore the metadata for this lesson!
+
+<button class="accordion">Metadata: Video lesson</button>
+::: panel
+In the video portion of this lesson, we will explore:
+
+```{r}
+#| echo: false
+#| output: asis
+
+lesson_metadata(.dataset = c("weather_tidy.rds", "messy_birds.rds")) %>%
+  cat()
+```
+:::
+
+<button class="accordion">Metadata: Written tutorial</button>
+::: panel
+In the written portion of this lesson, we will explore:
+
+```{r}
+#| echo: false
+#| output: asis
+
+lesson_metadata(
+  .dataset = "district_birds.rds",
+  .tables = c("birds", "counts", "visits")
+) %>%
+  cat()
+```
+:::
+
+## Set up your video session
+
+Please do the following to ensure that you are working in a clean session:
+
+1. In the *Environment* tab of your *workspace pane*, ensure that your *Global Environment* is empty. If it is not, click the *broom* to remove all objects. *Note: Conversely, you can remove all items with `rm(list = ls())`*.
+2. In the *History* tab of your *workspace pane*, ensure that your history is empty. If it is not, click the *broom* to remove your history.
+3. Open the script file [joins.R]{.mono} (Windows: [Ctrl + O]{.mono}; Mac: [Cmd + O]{.mono}).
+
+### Video content
+
+Before you begin, some notes on the video content:
+
+* This video was made before I realized the magic of hanging/exploded parentheses. As such, I violate style guide rules related to that.
+* Your `working_with_tidy_data.R` file may look slightly different than the one used in the video tutorial. Your version of the file has been updated to adhere to the course style guide.
+
+{{< video https://www.youtube.com/embed/wr4mzkZpq50 >}}
+
+## Set up your session (tutorial)
+
+**Important!** Before continuing, please save and close `joins.R`.
+
+Please do the following to ensure that you are working in a clean session:
+
+1. In the *Environment* tab of your *workspace pane*, ensure that your *Global Environment* is empty. If it is not, click the *broom* to remove all objects. *Note: Conversely, you can remove all items with `rm(list = ls())`*.
+2. In the *History* tab of your *workspace pane*, ensure that your history is empty. If it is not, click the *broom* to remove your history.
+
+Now that we are working in a clean session:
+
+1. Create a script file (Windows: [Ctrl + Shift + N]{.mono}; Mac: [Cmd + Shift + N]{.mono}).
+2. Save your script file as "`scripts/joins_written_content.R`".
+3. Add metadata as a comment on the top of the file (e.g., `# My code for the joining tutorial`).
+4. Following your metadata, create a new **code section** (Windows: [Ctrl + Shift + R]{.mono}; Mac: [Cmd + Shift + R]{.mono}) and call it "`setup`".
+5. Following your section header, attach the packages that comprise the **core tidyverse** (`library(tidyverse)`)
+
+At this point, your script should look something like:
+
+```{r}
+#| eval: false
+
+# My code for the joining tutorial
+
+# setup --------------------------------------------------------
+
+library(tidyverse)
+```
+
+Now we are going to add our data for this lesson ... let's do this again as two "Now you!" challenges:
+
+:::{.now_you}
+<button class="accordion">{{< fa user-circle size=2x >}}&nbsp; In a single piped statement:
+
+* Read in the list [district_birds.rds]{.mono}
+* Assign the names of the individual list items to your global environment
+
+</button>
+::: panel
+
+```{r}
+#| results: hide
+
+# Read in the data and assign the name of each list item to the global
+# environment:
+
+read_rds("data/raw/district_birds.rds") %>% 
+  list2env(.GlobalEnv)
+```
+
+:::
+
+<button class="accordion">{{< fa user-circle size=2x >}}&nbsp; In a single line of code, please remove the names `captures` and `sites` from your global environment.
+
+</button>
+::: panel
+
+```{r}
+# Remove `captures` and `sites` from the global environment:
+
+rm(captures, sites)
+```
+
+:::
+Please the give the above a try and then click the button to see how I answered this question!
+:::
+
+## Join tables
+
+Below, we see how tables in a relational database are interconnected. Each connection is defined by primary and foreign keys (image source: Wickham and Grolemund):
+
+<div class = "row">
+<a title = "Data Science hex">
+<img  src = "https://d33wubrfki0l68.cloudfront.net/245292d1ea724f6c3fd8a92063dcd7bfb9758d02/5751b/diagrams/relational-nycflights.png"
+alt="Hadley's relational database diagram"
+style = "float: right; margin-top: 1em; margin-bottom: 1em; width: 100%; height: auto;">
+</img>
+</a>
+</div>
+
+The connections above represent common columns that are used to connect information across data frames. When establishing connections between tables, it is important to consider which table is the target of the join and which table is the source of joining information. We can consider these two tables as:
+
+* **Source table**: A data frame that is referenced by the target table. 
+* **Target table**: A data frame that you wish to join data to.
+
+A join is typically conducted by joining the table with the *primary key* (the *source table*), to the table with the *foreign key* (the *target table*). In this course, we will explore two different methods for joining data:
+
+* A **mutating join** adds variables to a table;
+* A **filtering join** subsets a table based on the values in another table.
+
+
+For this exercise, we will use the tibbles `visits`, `counts`, and `birds` to explore the connections between tidy data frames. Before we begin, let's explore the primary and foreign keys of each table.
+
+**visits**: Each row in the `visits` table represents the date that a site was visited. It contains a primary key, `visit_id`. Let's take a look:
+
+```{r}
+visits
+```
+
+**counts**: The `counts` table represents the counts of birds, by species, during a visit. This table contains a primary key, `count_id`, a foreign key to the visits table, `visit_id`, and a foreign key to the `birds` table, `spp`. 
+
+```{r}
+counts
+```
+
+**birds**: The `birds` table contains natural history information for each of the birds observed. The primary key of this table is `species` and there are no foreign keys.
+
+```{r}
+birds
+```
+
+::: now_you
+{{< fa user-circle size=2x >}} [Check your understanding]{style="padding-left: 0.5em;"}
+
+The `counts` table contains a `visit_id` column that references the `visits` table, where each value of `visit_id` identifies a unique row. Which statement is true?
+
+`r longmcq(c(answer = "visit_id is the primary key of visits and a foreign key of counts", "visit_id is the primary key of counts and a foreign key of visits", "visit_id is a compound key", "visit_id is the primary key of both tables"))`
+
+True or false: A filtering join adds columns to the target table.
+
+`r torf(FALSE)`
+:::
+
+## Mutating joins
+
+Any join in which a column is added to the target table is known as a **mutating join**.
+
+### Left join
+
+The mutating join that I use most often (and the one that we have used previously) is `left_join()`. In a left join, all records in the target table and only matching records from the source table are maintained. Source table columns, other than the column or columns that represent matching keys, are added to the target table. 
+
+Let's join the source table `visits` (primary key: `visit_id`) to the target table `counts` (primary key: `count_id`; foreign key to `visits`:  `visit_id`). We supply:
+
+* The name assigned to the target table;
+* The function `left_join()`;
+* The name assigned to the source table;
+* The argument `by = `, which is supplied the function `join_by()`. Within the parentheses of `join_by()`, we provide the key column upon which the join is based.
+
+```{r}
+counts %>%
+  left_join(
+    visits,
+    by = join_by(visit_id)
+  )
+```
+
+::: mysecret
+
+{{< fa user-secret size=2x >}} [You will also see `by = "visit_id"`!]{style="font-size: 1.25em; padding-left: 0.5em;"}
+
+Before `join_by()` was introduced to *dplyr* (January 2023), the key column was supplied as a quoted character value, `by = "visit_id"`. That form still works, and you will see it in older code (including some of our course videos!), but `join_by()` is the current method and the one that we use in this course.
+:::
+
+### Interlude: joining issues
+
+There are a number of circumstances that can make joining a bit challenging. Let's explore these before moving from `left_join()` to other types of join operations.
+
+#### Common keys, uncommon names
+
+Sometimes the primary key and foreign key columns share values, but do not share the same name. As an example, let's join the source table `birds` (primary key: `species`) to the target table `counts` (foreign key to `birds`: `spp`). We address the different names by providing a logical test within `join_by()` -- the column on the left side of `==` is the key of the target table, and the column on the right side is the key of the source table:
+
+```{r}
+counts %>%
+  left_join(
+    birds,
+    by = join_by(spp == species)
+  )
+```
+
+#### Joins sometimes wield difficult intermediate tables!
+
+It can often be challenging to review all of the columns that a join generates. For example, do we really need all of the columns that we generated above?
+
+If we are not interested in *all* of the columns of the source table, it is best practice to subset the columns being joined. For example, perhaps we are only interested in knowing the number of each species counted in each observation and their common name. We can address this by subsetting the columns during the join process:
+
+```{r}
+counts %>% 
+  select(spp, count) %>% 
+  left_join(
+    birds %>% 
+      select(species, common_name), 
+    by = join_by(spp == species)
+  )
+```
+
+Notice that we had to maintain the `spp` and `species` columns because they represented the key columns for the join. If we no longer need the `spp` column, this should be removed *after the join* using negated column selection.
+
+```{r}
+counts %>% 
+  select(spp, count) %>% 
+  left_join(
+    birds %>% 
+      select(species, common_name), 
+    by = join_by(spp == species)
+  ) %>% 
+  select(!spp)
+```
+
+Of course, we could have just selected our columns of interest *after the join* (but I do not recommend this):
+
+```{r}
+counts %>% 
+  left_join(
+    birds, 
+    by = join_by(spp == species)
+  ) %>% 
+  select(count, common_name)
+```
+
+Given that the code above is much more parsimonious, why would I not choose this version? There are a few reasons for this:
+
+* The version in which you are selecting at the end forces you to make the decision about which columns to maintain after the data are joined -- this often involves reviewing a lot of columns!
+* By subsetting the columns in each step, and highlighting and running the portions of the code that subset the data, you have a stronger understanding of the data being joined. This care gives you more control over the joining process.
+* You reduce the size of the data being piped into subsequent steps (which can sometimes yield benefits in memory management).
+
+#### Joining at the same observational level
+
+The third tidy data rule states that "Every level of observation forms a table". The most frequent violation of this rule occurs when multiple levels of observation are in the same table. It is sometimes the case, however, that multiple tables represent the same level of observation.
+
+Let's fake the issue. Below, I generate two tables that both represent the "species" level of observation. I arrange the columns of each dataset by life history guild and then species within the guild:
+
+```{r}
+foraging <-
+  birds %>% 
+  select(species, foraging) %>% 
+  arrange(foraging, species)
+
+foraging
+
+diet <-
+  birds %>% 
+  select(species, diet) %>% 
+  arrange(diet, species)
+
+diet
+```
+
+A join is a (fairly) safe option for addressing this problem. In this case, the primary key of `foraging` is also the primary key of `diet`. As such, the foreign key of `foraging` is, of course, also the foreign key of `diet`. Because of this, the order of tables to supply to the join (target and source) do not really matter:
+
+```{r}
+# Join diet to foraging:
+
+foraging %>% 
+  left_join(
+    diet, 
+    by = join_by(species)
+  )
+```
+
+*Note: Joining `foraging` to `diet` instead returns the same table -- the only difference is the order of the columns.*
+
+Sometimes we intentionally construct tables at the same level of observation just for the purpose of sharing data across tables. For example, perhaps we want to construct a table that includes the common name of bird species and the number of birds observed for each species.
+
+We can use summarize to summarize counts by species:
+
+```{r}
+counts %>% 
+  summarize(
+    count = n(),
+    .by = spp
+  )
+```
+
+... and use `left_join()` to join the above to our `birds` table:
+
+```{r}
+counts %>% 
+  summarize(
+    count = n(),
+    .by = spp
+  ) %>% 
+  left_join(
+    birds %>% 
+      select(species, common_name),
+    by = join_by(spp == species)
+  ) %>% 
+  select(!spp)
+```
+
+As an extra step, let's subset the table to the 5 species with the highest count:
+
+```{r}
+counts %>% 
+  summarize(
+    count = n(),
+    .by = spp
+  ) %>% 
+  left_join(
+    birds %>% 
+      select(species, common_name),
+    by = join_by(spp == species)
+  ) %>% 
+  select(common_name, count) %>% 
+  slice_max(
+    count, 
+    n = 5
+  )
+```
+
+#### Compound keys
+
+One all-too-common issue that we face when joining tables on the same level of observation is primary keys that may be comprised of more than one column. Such keys are known as **compound keys**.
+
+I will fake the issue again by making two tables of counts, one for "GRCA" (Gray catbirds) and the other for "NOCA" (Northern cardinals). For each table, I will include the `site_id`, `date`, and `count`:
+
+```{r}
+# Gray catbird counts:
+
+counts_grca <- 
+  counts %>% 
+  filter(spp == "GRCA") %>% 
+  select(
+    visit_id, 
+    n_grca = count
+  ) %>% 
+  left_join(
+    visits, 
+    by = join_by(visit_id)
+  ) %>% 
+  select(site_id:date, n_grca)
+
+counts_grca
+
+# Northern cardinal counts:
+
+counts_noca <- 
+  counts %>% 
+  filter(spp == "NOCA") %>% 
+  select(
+    visit_id, 
+    n_noca = count
+  ) %>% 
+  left_join(
+    visits, 
+    by = join_by(visit_id)
+  ) %>% 
+  select(site_id:date, n_noca)
+
+counts_noca
+```
+
+We can see in the above that each observation (row) is defined by the site in which an observation occurred *and* the date when the observation occurred. The primary key therefore must include both `site_id` and `date`. We can address this in a join by supplying both columns to `join_by()`:
+
+```{r}
+# Cardinals joined to catbirds:
+
+counts_grca %>% 
+  left_join(
+    counts_noca,
+    by = join_by(site_id, date)
+  )
+
+# Catbirds joined to cardinals:
+
+counts_noca %>% 
+  left_join(
+    counts_grca,
+    by = join_by(site_id, date)
+  )
+```
+
+Notice that the two joins produced very different results. The number of observations (rows) is determined by the target table. When there was no match in the source table, an `NA` (missing value) is returned. I am not overly concerned with the `NA` values, but the different number of rows is a major issue given that the level of observation is equivalent for the tables. This is the sort of situation in which we might face data loss. To address this, let's return to our classes of mutating joins ...
+
+### Full joins
+
+A `full_join()` maintains all rows in the target *and* source tables, regardless of whether there is a match. Non-matching values are replaced with an `NA`:
+
+```{r}
+# Cardinals joined to catbirds, all rows maintained:
+
+counts_grca %>% 
+  full_join(
+    counts_noca,
+    by = join_by(site_id, date)
+  )
+
+# Catbirds joined to cardinals, all rows maintained:
+
+counts_noca %>% 
+  full_join(
+    counts_grca,
+    by = join_by(site_id, date)
+  )
+```
+
+With the exception of the order of the rows and columns, the above datasets are equivalent.
+
+Let's take a moment to think about those `NA` values. If no attempt was made to observe the value of a given variable, such values are appropriate. If, however, attempts were made to observe both variables, then the `NA` values should be replaced. Here, the value `NA` represents the value `0`. Modifying the above with `replace_na()` (see ***2.2 Introduction to mutation***):
+
+```{r}
+counts_noca %>% 
+  full_join(
+    counts_grca,
+    by = join_by(site_id, date)
+  ) %>% 
+  mutate(
+    n_noca = 
+      replace_na(n_noca, 0),
+    n_grca = 
+      replace_na(n_grca, 0)
+  )
+```
+
+### Inner joins
+
+What if we wanted to conduct a mutating join that only maintains matching rows? For example, perhaps we want to subset and join the data across sites in which both Northern cardinals *and* Gray catbirds were observed. For this, we use an `inner_join()`:
+
+```{r}
+counts_noca %>% 
+  inner_join(
+    counts_grca,
+    by = join_by(site_id, date)
+  )
+```
+
+We can look at the summary statistics to ensure that there are no `NA` values in the output:
+
+```{r}
+counts_noca %>% 
+  inner_join(
+    counts_grca,
+    by = join_by(site_id, date)
+  ) %>% 
+  summary()
+```
+
+::: now_you
+{{< fa user-circle size=2x >}} [Check your understanding]{style="padding-left: 0.5em;"}
+
+In a left join, what happens to a row of the target table that has no match in the source table?
+
+`r longmcq(c(answer = "The row is maintained, with NA in each column added by the join", "The row is removed from the resultant table", "The row generates an error", "The row is duplicated"))`
+
+Which mutating join maintains all rows of the target *and* source tables?
+
+`r longmcq(c("left_join()", "inner_join()", answer = "full_join()", "semi_join()"))`
+:::
+
+## Filtering joins
+
+We can use joins to filter data based on matching (or non-matching) key-values. These are called **filtering joins**. In a filtering join, no columns are added to the target data frame.
+
+### Semi-joins
+
+Semi-joins subset data in the target table by matching key values between the target and joining tables.
+
+Let's filter the `counts` data to counts of species observed with a insectivorous diet (`diet == insectivore`).
+
+```{r}
+counts %>% 
+  semi_join(
+    birds %>% 
+      filter(diet == "insectivore"),
+    by = join_by(spp == species)
+  )
+```
+
+Note: The above operation is a (much more parsimonious!) version of:
+
+```{r}
+insectivores <-
+  birds %>% 
+  filter(diet == "insectivore") %>% 
+  pull(species)
+
+counts %>% 
+  filter(spp %in% insectivores)
+```
+
+### Anti-joins
+
+An `anti_join()` subsets the data in the target table by the key values that are *not* present in the joining table.
+
+For example, we can subset the `counts` data to counts of species observed who do **not** have an insectivorous diet:
+
+```{r}
+counts %>% 
+  anti_join(
+    birds %>% 
+      filter(diet == "insectivore"),
+    by = join_by(spp == species)
+  )
+```
+
+*Note: As with `semi_join()`, this replaces a two-step `pull()` and negated `filter()` operation with a single function.*
+
+<hr>
+
+To better understand joins, I **strongly**  recommend reading the R for Data Science chapter (<a href = "https://r4ds.hadley.nz/joins.html" target = "_blank">link</a>) on joining data. Joining data frames is one of the most important skills for managing data!
+
+## Take-home points
+
+* A **primary key** is a column that provides a unique identifier for each row of a table, and a **foreign key** is a column that references the primary key of another table. A **compound key** is a primary key comprised of more than one column.
+* A join connects a **target table** (the table you wish to join data to) with a **source table** (the table that provides the data), matched on key columns supplied to `join_by()`. When the key columns do not share a name, provide a logical test (`join_by(spp == species)`), and when the key is compound, provide every column (`join_by(site_id, date)`).
+* A **mutating join** adds variables to the target table. `left_join()` maintains all target rows, `inner_join()` maintains matching rows only, and `full_join()` maintains all rows of both tables. Unmatched rows are maintained with `NA` values.
+* When an `NA` produced by a join represents a value that *was* observed, such as a count of zero, replace it with `replace_na()`.
+* A **filtering join** subsets the target table without adding columns. `semi_join()` maintains the rows with matching key values, and `anti_join()` maintains the rows without them.
+* Subset the columns of each table during the join process, rather than reviewing and selecting from the many columns that an unconstrained join can generate.
+
+## Exercises
+
+::: now_you
+{{< fa user-circle size=2x >}} [Test your knowledge!]{style="font-size: 1.25em; padding-left: 0.5em;"}
+
+1. You would like to subset the `counts` table to the rows whose `spp` value appears in the `birds` table, without adding any columns. Which function completes the task?
+
+   `r longmcq(c("left_join()", "inner_join()", answer = "semi_join()", "anti_join()"))`
+
+2. True or false: `counts %>% left_join(visits, by = join_by(visit_id))` and `counts %>% inner_join(visits, by = join_by(visit_id))` return the same number of rows when every value of `visit_id` in `counts` has a match in `visits`.
+
+   `r torf(TRUE)`
+
+3. Two tables record observations that are identified by the combination of a site and a date. Which `by = ` argument correctly joins them?
+
+   `r longmcq(c(answer = "by = join_by(site_id, date)", "by = join_by(site_id == date)", "by = join_by(site_id)", "A spatial join is required"))`
+
+4. Match each join function to its behavior:
+
+   ```{r}
+   #| echo: false
+   #| results: asis
+
+   matching_game(
+     .pairs =
+       tribble(
+         ~ left,                                                ~ right,
+         "Add columns, maintaining all target rows",            "left_join()",
+         "Add columns, maintaining all rows of both tables",    "full_join()",
+         "Add columns, maintaining matching rows only",         "inner_join()",
+         "Subset the target to rows without a key match",       "anti_join()"
+       ),
+     .id = "match-3-6-joins"
+   )
+   ```
+
+5. Parsons problem: Reorder the lines below to join the common name of each species to the `counts` table, subsetting each table to the columns of interest and removing the key column `spp` from the result. One line supplies the key columns in the wrong order. Leave it in the trash.
+
+   <div class="parsons-problem">
+   <div id="p-3-6-01-trash" class="sortable-code"></div>
+   <div id="p-3-6-01-sortable" class="sortable-code"></div>
+   <div style="clear: both;"></div>
+   <button id="p-3-6-01-check" class="parsons-btn parsons-btn-check" type="button">Check My Order</button>
+   <button id="p-3-6-01-reset" class="parsons-btn parsons-btn-reset" type="button">Shuffle Again</button>
+   <p id="p-3-6-01-feedback" class="parsons-feedback"></p>
+   </div>
+
+   <script>
+   window.parsonsProblems = window.parsonsProblems || [];
+   window.parsonsProblems.push({
+     id: "p-3-6-01",
+     maxDistractors: 1,
+     code: "counts %>%\n  select(spp, count) %>%\n  left_join(\n    birds %>%\n      select(species, common_name),\n    by = join_by(spp == species)\n  ) %>%\n    by = join_by(species == spp) #distractor\n  select(!spp)"
+   });
+   </script>
+:::
+
+{{< include /src/includes/_reference_section.qmd >}}

@@ -1,0 +1,1234 @@
+---
+title: "Grading dashboard"
+format:
+  html:
+    theme:
+      - cosmo
+      - ../css/grading_dashboard.scss
+    embed-resources: false
+    self-contained: false
+    page-layout: full
+    toc: false
+    search: false
+server: shiny
+editor: source
+---
+
+```{r}
+#| label: setup
+#| context: setup
+#| include: false
+
+library(shiny)
+library(DT)
+library(tidyverse)
+
+# Resolve project files whether the app is served from the project root or
+# from src/reference.
+
+dashboard_source <-
+  c("src/r/grading_pipeline.R", "../r/grading_pipeline.R") %>%
+  keep(fs::file_exists) %>%
+  first()
+
+source(dashboard_source)
+
+# When this document was last edited. Shown in the header because Quarto
+# serves a shiny document from a temporary render, so there is otherwise no
+# way to tell a stale page from a fresh one.
+
+dashboard_built <-
+  c("src/reference/grading_dashboard.qmd", "grading_dashboard.qmd") %>%
+  keep(fs::file_exists) %>%
+  first() %>%
+  file.info() %>%
+  pull(mtime) %>%
+  format("%d %b %H:%M")
+
+# Which problem set to review.
+#
+# A quarto shiny document takes no arguments, so run_grading_dashboard()
+# passes it in the environment. One grading session is one problem set,
+# which is why there is no picker for it on the page.
+
+graded_problem_sets <-
+  1:7 %>%
+  keep(\(.n) fs::file_exists(grading_results_path(.n)))
+
+if (!length(graded_problem_sets)) {
+  cli::cli_abort(
+    "No graded run to show -- call {.code grade_problem_set(n)} first."
+  )
+}
+
+dashboard_problem_set <-
+  local({
+    asked <- suppressWarnings(as.integer(Sys.getenv("GRADING_PROBLEM_SET")))
+
+    if (length(asked) == 1 && !is.na(asked) && asked %in% graded_problem_sets) {
+      asked
+    } else {
+      graded_problem_sets[1]
+    }
+  })
+```
+
+```{r}
+#| label: controls
+#| echo: false
+
+div(
+  class = "gd-bar gd-grid gd-grid-controls",
+  uiOutput("where"),
+  checkboxInput(
+    "reveal_names",
+    "Reveal names",
+    value = FALSE
+  ),
+  actionButton("write_reports", "Write graded files")
+)
+
+uiOutput("question")
+
+div(
+  class = "gd-nav gd-nav-row",
+  actionButton("previous_response", "Previous response"),
+  uiOutput("response_counter", inline = TRUE),
+  actionButton(
+    "next_response",
+    "Next response",
+    class = "btn-primary"
+  )
+)
+
+uiOutput("compare")
+
+uiOutput("accept_answer_ui")
+```
+
+```{r}
+#| label: mark
+#| echo: false
+
+div(
+  class = "gd-card gd-grid gd-grid-mark",
+  numericInput(
+    "override_deduction",
+    "Deduction",
+    value = 0,
+    min = 0,
+    step = 0.05,
+    width = "100%"
+  ),
+  div(
+    numericInput(
+      "override_style_credit",
+      "Style credit",
+      value = 0,
+      min = 0,
+      step = 0.05,
+      width = "100%"
+    ),
+    uiOutput("style_note")
+  ),
+  textAreaInput(
+    "override_note",
+    "Feedback shown on the graded file, one reason per line",
+    width = "100%",
+    height = "110px"
+  )
+)
+
+div(
+  class = "gd-nav",
+  div(
+    class = "gd-nav-row",
+    actionButton("reset_response", "Undo this answer's edits"),
+    div(
+      uiOutput("unsaved", inline = TRUE),
+      actionButton(
+        "save_part",
+        "Save every edit on this question",
+        class = "btn-primary"
+      )
+    )
+  ),
+  div(
+    class = "gd-nav-row",
+    actionButton("previous_part", "Previous question"),
+    uiOutput("part_counter", inline = TRUE),
+    actionButton("next_part", "Next question")
+  )
+)
+
+tags$details(
+  class = "gd-cohort",
+  tags$summary("Cohort summary"),
+  br(),
+  div(
+    class = "gd-grid gd-grid-two",
+    plotOutput("score_distribution", height = "320px"),
+    plotOutput("question_difficulty", height = "320px")
+  ),
+  div(
+    class = "gd-grid gd-grid-two",
+    div(h4("Most common style violations"), DTOutput("violation_table")),
+    div(h4("Functions used outside the list"), DTOutput("unapproved_table"))
+  )
+)
+```
+
+```{r}
+#| label: server
+#| context: server
+
+results <-
+  reactiveVal(read_grading_results(dashboard_problem_set))
+
+problem_questions <-
+  reactiveVal(questions_from_qmd(dashboard_problem_set))
+
+# blinding ----------------------------------------------------------------
+
+# A deterministic number for one student's answer to one part, used to order
+# the responses. It is not random, so the order is the same every time the
+# app opens, and it depends on the part, so the person sitting at position 4
+# on one part is a different person at position 4 on the next. That is the
+# point: an impression formed on one part cannot follow a student into the
+# next one.
+
+response_order_key <-
+  function(.student_id, .slot_id) {
+    # The part goes first. Appended to the end it would only move each key by
+    # a digit or two, every key by about the same amount, and the ordering
+    # would barely change between one part and the next; carried through the
+    # whole multiplication it scatters them.
+
+    vapply(
+      str_c(.slot_id, "#", .student_id),
+      \(.text) {
+        Reduce(
+          \(.carry, .code) (.carry * 131 + .code) %% 2147483647,
+          utf8ToInt(.text),
+          7
+        )
+      },
+      numeric(1)
+    )
+  }
+
+# html --------------------------------------------------------------------
+
+# The panels are built as HTML strings, so anything taken from a submission
+# is escaped on the way in.
+
+escape_html <-
+  function(.text) {
+    .text %>%
+      str_replace_all("&", "&amp;") %>%
+      str_replace_all("<", "&lt;") %>%
+      str_replace_all(">", "&gt;")
+  }
+
+# Lesson prose is markdown, so a question is rendered rather than printed.
+# commonmark is what shiny itself uses for markdown(), so it is present
+# wherever this app runs; the fallback keeps the panel readable if it is not.
+
+markdown_html <-
+  function(.text) {
+    if (is.na(.text) || !nzchar(str_trim(.text))) return("")
+
+    if (requireNamespace("commonmark", quietly = TRUE)) {
+      return(commonmark::markdown_html(.text))
+    }
+
+    str_c("<p>", escape_html(.text), "</p>")
+  }
+
+code_panel <-
+  function(.code, .class = "gd-code") {
+    if (is.na(.code) || !nzchar(str_trim(.code))) {
+      return("<p class=\"gd-empty\">No answer given.</p>")
+    }
+
+    str_c(
+      "<pre class=\"", .class, "\">",
+      escape_html(str_trim(.code)),
+      "</pre>"
+    )
+  }
+
+# A finding with more than one part is a list, not a run-on sentence.
+
+finding_list <-
+  function(.label, .items) {
+    if (!length(.items)) return("")
+
+    if (length(.items) == 1) {
+      return(
+        str_c(
+          "<p class=\"gd-finding\"><strong>", .label, ":</strong> ",
+          escape_html(.items[1]), "</p>"
+        )
+      )
+    }
+
+    str_c(
+      "<p class=\"gd-finding\"><strong>", .label, ":</strong></p>",
+      "<ul class=\"gd-finding-list\">",
+      str_c("<li>", escape_html(.items), "</li>", collapse = ""),
+      "</ul>"
+    )
+  }
+
+# The functions an answer used that the assignment does not permit, saying
+# which of them the first-use rule actually charged for.
+
+outside_the_list <-
+  function(.slot) {
+    used <- .slot$unapproved[[1]] %||% character(0)
+
+    if (!length(used)) return(character(0))
+
+    charged <- .slot$unapproved_charged[[1]] %||% character(0)
+
+    str_c(
+      "`", used, "()`",
+      if_else(
+        used %in% charged,
+        " -- charged here",
+        " -- already charged at an earlier question"
+      )
+    )
+  }
+
+badge <-
+  function(.text, .class) {
+    str_c("<span class=\"gd-badge ", .class, "\">", .text, "</span>")
+  }
+
+# A submission's lines, read once per file.
+
+submission_lines <- new.env(parent = emptyenv())
+
+lines_of <-
+  function(.path) {
+    if (is.na(.path) || !fs::file_exists(.path)) return(character(0))
+
+    if (!exists(.path, envir = submission_lines)) {
+      assign(.path, read_lines(.path), envir = submission_lines)
+    }
+
+    get(.path, envir = submission_lines)
+  }
+
+# The comment block that sits against an answer, above or below it.
+#
+# Walks away from the answer taking comment lines, stepping over a blank
+# line only when a comment follows it, and stopping at the first line of
+# code. Nothing else is shown: the question is already on the page, and the
+# rest of the file belongs to other answers.
+
+adjacent_comment <-
+  function(.lines, .from, .step, .limit = 8L) {
+    kept <- integer(0)
+
+    at <- .from
+
+    while (at >= 1 && at <= length(.lines) && length(kept) < .limit) {
+      line <- str_trim(.lines[at])
+
+      if (str_starts(line, "#")) {
+        kept <- c(kept, at)
+
+        # A section header opens the next question. Take it, so the gap
+        # before it is visible, and stop: what follows belongs to another
+        # answer.
+
+        if (str_detect(line, "-{5,}\\s*$")) break
+
+        at <- at + .step
+
+        next
+      }
+
+      if (line == "") {
+        ahead <- at + .step
+
+        while (ahead >= 1 && ahead <= length(.lines) &&
+               str_trim(.lines[ahead]) == "") {
+          ahead <- ahead + .step
+        }
+
+        inside <-
+          ahead >= 1 &&
+            ahead <= length(.lines) &&
+            str_starts(str_trim(.lines[ahead]), "#")
+
+        if (!inside) break
+
+        kept <- c(kept, at)
+
+        at <- at + .step
+
+        next
+      }
+
+      break
+    }
+
+    sort(kept)
+  }
+
+# The answer as it sits in the student's own file, with the comment written
+# against it above and below.
+#
+# A comment a student wrote about their answer usually falls outside the
+# slot, because a slot begins after the question's own comment and ends
+# where the next one starts. Judging the answer alone would mean judging it
+# without the sentence they wrote to explain it. The answer itself is shown
+# untrimmed, so a blank line they left is visible too.
+
+answer_in_context <-
+  function(.slot) {
+    lines <- lines_of(.slot$submission_path %||% NA_character_)
+
+    if (!length(lines) || is.na(.slot$line_start %||% NA_integer_)) {
+      return(code_panel(.slot$answer))
+    }
+
+    span <- .slot$line_start:.slot$line_end
+
+    numbers <-
+      c(
+        adjacent_comment(lines, .slot$line_start - 1L, -1L),
+        span,
+        adjacent_comment(lines, .slot$line_end + 1L, 1L)
+      )
+
+    rendered <-
+      map_chr(
+        numbers,
+        \(.n) {
+          str_c(
+            "<span class=\"gd-line",
+            if (.n %in% span) "" else " gd-line-context",
+            "\"><span class=\"gd-lineno\">",
+            formatC(.n, width = 3),
+            "</span>",
+            escape_html(lines[.n]),
+            "</span>"
+          )
+        }
+      )
+
+    # Joined with nothing: each line is already a block, and a newline
+    # between two blocks inside a `pre` doubles the leading.
+
+    str_c(
+      "<pre class=\"gd-code gd-context\">",
+      str_c(rendered, collapse = ""),
+      "</pre>"
+    )
+  }
+
+# what is on screen -------------------------------------------------------
+
+# Every part of the problem set, in the order a reader meets them. The
+# question is chosen by walking this list rather than from a picker.
+
+part_table <-
+  function(.run) {
+    .run$slots %>%
+      distinct(
+        slot_id,
+        question,
+        answer_order,
+        criterion,
+        slot_points
+      ) %>%
+      arrange(question, answer_order)
+  }
+
+parts <- reactive(part_table(results()))
+
+part_index <- reactiveVal(1L)
+
+response_index <- reactiveVal(1L)
+
+# Marks changed but not yet written. One row per answer, so a question is
+# reviewed by clicking through it and then saved in one go.
+
+edits <-
+  reactiveVal(
+    tibble(
+      slot_id = integer(0),
+      student_id = character(0),
+      new_deduction = numeric(0),
+      new_note = character(0),
+      question = integer(0),
+      new_style_credit = numeric(0)
+    )
+  )
+
+# What the two boxes currently stand for. Held separately because an edit has
+# to be captured before the boxes are pointed at another answer.
+
+shown <- reactiveVal(NULL)
+
+# `req()` is deliberately absent from everything below. It raises a condition
+# that Shiny knows to swallow, but only while it travels untouched: raised
+# inside a dplyr verb it is caught, rewrapped and loses that class, and an
+# ordinary error in an observer ends the session. Empty tables and NULL do
+# the same work and cannot misfire.
+
+current_part <-
+  reactive({
+    rows <- parts()
+
+    if (!nrow(rows)) return(NULL)
+
+    rows[min(max(part_index(), 1L), nrow(rows)), ]
+  })
+
+current_responses <-
+  reactive({
+    part <- current_part()
+
+    if (is.null(part)) return(results()$slots[0, ])
+
+    results()$slots %>%
+      filter(slot_id == part$slot_id) %>%
+      mutate(order_key = response_order_key(student_id, slot_id)) %>%
+      arrange(order_key)
+  })
+
+current_response <-
+  reactive({
+    rows <- current_responses()
+
+    if (!nrow(rows)) return(NULL)
+
+    rows[min(max(response_index(), 1L), nrow(rows)), ]
+  })
+
+# the panels --------------------------------------------------------------
+
+output$where <-
+  renderUI({
+    part <- current_part()
+
+    if (is.null(part)) return(HTML(""))
+
+    rows <- current_responses()
+
+    marked <- sum(rows$reviewed %||% FALSE)
+
+    HTML(
+      str_c(
+        "<p class=\"gd-where\"><strong>Question ", part$question,
+        "</strong> of ", max(parts()$question),
+        " &middot; ", marked, " of ", nrow(rows), " answers marked",
+        " &middot; built ", dashboard_built, "</p>",
+        "<div class=\"gd-progress\"><div class=\"gd-progress-fill\"",
+        " style=\"width: ",
+        if (nrow(rows)) round(100 * marked / nrow(rows)) else 0,
+        "%;\"></div></div>"
+      )
+    )
+  })
+
+output$question <-
+  renderUI({
+    part <- current_part()
+
+    if (is.null(part)) return(HTML(""))
+
+    siblings <- parts() %>% filter(question == part$question)
+
+    position <- match(part$slot_id, siblings$slot_id)
+
+    stem <-
+      problem_questions()$markdown[
+        problem_questions()$question == part$question
+      ] %>%
+      head(1) %>%
+      coalesce("") %>%
+      question_markdown_for_report()
+
+    HTML(
+      str_c(
+        "<div class=\"gd-card\">",
+        "<div class=\"gd-label\">The question</div>",
+        "<div class=\"gd-stem\">", markdown_html(stem), "</div>",
+        if (!is.na(part$criterion)) {
+          str_c(
+            "<div class=\"gd-criterion\">",
+            markdown_html(part$criterion),
+            "</div>"
+          )
+        } else {
+          ""
+        },
+        "<p class=\"gd-points\">Part ", position, " of ", nrow(siblings),
+        " &middot; ", formatC(part$slot_points, format = "f", digits = 2),
+        " points</p>",
+        "</div>"
+      )
+    )
+  })
+
+output$compare <-
+  renderUI({
+    part <- current_part()
+
+    slot <- current_response()
+
+    if (is.null(part) || is.null(slot)) return(HTML(""))
+
+    accepted <-
+      results()$key %>%
+      filter(slot_id == part$slot_id) %>%
+      pull(alternatives)
+
+    key_html <-
+      if (length(accepted) && length(accepted[[1]])) {
+        str_c(
+          map_chr(accepted[[1]], \(.code) code_panel(.code, "gd-code-key")),
+          collapse = ""
+        )
+      } else {
+        "<p class=\"gd-empty\">The key lists no answer for this part.</p>"
+      }
+
+    violations <-
+      slot$violations[[1]] %>%
+      pull(comment_text) %>%
+      unique()
+
+    edited <-
+      edits() %>%
+      filter(slot_id == slot$slot_id, student_id == slot$student_id) %>%
+      nrow() > 0
+
+    badges <-
+      c(
+        if (isTRUE(slot$needs_review)) {
+          badge("needs review", "gd-badge-review")
+        },
+        if (slot$verdict == "correct") badge("correct", "gd-badge-correct"),
+        if (slot$verdict == "incorrect") badge("incorrect", "gd-badge-wrong"),
+        if (isTRUE(slot$reviewed)) badge("saved", "gd-badge-saved"),
+        if (edited) badge("edited, not saved", "gd-badge-edited")
+      )
+
+    HTML(
+      str_c(
+        "<div class=\"gd-compare\">",
+        "<div class=\"gd-card\">",
+        "<div class=\"gd-label\">What the key accepts</div>",
+        key_html,
+        "</div>",
+        "<div class=\"gd-card gd-response-card\">",
+        "<div class=\"gd-label\">Response ", response_index(),
+        " of ", nrow(current_responses()),
+        if (isTRUE(input$reveal_names)) {
+          str_c(" &middot; ", escape_html(slot$student_id))
+        } else {
+          ""
+        },
+        "</div>",
+        answer_in_context(slot),
+        "<p class=\"gd-finding\">", str_c(badges, collapse = ""), "</p>",
+        if (!is.na(slot$reason)) {
+          str_c("<p class=\"gd-finding\">", escape_html(slot$reason), "</p>")
+        } else {
+          ""
+        },
+        finding_list("Style", violations),
+        finding_list(
+          "Outside the list",
+          outside_the_list(slot)
+        ),
+        finding_list(
+          "Not required",
+          parsimony_notes(slot, results()$bank)
+        ),
+        "</div>",
+        "</div>"
+      )
+    )
+  })
+
+output$response_counter <-
+  renderUI({
+    rows <- current_responses()
+
+    if (!nrow(rows)) return(HTML(""))
+
+    slot <- current_response()
+
+    HTML(
+      str_c(
+        "<div class=\"gd-counter\">Response ", response_index(),
+        " of ", nrow(rows),
+        "<span>",
+        if (isTRUE(input$reveal_names)) {
+          escape_html(slot$student_id)
+        } else {
+          "name hidden until you reveal it"
+        },
+        "</span></div>"
+      )
+    )
+  })
+
+output$part_counter <-
+  renderUI({
+    part <- current_part()
+
+    if (is.null(part)) return(HTML(""))
+
+    HTML(
+      str_c(
+        "<div class=\"gd-counter\">Question ", part$question,
+        "<span>part ", part_index(), " of ", nrow(parts()),
+        " in this problem set</span></div>"
+      )
+    )
+  })
+
+# The style credit this question is worth, whether it was earned, and what
+# broke it. Credit is a property of the question, not of one answer: it is
+# awarded when every answer in the question follows the guide.
+
+# What the style credit for this question is worth and what broke it. The
+# figure itself is an input above this: credit is awarded when every answer
+# in a question follows the guide, and that is a judgement worth being able
+# to overrule.
+
+output$style_note <-
+  renderUI({
+    part <- current_part()
+
+    slot <- current_response()
+
+    if (is.null(part) || is.null(slot)) return(HTML(""))
+
+    possible <- style_credit_rate * slot$question_points
+
+    broke <-
+      results()$slots %>%
+      filter(
+        student_id == slot$student_id,
+        question == part$question,
+        !style_clean
+      ) %>%
+      nrow()
+
+    HTML(
+      str_c(
+        "<p class=\"gd-style-note\">of ", format_points(possible, "+"),
+        " for question ", part$question, ". ",
+        if (broke == 0) {
+          "Every answer here follows the guide."
+        } else {
+          str_c(
+            broke, " answer", if (broke == 1) "" else "s",
+            " here break", if (broke == 1) "s" else "", " it",
+            if (isTRUE(slot$style_clean)) ", but not this one." else {
+              ", this one among them."
+            }
+          )
+        },
+        "</p>"
+      )
+    )
+  })
+
+output$unsaved <-
+  renderUI({
+    part <- current_part()
+
+    waiting <-
+      if (is.null(part)) {
+        0
+      } else {
+        edits() %>%
+          filter(slot_id == part$slot_id) %>%
+          nrow()
+      }
+
+    HTML(
+      str_c(
+        "<span class=\"gd-unsaved\">",
+        if (waiting) {
+          str_c(waiting, " edited, not saved")
+        } else {
+          "nothing to save"
+        },
+        "</span>"
+      )
+    )
+  })
+
+# holding an edit ---------------------------------------------------------
+
+# The feedback the graded file will carry for one answer: whatever was
+# written in this box before, or the checks' own wording.
+
+baseline_feedback <-
+  function(.slot) {
+    written <- override_reasons(.slot)
+
+    if (!is.null(written)) return(str_c(written, collapse = "\n"))
+
+    str_c(deduction_reasons(.slot), collapse = "\n")
+  }
+
+# The style credit this answer's question currently carries.
+
+style_credit_now <-
+  function(.slot) {
+    row <-
+      results()$questions %>%
+      filter(
+        student_id == .slot$student_id,
+        question == .slot$question
+      )
+
+    if (!nrow(row)) return(0)
+
+    row$style_credit[1]
+  }
+
+# Point the boxes at one answer, showing an unsaved edit in preference to the
+# mark the pipeline proposed.
+
+show_response <-
+  function(.slot) {
+    if (is.null(.slot) || !nrow(.slot)) return(invisible(NULL))
+
+    pending <-
+      edits() %>%
+      filter(slot_id == .slot$slot_id, student_id == .slot$student_id)
+
+    updateNumericInput(
+      session,
+      "override_deduction",
+      value = if (nrow(pending)) pending$new_deduction[1] else .slot$deduction,
+      max = .slot$slot_points
+    )
+
+    updateTextAreaInput(
+      session,
+      "override_note",
+      value =
+        if (nrow(pending) && !is.na(pending$new_note[1])) {
+          pending$new_note[1]
+        } else {
+          baseline_feedback(.slot)
+        }
+    )
+
+    credit <- style_credit_now(.slot)
+
+    updateNumericInput(
+      session,
+      "override_style_credit",
+      value =
+        if (nrow(pending) && !is.na(pending$new_style_credit[1])) {
+          pending$new_style_credit[1]
+        } else {
+          credit
+        },
+      max = style_credit_rate * .slot$question_points
+    )
+
+    shown(
+      list(
+        slot_id = .slot$slot_id,
+        student_id = .slot$student_id,
+        question = .slot$question,
+        deduction = .slot$deduction,
+        feedback = baseline_feedback(.slot),
+        style_credit = credit
+      )
+    )
+  }
+
+# Take whatever is in the boxes into the buffer, or out of it when it has
+# been put back to the mark the pipeline proposed.
+
+capture_current <-
+  function() {
+    was <- shown()
+
+    if (is.null(was)) return(invisible(NULL))
+
+    same_deduction <-
+      isTRUE(all.equal(input$override_deduction, was$deduction))
+
+    same_feedback <-
+      identical(str_trim(input$override_note), str_trim(was$feedback))
+
+    same_credit <-
+      isTRUE(all.equal(input$override_style_credit, was$style_credit))
+
+    kept <-
+      edits() %>%
+      filter(!(slot_id == was$slot_id & student_id == was$student_id))
+
+    if (same_deduction && same_feedback && same_credit) {
+      edits(kept)
+
+      return(invisible(NULL))
+    }
+
+    edits(
+      bind_rows(
+        kept,
+        tibble(
+          slot_id = was$slot_id,
+          student_id = was$student_id,
+          question = as.integer(was$question),
+          new_deduction = input$override_deduction,
+          new_note =
+            if (same_feedback) NA_character_ else str_trim(input$override_note),
+          new_style_credit =
+            if (same_credit) NA_real_ else input$override_style_credit
+        )
+      )
+    )
+
+    invisible(NULL)
+  }
+
+# moving ------------------------------------------------------------------
+
+# Every move captures first, then changes position, then points the boxes at
+# the new answer, in that order. An edit belongs to the answer that was on
+# screen when it was made.
+
+move_to <-
+  function(.part, .response) {
+    capture_current()
+
+    part_index(.part)
+
+    response_index(.response)
+
+    show_response(current_response())
+  }
+
+# The run is fixed for this session, so the only thing to do at startup is
+# point the boxes at the first answer of the first question.
+
+observeEvent(
+  TRUE,
+  move_to(1L, 1L),
+  once = TRUE
+)
+
+observeEvent(
+  input$next_response,
+  {
+    total <- nrow(current_responses())
+
+    if (!total) return(invisible(NULL))
+
+    move_to(
+      part_index(),
+      if (response_index() >= total) 1L else response_index() + 1L
+    )
+  }
+)
+
+observeEvent(
+  input$previous_response,
+  {
+    total <- nrow(current_responses())
+
+    if (!total) return(invisible(NULL))
+
+    move_to(
+      part_index(),
+      if (response_index() <= 1L) total else response_index() - 1L
+    )
+  }
+)
+
+observeEvent(
+  input$next_part,
+  {
+    total <- nrow(parts())
+
+    if (!total) return(invisible(NULL))
+
+    move_to(if (part_index() >= total) 1L else part_index() + 1L, 1L)
+  }
+)
+
+observeEvent(
+  input$previous_part,
+  {
+    total <- nrow(parts())
+
+    if (!total) return(invisible(NULL))
+
+    move_to(if (part_index() <= 1L) total else part_index() - 1L, 1L)
+  }
+)
+
+observeEvent(
+  input$reset_response,
+  {
+    slot <- current_response()
+
+    if (is.null(slot)) return(invisible(NULL))
+
+    edits(
+      edits() %>%
+        filter(!(slot_id == slot$slot_id & student_id == slot$student_id))
+    )
+
+    show_response(slot)
+  }
+)
+
+# accepting an unexpected answer ------------------------------------------
+
+# Shown only under an answer the comparison marked wrong. Accepting it
+# appends the code to the key file as a new alternative and marks every
+# matching proposal on this question correct.
+
+output$accept_answer_ui <-
+  renderUI({
+    slot <- current_response()
+
+    if (is.null(slot) || slot$verdict != "incorrect") return(NULL)
+
+    div(
+      class = "gd-nav gd-nav-row",
+      actionButton(
+        "accept_answer",
+        "Accept this answer and add it to the key"
+      )
+    )
+  })
+
+observeEvent(
+  input$accept_answer,
+  {
+    slot <- current_response()
+
+    if (is.null(slot) || slot$verdict != "incorrect") {
+      return(invisible(NULL))
+    }
+
+    before <- results()
+
+    updated <-
+      accept_alternative(
+        before,
+        slot$student_id,
+        slot$slot_id
+      )
+
+    added <-
+      length(updated$key$alternatives[updated$key$slot_id == slot$slot_id][[1]]) >
+        length(before$key$alternatives[before$key$slot_id == slot$slot_id][[1]])
+
+    if (!added) {
+      showNotification(
+        "The key already accepts this approach.",
+        duration = 4,
+        type = "warning"
+      )
+
+      return(invisible(NULL))
+    }
+
+    marked <-
+      sum(
+        updated$slots$verdict == "correct" &
+          before$slots$verdict != "correct"
+      )
+
+    results(updated)
+
+    # An unsaved edit on this answer would otherwise keep showing the old
+    # mark in the boxes.
+
+    edits(
+      edits() %>%
+        filter(!(slot_id == slot$slot_id & student_id == slot$student_id))
+    )
+
+    showNotification(
+      str_c(
+        "Added to the key. ",
+        marked,
+        " answer",
+        if (marked == 1) "" else "s",
+        " on this question ",
+        if (marked == 1) "is" else "are",
+        " now marked correct."
+      ),
+      duration = 6,
+      type = "message"
+    )
+
+    show_response(current_response())
+  }
+)
+
+# saving ------------------------------------------------------------------
+
+observeEvent(
+  input$save_part,
+  {
+    capture_current()
+
+    part <- current_part()
+
+    if (is.null(part)) return(invisible(NULL))
+
+    this_part <-
+      edits() %>%
+      filter(slot_id == part$slot_id)
+
+    if (!nrow(this_part)) {
+      showNotification(
+        "Nothing has been changed on this question.",
+        duration = 3,
+        type = "warning"
+      )
+
+      return(invisible(NULL))
+    }
+
+    results(apply_overrides(results(), this_part))
+
+    edits(
+      edits() %>%
+        filter(slot_id != part$slot_id)
+    )
+
+    showNotification(
+      str_c(
+        "Saved ", nrow(this_part), " response",
+        if (nrow(this_part) == 1) "" else "s",
+        "."
+      ),
+      duration = 3,
+      type = "message"
+    )
+
+    show_response(current_response())
+  }
+)
+
+observeEvent(
+  input$write_reports,
+  {
+    run <- results()
+
+    paths <-
+      write_graded_reports(
+        run$problem_set,
+        run$index,
+        run$slots,
+        run$questions,
+        .bank = run$bank
+      )
+
+    showNotification(
+      str_c("Wrote ", length(paths), " graded files."),
+      type = "message"
+    )
+
+    # A review flag is the grader's and never appears on a graded file, so
+    # files written past an open flag carry a provisional mark silently.
+
+    open_flags <-
+      sum(run$slots$needs_review & !run$slots$reviewed, na.rm = TRUE)
+
+    if (open_flags > 0) {
+      showNotification(
+        str_c(
+          open_flags,
+          " flagged response",
+          if (open_flags == 1) " is" else "s are",
+          " still unreviewed. The written files carry no review markers."
+        ),
+        duration = 8,
+        type = "warning"
+      )
+    }
+  }
+)
+
+# cohort ------------------------------------------------------------------
+
+output$score_distribution <-
+  renderPlot({
+    ggplot(results()$students, aes(x = total)) +
+      geom_histogram(
+        binwidth = 0.5,
+        fill = "#292093",
+        colour = "white"
+      ) +
+      labs(
+        x = "Total points",
+        y = "Students",
+        title = "How the class scored"
+      ) +
+      theme_minimal(base_size = 13)
+  })
+
+output$question_difficulty <-
+  renderPlot({
+    results()$questions %>%
+      group_by(question) %>%
+      summarize(
+        share = mean(earned / question_points),
+        .groups = "drop"
+      ) %>%
+      ggplot(aes(x = factor(question), y = share)) +
+      geom_col(fill = "#9db0e6") +
+      scale_y_continuous(labels = scales::percent) +
+      labs(
+        x = "Question",
+        y = "Mean share earned",
+        title = "Which questions were hardest"
+      ) +
+      theme_minimal(base_size = 13)
+  })
+
+output$violation_table <-
+  renderDT(
+    {
+      results()$slots %>%
+        select(student_id, violations) %>%
+        unnest(violations) %>%
+        count(comment_text, sort = TRUE) %>%
+        rename(Violation = comment_text, Count = n)
+    },
+    rownames = FALSE,
+    options = list(pageLength = 8, dom = "tp")
+  )
+
+output$unapproved_table <-
+  renderDT(
+    {
+      results()$slots %>%
+        select(student_id, question, unapproved) %>%
+        unnest(unapproved) %>%
+        count(unapproved, question, sort = TRUE) %>%
+        rename(Function = unapproved, Question = question, Count = n)
+    },
+    rownames = FALSE,
+    options = list(pageLength = 8, dom = "tp")
+  )
+```

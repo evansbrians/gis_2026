@@ -1,0 +1,600 @@
+/*-- scss:defaults --*/
+
+// Neutral dark palette for the course reference GUI. Layered over darkly, but
+// darkly's blues are replaced throughout with a desaturated slate so nothing
+// on the page reads as "bright".
+
+$gui-bg:           #131619;
+$gui-surface:      #1a1e22;
+$gui-surface-2:    #22262b;
+$gui-surface-3:    #2b3037;
+$gui-border:       #2b3036;
+$gui-border-soft:  #21262b;
+$gui-text:         #d8dbdf;
+$gui-text-dim:     #969ca4;
+$gui-text-faint:   #6b7178;
+$gui-accent:       #9aa8ae;
+$gui-accent-deep:  #b6c3c8;
+$gui-ok:           #86a892;
+$gui-danger:       #bd8585;
+
+$body-bg:                     $gui-bg;
+$body-color:                  $gui-text;
+$body-secondary-color:        $gui-text-dim;
+
+$primary:                     $gui-surface-3;
+$secondary:                   $gui-surface-2;
+$success:                     $gui-ok;
+$info:                        $gui-accent;
+$warning:                     #b6a271;
+$danger:                      $gui-danger;
+$light:                       $gui-surface-2;
+$dark:                        $gui-bg;
+
+$border-color:                $gui-border;
+$border-radius:               0.5rem;
+$link-color:                  $gui-accent-deep;
+$link-hover-color:            #d3dcdf;
+
+$font-family-sans-serif:      -apple-system, BlinkMacSystemFont, "Segoe UI",
+                              "Helvetica Neue", Arial, sans-serif;
+$font-size-base:              0.92rem;
+$line-height-base:            1.55;
+$headings-font-weight:        600;
+
+$input-bg:                    $gui-surface-2;
+$input-color:                 $gui-text;
+$input-border-color:          $gui-border;
+$input-focus-bg:              $gui-surface-2;
+$input-focus-border-color:    $gui-accent;
+$input-focus-box-shadow:      0 0 0 3px rgba(154, 168, 174, 0.16);
+$input-placeholder-color:     $gui-text-faint;
+$input-btn-padding-y:         0.45rem;
+$input-btn-padding-x:         0.7rem;
+
+$component-active-bg:         $gui-surface-3;
+$component-active-color:      $gui-text;
+
+$nav-tabs-border-color:       $gui-border;
+$nav-tabs-link-active-bg:     $gui-surface;
+$nav-tabs-link-active-color:  $gui-text;
+
+$code-color:                  #c6b28a;
+$code-bg:                     $gui-surface-2;
+$pre-bg:                      $gui-bg;
+
+$table-bg:                    transparent;
+$table-color:                 $gui-text;
+$table-border-color:          $gui-border-soft;
+
+/*-- scss:rules --*/
+
+:root {
+  --gui-bg: #131619;
+  --gui-surface: #1a1e22;
+  --gui-surface-2: #22262b;
+  --gui-surface-3: #2b3037;
+  --gui-border: #2b3036;
+  --gui-border-soft: #21262b;
+  --gui-text: #d8dbdf;
+  --gui-text-dim: #969ca4;
+  --gui-text-faint: #6b7178;
+  --gui-accent: #9aa8ae;
+  --gui-accent-deep: #b6c3c8;
+  --gui-accent-soft: rgba(154, 168, 174, 0.14);
+  --gui-ok: #86a892;
+  --gui-danger: #bd8585;
+  --gui-radius: 10px;
+  --gui-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+}
+
+body {
+  background-color: var(--gui-bg);
+  color: var(--gui-text);
+  -webkit-font-smoothing: antialiased;
+}
+
+// Quarto page furniture we replace with our own header.
+
+#title-block-header,
+#quarto-header,
+.quarto-title-banner {
+  display: none !important;
+}
+
+main.content,
+#quarto-content > *,
+#quarto-document-content {
+  max-width: none;
+  padding-top: 0;
+  margin-top: 0;
+}
+
+// Header -------------------------------------------------------------------
+
+.gui-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem 1.5rem;
+  padding: 0.9rem 0 1rem;
+  margin-bottom: 0.25rem;
+  border-bottom: 1px solid var(--gui-border-soft);
+}
+
+.gui-title {
+  margin: 0;
+  font-size: 1.15rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--gui-text);
+}
+
+.gui-subtitle {
+  margin-top: 0.15rem;
+  font-family: var(--bs-font-monospace);
+  font-size: 0.76rem;
+  color: var(--gui-text-faint);
+}
+
+.gui-stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+
+.gui-stat {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.35rem;
+  padding: 0.25rem 0.6rem;
+  background-color: var(--gui-surface);
+  border: 1px solid var(--gui-border-soft);
+  border-radius: 999px;
+  font-size: 0.72rem;
+  color: var(--gui-text-faint);
+  white-space: nowrap;
+}
+
+.gui-stat strong {
+  font-weight: 600;
+  color: var(--gui-text-dim);
+}
+
+// Tab strip ---------------------------------------------------------------
+//
+// shiny's tabsetPanel() emits Bootstrap 3 markup (ul > li > a) even under
+// Bootstrap 5, so none of Bootstrap 5's own .nav-link rules apply and the tab
+// strip renders as bare inline links. Both shapes are styled here.
+
+.nav-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem;
+  padding: 0;
+  margin: 0.85rem 0 1.15rem;
+  list-style: none;
+  border-bottom: 1px solid var(--gui-border);
+}
+
+.nav-tabs > li,
+.nav-tabs .nav-item {
+  margin-bottom: -1px;
+  float: none;
+}
+
+.nav-tabs > li > a,
+.nav-tabs .nav-link {
+  display: block;
+  padding: 0.5rem 0.95rem;
+  font-size: 0.84rem;
+  font-weight: 500;
+  line-height: 1.4;
+  text-decoration: none;
+  color: var(--gui-text-faint);
+  background-color: transparent;
+  border: 1px solid transparent;
+  border-radius: 8px 8px 0 0;
+  transition: color 0.12s ease, background-color 0.12s ease;
+}
+
+.nav-tabs > li > a:hover,
+.nav-tabs .nav-link:hover {
+  color: var(--gui-text-dim);
+  background-color: var(--gui-surface);
+  border-color: transparent;
+  text-decoration: none;
+}
+
+.nav-tabs > li > a:focus-visible,
+.nav-tabs .nav-link:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px var(--gui-accent-soft);
+}
+
+.nav-tabs > li.active > a,
+.nav-tabs > li > a.active,
+.nav-tabs .nav-link.active {
+  color: var(--gui-text);
+  background-color: var(--gui-surface);
+  border-color: var(--gui-border);
+  border-bottom-color: var(--gui-surface);
+  box-shadow: inset 0 2px 0 0 var(--gui-accent);
+}
+
+.tab-content {
+  padding-top: 0;
+}
+
+.tab-content > .tab-pane {
+  display: none;
+}
+
+.tab-content > .tab-pane.active {
+  display: block;
+}
+
+// Panes --------------------------------------------------------------------
+
+.gui-pane {
+  display: grid;
+  grid-template-columns: minmax(250px, 300px) minmax(0, 1fr);
+  gap: 1.1rem;
+  align-items: start;
+}
+
+.gui-pane-wide {
+  display: block;
+}
+
+@media (max-width: 780px) {
+  .gui-pane {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.gui-card {
+  background-color: var(--gui-surface);
+  border: 1px solid var(--gui-border);
+  border-radius: var(--gui-radius);
+  box-shadow: var(--gui-shadow);
+  overflow: hidden;
+}
+
+.gui-card-head {
+  padding: 0.7rem 0.9rem;
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.075em;
+  color: var(--gui-text-faint);
+  background-color: var(--gui-surface-2);
+  border-bottom: 1px solid var(--gui-border);
+}
+
+.gui-card-body {
+  padding: 0.9rem;
+}
+
+.gui-card-body > .shiny-input-container:first-child,
+.gui-card-body > .form-group:first-child {
+  margin-top: 0;
+}
+
+.gui-card-foot {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.75rem 0.9rem;
+  background-color: rgba(0, 0, 0, 0.16);
+  border-top: 1px solid var(--gui-border-soft);
+}
+
+// Fields -------------------------------------------------------------------
+
+.gui-field-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 0.75rem;
+}
+
+.gui-card-body .form-group,
+.gui-card-body .shiny-input-container {
+  margin-bottom: 0.75rem;
+  width: 100%;
+}
+
+.gui-card-body .form-group:last-child {
+  margin-bottom: 0;
+}
+
+// shiny emits an empty <label> for inputs given a NULL label.
+
+.control-label:empty,
+.shiny-label-null {
+  display: none;
+}
+
+.control-label {
+  font-size: 0.72rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--gui-text-faint);
+  margin-bottom: 0.28rem;
+}
+
+.form-control,
+.form-select {
+  background-color: var(--gui-surface-2);
+  color: var(--gui-text);
+  border: 1px solid var(--gui-border);
+  border-radius: 8px;
+  font-size: 0.86rem;
+  transition: border-color 0.12s ease, box-shadow 0.12s ease;
+}
+
+.form-control:focus,
+.form-select:focus {
+  background-color: var(--gui-surface-2);
+  color: var(--gui-text);
+  border-color: var(--gui-accent);
+  box-shadow: 0 0 0 3px var(--gui-accent-soft);
+}
+
+textarea.form-control {
+  font-family: var(--bs-font-monospace);
+  font-size: 0.83rem;
+  line-height: 1.55;
+}
+
+// Record list --------------------------------------------------------------
+
+.gui-record-list select {
+  height: auto;
+  padding: 0.25rem;
+  font-family: var(--bs-font-monospace);
+  font-size: 0.79rem;
+  background-color: var(--gui-bg);
+  border-radius: 8px;
+}
+
+.gui-record-list select option {
+  padding: 0.32rem 0.45rem;
+  color: var(--gui-text-dim);
+  border-radius: 5px;
+}
+
+// Chromium ignores background-color on a selected <option>; a same-colour
+// linear-gradient is the one declaration it does honour, and keeps the
+// operating system's bright selection colour off the list.
+
+.gui-record-list select option:checked {
+  color: var(--gui-text);
+  -webkit-text-fill-color: var(--gui-text);
+  background: var(--gui-surface-3)
+    linear-gradient(0deg, var(--gui-surface-3) 0%, var(--gui-surface-3) 100%);
+}
+
+.gui-record-list select:focus option:checked {
+  background: #343c45 linear-gradient(0deg, #343c45 0%, #343c45 100%);
+}
+
+// Buttons ------------------------------------------------------------------
+
+.gui-btn.btn {
+  padding: 0.4rem 0.85rem;
+  font-size: 0.8rem;
+  font-weight: 500;
+  border-radius: 8px;
+  border: 1px solid var(--gui-border);
+  transition: background-color 0.12s ease, border-color 0.12s ease,
+    color 0.12s ease;
+}
+
+.gui-btn-primary.btn {
+  color: var(--gui-text);
+  background-color: var(--gui-surface-3);
+  border-color: #39404a;
+}
+
+.gui-btn-primary.btn:hover {
+  background-color: #343b44;
+  border-color: var(--gui-accent);
+}
+
+.gui-btn-ghost.btn {
+  color: var(--gui-text-dim);
+  background-color: transparent;
+}
+
+.gui-btn-ghost.btn:hover {
+  color: var(--gui-text);
+  background-color: var(--gui-surface-2);
+}
+
+.gui-btn-danger.btn {
+  color: var(--gui-danger);
+  background-color: transparent;
+}
+
+.gui-btn-danger.btn:hover {
+  color: #e8b6b6;
+  background-color: rgba(189, 133, 133, 0.14);
+  border-color: rgba(189, 133, 133, 0.4);
+}
+
+.gui-btn.btn:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px var(--gui-accent-soft);
+}
+
+.gui-list-actions {
+  display: flex;
+  gap: 0.4rem;
+  margin-top: 0.65rem;
+}
+
+.gui-list-actions .btn {
+  flex: 1 1 0;
+}
+
+// Status line --------------------------------------------------------------
+
+.gui-message {
+  margin-left: auto;
+  font-size: 0.79rem;
+  color: var(--gui-text-faint);
+  text-align: right;
+}
+
+// Selectize ----------------------------------------------------------------
+
+.selectize-input,
+.selectize-dropdown {
+  background-color: var(--gui-surface-2) !important;
+  color: var(--gui-text) !important;
+  border-color: var(--gui-border) !important;
+  border-radius: 8px !important;
+  font-size: 0.85rem;
+  box-shadow: none !important;
+}
+
+.selectize-input.focus {
+  border-color: var(--gui-accent) !important;
+  box-shadow: 0 0 0 3px var(--gui-accent-soft) !important;
+}
+
+.selectize-dropdown .active {
+  background-color: var(--gui-surface-3) !important;
+  color: var(--gui-text) !important;
+}
+
+.selectize-input > .item {
+  background-color: var(--gui-surface-3) !important;
+  color: var(--gui-text) !important;
+  border: 1px solid var(--gui-border) !important;
+  border-radius: 6px;
+}
+
+// DataTables ---------------------------------------------------------------
+
+.dataTables_wrapper {
+  color: var(--gui-text-dim);
+  font-size: 0.82rem;
+}
+
+table.dataTable {
+  color: var(--gui-text);
+  border-color: var(--gui-border-soft);
+}
+
+table.dataTable thead th {
+  padding: 0.5rem 0.6rem !important;
+  font-size: 0.71rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--gui-text-faint);
+  border-bottom: 1px solid var(--gui-border) !important;
+}
+
+table.dataTable tbody td {
+  padding: 0.42rem 0.6rem !important;
+  border-top: 1px solid var(--gui-border-soft);
+}
+
+table.dataTable tbody tr:hover td {
+  background-color: rgba(255, 255, 255, 0.02);
+}
+
+table.dataTable tbody tr.selected td {
+  background-color: var(--gui-accent-soft) !important;
+  box-shadow: none !important;
+  color: var(--gui-text) !important;
+}
+
+.dataTables_wrapper .dataTables_filter {
+  margin-bottom: 0.5rem;
+  text-align: right;
+}
+
+.dataTables_wrapper .dataTables_filter label,
+.dataTables_wrapper .dataTables_length label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-size: 0.75rem;
+  color: var(--gui-text-faint);
+  margin: 0;
+}
+
+.dataTables_wrapper .dataTables_filter input,
+.dataTables_wrapper .dataTables_length select {
+  background-color: var(--gui-surface-2);
+  color: var(--gui-text);
+  border: 1px solid var(--gui-border);
+  border-radius: 6px;
+  padding: 0.2rem 0.45rem;
+}
+
+.dataTables_wrapper .dataTables_info {
+  font-size: 0.75rem;
+  color: var(--gui-text-faint);
+}
+
+.dataTables_wrapper .dataTables_paginate {
+  padding-top: 0.5rem;
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button {
+  color: var(--gui-text-dim) !important;
+  border: none !important;
+  border-radius: 6px;
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button:hover {
+  background: var(--gui-surface-2) !important;
+  color: var(--gui-text) !important;
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button.current {
+  background: var(--gui-surface-3) !important;
+  color: var(--gui-text) !important;
+}
+
+// Scrollbars ---------------------------------------------------------------
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #383f47 transparent;
+}
+
+*::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+*::-webkit-scrollbar-thumb {
+  background-color: #383f47;
+  border: 3px solid transparent;
+  border-radius: 999px;
+  background-clip: content-box;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background-color: #4a525c;
+}
+
+// Copy-to-clipboard flash --------------------------------------------------
+
+.gui-copied {
+  animation: gui-flash 0.85s ease-out;
+}
+
+@keyframes gui-flash {
+  0%   { box-shadow: 0 0 0 0 var(--gui-accent-soft); }
+  100% { box-shadow: 0 0 0 12px rgba(154, 168, 174, 0); }
+}

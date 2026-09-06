@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 723 541" width="723" height="541" font-family="Helvetica Neue,Helvetica,Arial,sans-serif" role="img">
+<rect width="723" height="541" fill="#ffffff"/>
+<text x="362" y="34" text-anchor="middle" font-size="19" font-weight="700" fill="#292093">Decision tree: Choosing the operation</text>
+<line x1="40" y1="50" x2="683" y2="50" stroke="#9db0e6" stroke-width="1.2"/>
+<g transform="translate(0,52)">
+<path d="M 124.0 244.0 H 136.0 V 100.0 H 259.0" fill="none" stroke="#9db0e6" stroke-width="1.8" stroke-linejoin="round"/>
+<polygon points="270.0,100.0 258.0,95.0 258.0,105.0" fill="#9db0e6"/>
+<path d="M 420.0 100.0 H 432.0 V 52.0 H 575.0" fill="none" stroke="#9db0e6" stroke-width="1.8" stroke-linejoin="round"/>
+<polygon points="586.0,52.0 574.0,47.0 574.0,57.0" fill="#9db0e6"/>
+<path d="M 420.0 100.0 H 432.0 V 148.0 H 575.0" fill="none" stroke="#9db0e6" stroke-width="1.8" stroke-linejoin="round"/>
+<polygon points="586.0,148.0 574.0,143.0 574.0,153.0" fill="#9db0e6"/>
+<path d="M 124.0 244.0 H 136.0 V 244.0 H 259.0" fill="none" stroke="#9db0e6" stroke-width="1.8" stroke-linejoin="round"/>
+<polygon points="270.0,244.0 258.0,239.0 258.0,249.0" fill="#9db0e6"/>
+<path d="M 124.0 244.0 H 136.0 V 388.0 H 259.0" fill="none" stroke="#9db0e6" stroke-width="1.8" stroke-linejoin="round"/>
+<polygon points="270.0,388.0 258.0,383.0 258.0,393.0" fill="#9db0e6"/>
+<path d="M 420.0 388.0 H 432.0 V 340.0 H 575.0" fill="none" stroke="#9db0e6" stroke-width="1.8" stroke-linejoin="round"/>
+<polygon points="586.0,340.0 574.0,335.0 574.0,345.0" fill="#9db0e6"/>
+<path d="M 420.0 388.0 H 432.0 V 436.0 H 575.0" fill="none" stroke="#9db0e6" stroke-width="1.8" stroke-linejoin="round"/>
+<polygon points="586.0,436.0 574.0,431.0 574.0,441.0" fill="#9db0e6"/>
+<rect x="148.2" y="66.0" width="109.5" height="30.0" rx="3" fill="#ffffff"/>
+<text x="203.0" y="77.0" text-anchor="middle" font-size="12" fill="#4a5aa0">a subset of the</text>
+<text x="203.0" y="90.0" text-anchor="middle" font-size="12" fill="#4a5aa0">existing rows</text>
+<rect x="457.7" y="31.0" width="102.6" height="17.0" rx="3" fill="#ffffff"/>
+<text x="509.0" y="42.0" text-anchor="middle" font-size="12" fill="#4a5aa0">by a condition</text>
+<rect x="481.9" y="127.0" width="54.3" height="17.0" rx="3" fill="#ffffff"/>
+<text x="509.0" y="138.0" text-anchor="middle" font-size="12" fill="#4a5aa0">by rank</text>
+<rect x="148.2" y="210.0" width="109.5" height="30.0" rx="3" fill="#ffffff"/>
+<text x="203.0" y="221.0" text-anchor="middle" font-size="12" fill="#4a5aa0">every row, with</text>
+<text x="203.0" y="234.0" text-anchor="middle" font-size="12" fill="#4a5aa0">a new variable</text>
+<rect x="162.1" y="354.0" width="81.9" height="30.0" rx="3" fill="#ffffff"/>
+<text x="203.0" y="365.0" text-anchor="middle" font-size="12" fill="#4a5aa0">one row for</text>
+<text x="203.0" y="378.0" text-anchor="middle" font-size="12" fill="#4a5aa0">each group</text>
+<rect x="464.6" y="319.0" width="88.8" height="17.0" rx="3" fill="#ffffff"/>
+<text x="509.0" y="330.0" text-anchor="middle" font-size="12" fill="#4a5aa0">only a count</text>
+<rect x="443.9" y="415.0" width="130.2" height="17.0" rx="3" fill="#ffffff"/>
+<text x="509.0" y="426.0" text-anchor="middle" font-size="12" fill="#4a5aa0">summary statistics</text>
+<rect x="8.0" y="212.0" width="116" height="64" rx="9" fill="#eaf0ff" stroke="#292093" stroke-width="2.0"/>
+<text x="66.0" y="239.0" text-anchor="middle" font-size="15" fill="#333333">What result</text>
+<text x="66.0" y="258.0" text-anchor="middle" font-size="15" fill="#333333">do you want?</text>
+<rect x="272.0" y="68.0" width="148" height="64" rx="9" fill="#eaf0ff" stroke="#292093" stroke-width="2.0"/>
+<text x="346.0" y="95.0" text-anchor="middle" font-size="15" fill="#333333">How should the</text>
+<text x="346.0" y="114.0" text-anchor="middle" font-size="15" fill="#333333">rows be chosen?</text>
+<rect x="588.0" y="29.0" width="127" height="46" rx="9" fill="#ffffff" stroke="#9db0e6" stroke-width="1.6"/>
+<text x="651.5" y="57.0" text-anchor="middle" font-size="15" font-weight="700" font-family="Menlo,Consolas,monospace" fill="#292093">filter()</text>
+<rect x="588.0" y="115.0" width="127" height="66" rx="9" fill="#ffffff" stroke="#9db0e6" stroke-width="1.6"/>
+<text x="651.5" y="143.0" text-anchor="middle" font-size="15" font-weight="700" font-family="Menlo,Consolas,monospace" fill="#292093">slice_max()</text>
+<text x="651.5" y="163.0" text-anchor="middle" font-size="15" font-weight="700" font-family="Menlo,Consolas,monospace" fill="#292093">slice_min()</text>
+<rect x="272.0" y="221.0" width="148" height="46" rx="9" fill="#ffffff" stroke="#9db0e6" stroke-width="1.6"/>
+<text x="346.0" y="249.0" text-anchor="middle" font-size="15" font-weight="700" font-family="Menlo,Consolas,monospace" fill="#292093">mutate()</text>
+<rect x="272.0" y="356.0" width="148" height="64" rx="9" fill="#eaf0ff" stroke="#292093" stroke-width="2.0"/>
+<text x="346.0" y="383.0" text-anchor="middle" font-size="15" fill="#333333">What should that</text>
+<text x="346.0" y="402.0" text-anchor="middle" font-size="15" fill="#333333">row contain?</text>
+<rect x="588.0" y="307.0" width="127" height="66" rx="9" fill="#ffffff" stroke="#9db0e6" stroke-width="1.6"/>
+<text x="651.5" y="335.0" text-anchor="middle" font-size="15" font-weight="700" font-family="Menlo,Consolas,monospace" fill="#292093">count()</text>
+<text x="651.5" y="355.0" text-anchor="middle" font-size="15" font-weight="700" font-family="Menlo,Consolas,monospace" fill="#292093">summarize()</text>
+<rect x="588.0" y="413.0" width="127" height="46" rx="9" fill="#ffffff" stroke="#9db0e6" stroke-width="1.6"/>
+<text x="651.5" y="441.0" text-anchor="middle" font-size="15" font-weight="700" font-family="Menlo,Consolas,monospace" fill="#292093">summarize()</text>
+</g>
+</svg>
