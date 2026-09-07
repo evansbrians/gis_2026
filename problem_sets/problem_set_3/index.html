@@ -2323,7 +2323,6 @@ Functions that you may use in this assignment
 <li><code>tibble::as_tibble</code></li>
 <li><code>tibble::tribble</code></li>
 <li><code>tmap::tm_basemap</code></li>
-<li><code>tmap::tm_borders</code></li>
 <li><code>tmap::tm_dots</code></li>
 <li><code>tmap::tm_legend</code></li>
 <li><code>tmap::tm_polygons</code></li>
@@ -2374,9 +2373,10 @@ Click this button to learn more!
 <p><em>Note: You will submit this script file as your assignment.</em></p>
 </div>
 <div class="now_you">
-<p>2. <span class="score">[0.25]</span> Prepare your session:</p>
+<p>2. <span class="score">[0.50]</span> Prepare your session:</p>
 <ul>
-<li><span class="subscore">[0.15]</span> Attach <em>sf</em>, <em>tmap</em>, and the tidyverse metapackage to your current R session.</li>
+<li><span class="subscore">[0.20]</span> Attach <em>sf</em>, <em>tmap</em>, and the tidyverse metapackage to your current R session.</li>
+<li><span class="subscore">[0.20]</span> Set the <em>tmap</em> mode such that all <em>tmap</em> code will generate interactive maps.</li>
 <li><span class="subscore">[0.10]</span> Load <code>source_script_module_3.R</code>.</li>
 </ul>
 <p><em>Hint: Please see <strong>3.2 Introduction to spatial vector data</strong>.</em></p>
@@ -2385,10 +2385,10 @@ Click this button to learn more!
 <section id="reading-spatial-vector-data" class="level2">
 <h2 class="anchored" data-anchor-id="reading-spatial-vector-data">Reading spatial vector data</h2>
 <div class="now_you">
-<p>3. <span class="score">[0.75]</span> Read the spatial vector files. Use a relative file path for each.</p>
+<p>3. <span class="score">[0.50]</span> Read the spatial vector files. Use a relative file path for each.</p>
 <ul>
-<li><span class="subscore">[0.30]</span> Read <code>patches.geojson</code> and globally assign it to the name <code>patches</code>. Allow the file metadata to print.</li>
-<li><span class="subscore">[0.45]</span> Read <code>nest_locations.shp</code> and globally assign it to the name <code>nests</code>. In doing so, suppress the printing of the file metadata.</li>
+<li><span class="subscore">[0.25]</span> Read <code>patches.geojson</code> and globally assign it to the name <code>patches</code>. Allow the file metadata to print.</li>
+<li><span class="subscore">[0.25]</span> Read <code>nest_locations.shp</code> and globally assign it to the name <code>nests</code>. In doing so, suppress the printing of the file metadata.</li>
 </ul>
 <p><em>Hint: Please see <strong>3.2 Introduction to spatial vector data</strong>.</em></p>
 </div>
@@ -2398,9 +2398,10 @@ Click this button to learn more!
 <div class="now_you">
 <p>4. <span class="score">[1.0]</span> The point count locations are stored in a CSV file with longitude and latitude fields rather than a geometry. In a single piped statement:</p>
 <ul>
-<li><span class="subscore">[0.30]</span> Read <code>point_count_locations.csv</code> with a relative file path.</li>
-<li><span class="subscore">[0.60]</span> Convert the result to a point simple features object, supplying the coordinate reference system in which the coordinates were recorded.</li>
-<li><span class="subscore">[0.10]</span> Globally assign the result to the name <code>point_counts</code>.</li>
+<li><span class="subscore">[0.20]</span> Read <code>point_count_locations.csv</code> with a relative file path.</li>
+<li><span class="subscore">[0.50]</span> Convert the result to a point simple features object, supplying the coordinate reference system in which the coordinates were recorded.</li>
+<li><span class="subscore">[0.25]</span> Convert the CRS to the same CRS as <code>patches</code></li>
+<li><span class="subscore">[0.05]</span> Globally assign the result to the name <code>point_counts</code>.</li>
 </ul>
 <p><em>Hint: The order in which you name the coordinate columns matters! Please see <strong>3.2 Introduction to spatial vector data</strong> and <strong>3.4 The coordinate reference system: Why it matters and how to use it</strong>.</em></p>
 </div>
@@ -2411,8 +2412,8 @@ Click this button to learn more!
 <p>5. <span class="score">[1.25]</span> Prepare the objects for mapping.</p>
 <ul>
 <li><span class="subscore">[0.30]</span> In separate code blocks, return the EPSG code of <code>patches</code>, <code>nests</code>, and <code>point_counts</code>, each as a single integer value.</li>
-<li><span class="subscore">[0.30]</span> Return a single integer vector containing the number of vertices in <code>patches</code>, <code>nests</code>, and <code>point_counts</code>, in that order.</li>
-<li><span class="subscore">[0.65]</span> Either existing CRS is appropriate for this local map. Using the decision rules in <strong>3.2 Introduction to spatial vector data</strong>, transform the necessary object(s). Assign the resulting objects to the global environment, adding the suffix <code>_transformed</code> to the previously assigned name(s).</li>
+<li><span class="subscore">[0.30]</span> In separate code blocks, return a single integer vector containing the number of vertices in <code>patches</code>, <code>nests</code>, and <code>point_counts</code>, in that order.</li>
+<li><span class="subscore">[0.65]</span> Using the decision rules in <strong>3.2 Introduction to spatial vector data</strong>, transform the object(s) such that patches, nests, and point counts share a CRS. Globally assign the transformed object(s), adding the suffix <code>_transformed</code> to the previously assigned name(s).</li>
 </ul>
 <p><em>Hint: Please see <strong>3.2 Introduction to spatial vector data</strong> and <strong>3.4 The coordinate reference system: Why it matters and how to use it</strong>.</em></p>
 </div>
@@ -2421,14 +2422,14 @@ Click this button to learn more!
 <h2 class="anchored" data-anchor-id="the-size-of-each-habitat-patch">The size of each habitat patch</h2>
 <div class="now_you">
 <p>6. <span class="score">[1.25]</span> Tara will use patch area to help decide how many trail cameras each habitat patch can accommodate.</p>
-<p>Using the existing projected CRS, return a tibble data frame containing <code>patch_id</code> and <code>patch_area</code>, with area reported in hectares. Arrange the patches from largest to smallest. Do not assign the result to a name or overwrite an existing binding.</p>
+<p>Using the <code>patches</code> shapefile, return a tibble data frame containing <code>patch_id</code> and <code>patch_area</code>, with area reported in hectares. Arrange the patches from largest to smallest. Do not assign the result to a name or overwrite an existing global assignment.</p>
 <p><em>Hint: Please see <strong>3.4 The coordinate reference system: Why it matters and how to use it</strong> and <strong>3.6 Geometric operations with sf</strong>.</em></p>
 </div>
 </section>
 <section id="mapping-with-tmap" class="level2">
 <h2 class="anchored" data-anchor-id="mapping-with-tmap">Mapping with tmap</h2>
 <div class="now_you">
-<p>7. <span class="score">[1.25]</span> Tara and her field team have been finding nests throughout the spring and summer. Create an interactive field map that Tara and the field team can use to relocate monitored nests. Display the habitat patch boundaries and nest locations over Esri World Imagery. Make the nest locations clearly visible and include an informative map title and layer names.</p>
+<p>7. <span class="score">[1.25]</span> Tara and her field team have been finding nests throughout the spring and summer. Create an interactive field map that Tara and her team can use to relocate monitored nests. Display the habitat patches and nest locations over Esri World Imagery. Make the nest locations clearly visible and include an informative map title and layer names.</p>
 <p><em>Hint: Please see <strong>3.5 Introduction to tmap</strong>.</em></p>
 </div>
 </section>
@@ -2446,10 +2447,10 @@ Click this button to learn more!
 <section id="spatial-buffers" class="level2">
 <h2 class="anchored" data-anchor-id="spatial-buffers">Spatial buffers</h2>
 <div class="now_you">
-<p>9. <span class="score">[1.0]</span> Tara wants to compare the original point count location for Coyote with the proposed location at the patch centroid.</p>
+<p>9. <span class="score">[1.0]</span> Tara wants to compare the original point count location for the patch named Coyote and the proposed location at the centroid of that patch. Within a single code block, create an interactive map that:</p>
 <ul>
-<li><span class="subscore">[0.30]</span> Within a single map statement, subset <code>point_counts</code>, <code>patches</code>, and <code>patch_centroids</code> to the Coyote patch. Do not assign the subsets or buffers to names.</li>
-<li><span class="subscore">[0.70]</span> Create an interactive map over Esri World Imagery that displays the Coyote patch and multiring buffers at 10-meter intervals out to 100 meters around both point count locations. Display the two locations and make the original and proposed locations and buffers easy to distinguish. Include an informative map title and layer names.</li>
+<li><span class="subscore">[0.60]</span> Displays the <code>points_counts</code>, <code>patches</code>, and <code>patch_centroids</code> for the patch named “Coyote”</li>
+<li><span class="subscore">[0.40]</span> Draws a 100 m buffer around the original point count location and the centroid of <code>Coyote</code>.</li>
 </ul>
 <p><em>Hint: Please see <strong>3.6 Geometric operations with sf</strong> and <strong>3.5 Introduction to tmap</strong>.</em></p>
 </div>
