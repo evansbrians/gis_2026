@@ -26526,16 +26526,16 @@ Note
 <li><p>True or false: A pair of coordinates defines a location on the surface of the Earth, with or without a coordinate reference system.</p>
 <p><select class="webex-select"><option value="blank"></option><option value>TRUE</option><option value="answer">FALSE</option></select></p></li>
 <li><p>A set of bird sampling locations is best represented by which type of shapefile?</p>
-<div id="radio_FWXOZCWTSX" class="webex-radiogroup">
-<label><input type="radio" autocomplete="off" name="radio_FWXOZCWTSX" value> <span>Lines</span></label><label><input type="radio" autocomplete="off" name="radio_FWXOZCWTSX" value="answer"> <span>Points</span></label><label><input type="radio" autocomplete="off" name="radio_FWXOZCWTSX" value> <span>Polygons</span></label><label><input type="radio" autocomplete="off" name="radio_FWXOZCWTSX" value> <span>A raster</span></label>
+<div id="radio_NHBXFBXACS" class="webex-radiogroup">
+<label><input type="radio" autocomplete="off" name="radio_NHBXFBXACS" value> <span>Lines</span></label><label><input type="radio" autocomplete="off" name="radio_NHBXFBXACS" value="answer"> <span>Points</span></label><label><input type="radio" autocomplete="off" name="radio_NHBXFBXACS" value> <span>Polygons</span></label><label><input type="radio" autocomplete="off" name="radio_NHBXFBXACS" value> <span>A raster</span></label>
 </div></li>
 <li><p>Elevation varies continuously across a landscape, and every location has a value. Which data model best represents it?</p>
-<div id="radio_FJDIDNNGSL" class="webex-radiogroup">
-<label><input type="radio" autocomplete="off" name="radio_FJDIDNNGSL" value> <span>Points</span></label><label><input type="radio" autocomplete="off" name="radio_FJDIDNNGSL" value> <span>Lines</span></label><label><input type="radio" autocomplete="off" name="radio_FJDIDNNGSL" value> <span>Polygons</span></label><label><input type="radio" autocomplete="off" name="radio_FJDIDNNGSL" value="answer"> <span>A raster</span></label>
+<div id="radio_XLQJWHAIAY" class="webex-radiogroup">
+<label><input type="radio" autocomplete="off" name="radio_XLQJWHAIAY" value> <span>Points</span></label><label><input type="radio" autocomplete="off" name="radio_XLQJWHAIAY" value> <span>Lines</span></label><label><input type="radio" autocomplete="off" name="radio_XLQJWHAIAY" value> <span>Polygons</span></label><label><input type="radio" autocomplete="off" name="radio_XLQJWHAIAY" value="answer"> <span>A raster</span></label>
 </div></li>
 <li><p>A land cover dataset covers the conterminous United States with cells that are 30 meters on each side. Which term describes the area that the dataset covers?</p>
-<div id="radio_WBVRGHYQHX" class="webex-radiogroup">
-<label><input type="radio" autocomplete="off" name="radio_WBVRGHYQHX" value> <span>The spatial grain</span></label><label><input type="radio" autocomplete="off" name="radio_WBVRGHYQHX" value="answer"> <span>The spatial extent</span></label><label><input type="radio" autocomplete="off" name="radio_WBVRGHYQHX" value> <span>The coordinate reference system</span></label><label><input type="radio" autocomplete="off" name="radio_WBVRGHYQHX" value> <span>The geometry</span></label>
+<div id="radio_DMNZVOFGPJ" class="webex-radiogroup">
+<label><input type="radio" autocomplete="off" name="radio_DMNZVOFGPJ" value> <span>The spatial grain</span></label><label><input type="radio" autocomplete="off" name="radio_DMNZVOFGPJ" value="answer"> <span>The spatial extent</span></label><label><input type="radio" autocomplete="off" name="radio_DMNZVOFGPJ" value> <span>The coordinate reference system</span></label><label><input type="radio" autocomplete="off" name="radio_DMNZVOFGPJ" value> <span>The geometry</span></label>
 </div></li>
 </ol>
 </div>
@@ -29235,6 +29235,7 @@ padding: 0.4rem 0.75rem; cursor: pointer;
     var body   = modal.querySelector(".answer-modal__body");
     var closeBtn = modal.querySelector(".answer-modal__close");
     var opener = null;
+    var borrowed = null;
 
     // The question a link belongs to -- its list item when the box numbers its
     // questions, otherwise the Now you! box itself. Used to name the dialog.
@@ -29252,15 +29253,26 @@ padding: 0.4rem 0.75rem; cursor: pointer;
       return (clone.textContent || "").replace(/\s+/g, " ").trim().slice(0, 120);
     }
 
+    // Put a borrowed answer back in the page it came from.
+    function returnAnswer() {
+      if (!borrowed) return;
+      while (body.firstChild) borrowed.appendChild(body.firstChild);
+      borrowed = null;
+    }
+
     function openModal(link) {
       var answer = document.getElementById(link.getAttribute("data-answer"));
       if (!answer) return;
+      returnAnswer();
       opener = link;
 
       var question = questionText(link);
       modal.setAttribute("aria-label", question ? "Answer to: " + question : "Answer");
 
-      body.innerHTML = answer.innerHTML;
+      // Move the answer into the modal rather than copying its markup. An
+      // interactive map is a live element, and a copy of it carries no map.
+      while (answer.firstChild) body.appendChild(answer.firstChild);
+      borrowed = answer;
 
       // match the width of the Now you! box this link sits in
       var host = link.closest(".now_you");
@@ -29269,11 +29281,19 @@ padding: 0.4rem 0.75rem; cursor: pointer;
       modal.classList.add("is-open");
       body.scrollTop = 0;
       closeBtn.focus();
+
+      // A Leaflet map built inside a hidden box has no size and draws nothing.
+      // Resizing it once the box is open makes it draw.
+      requestAnimationFrame(function () {
+        requestAnimationFrame(function () {
+          window.dispatchEvent(new Event("resize"));
+        });
+      });
     }
 
     function closeModal() {
       modal.classList.remove("is-open");
-      body.innerHTML = "";
+      returnAnswer();
       if (opener) opener.focus();
     }
 

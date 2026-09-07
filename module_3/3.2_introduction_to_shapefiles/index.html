@@ -26962,8 +26962,8 @@ Geodetic CRS:  NAD83</code></pre>
 <div class="now_you">
 <p><i class="fa-solid fa-user-circle fa-2x" aria-label="user-circle"></i> <span style="padding-left: 0.5em;">Check your understanding</span></p>
 <p>An ESRI shapefile is composed of multiple files. Which file do we supply to <code>st_read()</code>?</p>
-<div id="radio_FRMSWQWZBC" class="webex-radiogroup">
-<label><input type="radio" autocomplete="off" name="radio_FRMSWQWZBC" value> <span>Every file, as a vector of file paths</span></label><label><input type="radio" autocomplete="off" name="radio_FRMSWQWZBC" value="answer"> <span>The file that ends in .shp</span></label><label><input type="radio" autocomplete="off" name="radio_FRMSWQWZBC" value> <span>The file that ends in .dbf</span></label><label><input type="radio" autocomplete="off" name="radio_FRMSWQWZBC" value> <span>The folder that contains the files</span></label>
+<div id="radio_WGBIXRASIY" class="webex-radiogroup">
+<label><input type="radio" autocomplete="off" name="radio_WGBIXRASIY" value> <span>Every file, as a vector of file paths</span></label><label><input type="radio" autocomplete="off" name="radio_WGBIXRASIY" value="answer"> <span>The file that ends in .shp</span></label><label><input type="radio" autocomplete="off" name="radio_WGBIXRASIY" value> <span>The file that ends in .dbf</span></label><label><input type="radio" autocomplete="off" name="radio_WGBIXRASIY" value> <span>The folder that contains the files</span></label>
 </div>
 <p>True or false: Adding <code>quiet = TRUE</code> to <code>st_read()</code> changes the metadata of the resultant object.</p>
 <p><select class="webex-select"><option value="blank"></option><option value>TRUE</option><option value="answer">FALSE</option></select></p>
@@ -27055,8 +27055,8 @@ Geodetic CRS:  WGS 84
 <div class="now_you">
 <p><i class="fa-solid fa-user-circle fa-2x" aria-label="user-circle"></i> <span style="padding-left: 0.5em;">Check your understanding</span></p>
 <p>A colleague’s data frame contains animal locations that were recorded with a GPS unit set to EPSG 4326. Which CRS should be supplied to the <code>crs =</code> argument of <code>st_as_sf()</code>?</p>
-<div id="radio_SFVCHVEQMF" class="webex-radiogroup">
-<label><input type="radio" autocomplete="off" name="radio_SFVCHVEQMF" value="answer"> <span>EPSG 4326, because the coordinates were recorded in that CRS</span></label><label><input type="radio" autocomplete="off" name="radio_SFVCHVEQMF" value> <span>The CRS of the simple features object with the most vertices</span></label><label><input type="radio" autocomplete="off" name="radio_SFVCHVEQMF" value> <span>Any CRS, because the argument transforms the coordinates</span></label><label><input type="radio" autocomplete="off" name="radio_SFVCHVEQMF" value> <span>No CRS, because data frames do not contain one</span></label>
+<div id="radio_YKTVBFPERG" class="webex-radiogroup">
+<label><input type="radio" autocomplete="off" name="radio_YKTVBFPERG" value="answer"> <span>EPSG 4326, because the coordinates were recorded in that CRS</span></label><label><input type="radio" autocomplete="off" name="radio_YKTVBFPERG" value> <span>The CRS of the simple features object with the most vertices</span></label><label><input type="radio" autocomplete="off" name="radio_YKTVBFPERG" value> <span>Any CRS, because the argument transforms the coordinates</span></label><label><input type="radio" autocomplete="off" name="radio_YKTVBFPERG" value> <span>No CRS, because data frames do not contain one</span></label>
 </div>
 <p>True or false: The <code>coords =</code> argument of <code>st_as_sf()</code> is supplied with the coordinate columns in X, Y order.</p>
 <p><select class="webex-select"><option value="blank"></option><option value="answer">TRUE</option><option value>FALSE</option></select></p>
@@ -27663,8 +27663,8 @@ Geodetic CRS:  NAD83
 <div class="now_you">
 <p><i class="fa-solid fa-user-circle fa-2x" aria-label="user-circle"></i> <span style="padding-left: 0.5em;">Check your understanding</span></p>
 <p>Two simple features objects use different CRSs, and both CRSs are appropriate for your task and spatial extent. One object has 10 point features; the other is a polygon object with many thousands of vertices. Which object should be transformed?</p>
-<div id="radio_TVNHGYRNAM" class="webex-radiogroup">
-<label><input type="radio" autocomplete="off" name="radio_TVNHGYRNAM" value="answer"> <span>The points, because as few vertices as possible should be transformed</span></label><label><input type="radio" autocomplete="off" name="radio_TVNHGYRNAM" value> <span>The polygons, because polygons should always match the CRS of points</span></label><label><input type="radio" autocomplete="off" name="radio_TVNHGYRNAM" value> <span>Both objects, to a third CRS</span></label><label><input type="radio" autocomplete="off" name="radio_TVNHGYRNAM" value> <span>Neither object, because spatial operations do not require a shared CRS</span></label>
+<div id="radio_FUNAGPUQDD" class="webex-radiogroup">
+<label><input type="radio" autocomplete="off" name="radio_FUNAGPUQDD" value="answer"> <span>The points, because as few vertices as possible should be transformed</span></label><label><input type="radio" autocomplete="off" name="radio_FUNAGPUQDD" value> <span>The polygons, because polygons should always match the CRS of points</span></label><label><input type="radio" autocomplete="off" name="radio_FUNAGPUQDD" value> <span>Both objects, to a third CRS</span></label><label><input type="radio" autocomplete="off" name="radio_FUNAGPUQDD" value> <span>Neither object, because spatial operations do not require a shared CRS</span></label>
 </div>
 <p>True or false: <code>select()</code> removes the <code>geometry</code> column of a simple features object unless that column is included in the selection.</p>
 <p><select class="webex-select"><option value="blank"></option><option value>TRUE</option><option value="answer">FALSE</option></select></p>
@@ -27781,8 +27781,8 @@ Note
 <li><p>True or false: The metadata printed by <code>st_read()</code> describes the resultant object after every subsequent step in a chained analysis.</p>
 <p><select class="webex-select"><option value="blank"></option><option value>TRUE</option><option value="answer">FALSE</option></select></p></li>
 <li><p>Which sequence reflects the pre-processing order that this lesson recommends?</p>
-<div id="radio_KSBZFJUTST" class="webex-radiogroup">
-<label><input type="radio" autocomplete="off" name="radio_KSBZFJUTST" value="answer"> <span>Explore the data → clean the field names → subset the features → subset the fields → transform the CRS</span></label><label><input type="radio" autocomplete="off" name="radio_KSBZFJUTST" value> <span>Transform the CRS → clean the field names → subset the features → explore the data → subset the fields</span></label><label><input type="radio" autocomplete="off" name="radio_KSBZFJUTST" value> <span>Subset the fields → subset the features → clean the field names → explore the data → transform the CRS</span></label><label><input type="radio" autocomplete="off" name="radio_KSBZFJUTST" value> <span>The order of pre-processing steps has no conventions</span></label>
+<div id="radio_QWVKIJRWOB" class="webex-radiogroup">
+<label><input type="radio" autocomplete="off" name="radio_QWVKIJRWOB" value="answer"> <span>Explore the data → clean the field names → subset the features → subset the fields → transform the CRS</span></label><label><input type="radio" autocomplete="off" name="radio_QWVKIJRWOB" value> <span>Transform the CRS → clean the field names → subset the features → explore the data → subset the fields</span></label><label><input type="radio" autocomplete="off" name="radio_QWVKIJRWOB" value> <span>Subset the fields → subset the features → clean the field names → explore the data → transform the CRS</span></label><label><input type="radio" autocomplete="off" name="radio_QWVKIJRWOB" value> <span>The order of pre-processing steps has no conventions</span></label>
 </div></li>
 <li><p>Match each function to the task that it completes:</p>
 <script>// Two-column "matching game" exercises for course lesson pages.
@@ -28153,7 +28153,7 @@ Shuffle Again
 window.matchingGames = window.matchingGames || [];
 window.matchingGames.push({"id":"match-3-2-functions","osSwitch":false,"pairs":[{"left":"Read a spatial vector file","right":"st_read()"},{"left":"Convert a data frame to a simple features object","right":"st_as_sf()"},{"left":"View the CRS of a simple features object","right":"st_crs()"},{"left":"Transform an object to a different CRS","right":"st_transform()"}]});
 </script></li>
-<li><p>Parsons problem: Reorder the lines below to read in <code>counties.geojson</code>, clean the field names, subset the features to the District of Columbia, subset the fields to <code>geoid</code>, and transform the object to the CRS of <code>census</code>. One line applies a function that an existing simple features object does not require. Leave it in the trash.</p>
+<li><p>Parsons problem: Reorder the lines below to read in <code>counties.geojson</code> (with no metadata printed during the reading process), clean the field names, subset the features to the District of Columbia, subset the fields to <code>geoid</code>, and transform the object to the CRS of <code>census</code>. One line applies a function that an existing simple features object does not require. Leave it in the trash.</p>
 <div class="parsons-problem">
 <div id="p-3-2-01-trash" class="sortable-code">
 
@@ -31152,6 +31152,7 @@ padding: 0.4rem 0.75rem; cursor: pointer;
     var body   = modal.querySelector(".answer-modal__body");
     var closeBtn = modal.querySelector(".answer-modal__close");
     var opener = null;
+    var borrowed = null;
 
     // The question a link belongs to -- its list item when the box numbers its
     // questions, otherwise the Now you! box itself. Used to name the dialog.
@@ -31169,15 +31170,26 @@ padding: 0.4rem 0.75rem; cursor: pointer;
       return (clone.textContent || "").replace(/\s+/g, " ").trim().slice(0, 120);
     }
 
+    // Put a borrowed answer back in the page it came from.
+    function returnAnswer() {
+      if (!borrowed) return;
+      while (body.firstChild) borrowed.appendChild(body.firstChild);
+      borrowed = null;
+    }
+
     function openModal(link) {
       var answer = document.getElementById(link.getAttribute("data-answer"));
       if (!answer) return;
+      returnAnswer();
       opener = link;
 
       var question = questionText(link);
       modal.setAttribute("aria-label", question ? "Answer to: " + question : "Answer");
 
-      body.innerHTML = answer.innerHTML;
+      // Move the answer into the modal rather than copying its markup. An
+      // interactive map is a live element, and a copy of it carries no map.
+      while (answer.firstChild) body.appendChild(answer.firstChild);
+      borrowed = answer;
 
       // match the width of the Now you! box this link sits in
       var host = link.closest(".now_you");
@@ -31186,11 +31198,19 @@ padding: 0.4rem 0.75rem; cursor: pointer;
       modal.classList.add("is-open");
       body.scrollTop = 0;
       closeBtn.focus();
+
+      // A Leaflet map built inside a hidden box has no size and draws nothing.
+      // Resizing it once the box is open makes it draw.
+      requestAnimationFrame(function () {
+        requestAnimationFrame(function () {
+          window.dispatchEvent(new Event("resize"));
+        });
+      });
     }
 
     function closeModal() {
       modal.classList.remove("is-open");
-      body.innerHTML = "";
+      returnAnswer();
       if (opener) opener.focus();
     }
 

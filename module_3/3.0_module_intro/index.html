@@ -26865,7 +26865,10 @@ margin: 1em 0;
 <p><strong><span class="mono">dc_census.geojson</span></strong>: This is a polygon shapefile (EPSG 32618; UTM Zone 18N) from the US Census Bureau that provides tract-level census data for the District of Columbia. The data were downloaded using the <em>tigris</em> and <em>tidycensus</em> packages in R.</p>
 <p><strong><span class="mono">district_birds.rds</span></strong>: This is a tidy dataset that contains a subset of records from the Smithsonian Migratory Bird Center’s <a href="https://nationalzoo.si.edu/migratory-birds/neighborhood-nestwatch" target="_blank">Neighborhood Nestwatch</a> (NN) program. NN is a community science project where scientists visit backyards, neighborhoods, and schools to conduct bird banding demonstrations and sample bird populations. The data include tables for sites, visits, point counts, and capture events, and a table that provides natural history information for observed birds. Geographic coordinate values have been jittered to protect the privacy of NN participants.</p>
 <p><strong><span class="mono">messy_birds.rds</span></strong>: This is a very small subset of tabular data associated with birds banded by the <a href="https://nationalzoo.si.edu/migratory-birds/neighborhood-nestwatch" target="_blank">Neighborhood Nestwatch</a> community science program.</p>
+<p><strong><span class="mono">nest_locations</span></strong> (<span class="mono">.dbf</span>, <span class="mono">.prj</span>, <span class="mono">.shp</span>, <span class="mono">.shx</span>): This is a point shapefile of nests distributed across the habitat patches in <span class="mono">patches.geojson</span>. Its field names are abbreviated. Some nests have no recorded height and some have no recorded discovery date.</p>
 <p><strong><span class="mono">observatory_nets.geojson</span></strong>: This is a point dataset of mist-net locations at the Bird Observatory, an exhibit, research, and outreach center run by Tara and me. Geographic coordinates have been modified to protect the location of active research infrastructure.</p>
+<p><strong><span class="mono">patches.geojson</span></strong>: This is a polygon shapefile of habitat patches within a nest monitoring study area. The file states no coordinate reference system, so the GeoJSON default of EPSG 4326 applies.</p>
+<p><strong><span class="mono">point_count_locations.csv</span></strong>: This is a tabular dataset of point count locations, one within each habitat patch in <span class="mono">patches.geojson</span>. The coordinates were recorded with a handheld GPS unit set to EPSG 4326.</p>
 <p><strong><span class="mono">rock_creek_park.geojson</span></strong>: This is a multipolygon shapefile (EPSG 32618; UTM Zone 18N) that represents Washington, DC’s Rock Creek Park, a National Park that bisects the city. The data were obtained from <a href="https://opendata.dc.gov/" target="_blank">Open Data DC</a>.</p>
 <p><strong><span class="mono">sites.csv</span></strong>: This is a simple tabular dataset that contains three variables: a site name and the longitude and latitude of site locations. The sites and their locations in this file are derived from <a href="https://nationalzoo.si.edu/migratory-birds/neighborhood-nestwatch" target="_blank">Neighborhood Nestwatch</a> data and represent the locations of banding stations in the greater Washington DC region.</p>
 <p><strong><span class="mono">spotted_lanternfly.rds</span></strong>: This is a tabular dataset of <a href="https://www.inaturalist.org/projects/spotted-lanternfly" target="_blank">iNaturalist observations of spotted lanternfly (<em>Lycorma delicatula</em>)</a>, an invasive pest species whose spread is of commercial and ecological concern. Each row is an observation submitted by a community science participant via a web or smartphone application.</p>
@@ -30854,6 +30857,7 @@ padding: 0.4rem 0.75rem; cursor: pointer;
     var body   = modal.querySelector(".answer-modal__body");
     var closeBtn = modal.querySelector(".answer-modal__close");
     var opener = null;
+    var borrowed = null;
 
     // The question a link belongs to -- its list item when the box numbers its
     // questions, otherwise the Now you! box itself. Used to name the dialog.
@@ -30871,15 +30875,26 @@ padding: 0.4rem 0.75rem; cursor: pointer;
       return (clone.textContent || "").replace(/\s+/g, " ").trim().slice(0, 120);
     }
 
+    // Put a borrowed answer back in the page it came from.
+    function returnAnswer() {
+      if (!borrowed) return;
+      while (body.firstChild) borrowed.appendChild(body.firstChild);
+      borrowed = null;
+    }
+
     function openModal(link) {
       var answer = document.getElementById(link.getAttribute("data-answer"));
       if (!answer) return;
+      returnAnswer();
       opener = link;
 
       var question = questionText(link);
       modal.setAttribute("aria-label", question ? "Answer to: " + question : "Answer");
 
-      body.innerHTML = answer.innerHTML;
+      // Move the answer into the modal rather than copying its markup. An
+      // interactive map is a live element, and a copy of it carries no map.
+      while (answer.firstChild) body.appendChild(answer.firstChild);
+      borrowed = answer;
 
       // match the width of the Now you! box this link sits in
       var host = link.closest(".now_you");
@@ -30888,11 +30903,19 @@ padding: 0.4rem 0.75rem; cursor: pointer;
       modal.classList.add("is-open");
       body.scrollTop = 0;
       closeBtn.focus();
+
+      // A Leaflet map built inside a hidden box has no size and draws nothing.
+      // Resizing it once the box is open makes it draw.
+      requestAnimationFrame(function () {
+        requestAnimationFrame(function () {
+          window.dispatchEvent(new Event("resize"));
+        });
+      });
     }
 
     function closeModal() {
       modal.classList.remove("is-open");
-      body.innerHTML = "";
+      returnAnswer();
       if (opener) opener.focus();
     }
 

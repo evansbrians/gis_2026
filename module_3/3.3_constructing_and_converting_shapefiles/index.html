@@ -26990,8 +26990,8 @@ Geodetic CRS:  NAD83
 <div class="now_you">
 <p><i class="fa-solid fa-user-circle fa-2x" aria-label="user-circle"></i> <span style="padding-left: 0.5em;">Check your understanding</span></p>
 <p>Which object class contains a geometry, a CRS, <em>and</em> the fields that describe each feature?</p>
-<div id="radio_CGPIDYNTHD" class="webex-radiogroup">
-<label><input type="radio" autocomplete="off" name="radio_CGPIDYNTHD" value> <span>sfg</span></label><label><input type="radio" autocomplete="off" name="radio_CGPIDYNTHD" value> <span>sfc</span></label><label><input type="radio" autocomplete="off" name="radio_CGPIDYNTHD" value="answer"> <span>sf</span></label><label><input type="radio" autocomplete="off" name="radio_CGPIDYNTHD" value> <span>A matrix of coordinates</span></label>
+<div id="radio_PGXESMWCLT" class="webex-radiogroup">
+<label><input type="radio" autocomplete="off" name="radio_PGXESMWCLT" value> <span>sfg</span></label><label><input type="radio" autocomplete="off" name="radio_PGXESMWCLT" value> <span>sfc</span></label><label><input type="radio" autocomplete="off" name="radio_PGXESMWCLT" value="answer"> <span>sf</span></label><label><input type="radio" autocomplete="off" name="radio_PGXESMWCLT" value> <span>A matrix of coordinates</span></label>
 </div>
 <p>True or false: An sfc object can contain a CRS.</p>
 <p><select class="webex-select"><option value="blank"></option><option value="answer">TRUE</option><option value>FALSE</option></select></p>
@@ -27256,8 +27256,8 @@ Geodetic CRS:  NAD83
 <p>True or false: To create a polygon from scratch, the first and last vertices supplied must be the same point.</p>
 <p><select class="webex-select"><option value="blank"></option><option value="answer">TRUE</option><option value>FALSE</option></select></p>
 <p>A linestring is created from a matrix of coordinates. What determines the order in which the vertices are connected?</p>
-<div id="radio_ZFWJMADLUI" class="webex-radiogroup">
-<label><input type="radio" autocomplete="off" name="radio_ZFWJMADLUI" value="answer"> <span>The order of the rows in the matrix</span></label><label><input type="radio" autocomplete="off" name="radio_ZFWJMADLUI" value> <span>The alphabetical order of the feature names</span></label><label><input type="radio" autocomplete="off" name="radio_ZFWJMADLUI" value> <span>The longitude of each vertex, from west to east</span></label><label><input type="radio" autocomplete="off" name="radio_ZFWJMADLUI" value> <span>The CRS of the object</span></label>
+<div id="radio_JTQAOKXBSU" class="webex-radiogroup">
+<label><input type="radio" autocomplete="off" name="radio_JTQAOKXBSU" value="answer"> <span>The order of the rows in the matrix</span></label><label><input type="radio" autocomplete="off" name="radio_JTQAOKXBSU" value> <span>The alphabetical order of the feature names</span></label><label><input type="radio" autocomplete="off" name="radio_JTQAOKXBSU" value> <span>The longitude of each vertex, from west to east</span></label><label><input type="radio" autocomplete="off" name="radio_JTQAOKXBSU" value> <span>The CRS of the object</span></label>
 </div>
 </div>
 </section>
@@ -27677,8 +27677,8 @@ Geodetic CRS:  NAD83
 <p>The result has one feature with <code>LINESTRING</code> geometry. Its coordinates start at B (-80, 35), pass through A (-79, 36), and end at C (-78, 37). The order comes from the rows supplied to <code>st_linestring()</code>.</p>
 </div></li>
 <li><p>Two state polygons cover a similar area. One has a detailed coastline stored with thousands of vertices, while the other has straight borders stored with only a few vertices. Which statement is true?</p>
-<div id="radio_PZCHUPETEZ" class="webex-radiogroup">
-<label><input type="radio" autocomplete="off" name="radio_PZCHUPETEZ" value="answer"> <span>The polygon with more vertices requires more memory to store its coordinates</span></label><label><input type="radio" autocomplete="off" name="radio_PZCHUPETEZ" value> <span>The two polygons contain the same number of vertices</span></label><label><input type="radio" autocomplete="off" name="radio_PZCHUPETEZ" value> <span>The polygon with fewer vertices requires more memory to store its coordinates</span></label><label><input type="radio" autocomplete="off" name="radio_PZCHUPETEZ" value> <span>The number of vertices is determined by the CRS</span></label>
+<div id="radio_KACUXXXHDT" class="webex-radiogroup">
+<label><input type="radio" autocomplete="off" name="radio_KACUXXXHDT" value="answer"> <span>The polygon with more vertices requires more memory to store its coordinates</span></label><label><input type="radio" autocomplete="off" name="radio_KACUXXXHDT" value> <span>The two polygons contain the same number of vertices</span></label><label><input type="radio" autocomplete="off" name="radio_KACUXXXHDT" value> <span>The polygon with fewer vertices requires more memory to store its coordinates</span></label><label><input type="radio" autocomplete="off" name="radio_KACUXXXHDT" value> <span>The number of vertices is determined by the CRS</span></label>
 </div></li>
 <li><p>Match each function to its role in constructing or converting a simple features object:</p>
 <script>// Two-column "matching game" exercises for course lesson pages.
@@ -31105,6 +31105,7 @@ padding: 0.4rem 0.75rem; cursor: pointer;
     var body   = modal.querySelector(".answer-modal__body");
     var closeBtn = modal.querySelector(".answer-modal__close");
     var opener = null;
+    var borrowed = null;
 
     // The question a link belongs to -- its list item when the box numbers its
     // questions, otherwise the Now you! box itself. Used to name the dialog.
@@ -31122,15 +31123,26 @@ padding: 0.4rem 0.75rem; cursor: pointer;
       return (clone.textContent || "").replace(/\s+/g, " ").trim().slice(0, 120);
     }
 
+    // Put a borrowed answer back in the page it came from.
+    function returnAnswer() {
+      if (!borrowed) return;
+      while (body.firstChild) borrowed.appendChild(body.firstChild);
+      borrowed = null;
+    }
+
     function openModal(link) {
       var answer = document.getElementById(link.getAttribute("data-answer"));
       if (!answer) return;
+      returnAnswer();
       opener = link;
 
       var question = questionText(link);
       modal.setAttribute("aria-label", question ? "Answer to: " + question : "Answer");
 
-      body.innerHTML = answer.innerHTML;
+      // Move the answer into the modal rather than copying its markup. An
+      // interactive map is a live element, and a copy of it carries no map.
+      while (answer.firstChild) body.appendChild(answer.firstChild);
+      borrowed = answer;
 
       // match the width of the Now you! box this link sits in
       var host = link.closest(".now_you");
@@ -31139,11 +31151,19 @@ padding: 0.4rem 0.75rem; cursor: pointer;
       modal.classList.add("is-open");
       body.scrollTop = 0;
       closeBtn.focus();
+
+      // A Leaflet map built inside a hidden box has no size and draws nothing.
+      // Resizing it once the box is open makes it draw.
+      requestAnimationFrame(function () {
+        requestAnimationFrame(function () {
+          window.dispatchEvent(new Event("resize"));
+        });
+      });
     }
 
     function closeModal() {
       modal.classList.remove("is-open");
-      body.innerHTML = "";
+      returnAnswer();
       if (opener) opener.focus();
     }
 
