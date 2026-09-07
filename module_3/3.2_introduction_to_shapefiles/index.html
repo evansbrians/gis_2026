@@ -26962,8 +26962,8 @@ Geodetic CRS:  NAD83</code></pre>
 <div class="now_you">
 <p><i class="fa-solid fa-user-circle fa-2x" aria-label="user-circle"></i> <span style="padding-left: 0.5em;">Check your understanding</span></p>
 <p>An ESRI shapefile is composed of multiple files. Which file do we supply to <code>st_read()</code>?</p>
-<div id="radio_WGBIXRASIY" class="webex-radiogroup">
-<label><input type="radio" autocomplete="off" name="radio_WGBIXRASIY" value> <span>Every file, as a vector of file paths</span></label><label><input type="radio" autocomplete="off" name="radio_WGBIXRASIY" value="answer"> <span>The file that ends in .shp</span></label><label><input type="radio" autocomplete="off" name="radio_WGBIXRASIY" value> <span>The file that ends in .dbf</span></label><label><input type="radio" autocomplete="off" name="radio_WGBIXRASIY" value> <span>The folder that contains the files</span></label>
+<div id="radio_GDPFVMFVZR" class="webex-radiogroup">
+<label><input type="radio" autocomplete="off" name="radio_GDPFVMFVZR" value> <span>Every file, as a vector of file paths</span></label><label><input type="radio" autocomplete="off" name="radio_GDPFVMFVZR" value="answer"> <span>The file that ends in .shp</span></label><label><input type="radio" autocomplete="off" name="radio_GDPFVMFVZR" value> <span>The file that ends in .dbf</span></label><label><input type="radio" autocomplete="off" name="radio_GDPFVMFVZR" value> <span>The folder that contains the files</span></label>
 </div>
 <p>True or false: Adding <code>quiet = TRUE</code> to <code>st_read()</code> changes the metadata of the resultant object.</p>
 <p><select class="webex-select"><option value="blank"></option><option value>TRUE</option><option value="answer">FALSE</option></select></p>
@@ -27055,8 +27055,8 @@ Geodetic CRS:  WGS 84
 <div class="now_you">
 <p><i class="fa-solid fa-user-circle fa-2x" aria-label="user-circle"></i> <span style="padding-left: 0.5em;">Check your understanding</span></p>
 <p>A colleague’s data frame contains animal locations that were recorded with a GPS unit set to EPSG 4326. Which CRS should be supplied to the <code>crs =</code> argument of <code>st_as_sf()</code>?</p>
-<div id="radio_YKTVBFPERG" class="webex-radiogroup">
-<label><input type="radio" autocomplete="off" name="radio_YKTVBFPERG" value="answer"> <span>EPSG 4326, because the coordinates were recorded in that CRS</span></label><label><input type="radio" autocomplete="off" name="radio_YKTVBFPERG" value> <span>The CRS of the simple features object with the most vertices</span></label><label><input type="radio" autocomplete="off" name="radio_YKTVBFPERG" value> <span>Any CRS, because the argument transforms the coordinates</span></label><label><input type="radio" autocomplete="off" name="radio_YKTVBFPERG" value> <span>No CRS, because data frames do not contain one</span></label>
+<div id="radio_IVYHVMKZLE" class="webex-radiogroup">
+<label><input type="radio" autocomplete="off" name="radio_IVYHVMKZLE" value="answer"> <span>EPSG 4326, because the coordinates were recorded in that CRS</span></label><label><input type="radio" autocomplete="off" name="radio_IVYHVMKZLE" value> <span>The CRS of the simple features object with the most vertices</span></label><label><input type="radio" autocomplete="off" name="radio_IVYHVMKZLE" value> <span>Any CRS, because the argument transforms the coordinates</span></label><label><input type="radio" autocomplete="off" name="radio_IVYHVMKZLE" value> <span>No CRS, because data frames do not contain one</span></label>
 </div>
 <p>True or false: The <code>coords =</code> argument of <code>st_as_sf()</code> is supplied with the coordinate columns in X, Y order.</p>
 <p><select class="webex-select"><option value="blank"></option><option value="answer">TRUE</option><option value>FALSE</option></select></p>
@@ -27663,8 +27663,8 @@ Geodetic CRS:  NAD83
 <div class="now_you">
 <p><i class="fa-solid fa-user-circle fa-2x" aria-label="user-circle"></i> <span style="padding-left: 0.5em;">Check your understanding</span></p>
 <p>Two simple features objects use different CRSs, and both CRSs are appropriate for your task and spatial extent. One object has 10 point features; the other is a polygon object with many thousands of vertices. Which object should be transformed?</p>
-<div id="radio_FUNAGPUQDD" class="webex-radiogroup">
-<label><input type="radio" autocomplete="off" name="radio_FUNAGPUQDD" value="answer"> <span>The points, because as few vertices as possible should be transformed</span></label><label><input type="radio" autocomplete="off" name="radio_FUNAGPUQDD" value> <span>The polygons, because polygons should always match the CRS of points</span></label><label><input type="radio" autocomplete="off" name="radio_FUNAGPUQDD" value> <span>Both objects, to a third CRS</span></label><label><input type="radio" autocomplete="off" name="radio_FUNAGPUQDD" value> <span>Neither object, because spatial operations do not require a shared CRS</span></label>
+<div id="radio_HDEOCLRDRY" class="webex-radiogroup">
+<label><input type="radio" autocomplete="off" name="radio_HDEOCLRDRY" value="answer"> <span>The points, because as few vertices as possible should be transformed</span></label><label><input type="radio" autocomplete="off" name="radio_HDEOCLRDRY" value> <span>The polygons, because polygons should always match the CRS of points</span></label><label><input type="radio" autocomplete="off" name="radio_HDEOCLRDRY" value> <span>Both objects, to a third CRS</span></label><label><input type="radio" autocomplete="off" name="radio_HDEOCLRDRY" value> <span>Neither object, because spatial operations do not require a shared CRS</span></label>
 </div>
 <p>True or false: <code>select()</code> removes the <code>geometry</code> column of a simple features object unless that column is included in the selection.</p>
 <p><select class="webex-select"><option value="blank"></option><option value>TRUE</option><option value="answer">FALSE</option></select></p>
@@ -27781,8 +27781,8 @@ Note
 <li><p>True or false: The metadata printed by <code>st_read()</code> describes the resultant object after every subsequent step in a chained analysis.</p>
 <p><select class="webex-select"><option value="blank"></option><option value>TRUE</option><option value="answer">FALSE</option></select></p></li>
 <li><p>Which sequence reflects the pre-processing order that this lesson recommends?</p>
-<div id="radio_QWVKIJRWOB" class="webex-radiogroup">
-<label><input type="radio" autocomplete="off" name="radio_QWVKIJRWOB" value="answer"> <span>Explore the data → clean the field names → subset the features → subset the fields → transform the CRS</span></label><label><input type="radio" autocomplete="off" name="radio_QWVKIJRWOB" value> <span>Transform the CRS → clean the field names → subset the features → explore the data → subset the fields</span></label><label><input type="radio" autocomplete="off" name="radio_QWVKIJRWOB" value> <span>Subset the fields → subset the features → clean the field names → explore the data → transform the CRS</span></label><label><input type="radio" autocomplete="off" name="radio_QWVKIJRWOB" value> <span>The order of pre-processing steps has no conventions</span></label>
+<div id="radio_ZDBVNLGMAT" class="webex-radiogroup">
+<label><input type="radio" autocomplete="off" name="radio_ZDBVNLGMAT" value="answer"> <span>Explore the data → clean the field names → subset the features → subset the fields → transform the CRS</span></label><label><input type="radio" autocomplete="off" name="radio_ZDBVNLGMAT" value> <span>Transform the CRS → clean the field names → subset the features → explore the data → subset the fields</span></label><label><input type="radio" autocomplete="off" name="radio_ZDBVNLGMAT" value> <span>Subset the fields → subset the features → clean the field names → explore the data → transform the CRS</span></label><label><input type="radio" autocomplete="off" name="radio_ZDBVNLGMAT" value> <span>The order of pre-processing steps has no conventions</span></label>
 </div></li>
 <li><p>Match each function to the task that it completes:</p>
 <script>// Two-column "matching game" exercises for course lesson pages.
