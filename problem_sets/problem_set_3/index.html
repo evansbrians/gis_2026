@@ -2221,9 +2221,9 @@ font-size: 2.5em;
   <li><a href="#the-coordinate-reference-system" id="toc-the-coordinate-reference-system" class="nav-link" data-scroll-target="#the-coordinate-reference-system">The coordinate reference system</a></li>
   <li><a href="#the-size-of-each-habitat-patch" id="toc-the-size-of-each-habitat-patch" class="nav-link" data-scroll-target="#the-size-of-each-habitat-patch">The size of each habitat patch</a></li>
   <li><a href="#mapping-with-tmap" id="toc-mapping-with-tmap" class="nav-link" data-scroll-target="#mapping-with-tmap">Mapping with tmap</a></li>
-  <li><a href="#proposed-point-count-locations" id="toc-proposed-point-count-locations" class="nav-link" data-scroll-target="#proposed-point-count-locations">Proposed point count locations</a></li>
   <li><a href="#spatial-buffers" id="toc-spatial-buffers" class="nav-link" data-scroll-target="#spatial-buffers">Spatial buffers</a></li>
   <li><a href="#assigning-a-nest-to-a-habitat-patch" id="toc-assigning-a-nest-to-a-habitat-patch" class="nav-link" data-scroll-target="#assigning-a-nest-to-a-habitat-patch">Assigning a nest to a habitat patch</a></li>
+  <li><a href="#counting-nests" id="toc-counting-nests" class="nav-link" data-scroll-target="#counting-nests">Counting nests</a></li>
   </ul>
 </nav>
 </div>
@@ -2282,20 +2282,19 @@ Functions that you may use in this assignment
 <li><code>.Primitive, ()</code></li>
 <li><code>.Primitive, &lt;-</code></li>
 <li><code>.Primitive, =</code></li>
-<li><code>.Primitive, ::</code></li>
+<li><code>.Primitive, ==</code></li>
+<li><code>.Primitive, +</code></li>
+<li><code>.Primitive, -</code></li>
 <li><code>.Primitive, $</code></li>
 <li><code>.Primitive, [</code></li>
-<li><code>.Primitive, !</code></li>
-<li><code>.Primitive, ==</code></li>
-<li><code>.Primitive, -</code></li>
-<li><code>.Primitive, ~</code></li>
+<li><code>.Primitive, ::</code></li>
 <li><code>.Primitive, c</code></li>
-<li><code>.Primitive, list</code></li>
-<li><code>base::as.matrix</code></li>
+<li><code>.Primitive, min</code></li>
 <li><code>base::library</code></li>
-<li><code>base::min</code></li>
 <li><code>base::source</code></li>
 <li><code>dplyr::arrange</code></li>
+<li><code>dplyr::count</code></li>
+<li><code>dplyr::desc</code></li>
 <li><code>dplyr::filter</code></li>
 <li><code>dplyr::join_by</code></li>
 <li><code>dplyr::left_join</code></li>
@@ -2308,21 +2307,18 @@ Functions that you may use in this assignment
 <li><code>sf::st_area</code></li>
 <li><code>sf::st_as_sf</code></li>
 <li><code>sf::st_buffer</code></li>
-<li><code>sf::st_cast</code></li>
 <li><code>sf::st_centroid</code></li>
 <li><code>sf::st_crs</code></li>
 <li><code>sf::st_distance</code></li>
 <li><code>sf::st_point</code></li>
-<li><code>sf::st_polygon</code></li>
 <li><code>sf::st_read</code></li>
 <li><code>sf::st_sf</code></li>
 <li><code>sf::st_sfc</code></li>
 <li><code>sf::st_transform</code></li>
-<li><code>source_script_module_3.R, create_multiring_buffer</code></li>
 <li><code>source_script_module_3.R, count_vertices</code></li>
 <li><code>tibble::as_tibble</code></li>
-<li><code>tibble::tribble</code></li>
 <li><code>tmap::tm_basemap</code></li>
+<li><code>tmap::tm_borders</code></li>
 <li><code>tmap::tm_dots</code></li>
 <li><code>tmap::tm_legend</code></li>
 <li><code>tmap::tm_polygons</code></li>
@@ -2341,13 +2337,13 @@ Functions that you may use in this assignment
 Click this button to learn more!
 </button>
 <div class="panel">
-<p><strong><code>patches.geojson</code></strong> is a polygon shapefile of habitat patches. A GeoJSON file that does not state a coordinate reference system is in EPSG 4326. The file contains the following fields:</p>
+<p><strong><code>patches.geojson</code></strong> is a polygon shapefile of habitat patches, recorded in EPSG 32617. The file contains the following fields:</p>
 <ul>
 <li><code>patch_id</code> (character): A code that identifies the patch.</li>
 <li><code>patch_label</code> (character): The name of the patch.</li>
 <li><code>geometry</code> (polygon): The boundary of the patch.</li>
 </ul>
-<p><strong><code>nest_locations.shp</code></strong> is a point shapefile of nests, recorded in EPSG 32617. Its field names are abbreviated. The file contains the following fields:</p>
+<p><strong><code>nest_locations.shp</code></strong> is a point shapefile of nests, recorded in EPSG 4326. Its field names are abbreviated. The file contains the following fields:</p>
 <ul>
 <li><code>nest_id</code> (character): A code that identifies the nest.</li>
 <li><code>patch_d</code> (character): The patch in which the nest was recorded, matching <code>patch_id</code> in <code>patches.geojson</code>.</li>
@@ -2357,7 +2353,7 @@ Click this button to learn more!
 <p><strong><code>point_count_locations.csv</code></strong> is a tabular dataset of the point count locations, one per patch. The coordinates were recorded with a handheld GPS unit set to EPSG 4326. The file contains the following variables:</p>
 <ul>
 <li><code>point_name</code> (character): The name of the point count location.</li>
-<li><code>patch_id</code> (character): The patch in which the point count location sits.</li>
+<li><code>patch_id</code> (character): The patch associated with a point count location.</li>
 <li><code>latitude</code> (numeric, double): The latitude of the point count location, in decimal degrees.</li>
 <li><code>longitude</code> (numeric, double): The longitude of the point count location, in decimal degrees.</li>
 </ul>
@@ -2412,7 +2408,7 @@ Click this button to learn more!
 <p>5. <span class="score">[1.25]</span> Prepare the objects for mapping.</p>
 <ul>
 <li><span class="subscore">[0.30]</span> In separate code blocks, return the EPSG code of <code>patches</code>, <code>nests</code>, and <code>point_counts</code>, each as a single integer value.</li>
-<li><span class="subscore">[0.30]</span> In separate code blocks, return a single integer vector containing the number of vertices in <code>patches</code>, <code>nests</code>, and <code>point_counts</code>, in that order.</li>
+<li><span class="subscore">[0.30]</span> Using a single clode block, return an integer vector containing the number of vertices in <code>patches</code>, <code>nests</code>, and <code>point_counts</code>, in that order.</li>
 <li><span class="subscore">[0.65]</span> Using the decision rules in <strong>3.2 Introduction to spatial vector data</strong>, transform the object(s) such that patches, nests, and point counts share a CRS. Globally assign the transformed object(s), adding the suffix <code>_transformed</code> to the previously assigned name(s).</li>
 </ul>
 <p><em>Hint: Please see <strong>3.2 Introduction to spatial vector data</strong> and <strong>3.4 The coordinate reference system: Why it matters and how to use it</strong>.</em></p>
@@ -2429,41 +2425,39 @@ Click this button to learn more!
 <section id="mapping-with-tmap" class="level2">
 <h2 class="anchored" data-anchor-id="mapping-with-tmap">Mapping with tmap</h2>
 <div class="now_you">
-<p>7. <span class="score">[1.25]</span> Tara and her field team have been finding nests throughout the spring and summer. Create an interactive field map that Tara and her team can use to relocate monitored nests. Display the habitat patches and nest locations over Esri World Imagery. Make the nest locations clearly visible and include an informative map title and layer names.</p>
+<p>7. <span class="score">[1.25]</span> Tara and her field team have been finding nests throughout the spring and summer. Create an interactive field map that Tara and her team can use to relocate monitored nests. Display the habitat patches and nest locations over the Esri World Imagery basemap. Make the nest locations clearly visible and include an informative map title and layer names.</p>
 <p><em>Hint: Please see <strong>3.5 Introduction to tmap</strong>.</em></p>
-</div>
-</section>
-<section id="proposed-point-count-locations" class="level2">
-<h2 class="anchored" data-anchor-id="proposed-point-count-locations">Proposed point count locations</h2>
-<div class="now_you">
-<p>8. <span class="score">[1.25]</span> Tara’s current point count locations are outside the habitat patches. She is thinking of adding one location at the geometric center of each patch.</p>
-<ul>
-<li><span class="subscore">[0.65]</span> Using the existing projected CRS, calculate the centroid of each habitat patch and globally assign the resulting object to the name <code>patch_centroids</code>.</li>
-<li><span class="subscore">[0.60]</span> Make an interactive map that displays the habitat patches and <code>patch_centroids</code>.</li>
-</ul>
-<p><em>Hint: Please see <strong>3.6 Geometric operations with sf</strong>.</em></p>
 </div>
 </section>
 <section id="spatial-buffers" class="level2">
 <h2 class="anchored" data-anchor-id="spatial-buffers">Spatial buffers</h2>
 <div class="now_you">
-<p>9. <span class="score">[1.0]</span> Tara wants to compare the original point count location for the patch named Coyote and the proposed location at the centroid of that patch. Within a single code block, create an interactive map that:</p>
+<p>8. <span class="score">[1.0]</span> Tara’s current point count locations are outside the habitat patches. She is thinking of adding a point count location at the geometric center of the patch named “Firehouse”. Within a single code block:</p>
 <ul>
-<li><span class="subscore">[0.60]</span> Displays the <code>points_counts</code>, <code>patches</code>, and <code>patch_centroids</code> for the patch named “Coyote”</li>
-<li><span class="subscore">[0.40]</span> Draws a 100 m buffer around the original point count location and the centroid of <code>Coyote</code>.</li>
+<li><span class="subscore">[0.25]</span> Subset <code>point_counts</code> and <code>patches</code> to the patch named “Firehouse”.</li>
+<li><span class="subscore">[0.25]</span> Calculate the centroid of the Firehouse patch</li>
+<li><span class="subscore">[0.25]</span> Create an interactive map that displays the <code>points_counts</code>, <code>patches</code>, and centroid layers (each subset to Firehouse)</li>
+<li><span class="subscore">[0.25]</span> Draw a 100 m buffer around the original point count location and the Firehouse centroid.</li>
 </ul>
-<p><em>Hint: Please see <strong>3.6 Geometric operations with sf</strong> and <strong>3.5 Introduction to tmap</strong>.</em></p>
+<p><em>Hint: Please see <strong>2.1 Subsetting and extraction</strong>, <strong>3.6 Geometric operations with sf</strong> and <strong>3.5 Introduction to tmap</strong>.</em></p>
 </div>
 </section>
 <section id="assigning-a-nest-to-a-habitat-patch" class="level2">
 <h2 class="anchored" data-anchor-id="assigning-a-nest-to-a-habitat-patch">Assigning a nest to a habitat patch</h2>
 <div class="now_you">
-<p>10. <span class="score">[1.75]</span> Tara records a nest at longitude -78.1685 and latitude 38.8940, outside the mapped habitat patches. The coordinates were recorded in EPSG 4326. She needs to determine which patch is closest to the nest.</p>
+<p>9. <span class="score">[1.50]</span> Tara records a nest at longitude -78.1685 and latitude 38.8940, outside the mapped habitat patches. The coordinates were recorded in EPSG 4326. She needs to determine which patch is closest to the nest.</p>
 <ul>
 <li><span class="subscore">[0.75]</span> Construct a one-feature point simple features object from the coordinates, supplying the CRS in which they were recorded. Transform the object to the existing projected CRS and globally assign the result to the name <code>new_nest</code>.</li>
-<li><span class="subscore">[1.00]</span> Calculate the distance from <code>new_nest</code> to every habitat patch. Return a one-row tibble data frame containing <code>patch_id</code>, <code>patch_label</code>, and <code>distance_to_nest</code> for the closest patch, with distance reported in meters. Do not assign the result to a name or overwrite an existing binding.</li>
+<li><span class="subscore">[0.75]</span> Calculate the distance from <code>new_nest</code> to every habitat patch. Return a one-row tibble data frame containing <code>patch_id</code>, <code>patch_label</code>, and <code>distance_to_nest</code> for the closest patch, with distance reported in meters. Do not assign the result to a name or overwrite an existing binding.</li>
 </ul>
 <p><em>Hint: Please see <strong>3.3 Constructing and converting simple features</strong>, <strong>3.4 The coordinate reference system: Why it matters and how to use it</strong>, and <strong>3.6 Geometric operations with sf</strong>.</em></p>
+</div>
+</section>
+<section id="counting-nests" class="level2">
+<h2 class="anchored" data-anchor-id="counting-nests">Counting nests</h2>
+<div class="now_you">
+<p>10. <span class="score">[1.50]</span> Tara wants a visualization of the number of nests associated with each patch. Please create an interactive map that uses fill color to display the number of nests assigned to each patch.</p>
+<p><em>Hint: Please see <strong>2.3 Grouped operations and summarize</strong>, <strong>2.6 Tidy data</strong>, and <strong>3.5 Introduction to tmap</strong>.</em></p>
 </div>
 </section>
 
