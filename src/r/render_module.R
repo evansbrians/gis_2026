@@ -67,7 +67,7 @@ write_render_profile <-
       "project:",
       "  render:",
       stringr::str_c("    - ", as.character(.paths))
-    ) %>%
+    ) |>
       readr::write_lines(path)
 
     path

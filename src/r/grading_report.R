@@ -649,7 +649,7 @@ graded_document <-
         problem_set_title(.problem_set),
         "\"\nsubtitle: \"",
         str_to_title(str_replace(.student_id, "_", ", ")),
-        "\"\nformat: html\n---"
+        "\"\nformat:\n  html:\n    toc: true\n    toc-location: left\n---"
       ),
       report_styles(),
       "::: score_summary",

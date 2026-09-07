@@ -22,7 +22,7 @@ This module will be our first foray into working with spatial data (this is, aft
 * How to read and preprocess spatial vector data
 * How to create point, line, and polygon geometries and convert among them
 * How to create static and interactive maps with *tmap*
-* How to aggregate, measure, and buffer geometries
+* How to aggregate and measure geometries and create new spatial objects
 
 *Note: Please continue to ignore references to the folder structure from our data science class.*
 
@@ -33,19 +33,9 @@ This module will be our first foray into working with spatial data (this is, aft
 * **3.3 Constructing and converting simple features**: This written tutorial will really help you understand what simple features objects are by building sf points, lines, and polygons from the ground up. You will also learn how to convert one geometry type to another (e.g., points to polygons).
 * **3.4 The coordinate reference system**: In this written tutorial, you will learn what a CRS is, how to read its well-known text representation, how to transform a CRS, and how to choose a CRS that is appropriate for a given task.
 * **3.5 Introduction to tmap**: In this written tutorial, you will use `left_join()` to add attributes to a simple features object, create static and interactive maps, layer polygon and point geometries, and control the basemap, colors, title, and legend.
-* **3.6 Geometric operations with sf**: In this written tutorial, you will aggregate geometries, calculate centroids, distances, and areas, work with the units of spatial measurements, and create spatial buffers.
+* **3.6 Geometric operations with sf**: In this written tutorial, you will practice aggregating geometries, calculate centroids, distances, and areas, work with the units of spatial measurements, and create convex hulls and spatial buffers.
 
 **Problem Set** (due 10 Nov): Cicada emergence
-
-## Getting started
-
-Please complete the following steps *prior* to beginning this week's lessons:
-
-* Download [module_3_files.zip]{.mono} and:
-    * Place the folder [shapefiles]{.mono} (and its contents) inside of the folder [data/raw]{.mono}
-    * Place capital_bike_share_locations.csv, messy_birds.rds, and sites.csv in [data/raw]{.mono}
-* Place the R script files ([*.R]{.mono}) inside of the [scripts]{.mono} folder
-* Install the packages *sf* and *tmap*: `install.packages(c("sf", "tmap"))`
 
 ## About this week's data
 

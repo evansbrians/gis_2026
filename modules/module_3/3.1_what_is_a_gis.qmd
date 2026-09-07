@@ -28,11 +28,17 @@ R is a GIS ... or at least it can be! In this video lesson, which is a lecture r
 
 :::
 
+::: {.callout-note}
+
+Throughout this course, I will frequently use the term **shapefile** to refer to **spatial vector** data. While "shapefile" is technically just one specific file format created by Esri (the makers of ArcGIS), it has become a common industry shorthand for vector data in general.
+
+:::
+
 ## Take-home points
 
 * A **geographic information system** (GIS) is a system for storing, managing, analyzing, and visualizing spatial data. R can serve as a GIS.
 * A **coordinate reference system** (CRS) is the reference system that allows us to define the location of a geometry on the surface of the Earth. A pair of coordinates has no location without one.
-* **Shapefiles** represent discrete features as points, lines, or polygons.
+* **Shapefiles** (colloquially) represents discrete features as points, lines, or polygons.
 * A **raster** represents a region as a continuous grid of equally sized cells, where each cell stores a value.
 * The **spatial extent** of a dataset is the area that the data cover, and the **spatial grain** is the finest spatial resolution of the data.
 

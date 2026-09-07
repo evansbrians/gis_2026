@@ -19,7 +19,9 @@ lesson_refs <- find_lesson_references()
 
 ![](../../src/images/hex_complex.png){.intro_image fig-alt="Course logo"}
 
-This tutorial is our first foray into using R as a GIS! An optional video provides another route through some of the same ideas. In this lesson, we will explore how to read and preprocess spatial vector data. Material covered will include:
+Spatial vector data represent discrete geographic **features** as **points**, **lines**, or **polygons**. A feature is a single thing that the data describe, such as one county or one sampling site. A point marks a single location, a line connects a sequence of locations, and a polygon encloses an area. As we discussed in ***3.1 What is a GIS?***, I will often refer to spatial vector data colloquially as "shapefiles," although an Esri Shapefile is one specific spatial vector file format.
+
+In this tutorial, we will begin using R as a GIS by reading spatial vector data and preparing them for analysis. The written tutorial is complete on its own. The *optional* video at the end covers the same workflow with a different set of data. Material covered will include:
 
 * Reading spatial vector data with `st_read()`
 * Converting coordinate columns to a simple features object
@@ -163,14 +165,14 @@ counties <-
 In the two operations above, executing `sf::st_read()` prints a lot of metadata about the file that you are reading in. We are given:
 
 * The number of features (rows, each associated with one geometry, which may be multipart);
-* The number of fields (data columns);
+* The number of **fields**, the columns that describe each feature;
 * The type of geometry (here, both objects contain MULTIPOLYGON geometries);
 * Dimensions (almost always XY);
-* The bounding box (the coordinates of the smallest box that can be drawn around all features);
+* The bounding box, the **coordinates** of the smallest box that can be drawn around all features;
 * The coordinate reference system (CRS).
 
 :::{class="mysecret"}
-<i class="fa fa-user-secret" aria-hidden="true" style = "font-size: 150%; padding-right: 5px;"></i>We should always read the metadata carefully! The last bit of metadata, the CRS, is the most important. When we compare or combine simple features objects spatially, their CRSs must be equivalent. If not, we must transform one of them.
+<i class="fa fa-user-secret" aria-hidden="true" style = "font-size: 150%; padding-right: 5px;"></i>We should always read the metadata carefully! The last bit of metadata, the CRS, is the most important. When we compare or combine simple features objects spatially, their CRSs must be equivalent. If not, we must **transform** one of them, recalculating its coordinates so that they describe the same locations in the other CRS.
 :::
 
 Once we have read the metadata, we do not need it printed every time that we run our script. We suppress it by adding the argument `quiet = TRUE` to the call that we have already run:
@@ -839,7 +841,7 @@ This diagram is a visualization of *my* mental model for this workflow. It is to
    )
    ```
 
-4. Parsons problem: Reorder the lines below to read in `counties.geojson`, clean the field names, subset the features to the District of Columbia, subset the fields to `geoid`, and transform the object to the CRS of `census`. One line applies a function that an existing simple features object does not require. Leave it in the trash.
+4. Parsons problem: Reorder the lines below to read in `counties.geojson` (with no metadata printed during the reading process), clean the field names, subset the features to the District of Columbia, subset the fields to `geoid`, and transform the object to the CRS of `census`. One line applies a function that an existing simple features object does not require. Leave it in the trash.
 
    <div class="parsons-problem">
    <div id="p-3-2-01-trash" class="sortable-code"></div>

@@ -197,7 +197,7 @@ census <-
 
 With one attribute row per `GEOID`, this join retains each tract and its geometry. This is a **non-spatial join**, matching keys rather than locations. We will examine joins more explicitly in Module 4.
 
-Now let's fill our polygons by population. In version 4, `fill = ` specifies the interior color, as in *ggplot2*. Name the target field in quotes:
+Now let's fill our polygons by population. The argument, `fill = ` specifies the interior color, as in *ggplot2*. Name the target field in quotes:
 
 ```{r}
 #| fig-alt: "DC census tracts colored by population count. The legend groups counts into intervals, and tract areas differ."
@@ -222,21 +222,18 @@ True or false: `tm_polygons()` determines how a polygon object is drawn.
 
 `r torf(TRUE)`
 
-Why can we use `left_join()` rather than a spatial join to add the census attributes?
-
-`r longmcq(c(answer = "The objects contain matching values in the shared key GEOID", "Both objects contain polygon geometries", "left_join() matches features by their locations", "Every census tract has the same population"))`
 :::
 
 ## Add a basemap
 
 `tm_basemap()` draws tiles beneath the data. We place the call first for readability, but its position does not determine the stacking order.
 
-Let's add the OpenStreetMap basemap below our census polygons:
+Let's add the Esri World Imagery basemap below our census polygons:
 
 ```{r}
-#| fig-alt: "Semi-transparent DC population polygons over OpenStreetMap streets in Web Mercator."
+#| fig-alt: "Semi-transparent DC population polygons over Esri World Imagery satellite tiles in Web Mercator."
 
-tm_basemap("OpenStreetMap") +
+tm_basemap("Esri.WorldImagery") +
 
   # Add census data:
 
@@ -256,12 +253,12 @@ The `fill_alpha = ` argument controls the transparency of the polygon fill. A va
 
 ## Legends, titles, and colors
 
-In version 4, each visual variable has its own legend settings. For polygon fill, use `fill.legend = ` with `tm_legend()`:
+Each visual variable has its own legend settings. For polygon fill, use `fill.legend = ` with `tm_legend()`:
 
 ```{r}
 #| fig-alt: "The same DC population map with the fill legend titled Population."
 
-tm_basemap("OpenStreetMap") +
+tm_basemap("Esri.WorldImagery") +
   census %>%
   tm_shape(crs = 3857) +
   tm_polygons(
@@ -277,7 +274,7 @@ We can add a title with `tm_title()`:
 ```{r}
 #| fig-alt: "The population map with a Population legend and the title DC population by census tract."
 
-tm_basemap("OpenStreetMap") +
+tm_basemap("Esri.WorldImagery") +
   census %>%
   tm_shape(crs = 3857) +
   tm_polygons(
@@ -302,7 +299,7 @@ The first population map grouped counts into intervals. A continuous scale assig
 ```{r}
 #| fig-alt: "DC population mapped to a continuous plasma scale, with lower counts purple and higher counts yellow. Transparency blends the colors with the basemap."
 
-tm_basemap("OpenStreetMap") +
+tm_basemap("Esri.WorldImagery") +
   census %>%
   tm_shape(crs = 3857) +
   tm_polygons(
@@ -325,9 +322,9 @@ Transparency mixes these colors with the basemap. Check the finished map for con
 Add `tm_shape()` when switching spatial objects. Multiple geometry layers can use the same object. Let's add Capital Bikeshare locations with `tm_dots()`:
 
 ```{r}
-#| fig-alt: "Capital Bikeshare locations drawn over the DC population polygons and OpenStreetMap basemap, with a Population legend and map title."
+#| fig-alt: "Capital Bikeshare locations drawn over the DC population polygons and Esri World Imagery basemap, with a Population legend and map title."
 
-tm_basemap("OpenStreetMap") +
+tm_basemap("Esri.WorldImagery") +
 
   # Add census polygons:
 
@@ -348,7 +345,7 @@ tm_basemap("OpenStreetMap") +
 
   bikes %>%
   tm_shape() +
-  tm_dots(size = 0.05) +
+  tm_dots(size = 0.25) +
   tm_title("DC population and bike-share locations")
 ```
 
@@ -366,7 +363,7 @@ Modify the map above so that the bike-share points are larger and blue. Use `siz
 ```{r}
 #| fig-alt: "The same population and bike-share map with larger blue points. The population legend and map title are retained."
 
-tm_basemap("OpenStreetMap") +
+tm_basemap("Esri.WorldImagery") +
   census %>%
   tm_shape(crs = 3857) +
   tm_polygons(
@@ -431,7 +428,7 @@ census %>%
 
 You can switch basemaps, turn layers on or off, inspect features, and zoom in and out. The `group = ` argument sets the name of each layer in the layer control.
 
-Before moving on, return to static mode for the remaining lessons:
+Let's return to static mode:
 
 ```{r}
 tmap_mode("plot")

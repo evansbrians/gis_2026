@@ -580,7 +580,7 @@ This tree is a visualization of *my* mental model for this process. It is totall
 
    `r longmcq(c("A conformal projection", answer = "An equal-area projection", "An equidistant projection", "An azimuthal projection"))`
 
-5. Match each task to a suitable choice. The choices assume that the CRS covers the study area:
+5. Match each task to a suitable CRS.
 
    ```{r}
    #| echo: false
@@ -590,10 +590,10 @@ This tree is a visualization of *my* mental model for this process. It is totall
      .pairs =
        tribble(
          ~ left,                               ~ right,
-         "Map a single city",                  "A suitable UTM CRS for the city",
-         "Measure distances from one central field station", "An azimuthal equidistant projection centered on the station",
-         "Conduct distance and buffer operations", "A suitable projected CRS for the task and extent",
-         "Compare the areas of features",      "An equal-area projection"
+         "Generate a map of fields on a farm",                  "UTM",
+         "Measure the distance from a farm to a city >100 km away", "An azimuthal equidistant projection",
+         "Define the location of a point collected with longitude and latitude coordinates", "EPSG 4326",
+         "Compare the size of Canadian provinces",      "An equal-area projection"
        ),
      .id = "match-3-4-crs"
    )

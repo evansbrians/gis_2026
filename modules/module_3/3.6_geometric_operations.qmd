@@ -22,15 +22,16 @@ lesson_refs <- find_lesson_references()
 <div>
 ![](../../src/images/hex_complex.png){.intro_image fig-alt="Course logo"}
 
-Simple features objects do more than store and display locations. Their geometries allow us to answer questions about the size, distance, and spatial arrangement of ecological features. In this lesson, we will apply the structure and coordinate reference system concepts from the previous lessons to operations that modify or measure geometries.
+How far is a sampling location from a landmark? How large is a census tract? What falls within 50 meters of a survey point? In this lesson, we will use the structure and coordinate reference system concepts from the previous lessons to measure geometries and create new ones.
 
 In completing this lesson, you will learn how to:
 
-* Aggregate geometries with `st_union()`
+* Combine polygon geometries with `st_union()`
 * Calculate the centroid of a polygon or set of points with `st_centroid()`
 * Calculate distances with `st_distance()`
 * Work with the units attached to spatial measurements
 * Calculate polygon areas with `st_area()`
+* Create a minimum convex polygon with `st_convex_hull()`
 * Create spatial buffers with `st_buffer()`
 
 **Important!** Before starting this tutorial, be sure that you have completed all preliminary and previous lessons!
@@ -110,6 +111,12 @@ library(tidyverse)
 
 source("scripts/source_script_module_3.R")
 
+# Draw interactive maps over satellite imagery:
+
+tmap_mode("view")
+
+tmap_options(basemap.server = "Esri.WorldImagery")
+
 # United States counties:
 
 counties <-
@@ -117,10 +124,7 @@ counties <-
     "data/raw/shapefiles/counties.geojson",
     quiet = TRUE
   ) %>%
-  set_names(
-    names(.) %>%
-      tolower()
-  ) %>%
+  clean_names() %>%
   st_transform(crs = 5070)
 
 # District of Columbia census tracts:
@@ -145,21 +149,31 @@ observatory_nets <-
   st_transform(crs = 32618)
 ```
 
-The counties use an equal-area CRS built for the conterminous United States. The two District of Columbia objects use UTM zone 18N, a projected CRS appropriate for local measurements around Washington, DC. Because both CRSs use meters, numeric distances supplied to the operations below can be interpreted in meters. Recall from ***3.4 The coordinate reference system*** that the most appropriate CRS depends on the task and spatial extent.
+As in ***3.5 Introduction to tmap***, every map is interactive and uses Esri World Imagery. Pan, zoom, and click a feature to inspect it.
+
+The counties use a conterminous US equal-area CRS. The District of Columbia objects use UTM zone 18N, which is appropriate for local measurements. Both CRSs use meters. Recall from ***3.4 The coordinate reference system*** that the appropriate CRS depends on the task and spatial extent.
 
 ## Spatial aggregation
 
-Sometimes our polygons, multipolygons, and points contain more features than are needed. To address this, we use a process called **spatial aggregation**, which combines features.
+**Spatial aggregation** combines features. For polygons, this is also called **dissolving** because `st_union()` removes boundaries between combined features. The workflow below is formative self-assessment. We will return to aggregation in ***5.2 Memory management when using shapefiles***.
 
-### Aggregate polygons
+::: now_you
+{{< fa user-circle size=2x >}} [Formative challenge]{style="font-size: 1.25em; padding-left: 0.5em;"}
 
-For polygons, aggregation can also be called **dissolving** because boundaries between features are removed. The *sf* package uses `st_union()` to dissolve boundaries.
+Use `counties` to create and map one feature for each of the District of Columbia, Maryland, and Virginia:
 
-Let's subset the counties to the District of Columbia, Maryland, and Virginia:
+1. Subset the features to those three jurisdictions.
+2. Use `summarize()` with `.by = state_name`.
+3. Combine each group's geometries with `st_union()`.
+
+[Click here to see my answer]{.answer_link data-answer="a-3-6-aggregation"}
+
+::: {.answer_body #a-3-6-aggregation}
 
 ```{r}
-counties_dmv <-
-  counties %>%
+#| eval: false
+
+counties %>%
   filter(
     state_name %in%
       c(
@@ -167,96 +181,44 @@ counties_dmv <-
         "Maryland",
         "Virginia"
       )
-  )
-```
-
-If we apply `st_union()` to the entire object, every county is combined into a single geometry:
-
-```{r}
-counties_dmv %>%
-  st_union()
-```
-
-To dissolve boundaries within groups of polygons, we can use `summarize()`. We group the data by the field that should define each resultant feature and combine the geometries with `st_union()`:
-
-```{r}
-states_dmv <-
-  counties_dmv %>%
+  ) %>%
   summarize(
     geometry = st_union(geometry),
     .by = state_name
-  )
-
-states_dmv
-```
-
-Let's have a look:
-
-```{r}
-states_dmv %>%
+  ) %>% 
   tm_shape() +
   tm_polygons(
     fill = "state_name",
     fill.legend =
-      tm_legend(title = "State")
+      tm_legend(title = "Jurisdiction")
   )
 ```
 
-The county boundaries have been dissolved, but the boundary around each state remains.
+`st_union()` dissolves the county boundaries within each group, while `summarize()` returns one feature per jurisdiction.
 
-### Aggregate points
-
-We can also combine point features. Let's look at `observatory_nets`, which represents the locations where Tara and I mist-net birds outside of our office at the Bird Observatory:
-
-```{r}
-observatory_nets
-```
-
-Each feature is a point. When we aggregate the geometry, the points become a single multipoint feature:
-
-```{r}
-observatory_nets %>%
-  st_union()
-```
-
-Like polygons, points can also be aggregated by a grouping field:
-
-```{r}
-observatory_nets %>%
-  summarize(
-    geometry = st_union(geometry),
-    .by = region
-  )
-```
-
-::: now_you
-{{< fa user-circle size=2x >}} [Check your understanding]{style="padding-left: 0.5em;"}
-
-What does `st_union()` do when it is applied to all features of a polygon object?
-
-`r longmcq(c(answer = "Combines the features and dissolves their internal boundaries", "Converts the polygons to points", "Adds their areas as a field", "Transforms their CRS"))`
-
-True or false: Grouping before unioning geometries allows one resultant geometry to be created for each group.
-
-`r torf(TRUE)`
+:::
 :::
 
 ## Centroids
 
 The **centroid** of a feature is its geometric center. We can use `st_centroid()` to calculate this location.
 
-When applied to a polygon object with multiple features, `st_centroid()` returns the centroid of each feature. The code below returns the centroid of each state within `states_dmv`:
+When applied to a polygon object, `st_centroid()` returns one centroid per feature:
+
+*Note: `st_centroid()` reports that it assumes attributes are constant over geometries. The fields of each feature are carried to its centroid, and their values are not recalculated.*
 
 ```{r}
-states_dmv %>%
+#| fig-alt: "District of Columbia census tract boundaries, each marked with a red point at its geometric center."
+
+dc_census %>%
   tm_shape() +
   tm_polygons() +
-  states_dmv %>%
+  dc_census %>%
   st_centroid() %>%
   tm_shape() +
   tm_dots(
     fill = "red",
-    size = 0.1
+    size = 0.3
   )
 ```
 
@@ -266,34 +228,32 @@ states_dmv %>%
 The centroid of a concave or multipart polygon may fall outside of the polygon. When an interior label or representative point is required, `st_point_on_surface()` is often a better choice.
 :::
 
-Because `st_centroid()` calculates the centroid of each feature, applying it directly to individual point features is not very interesting. If we aggregate all of our points first, we can calculate the centroid of the entire set:
+Applying `st_centroid()` directly to point features would simply return the same points. To calculate the center of a set of points, we first use `st_combine()` to collect them into one multipoint geometry:
 
 ```{r}
 observatory_centroid <-
   observatory_nets %>%
-  st_union() %>%
+  st_combine() %>%
   st_centroid()
-
-observatory_centroid
 ```
 
-Likewise, if we aggregate points by banding region, we can calculate the centroid of each region:
+We can also combine the points within each banding region and calculate one centroid per region:
 
 ```{r}
 observatory_regions_centroids <-
   observatory_nets %>%
   summarize(
-    geometry = st_union(geometry),
+    geometry = st_combine(geometry),
     .by = region
   ) %>%
   st_centroid()
-
-observatory_regions_centroids
 ```
 
 Let's plot the net locations and regional centroids:
 
 ```{r}
+#| fig-alt: "Mist-net locations colored by banding region, with a larger red point marking the centroid of each region."
+
 observatory_nets %>%
   tm_shape() +
   tm_dots(
@@ -305,14 +265,14 @@ observatory_nets %>%
   tm_shape() +
   tm_dots(
     fill = "red",
-    size = 0.15,
+    size = 0.5,
     group = "Regional centroids"
   )
 ```
 
 ## Distance
 
-We can calculate the distance between simple features objects, or between features within them, using `st_distance()`. For example, we can calculate the distance between the Lincoln Memorial and the center of our mist-netting area.
+We can calculate the distance between simple features using `st_distance()`. For example, let's calculate the distance between the Lincoln Memorial and the center of our mist-netting area.
 
 First, let's create the Lincoln Memorial point. Its coordinates were recorded in EPSG 4326, so we assign that CRS and then transform the point to the CRS of `observatory_centroid`:
 
@@ -337,7 +297,7 @@ lincoln_memorial %>%
   )
 ```
 
-The numerical distance is followed by its units (`[m]`). This output is a units-class object. We can convert between units with `units::set_units()`:
+The output is a units-class object, with the units shown after the value. We can convert it with `units::set_units()`:
 
 ```{r}
 lincoln_memorial %>%
@@ -348,7 +308,7 @@ lincoln_memorial %>%
   units::set_units("km")
 ```
 
-The argument `by_element = TRUE` pairs the first feature of one object with the first feature of the other, the second with the second, and so on. The two objects must therefore contain the same number of features. The default, `by_element = FALSE`, calculates every pairwise distance and returns a matrix.
+The argument `by_element = TRUE` pairs corresponding features, so both objects must contain the same number of features. The default calculates every pairwise distance and returns a matrix.
 
 For example, we can calculate the distance from every mist net to the observatory centroid:
 
@@ -357,7 +317,7 @@ observatory_nets %>%
   st_distance(observatory_centroid)
 ```
 
-Because there is one centroid, the matrix contains one column. We can add those distances to the point object by extracting that column:
+Because there is one centroid, the matrix contains one column. We can extract that column and add the distances to the point object:
 
 ```{r}
 observatory_nets %>%
@@ -370,7 +330,7 @@ observatory_nets %>%
   )
 ```
 
-A common task in spatial ecology is to calculate the pairwise distances among all features in an object. These distances form a **distance matrix**:
+The pairwise distances among all features in an object form a **distance matrix**:
 
 ```{r}
 observatory_nets %>%
@@ -397,7 +357,7 @@ observatory_regions_centroids %>%
 
 ## Area
 
-We are commonly asked to calculate the area of polygon features. For example, perhaps we want to generate a map of population density by census tract in the District of Columbia.
+We are commonly asked to calculate the area of polygon features. Here, we will use tract area to map population density in the District of Columbia.
 
 We can calculate the area of each census tract with `st_area()` and add these data as a new field with `mutate()`:
 
@@ -423,9 +383,11 @@ dc_census_density <-
 dc_census_density
 ```
 
-Let's map the result:
+Here, quantile classes place approximately the same number of census tracts in each color class. Let's map the result:
 
 ```{r}
+#| fig-alt: "District of Columbia census tracts shaded from pale to deep orange-red by population density, with approximately the same number of tracts in each color class."
+
 dc_census_density %>%
   tm_shape() +
   tm_polygons(
@@ -444,58 +406,80 @@ dc_census_density %>%
 
 ### The area occupied by a set of points
 
-If we want a simple polygon describing the area occupied by a set of points, one option is the **minimum convex polygon**, the smallest convex polygon that contains every point. This is often applied in spatial ecology as a rough estimate of an individual's home range, although there are much better methods.
+One simple description of the area occupied by a set of points is the **minimum convex polygon**, the smallest convex polygon containing every point. It is often used as a rough estimate of an animal's home range, although other methods may better suit the question and data.
 
-To generate a minimum convex polygon, we first aggregate the points with `st_union()` and then generate the polygon with `st_convex_hull()`:
+We first combine the points with `st_combine()`, then generate the polygon with `st_convex_hull()`:
 
 ```{r}
 observatory_hull <-
   observatory_nets %>%
-  st_union() %>%
+  st_combine() %>%
   st_convex_hull()
-
-observatory_hull
 ```
 
-We can then calculate the area occupied by the convex hull:
+We can calculate the area enclosed by the hull:
 
 ```{r}
 observatory_hull %>%
   st_area()
 ```
 
+The result is easier to interpret with the original points:
+
+```{r}
+#| fig-alt: "A translucent polygon shows the minimum convex polygon around the seven mist-net locations, which are drawn as red points."
+
+observatory_hull %>%
+  tm_shape() +
+  tm_polygons(
+    fill = "cyan",
+    fill_alpha = 0.25
+  ) +
+  observatory_nets %>%
+  tm_shape() +
+  tm_dots(
+    fill = "red",
+    size = 0.08
+  )
+```
+
 ## Spatial buffers
 
-In spatial ecology, and lots of other fields, it is often necessary to evaluate the environment around a feature. One method for doing so is creating a **spatial buffer**, which describes the area within a specified distance of a point, line, or polygon.
+A **spatial buffer** describes the area within a specified distance of a point, line, or polygon. Buffers are often used to evaluate the environment around a feature.
 
-We can create a buffer polygon with `st_buffer()`. We supply the object that we would like to buffer and the distance from the feature. Because `observatory_centroid` uses a projected CRS measured in meters, `dist = 2000` creates a buffer extending 2,000 meters from the centroid:
+We create a buffer with `st_buffer()`. Because `observatory_centroid` uses a projected CRS measured in meters, `dist = 2000` extends 2,000 meters from the centroid:
 
 ```{r}
 observatory_centroid_buffer <-
   observatory_centroid %>%
   st_buffer(dist = 2000) %>%
   st_sf()
-
-observatory_centroid_buffer
 ```
 
-Let's map the centroid and its buffer:
+Let's map the result:
 
 ```{r}
+#| fig-alt: "A circle of 2,000 meters radius outlined around a single red point at the observatory centroid."
+
 observatory_centroid_buffer %>%
   tm_shape() +
-  tm_borders(lwd = 1.5) +
+  tm_borders(
+    col = "blue",
+    lwd = 1.5
+  ) +
   observatory_centroid %>%
   tm_shape() +
   tm_dots(
     fill = "red",
-    size = 0.1
+    size = 0.5
   )
 ```
 
-If we have multiple features, a buffer is drawn around each feature. For example, Tara will guide our team in conducting fixed-radius point counts at the center of each mist-netting region. We can help the team visualize a 50-meter radius around each centroid:
+With multiple features, `st_buffer()` returns one buffer per feature. Tara will guide our team in conducting fixed-radius point counts at the center of each mist-netting region. We can help the team visualize a 50-meter radius around each centroid:
 
 ```{r}
+#| fig-alt: "A blue circle of 50 meters radius drawn around each regional centroid, one buffer per feature."
+
 observatory_regions_centroids %>%
   st_buffer(dist = 50) %>%
   tm_shape() +
@@ -507,7 +491,7 @@ observatory_regions_centroids %>%
   tm_shape() +
   tm_dots(
     fill = "red",
-    size = 0.1
+    size = 0.5
   )
 ```
 
@@ -516,7 +500,7 @@ Sometimes a single ring is not enough. During point counts, our field teams may 
 ::: now_you
 {{< fa user-circle size=2x >}} [Check your understanding]{style="padding-left: 0.5em;"}
 
-Why must the CRS units be considered before supplying a numeric distance to `st_buffer()`?
+For the projected objects in this lesson, why must the CRS units be considered before supplying a numeric distance to `st_buffer()`?
 
 `r longmcq(c(answer = "The buffer distance is interpreted using the coordinate units of the object", "A buffer can only be created in EPSG 4326", "The CRS determines the number of features", "st_buffer() transforms the object automatically"))`
 
@@ -529,7 +513,7 @@ True or false: Buffering an object with three point features returns one buffer 
 
 At this point, my hope is that you have a mental model for the geometric operations in this lesson. Choosing among them might look something like this (click to expand):
 
-![](../../src/images/decision_trees/geometric_operations.svg){.zoomable data-title="Decision tree: Geometric operations" data-pdf-key="geometric_operations" fig-alt="To create a geometry: combine features and dissolve polygon boundaries with st_union(), which returns one geometry per group when the data are grouped; find the geometric center of each feature with st_centroid(); find a point that falls inside the shape with st_point_on_surface(); draw the smallest polygon around a set of points with st_convex_hull(), combining the points first; and draw the area within a distance of a feature with st_buffer(), whose dist = argument is read in the units of the CRS. To measure a geometry, use st_distance(), which returns every pairwise distance unless by_element = TRUE pairs corresponding features, and st_area(), which returns one area per feature. To convert a measurement to other units, use units::set_units()."}
+![](../../src/images/decision_trees/geometric_operations.svg){.zoomable data-title="Decision tree: Geometric operations" data-pdf-key="geometric_operations" fig-alt="To create a geometry: combine features and dissolve polygon boundaries with st_union(), called inside summarize() to return one geometry per group; find the geometric center of each feature with st_centroid(); find a point that falls inside the shape with st_point_on_surface(); draw the smallest convex polygon around a set of points by combining them with st_combine() and calling st_convex_hull(); and draw the area within a distance of a feature with st_buffer(), whose dist = argument is read in the units of a projected CRS. To measure a geometry, use st_distance(), which returns every pairwise distance unless by_element = TRUE pairs corresponding features, and st_area(), which returns one area per feature. To convert a measurement to other units, use units::set_units()."}
 
 {{< include ../../src/includes/decision_tree_pdfs/geometric_operations.qmd >}}
 
@@ -541,8 +525,8 @@ This tree is a visualization of *my* mental model for these functions. It is tot
 
 ## Take-home points
 
-* `st_union()` combines geometries and dissolves the boundaries among polygon features. When used with grouped data, it creates one combined geometry for each group.
-* `st_centroid()` returns the geometric center of each feature. Aggregate point features before calculating the centroid of the set.
+* `st_union()` combines geometries and dissolves boundaries among polygon features. Call it inside `summarize()` with a grouping variable to create one geometry per group.
+* `st_centroid()` returns the geometric center of each feature. Combine point features before calculating the centroid of the set.
 * `st_distance()` returns pairwise distances by default. `by_element = TRUE` instead pairs corresponding features.
 * Spatial measurements retain units. Use `units::set_units()` to convert them without discarding their meaning.
 * `st_area()` calculates polygon area. Choose a CRS appropriate for the spatial extent and measurement before interpreting the result.
@@ -554,36 +538,37 @@ This tree is a visualization of *my* mental model for these functions. It is tot
 ::: now_you
 {{< fa user-circle size=2x >}} [Test your knowledge!]{style="font-size: 1.25em; padding-left: 0.5em;"}
 
-1. Which operation removes the internal county boundaries while maintaining one feature for each state?
+1. You want to compare census tract populations while accounting for differences in tract size. What should you calculate?
 
-   `r longmcq(c(answer = "Summarize by state and combine geometry with st_union()", "Apply st_centroid() to every county", "Apply st_buffer() to the county object", "Transform every county to the same CRS"))`
+`r longmcq(c(answer = "Population divided by tract area", "The centroid of each tract", "The distance among every pair of tracts", "A buffer around each tract"))`
 
 2. You apply `st_distance()` to an object containing eight points without supplying a second object. What is returned?
 
-   `r longmcq(c(answer = "An 8 by 8 pairwise-distance matrix", "A vector containing eight areas", "A single distance", "Eight buffer polygons"))`
+`r longmcq(c(answer = "An 8 by 8 pairwise-distance matrix", "A vector containing eight areas", "A single distance", "Eight buffer polygons"))`
 
-3. Match each function to the geometric operation that it completes:
+3. Parsons problem: Reorder the lines below to combine the mist-net locations, create their minimum convex polygon, and calculate its area in hectares. One line calculates a centroid instead. Leave it in the trash.
 
-   ```{r}
-   #| echo: false
-   #| results: asis
+<div class="parsons-problem">
+<div id="p-3-6-01-trash" class="sortable-code"></div>
+<div id="p-3-6-01-sortable" class="sortable-code"></div>
+<div style="clear: both;"></div>
+<button id="p-3-6-01-check" class="parsons-btn parsons-btn-check" type="button">Check My Order</button>
+<button id="p-3-6-01-reset" class="parsons-btn parsons-btn-reset" type="button">Shuffle Again</button>
+<p id="p-3-6-01-feedback" class="parsons-feedback"></p>
+</div>
 
-   matching_game(
-     .pairs =
-       tribble(
-         ~ left,                                  ~ right,
-         "Dissolve boundaries",                  "st_union()",
-         "Calculate a geometric center",         "st_centroid()",
-         "Measure a polygon",                    "st_area()",
-         "Create an area within a set distance", "st_buffer()"
-       ),
-     .id = "match-3-6-geometric-operations"
-   )
-   ```
+<script>
+window.parsonsProblems = window.parsonsProblems || [];
+window.parsonsProblems.push({
+id: "p-3-6-01",
+maxDistractors: 1,
+code: "observatory_hull_area <-\n  observatory_nets %>%\n  st_combine() %>%\n  st_centroid() %>% #distractor\n  st_convex_hull() %>%\n  st_area() %>%\n  units::set_units(\"ha\")"
+});
+</script>
 
 4. A researcher wants a 500-meter buffer around every sampling point. Which order of operations is appropriate?
 
-   `r longmcq(c(answer = "Transform the points to an appropriate projected CRS measured in meters, then call st_buffer(dist = 500)", "Assign EPSG 4326 and call st_buffer(dist = 500)", "Call st_area() and then st_buffer()", "Union all points and call st_buffer(dist = 500)"))`
+`r longmcq(c(answer = "Transform the points to an appropriate projected CRS measured in meters, then call st_buffer(dist = 500)", "Assign EPSG 4326 and call st_buffer(dist = 500)", "Call st_area() and then st_buffer()", "Union all points and call st_buffer(dist = 500)"))`
 :::
 
 {{< include /src/includes/_reference_section.qmd >}}

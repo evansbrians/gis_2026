@@ -556,7 +556,7 @@ landmarks %>%
   )
 ```
 
-Here, `st_combine()` collects the geometries without resolving their boundaries. In ***3.6 Geometric operations with sf***, we will use `st_union()` to calculate a geometric union, which dissolves shared polygon boundaries. For now, we just want to collect our points before connecting them.
+Here, `st_combine()` collects the geometries without resolving their boundaries. We will use `st_union()` to dissolve shared polygon boundaries in ***3.6 Geometric operations with sf*** and return to it in ***5.2 Memory management when using shapefiles***. For now, we just want to collect our points before connecting them.
 
 We can then cast these data to a linestring geometry with `st_cast()`:
 

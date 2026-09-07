@@ -1,7 +1,7 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1017 797" width="1017" height="797" font-family="Helvetica Neue,Helvetica,Arial,sans-serif" role="img">
-<rect width="1017" height="797" fill="#ffffff"/>
-<text x="508" y="34" text-anchor="middle" font-size="19" font-weight="700" fill="#292093">Decision tree: Geometric operations</text>
-<line x1="40" y1="50" x2="977" y2="50" stroke="#9db0e6" stroke-width="1.2"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1057 797" width="1057" height="797" font-family="Helvetica Neue,Helvetica,Arial,sans-serif" role="img">
+<rect width="1057" height="797" fill="#ffffff"/>
+<text x="528" y="34" text-anchor="middle" font-size="19" font-weight="700" fill="#292093">Decision tree: Geometric operations</text>
+<line x1="40" y1="50" x2="1017" y2="50" stroke="#9db0e6" stroke-width="1.2"/>
 <g transform="translate(0,52)">
 <path d="M 156.0 456.0 H 168.0 V 228.0 H 311.0" fill="none" stroke="#9db0e6" stroke-width="1.8" stroke-linejoin="round"/>
 <polygon points="322.0,228.0 310.0,223.0 310.0,233.0" fill="#9db0e6"/>
@@ -33,8 +33,8 @@
 <text x="662.0" y="205.0" text-anchor="middle" font-size="12" fill="#4a5aa0">find a point inside</text>
 <text x="662.0" y="218.0" text-anchor="middle" font-size="12" fill="#4a5aa0">the shape</text>
 <rect x="572.8" y="282.0" width="178.5" height="30.0" rx="3" fill="#ffffff"/>
-<text x="662.0" y="293.0" text-anchor="middle" font-size="12" fill="#4a5aa0">draw the smallest polygon</text>
-<text x="662.0" y="306.0" text-anchor="middle" font-size="12" fill="#4a5aa0">around the points</text>
+<text x="662.0" y="293.0" text-anchor="middle" font-size="12" fill="#4a5aa0">draw the smallest convex</text>
+<text x="662.0" y="306.0" text-anchor="middle" font-size="12" fill="#4a5aa0">polygon around the points</text>
 <rect x="590.0" y="370.0" width="144.0" height="30.0" rx="3" fill="#ffffff"/>
 <text x="662.0" y="381.0" text-anchor="middle" font-size="12" fill="#4a5aa0">draw the area within</text>
 <text x="662.0" y="394.0" text-anchor="middle" font-size="12" fill="#4a5aa0">a distance</text>
@@ -51,31 +51,31 @@
 <text x="82.0" y="470.0" text-anchor="middle" font-size="15" fill="#333333">to do?</text>
 <rect x="324.0" y="205.5" width="225" height="45" rx="9" fill="#eaf0ff" stroke="#292093" stroke-width="2.0"/>
 <text x="436.5" y="232.5" text-anchor="middle" font-size="15" fill="#333333">Which operation?</text>
-<rect x="765.0" y="13.0" width="244" height="78" rx="9" fill="#ffffff" stroke="#9db0e6" stroke-width="1.6"/>
-<text x="887.0" y="41.0" text-anchor="middle" font-size="15" font-weight="700" font-family="Menlo,Consolas,monospace" fill="#292093">st_union()</text>
-<text x="887.0" y="58.0" text-anchor="middle" font-size="12" fill="#5d5d70">polygon boundaries dissolve</text>
-<text x="887.0" y="74.0" text-anchor="middle" font-size="12" fill="#5d5d70">one geometry per group, if grouped</text>
-<rect x="765.0" y="109.0" width="244" height="62" rx="9" fill="#ffffff" stroke="#9db0e6" stroke-width="1.6"/>
-<text x="887.0" y="137.0" text-anchor="middle" font-size="15" font-weight="700" font-family="Menlo,Consolas,monospace" fill="#292093">st_centroid()</text>
-<text x="887.0" y="154.0" text-anchor="middle" font-size="12" fill="#5d5d70">one centroid per feature</text>
-<rect x="765.0" y="197.0" width="244" height="62" rx="9" fill="#ffffff" stroke="#9db0e6" stroke-width="1.6"/>
-<text x="887.0" y="225.0" text-anchor="middle" font-size="15" font-weight="700" font-family="Menlo,Consolas,monospace" fill="#292093">st_point_on_surface()</text>
-<text x="887.0" y="242.0" text-anchor="middle" font-size="12" fill="#5d5d70">when the point must fall inside</text>
-<rect x="765.0" y="285.0" width="244" height="62" rx="9" fill="#ffffff" stroke="#9db0e6" stroke-width="1.6"/>
-<text x="887.0" y="313.0" text-anchor="middle" font-size="15" font-weight="700" font-family="Menlo,Consolas,monospace" fill="#292093">st_convex_hull()</text>
-<text x="887.0" y="330.0" text-anchor="middle" font-size="12" fill="#5d5d70">combine the points first</text>
-<rect x="765.0" y="373.0" width="244" height="62" rx="9" fill="#ffffff" stroke="#9db0e6" stroke-width="1.6"/>
-<text x="887.0" y="401.0" text-anchor="middle" font-size="15" font-weight="700" font-family="Menlo,Consolas,monospace" fill="#292093">st_buffer()</text>
-<text x="887.0" y="418.0" text-anchor="middle" font-size="12" fill="#5d5d70">dist = , in the units of the CRS</text>
+<rect x="765.0" y="13.0" width="284" height="78" rx="9" fill="#ffffff" stroke="#9db0e6" stroke-width="1.6"/>
+<text x="907.0" y="41.0" text-anchor="middle" font-size="15" font-weight="700" font-family="Menlo,Consolas,monospace" fill="#292093">st_union()</text>
+<text x="907.0" y="58.0" text-anchor="middle" font-size="12" fill="#5d5d70">polygon boundaries dissolve</text>
+<text x="907.0" y="74.0" text-anchor="middle" font-size="12" fill="#5d5d70">inside summarize() for one per group</text>
+<rect x="765.0" y="109.0" width="284" height="62" rx="9" fill="#ffffff" stroke="#9db0e6" stroke-width="1.6"/>
+<text x="907.0" y="137.0" text-anchor="middle" font-size="15" font-weight="700" font-family="Menlo,Consolas,monospace" fill="#292093">st_centroid()</text>
+<text x="907.0" y="154.0" text-anchor="middle" font-size="12" fill="#5d5d70">one centroid per feature</text>
+<rect x="765.0" y="197.0" width="284" height="62" rx="9" fill="#ffffff" stroke="#9db0e6" stroke-width="1.6"/>
+<text x="907.0" y="225.0" text-anchor="middle" font-size="15" font-weight="700" font-family="Menlo,Consolas,monospace" fill="#292093">st_point_on_surface()</text>
+<text x="907.0" y="242.0" text-anchor="middle" font-size="12" fill="#5d5d70">when the point must fall inside</text>
+<rect x="765.0" y="285.0" width="284" height="62" rx="9" fill="#ffffff" stroke="#9db0e6" stroke-width="1.6"/>
+<text x="907.0" y="313.0" text-anchor="middle" font-size="15" font-weight="700" font-family="Menlo,Consolas,monospace" fill="#292093">st_combine()</text>
+<text x="907.0" y="330.0" text-anchor="middle" font-size="12" fill="#5d5d70">then st_convex_hull()</text>
+<rect x="765.0" y="373.0" width="284" height="62" rx="9" fill="#ffffff" stroke="#9db0e6" stroke-width="1.6"/>
+<text x="907.0" y="401.0" text-anchor="middle" font-size="15" font-weight="700" font-family="Menlo,Consolas,monospace" fill="#292093">st_buffer()</text>
+<text x="907.0" y="418.0" text-anchor="middle" font-size="12" fill="#5d5d70">dist = , in the units of a projected CRS</text>
 <rect x="324.0" y="521.5" width="225" height="45" rx="9" fill="#eaf0ff" stroke="#292093" stroke-width="2.0"/>
 <text x="436.5" y="548.5" text-anchor="middle" font-size="15" fill="#333333">Which measure?</text>
-<rect x="765.0" y="461.0" width="244" height="78" rx="9" fill="#ffffff" stroke="#9db0e6" stroke-width="1.6"/>
-<text x="887.0" y="489.0" text-anchor="middle" font-size="15" font-weight="700" font-family="Menlo,Consolas,monospace" fill="#292093">st_distance()</text>
-<text x="887.0" y="506.0" text-anchor="middle" font-size="12" fill="#5d5d70">every pair, by default</text>
-<text x="887.0" y="522.0" text-anchor="middle" font-size="12" fill="#5d5d70">by_element = TRUE pairs features</text>
-<rect x="765.0" y="557.0" width="244" height="62" rx="9" fill="#ffffff" stroke="#9db0e6" stroke-width="1.6"/>
-<text x="887.0" y="585.0" text-anchor="middle" font-size="15" font-weight="700" font-family="Menlo,Consolas,monospace" fill="#292093">st_area()</text>
-<text x="887.0" y="602.0" text-anchor="middle" font-size="12" fill="#5d5d70">one area per feature</text>
+<rect x="765.0" y="461.0" width="284" height="78" rx="9" fill="#ffffff" stroke="#9db0e6" stroke-width="1.6"/>
+<text x="907.0" y="489.0" text-anchor="middle" font-size="15" font-weight="700" font-family="Menlo,Consolas,monospace" fill="#292093">st_distance()</text>
+<text x="907.0" y="506.0" text-anchor="middle" font-size="12" fill="#5d5d70">every pair, by default</text>
+<text x="907.0" y="522.0" text-anchor="middle" font-size="12" fill="#5d5d70">by_element = TRUE pairs features</text>
+<rect x="765.0" y="557.0" width="284" height="62" rx="9" fill="#ffffff" stroke="#9db0e6" stroke-width="1.6"/>
+<text x="907.0" y="585.0" text-anchor="middle" font-size="15" font-weight="700" font-family="Menlo,Consolas,monospace" fill="#292093">st_area()</text>
+<text x="907.0" y="602.0" text-anchor="middle" font-size="12" fill="#5d5d70">one area per feature</text>
 <rect x="324.0" y="653.0" width="225" height="62" rx="9" fill="#ffffff" stroke="#9db0e6" stroke-width="1.6"/>
 <text x="436.5" y="681.0" text-anchor="middle" font-size="15" font-weight="700" font-family="Menlo,Consolas,monospace" fill="#292093">units::set_units()</text>
 <text x="436.5" y="698.0" text-anchor="middle" font-size="12" fill="#5d5d70">keeps the measurement's meaning</text>

@@ -1,0 +1,33 @@
+
+Hi all,
+
+Great job on the Problem set 1! Here are the details (out of 10 points):
+
+- Mean: 10.34
+- Median: 10.45
+- Standard error: 0.23
+- Range: 7.40 - 11.90
+
+The largest deduction was for the use of unapproved functions, so please make sure to read and adhere to the "Functions that you may use ..." list. 
+
+A grade report for your problem set can be accessed in Canvas by clicking on the assignment then clicking "View feedback". Note that your grade report is a Quarto document, which is a special file format for generating documents in R (all of your lessons are written as quarto documents). Please review your report by following these steps:
+
+1. Download the file (extension: .qmd)
+2. Open the file in RStudio
+3. Click the Render button (right-facing blue arrow) at the top of the Source pane's menu bar. This converts the Markdown file into an html file (a web page on your computer)
+4. Click the Viewer tab in the Output pane to view your grades.
+
+Please do go through my comments on your grades carefully -- this will really help you avoid recurring issues!
+
+Best,
+
+B
+
+
+
+Please review your grade report by following these steps:
+
+1. Download the file
+2. Open the file in RStudio
+3. Click the Render button (right-facing blue arrow) at the top of the Source pane's menu bar. This converts the Markdown file into an html file (a web page on your computer)
+4. Click the Viewer tab in the Output pane to view your grades.
