@@ -231,11 +231,22 @@ const PARTS = [
   "n": 0,
   "kicker": "Preliminary content",
   "title": "Before the course begins",
-  "startSlug": "module_0/module_0_intro/",
-  "startLabel": "Overview",
-  "note": "No problem set",
+  "introTitle": "Overview",
+  "introBlurb": "Why the preliminary lessons matter and what each of the five covers.",
+  "problemSet": null,
   "intro": "Strongly recommended before Module 1. These chapters carry the core knowledge an early beginner in R should have, along with the parts of the language that experienced users most often overlook.",
   "chapters": [
+   {
+    "id": "0.0",
+    "title": "Overview",
+    "slug": "module_0/module_0_intro/",
+    "kind": "Overview",
+    "blurb": "Why the preliminary lessons matter and what each of the five covers.",
+    "mins": 10,
+    "meta": "Overview · 10 min",
+    "search": "source",
+    "sections": []
+   },
    {
     "id": "0.1",
     "title": "R and RStudio",
@@ -243,6 +254,7 @@ const PARTS = [
     "kind": "Setup",
     "blurb": "Install and set up R and RStudio, adjust the global options for a comfortable and reproducible workflow, and get oriented in the four core panes.",
     "mins": 20,
+    "meta": "Setup · 20 min",
     "search": "tribble",
     "sections": [
      [
@@ -266,6 +278,7 @@ const PARTS = [
     "kind": "Tutorial",
     "blurb": "How R's environment tracks the objects you create, how assignment and functions work, when quotation marks are and are not necessary, and how to install and load packages.",
     "mins": 55,
+    "meta": "Tutorial · 55 min",
     "search": "c install.packages library ls mean rm str_c",
     "sections": [
      [
@@ -289,6 +302,7 @@ const PARTS = [
     "kind": "Tutorial",
     "blurb": "The four atomic vector types you will use throughout the course — numeric, character, factor, and logical — and the common pitfalls that come with each.",
     "mins": 40,
+    "meta": "Tutorial · 40 min",
     "search": "as.character as.integer as.numeric c class factor mean plot sum typeof",
     "sections": [
      [
@@ -316,6 +330,7 @@ const PARTS = [
     "kind": "Tutorial",
     "blurb": "How atomic vectors, matrices, lists, and data frames differ in dimension and homogeneity, how to construct and describe each, and how to read and write data with readr.",
     "mins": 90,
+    "meta": "Tutorial · 1 hr 30 min",
     "search": "as_tibble attributes c class colnames data.frame dim length library list matrix names ncol nrow read_csv read_lines read_rds row.names rownames tibble typeof write_csv write_lines write_rds",
     "sections": [
      [
@@ -351,6 +366,7 @@ const PARTS = [
     "kind": "Tutorial",
     "blurb": "Subset atomic vectors, matrices, lists, and data frames by position, by name, or by logical condition.",
     "mins": 75,
+    "meta": "Tutorial · 1 hr 15 min",
     "search": "c class data.frame filter library list matrix names pluck str which",
     "sections": [
      [
@@ -371,18 +387,45 @@ const PARTS = [
      ]
     ]
    }
-  ],
-  "hasIntro": true
+  ]
  },
  {
   "n": 1,
   "kicker": "Module 1",
   "title": "Foundations",
-  "startSlug": "module_1/1.0_module_intro/",
-  "startLabel": "Module introduction",
-  "note": "Problem set: R foundations, due 30 Aug",
+  "introTitle": "Module introduction",
+  "introBlurb": "What Module 1 covers, this week's data, and the required readings and cheat sheets.",
+  "problemSet": {
+   "id": "PS1",
+   "dir": "problem_set_1",
+   "blurb": "Practice with reading and exploring data, assignment, and the course code style."
+  },
   "intro": "Concepts and tools before data. This module builds the conceptual understanding of R — functions, environments, objects, assignment — that everything after it rests on.",
   "chapters": [
+   {
+    "id": "1.0",
+    "title": "Module introduction",
+    "slug": "module_1/1.0_module_intro/",
+    "kind": "Overview",
+    "blurb": "What Module 1 covers, this week's data, and the required readings and cheat sheets.",
+    "mins": 10,
+    "meta": "Overview · 10 min",
+    "search": "cat source",
+    "sections": [
+     [
+      "Module overview",
+      "module-overview"
+     ],
+     [
+      "About this week's data",
+      "about-this-weeks-data"
+     ],
+     [
+      "Readings and resources",
+      "readings-and-resources"
+     ]
+    ]
+   },
    {
     "id": "1.1",
     "title": "Course introduction",
@@ -390,6 +433,7 @@ const PARTS = [
     "kind": "Orientation",
     "blurb": "A road map for the course: where the resources live, how content is organized, and how to get unstuck.",
     "mins": 10,
+    "meta": "Orientation · 10 min",
     "search": "source",
     "sections": [
      [
@@ -413,6 +457,7 @@ const PARTS = [
     "kind": "Setup",
     "blurb": "The necessary setup steps before anything else — packages, renv, and the habits that make a coding session go well.",
     "mins": 15,
+    "meta": "Setup · 15 min",
     "search": "read_csv source",
     "sections": [
      [
@@ -428,6 +473,7 @@ const PARTS = [
     "kind": "Tutorial",
     "blurb": "An enhanced review of functions, environments, and data objects that builds the vocabulary the rest of the course depends on.",
     "mins": 75,
+    "meta": "Tutorial · 1 hr 15 min",
     "search": "as.numeric attributes c class data.frame factor function if library list ls matrix names rep rm search source str tibble tidyverse_packages tribble typeof",
     "sections": [
      [
@@ -455,6 +501,7 @@ const PARTS = [
     "kind": "Tutorial + video",
     "blurb": "Read and write .csv and .rds files, peek inside .xlsx workbooks, and run the exploratory steps you should take every single time you read a file.",
     "mins": 60,
+    "meta": "Tutorial + video · 1 hr",
     "search": "arrange c data.frame desc dim excel_sheets factor file.remove length levels library list list.files max mean median min ncol nrow read_csv read_excel read_lines read_rds sd slice_head slice_tail source str summary table unique var write_csv write_lines write_rds",
     "sections": [
      [
@@ -478,6 +525,7 @@ const PARTS = [
     "kind": "Tutorial + video",
     "blurb": "Global and recursive assignment, naming conventions, the pipe operator, and how to keep a global environment you can trust.",
     "mins": 70,
+    "meta": "Tutorial + video · 1 hr 10 min",
     "search": "c class factor library list ls names read_csv ref rename rm set_names source str_c tolower unique",
     "sections": [
      [
@@ -501,19 +549,82 @@ const PARTS = [
       "the-pipe-operator"
      ]
     ]
+   },
+   {
+    "id": "PS1",
+    "title": "R foundations",
+    "slug": "problem_sets/problem_set_1/",
+    "kind": "Problem set",
+    "blurb": "Practice with reading and exploring data, assignment, and the course code style.",
+    "mins": 0,
+    "meta": "Problem set · due 30 Aug",
+    "search": "arrange factor levels library mean typeof",
+    "sections": [
+     [
+      "Grading",
+      "grading"
+     ],
+     [
+      "About the data",
+      "about-the-data"
+     ],
+     [
+      "Getting started",
+      "getting-started"
+     ],
+     [
+      "Exploring your data",
+      "exploring-your-data"
+     ],
+     [
+      "Assignments",
+      "assignments"
+     ],
+     [
+      "Code styling",
+      "code-styling"
+     ]
+    ]
    }
-  ],
-  "hasIntro": true
+  ]
  },
  {
   "n": 2,
   "kicker": "Module 2",
   "title": "The tidyverse",
-  "startSlug": "module_2/2.0_module_intro/",
-  "startLabel": "Module introduction",
-  "note": "Problem set: Counting coqui frogs, due 6 Sep",
+  "introTitle": "Module introduction",
+  "introBlurb": "What Module 2 covers, this week's data, and the required readings and cheat sheets.",
+  "problemSet": {
+   "id": "PS2",
+   "dir": "problem_set_2",
+   "blurb": "Practice with the whole module 2 toolkit, from subsetting through tidy data and relational tables."
+  },
   "intro": "The toolkit you will use for the rest of the course: subsetting and extraction, mutation, grouped summaries, reshaping and joining, ggplot2, and tidy data.",
   "chapters": [
+   {
+    "id": "2.0",
+    "title": "Module introduction",
+    "slug": "module_2/2.0_module_intro/",
+    "kind": "Overview",
+    "blurb": "What Module 2 covers, this week's data, and the required readings and cheat sheets.",
+    "mins": 10,
+    "meta": "Overview · 10 min",
+    "search": "cat source",
+    "sections": [
+     [
+      "Module overview",
+      "module-overview"
+     ],
+     [
+      "About this week's data",
+      "about-this-weeks-data"
+     ],
+     [
+      "Readings and resources",
+      "readings-and-resources"
+     ]
+    ]
+   },
    {
     "id": "2.1",
     "title": "Introduction to subsetting and extraction",
@@ -521,7 +632,8 @@ const PARTS = [
     "kind": "Tutorial",
     "blurb": "Distinguish subsetting from extraction, then choose the right tool for rows, columns, values, and metadata.",
     "mins": 80,
-    "search": "arrange c class distinct drop_na filter is.na library list2env max names pluck pull read_rds rm select slice slice_head slice_max slice_min slice_tail source year",
+    "meta": "Tutorial · 1 hr 20 min",
+    "search": "arrange c cat class distinct drop_na filter is.na library list2env max names pluck pull read_rds rm select slice slice_head slice_max slice_min slice_tail source year",
     "sections": [
      [
       "Extraction vs. subsetting",
@@ -548,7 +660,8 @@ const PARTS = [
     "kind": "Tutorial",
     "blurb": "Create new columns and modify existing ones with dplyr — including the special case of NA values.",
     "mins": 45,
-    "search": "library mutate na_if nrow pluck pull read_rds replace_na row_number select source table transmute",
+    "meta": "Tutorial · 45 min",
+    "search": "cat library mutate na_if nrow pluck pull read_rds replace_na row_number select source table transmute",
     "sections": [
      [
       "Add or modify a column",
@@ -579,7 +692,8 @@ const PARTS = [
     "kind": "Tutorial",
     "blurb": "Apply mutation, subsetting, and summary operations within groups, and tell per-operation grouping from persistent grouping.",
     "mins": 45,
-    "search": "c count drop_na filter group_by library mean mutate n pluck pull read_rds replace_na sd select slice_max source summarize summary ungroup",
+    "meta": "Tutorial · 45 min",
+    "search": "c cat count drop_na filter group_by library mean mutate n pluck pull read_rds replace_na sd select slice_max source summarize summary ungroup",
     "sections": [
      [
       "Group the data",
@@ -610,7 +724,8 @@ const PARTS = [
     "kind": "Tutorial",
     "blurb": "Combine and split columns and tables, join tables by shared keys, and pivot data between long and wide forms.",
     "mins": 60,
-    "search": "arrange bind_cols bind_rows c count distinct left_join library list2env ls n pivot_longer pivot_wider pull read_rds ref rm select separate separate_wider_delim slice_head source summarize unique unite",
+    "meta": "Tutorial · 1 hr",
+    "search": "arrange bind_cols bind_rows c cat count distinct left_join library list2env ls n pivot_longer pivot_wider pull read_rds ref rm select separate separate_wider_delim slice_head source summarize unique unite",
     "sections": [
      [
       "Bind rows",
@@ -653,7 +768,8 @@ const PARTS = [
     "kind": "Tutorial + video",
     "blurb": "Build plots layer by layer — data, aesthetic mappings, geometries, scales, facets, labels, and themes.",
     "mins": 40,
-    "search": "aes c coord_flip count element_text facet_wrap factor fct_rev geom_bar geom_point geom_smooth ggplot labs length library mutate read_csv scale_color_brewer scale_color_manual scale_x_continuous scale_y_continuous source summary theme theme_bw tibble unit",
+    "meta": "Tutorial + video · 40 min",
+    "search": "aes c cat coord_flip count element_text facet_wrap factor fct_rev geom_bar geom_point geom_smooth ggplot labs length library mutate read_csv scale_color_brewer scale_color_manual scale_x_continuous scale_y_continuous source summary theme theme_bw tibble unit",
     "sections": [
      [
       "Background",
@@ -708,7 +824,8 @@ const PARTS = [
     "kind": "Tutorial",
     "blurb": "Apply the three rules of tidy data to diagnose and repair the structural problems in a messy dataset.",
     "mins": 40,
-    "search": "across aes as.numeric c count distinct drop_na facet_wrap geom_point geom_smooth ggplot labs left_join library list max mean mutate pivot_longer pivot_wider pull read_csv select separate_wider_delim source summarize theme_bw tibble unique unite write_rds",
+    "meta": "Tutorial · 40 min",
+    "search": "across aes as.numeric c cat count distinct drop_na facet_wrap geom_point geom_smooth ggplot labs left_join library list max mean mutate pivot_longer pivot_wider pull read_csv select separate_wider_delim source summarize theme_bw tibble unique unite write_rds",
     "sections": [
      [
       "The vocabulary of tidy data",
@@ -743,26 +860,98 @@ const PARTS = [
       "saving-the-tidy-data"
      ]
     ]
+   },
+   {
+    "id": "PS2",
+    "title": "Counting coqui frogs",
+    "slug": "problem_sets/problem_set_2/",
+    "kind": "Problem set",
+    "blurb": "Practice with the whole module 2 toolkit, from subsetting through tidy data and relational tables.",
+    "mins": 0,
+    "meta": "Problem set · due 6 Sep",
+    "search": "library",
+    "sections": [
+     [
+      "Grading",
+      "grading"
+     ],
+     [
+      "About the data",
+      "about-the-data"
+     ],
+     [
+      "Subsetting and extraction",
+      "subsetting-and-extraction"
+     ],
+     [
+      "Data tidying and mutation",
+      "data-tidying-and-mutation"
+     ],
+     [
+      "Grouped operations and summarizing",
+      "grouped-operations-and-summarizing"
+     ],
+     [
+      "Data visualization",
+      "data-visualization"
+     ],
+     [
+      "Ranked subsetting",
+      "ranked-subsetting"
+     ],
+     [
+      "Tidy data and relational tables",
+      "tidy-data-and-relational-tables"
+     ]
+    ]
    }
-  ],
-  "hasIntro": true
+  ]
  },
  {
   "n": 3,
   "kicker": "Module 3",
   "title": "Introduction to spatial vector data",
-  "startSlug": "module_3/3.0_module_intro/",
-  "startLabel": "Module introduction",
-  "note": "Problem set: Cicada emergence, due 10 Nov",
+  "introTitle": "Module introduction",
+  "introBlurb": "What Module 3 covers, the files and packages to install first, this week's data, and the readings.",
+  "problemSet": {
+   "id": "PS3",
+   "dir": "problem_set_3",
+   "blurb": "Practice with the sf workflow: reading spatial data, projections, measurement, buffers, and mapping."
+  },
   "intro": "Our first foray into spatial data. The sf package end to end — reading and building geometries, the coordinate reference system, mapping with tmap, and geometric operations.",
   "chapters": [
+   {
+    "id": "3.0",
+    "title": "Module introduction",
+    "slug": "module_3/3.0_module_intro/",
+    "kind": "Overview",
+    "blurb": "What Module 3 covers, the files and packages to install first, this week's data, and the readings.",
+    "mins": 10,
+    "meta": "Overview · 10 min",
+    "search": "cat source",
+    "sections": [
+     [
+      "Module overview",
+      "module-overview"
+     ],
+     [
+      "About this week's data",
+      "about-this-weeks-data"
+     ],
+     [
+      "Readings and resources",
+      "readings-and-resources"
+     ]
+    ]
+   },
    {
     "id": "3.1",
     "title": "What is a GIS?",
     "slug": "module_3/3.1_what_is_a_gis/",
-    "kind": "Video, 13:17",
+    "kind": "Video",
     "blurb": "A video overview of the foundational GIS concepts: types of spatial data, file formats, and coordinate systems.",
     "mins": 10,
+    "meta": "Video · 13:17",
     "search": "library source",
     "sections": []
    },
@@ -773,7 +962,8 @@ const PARTS = [
     "kind": "Tutorial + video",
     "blurb": "Read spatial files, pre-process simple features objects, and transform a coordinate reference system — the first full sf workflow of the course.",
     "mins": 55,
-    "search": "c clean_names count_vertices everything filter geom_sf ggplot library list names nrow pull read_csv select source st_as_sf st_crs st_geometry st_read st_transform tribble unique",
+    "meta": "Tutorial + video · 55 min",
+    "search": "c cat clean_names count_vertices everything filter geom_sf ggplot library list names nrow pull read_csv select source st_as_sf st_crs st_geometry st_read st_transform tribble unique",
     "sections": [
      [
       "Putting it all together",
@@ -792,7 +982,8 @@ const PARTS = [
     "kind": "Tutorial",
     "blurb": "Build sf points, lines, and polygons from the ground up, then convert one geometry type into another.",
     "mins": 50,
-    "search": "aes arrange as.matrix bind_rows c class filter geom_sf geom_sf_text ggplot library list mutate select slice source st_as_sf st_cast st_combine st_linestring st_point st_polygon st_read st_sf st_sfc summarize theme_set theme_void tibble tribble",
+    "meta": "Tutorial · 50 min",
+    "search": "aes arrange as.matrix bind_rows c cat class filter geom_sf geom_sf_text ggplot library list mutate select slice source st_as_sf st_cast st_combine st_linestring st_point st_polygon st_read st_sf st_sfc summarize theme_set theme_void tibble tribble",
     "sections": [
      [
       "Simple features anatomy",
@@ -823,7 +1014,8 @@ const PARTS = [
     "kind": "Tutorial",
     "blurb": "What a CRS is, how to read its well-known text, how to transform one, and how to choose the right one for the task at hand.",
     "mins": 40,
-    "search": "c clean_names geom_sf ggplot library lonlat_to_utm read_csv select source st_as_sf st_crs st_read st_transform theme_bw tribble",
+    "meta": "Tutorial · 40 min",
+    "search": "c cat clean_names geom_sf ggplot library lonlat_to_utm read_csv select source st_as_sf st_crs st_read st_transform theme_bw tribble",
     "sections": [
      [
       "The components of a CRS",
@@ -862,7 +1054,8 @@ const PARTS = [
     "kind": "Tutorial",
     "blurb": "Join attributes to a simple features object, then build static and interactive maps — basemaps, colors, titles, legends, and layered geometries.",
     "mins": 20,
-    "search": "as_tibble c c4a_gui clean_names filter join_by left_join library list read_csv select source st_as_sf st_read tm_basemap tm_dots tm_legend tm_polygons tm_scale_continuous tm_shape tm_title tmap_mode tmap_options",
+    "meta": "Tutorial · 20 min",
+    "search": "as_tibble c c4a_gui cat clean_names filter join_by left_join library list read_csv select source st_as_sf st_read tm_basemap tm_dots tm_legend tm_polygons tm_scale_continuous tm_shape tm_title tmap_mode tmap_options",
     "sections": [
      [
       "Build a tmap",
@@ -896,8 +1089,9 @@ const PARTS = [
     "slug": "module_3/3.6_geometric_operations/",
     "kind": "Tutorial",
     "blurb": "Aggregate geometries, compute centroids, distances, and areas, work with the units of spatial measurement, and build spatial buffers.",
-    "mins": 35,
-    "search": "c clean_names filter library list mutate names select set_names set_units source st_area st_buffer st_centroid st_convex_hull st_crs st_distance st_point st_read st_sf st_sfc st_transform st_union summarize tm_borders tm_dots tm_legend tm_polygons tm_scale tm_shape tolower tribble",
+    "mins": 30,
+    "meta": "Tutorial · 30 min",
+    "search": "c cat clean_names filter library list mutate select set_units source st_area st_buffer st_centroid st_combine st_convex_hull st_crs st_distance st_point st_read st_sf st_sfc st_transform st_union summarize tm_borders tm_dots tm_legend tm_polygons tm_scale tm_shape tmap_mode tmap_options",
     "sections": [
      [
       "Spatial aggregation",
@@ -924,14 +1118,64 @@ const PARTS = [
       "putting-it-all-together"
      ]
     ]
+   },
+   {
+    "id": "PS3",
+    "title": "Nests in a patchy landscape",
+    "slug": "problem_sets/problem_set_3/",
+    "kind": "Problem set",
+    "blurb": "Practice with the sf workflow: reading spatial data, projections, measurement, buffers, and mapping.",
+    "mins": 0,
+    "meta": "Problem set · due 13 Sep",
+    "search": "library",
+    "sections": [
+     [
+      "Grading",
+      "grading"
+     ],
+     [
+      "About the data",
+      "about-the-data"
+     ],
+     [
+      "Reading spatial vector data",
+      "reading-spatial-vector-data"
+     ],
+     [
+      "From coordinate fields to features",
+      "from-coordinate-fields-to-features"
+     ],
+     [
+      "The coordinate reference system",
+      "the-coordinate-reference-system"
+     ],
+     [
+      "The size of each habitat patch",
+      "the-size-of-each-habitat-patch"
+     ],
+     [
+      "Mapping with tmap",
+      "mapping-with-tmap"
+     ],
+     [
+      "Spatial buffers",
+      "spatial-buffers"
+     ],
+     [
+      "Assigning a nest to a habitat patch",
+      "assigning-a-nest-to-a-habitat-patch"
+     ],
+     [
+      "Counting nests",
+      "counting-nests"
+     ]
+    ]
    }
-  ],
-  "hasIntro": true
+  ]
  }
 ];
 
 const esc = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
-const fmtTime = m => m >= 60 ? (m % 60 ? `${Math.floor(m/60)} hr ${m%60} min` : `${Math.floor(m/60)} hr`) : `${m} min`;
 
 /* ---- main column ---- */
 document.getElementById("parts").innerHTML = PARTS.map(part => {
@@ -942,7 +1186,7 @@ document.getElementById("parts").innerHTML = PARTS.map(part => {
       <div class="ch-head">
         <span class="ch-num">${ch.id}</span>
         <a class="ch-title" href="${BASE}${ch.slug}" target="_blank" rel="noopener">${esc(ch.title)}</a>
-        <span class="ch-meta">${esc(ch.kind)} &middot; ${fmtTime(ch.mins)}</span>
+        <span class="ch-meta">${esc(ch.meta)}</span>
       </div>
       <div class="ch-body">
         <p class="ch-blurb">${esc(ch.blurb)}</p>
@@ -956,9 +1200,7 @@ document.getElementById("parts").innerHTML = PARTS.map(part => {
       <h2>${esc(part.title)}</h2>
       <p>${esc(part.intro)}</p>
       <div class="part-meta">
-        ${part.hasIntro ? `<a href="${BASE}${part.startSlug}" target="_blank" rel="noopener">${esc(part.startLabel)}</a><span class="sep">|</span>` : ""}${part.chapters.length} chapters
-        <span class="sep">|</span>&asymp; ${hours} hours
-        <span class="sep">|</span>${esc(part.note)}
+        ${part.chapters.length} chapters<span class="sep">|</span>&asymp; ${hours} hours
       </div>
       ${chapters}
     </section>`;
