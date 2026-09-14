@@ -1172,6 +1172,257 @@ const PARTS = [
     ]
    }
   ]
+ },
+ {
+  "n": 4,
+  "kicker": "Module 4",
+  "title": "Subsetting, joining, and iterating spatial vector data",
+  "introTitle": "Module introduction",
+  "introBlurb": "What Module 4 covers, this week's data, and the required readings.",
+  "intro": "Working with more than one object at a time. Subset features by their location, join tables by shared keys and by location, repeat an operation across many objects, and turn the result into a map and a report.",
+  "problemSet": {
+   "id": "PS4",
+   "dir": "problem_set_4",
+   "blurb": "Practice with spatial filtering, the join family, and iteration across several spatial objects."
+  },
+  "chapters": [
+   {
+    "id": "4.0",
+    "title": "Module introduction",
+    "slug": "module_4/4.0_module_intro/",
+    "kind": "Overview",
+    "blurb": "What Module 4 covers, this week's data, and the required readings.",
+    "mins": 10,
+    "meta": "Overview · 10 min",
+    "search": "cat source",
+    "sections": [
+     [
+      "Module overview",
+      "module-overview"
+     ],
+     [
+      "Getting started",
+      "getting-started"
+     ],
+     [
+      "About this week's data",
+      "about-this-weeks-data"
+     ],
+     [
+      "Readings and resources",
+      "readings-and-resources"
+     ]
+    ]
+   },
+   {
+    "id": "4.1",
+    "title": "Spatial filtering: Subsetting features by location",
+    "slug": "module_4/4.1_spatial_filtering/",
+    "kind": "Tutorial",
+    "blurb": "We will use st_filter() to subset spatial features based on the relationships between geometries. You will also learn how to choose a spatial predicate and interpret what it returns.",
+    "mins": 50,
+    "meta": "Tutorial · 50 min",
+    "search": "c cat clean_names filter library list pluck read_rds select source st_as_sf st_contains st_crs st_disjoint st_filter st_intersects st_is_within_distance st_overlaps st_read st_touches st_transform st_union st_within tibble tm_dots tm_polygons tm_shape tmap_mode tmap_options",
+    "sections": [
+     [
+      "Filtering using values stored in a column",
+      "filtering-using-values-stored-in-a-column"
+     ],
+     [
+      "When the value is not stored in a column",
+      "when-the-value-is-not-stored-in-a-column"
+     ],
+     [
+      "Filtering on location",
+      "filtering-on-location"
+     ],
+     [
+      "The condition is a spatial predicate",
+      "the-condition-is-a-spatial-predicate"
+     ],
+     [
+      "The other predicates",
+      "the-other-predicates"
+     ],
+     [
+      "When \"any\" is not the question",
+      "when-any-is-not-the-question"
+     ],
+     [
+      "Distance as a condition",
+      "distance-as-a-condition"
+     ],
+     [
+      "Putting it all together",
+      "putting-it-all-together"
+     ]
+    ]
+   },
+   {
+    "id": "4.2",
+    "title": "Non-spatial joins",
+    "slug": "module_4/4.2_nonspatial_joins/",
+    "kind": "Tutorial",
+    "blurb": "We will use shared keys to join related data frames, predict how a join will affect the number of rows, and prepare the results for mapping.",
+    "mins": 35,
+    "meta": "Tutorial · 35 min",
+    "search": "aes anti_join c cat filter full_join geom_sf ggplot inner_join is.na join_by labs left_join library list2env n n_distinct nrow read_rds scale_color_viridis_c scale_size_continuous select semi_join source st_as_sf summarize theme_bw",
+    "sections": [
+     [
+      "On joining tables",
+      "on-joining-tables"
+     ],
+     [
+      "Mutating joins",
+      "mutating-joins"
+     ],
+     [
+      "Filtering joins",
+      "filtering-joins"
+     ],
+     [
+      "Joining attributes to spatial data and mapping",
+      "joining-attributes-to-spatial-data-and-mapping"
+     ],
+     [
+      "Putting it all together",
+      "putting-it-all-together"
+     ]
+    ]
+   },
+   {
+    "id": "4.3",
+    "title": "Spatial joins",
+    "slug": "module_4/4.3_spatial_joins/",
+    "kind": "Tutorial",
+    "blurb": "We will use st_join() to add fields to a simple features object based on location. You will also learn how unmatched and repeated matches affect the returned object.",
+    "mins": 30,
+    "meta": "Tutorial · 30 min",
+    "search": "arrange c cat clean_names count desc filter is.na join_by left_join library list mutate n nrow pluck read_rds select set_units slice_head source st_as_sf st_crs st_distance st_drop_geometry st_join st_nearest_feature st_read st_transform sum summarize tm_legend tm_polygons tm_scale_continuous tm_shape tm_title tmap_mode tmap_options",
+    "sections": [
+     [
+      "Two functions, two questions",
+      "two-functions-two-questions"
+     ],
+     [
+      "Three decisions in a spatial join",
+      "three-decisions-in-a-spatial-join"
+     ],
+     [
+      "Joining to the nearest feature",
+      "joining-to-the-nearest-feature"
+     ],
+     [
+      "Counting features inside features",
+      "counting-features-inside-features"
+     ],
+     [
+      "Putting it all together",
+      "putting-it-all-together"
+     ]
+    ]
+   },
+   {
+    "id": "4.4",
+    "title": "Iteration with purrr",
+    "slug": "module_4/4.4_iteration/",
+    "kind": "Tutorial",
+    "blurb": "We will use map(), walk(), imap(), and pmap() to apply common spatial operations to several objects.",
+    "mins": 30,
+    "meta": "Tutorial · 30 min",
+    "search": "as.character as.numeric bind_rows c cat class count first imap iwalk library list_rbind map map_chr map_dbl map_int mutate names nrow pluck pmap pmap_dbl select set_units source st_area st_buffer st_crs st_drop_geometry st_geometry_type st_read st_sf st_transform st_union st_write str_c sum tm_legend tm_polygons tm_shape tm_title tmap_mode tribble walk",
+    "sections": [
+     [
+      "The repetition we are removing",
+      "the-repetition-we-are-removing"
+     ],
+     [
+      "Applying a function to every element",
+      "applying-a-function-to-every-element"
+     ],
+     [
+      "Choosing the function that returns what you need",
+      "choosing-the-function-that-returns-what-you-need"
+     ],
+     [
+      "Using the name of each element",
+      "using-the-name-of-each-element"
+     ],
+     [
+      "Iterating for a side effect",
+      "iterating-for-a-side-effect"
+     ],
+     [
+      "Varying more than one argument",
+      "varying-more-than-one-argument"
+     ],
+     [
+      "Putting it all together",
+      "putting-it-all-together"
+     ]
+    ]
+   },
+   {
+    "id": "4.5",
+    "title": "Cartography with ggplot2 and tmap",
+    "slug": "module_4/4.5_cartography/",
+    "kind": "Tutorial (optional)",
+    "blurb": "We will use ggplot2 and tmap to make deliberate choices about map layers, visual variables, classifications, colors, and supporting elements.",
+    "mins": 35,
+    "meta": "Tutorial (optional) · 35 min",
+    "search": "aes c cat clean_names count cut facet_wrap geom_histogram geom_sf ggplot join_by label_dollar labs left_join library median mutate n pluck pull quantile read_rds scale_color_viridis_c scale_fill_viridis_c scale_size_continuous scale_x_continuous select seq source st_as_sf st_crs st_drop_geometry st_filter st_read st_transform summarize table theme_bw theme_void tm_compass tm_credits tm_dots tm_facets_wrap tm_legend tm_polygons tm_scale_continuous tm_scale_intervals tm_scalebar tm_shape tm_title tmap_mode",
+    "sections": [
+     [
+      "The decisions behind a map",
+      "the-decisions-behind-a-map"
+     ],
+     [
+      "Choosing between ggplot2 and tmap",
+      "choosing-between-ggplot2-and-tmap"
+     ],
+     [
+      "Putting it all together",
+      "putting-it-all-together"
+     ]
+    ]
+   },
+   {
+    "id": "4.6",
+    "title": "Communicating spatial data with Quarto",
+    "slug": "module_4/4.6_quarto/",
+    "kind": "Tutorial (optional)",
+    "blurb": "We will use Quarto to combine an analysis, its maps, and the text that explains them in a document that can be updated and shared.",
+    "mins": 25,
+    "meta": "Tutorial (optional) · 25 min",
+    "search": "c cat clean_names library nrow pluck read_rds source st_as_sf st_buffer st_crs st_filter st_read st_transform tm_dots tm_legend tm_polygons tm_scale_intervals tm_shape tmap_mode",
+    "sections": [
+     [
+      "The three parts of a Quarto document",
+      "the-three-parts-of-a-quarto-document"
+     ],
+     [
+      "Figures",
+      "figures"
+     ],
+     [
+      "Referring to a figure and to a number",
+      "referring-to-a-figure-and-to-a-number"
+     ],
+     [
+      "Carrying an interactive map",
+      "carrying-an-interactive-map"
+     ],
+     [
+      "When the analysis is slow",
+      "when-the-analysis-is-slow"
+     ],
+     [
+      "Putting it all together",
+      "putting-it-all-together"
+     ]
+    ]
+   }
+  ]
  }
 ];
 
