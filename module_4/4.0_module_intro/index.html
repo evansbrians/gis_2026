@@ -26838,7 +26838,7 @@ margin: 1em 0;
 <li><strong>4.5 Cartography with ggplot2 and tmap</strong> (optional): We will use <em>ggplot2</em> and <em>tmap</em> to make deliberate choices about map layers, visual variables, classifications, colors, and supporting elements.</li>
 <li><strong>4.6 Communicating spatial data with Quarto</strong> (optional): We will use Quarto to combine an analysis, its maps, and the text that explains them in a document that can be updated and shared.</li>
 </ul>
-<p><strong>Problem Set</strong>: District crime</p>
+<p><strong>Problem Set</strong>: Planning ARU placement</p>
 </section>
 <section id="getting-started" class="level2">
 <h2 class="anchored" data-anchor-id="getting-started">Getting started</h2>
@@ -26990,7 +26990,6 @@ Glossary of terms
 <li><strong>Package</strong>: A set of pre-written functions that can be downloaded (<em>note: There are also data packages!</em>)</li>
 <li><strong>Package environment</strong>: A collection of variable names associated with objects in a package.</li>
 <li><strong>Parent</strong>: An object or environment that contains references to other objects.</li>
-<li><strong>Pipe operator</strong>: An infix function that passes the data object on the left-hand side (LHS) to the function on the right-hand side (RHS).</li>
 <li><strong>Placeholder symbol</strong>: In the context of piping, the symbol that defines the location in the right-hand-side function where the piped data will be inserted (a period, <code>.</code>, for the <em>magrittr</em> pipe).</li>
 <li><strong>Point</strong>: A zero-dimensional geometry containing a single point.</li>
 <li><strong>Polygon</strong>: Two-dimensional geometry containing a sequence of vertices (points) forming a closed ring of straight lines.</li>
@@ -27072,13 +27071,13 @@ Functions introduced through the end of this module
 <tr class="odd">
 <td style="text-align: center;">.Primitive</td>
 <td style="text-align: center;">!</td>
-<td style="text-align: left;">0.3_values</td>
+<td style="text-align: left;">1.3_objects</td>
 <td style="text-align: left;">Prefix logical operator (not)</td>
 </tr>
 <tr class="even">
 <td style="text-align: center;">.Primitive</td>
 <td style="text-align: center;">!=</td>
-<td style="text-align: left;">0.3_values</td>
+<td style="text-align: left;">2.1_subsetting_and_extraction</td>
 <td style="text-align: left;">Infix relational operator (is not equal to)</td>
 </tr>
 <tr class="odd">
@@ -27090,7 +27089,7 @@ Functions introduced through the end of this module
 <tr class="even">
 <td style="text-align: center;">.Primitive</td>
 <td style="text-align: center;">&amp;</td>
-<td style="text-align: left;">0.3_values</td>
+<td style="text-align: left;">2.1_subsetting_and_extraction</td>
 <td style="text-align: left;">Infix logical operator (and)</td>
 </tr>
 <tr class="odd">
@@ -27114,7 +27113,7 @@ Functions introduced through the end of this module
 <tr class="even">
 <td style="text-align: center;">.Primitive</td>
 <td style="text-align: center;">/</td>
-<td style="text-align: left;">1.4_importing_exploring_exporting</td>
+<td style="text-align: left;">0.4_objects</td>
 <td style="text-align: left;">Infix arithmetic operator (divide)</td>
 </tr>
 <tr class="odd">
@@ -27126,7 +27125,7 @@ Functions introduced through the end of this module
 <tr class="even">
 <td style="text-align: center;">.Primitive</td>
 <td style="text-align: center;">::</td>
-<td style="text-align: left;">1.3_objects</td>
+<td style="text-align: left;">1.2_getting_started</td>
 <td style="text-align: left;">Infix operator that can be used to access a package environment without attaching the whole package environment to your current session</td>
 </tr>
 <tr class="odd">
@@ -27143,111 +27142,111 @@ Functions introduced through the end of this module
 </tr>
 <tr class="odd">
 <td style="text-align: center;">.Primitive</td>
-<td style="text-align: center;">&lt;=</td>
-<td style="text-align: left;">0.3_values</td>
-<td style="text-align: left;">Infix relational operator (less than or equal to)</td>
-</tr>
-<tr class="even">
-<td style="text-align: center;">.Primitive</td>
 <td style="text-align: center;">=</td>
-<td style="text-align: left;">0.4_objects</td>
+<td style="text-align: left;">0.2_environment_and_functions</td>
 <td style="text-align: left;">Infix operator that assigns an object on the right-hand-side (RHS) to a name on the left-hand-side (LHS) -- this should not be used for global assignments!</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: center;">.Primitive</td>
 <td style="text-align: center;">==</td>
 <td style="text-align: left;">0.3_values</td>
 <td style="text-align: left;">Infix relational operator (is equal to)</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: center;">.Primitive</td>
 <td style="text-align: center;">&gt;</td>
 <td style="text-align: left;">0.3_values</td>
 <td style="text-align: left;">Infix relational operator (greater than)</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: center;">.Primitive</td>
 <td style="text-align: center;">&gt;=</td>
-<td style="text-align: left;">0.3_values</td>
+<td style="text-align: left;">2.1_subsetting_and_extraction</td>
 <td style="text-align: left;">Infix relational operator (greater than or equal to)</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: center;">.Primitive</td>
 <td style="text-align: center;">[...]</td>
 <td style="text-align: left;">0.5_indexing</td>
 <td style="text-align: left;">Extraction operator used to index multiple values from a data object (LHS) based on the position or values specified inside the brackets</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: center;">.Primitive</td>
 <td style="text-align: center;">[[...]]</td>
 <td style="text-align: left;">0.5_indexing</td>
 <td style="text-align: left;">Extraction operator used to index a single value from a data object (LHS) based on the position or values specified inside the brackets</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: center;">.Primitive</td>
 <td style="text-align: center;">^</td>
 <td style="text-align: left;">3.6_geometric_operations</td>
 <td style="text-align: left;">Infix arithmetic operator (to the power of)</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: center;">.Primitive</td>
 <td style="text-align: center;">as.character</td>
 <td style="text-align: left;">0.3_values</td>
 <td style="text-align: left;">Transform an atomic vector to a character vector</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: center;">.Primitive</td>
 <td style="text-align: center;">as.integer</td>
 <td style="text-align: left;">0.3_values</td>
 <td style="text-align: left;">Transform an atomic vector to an integer vector</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: center;">.Primitive</td>
 <td style="text-align: center;">as.numeric</td>
 <td style="text-align: left;">0.3_values</td>
 <td style="text-align: left;">Transform an atomic vector to a double numeric vector (i.e., decimal numbers)</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: center;">.Primitive</td>
 <td style="text-align: center;">attributes</td>
 <td style="text-align: left;">0.4_objects</td>
 <td style="text-align: left;">Generate and print a list that represents the attributes of a data object</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: center;">.Primitive</td>
 <td style="text-align: center;">c</td>
 <td style="text-align: left;">0.2_environment_and_functions</td>
 <td style="text-align: left;">Combine values to form an atomic vector</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: center;">.Primitive</td>
 <td style="text-align: center;">class</td>
 <td style="text-align: left;">0.3_values</td>
 <td style="text-align: left;">Print the class of an object as a one-value character vector</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: center;">.Primitive</td>
 <td style="text-align: center;">is.na</td>
 <td style="text-align: left;">2.1_subsetting_and_extraction</td>
 <td style="text-align: left;">A logical test of whether a value in a vector is [NA]</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: center;">.Primitive</td>
 <td style="text-align: center;">list</td>
 <td style="text-align: left;">0.4_objects</td>
 <td style="text-align: left;">Combine multiple objects of any type into a single, recursive, data object</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: center;">.Primitive</td>
 <td style="text-align: center;">max</td>
 <td style="text-align: left;">1.4_importing_exploring_exporting</td>
 <td style="text-align: left;">Return the highest value in a numeric vector (integer or double) as a one-value numeric or integer vector (depending on input)</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: center;">.Primitive</td>
 <td style="text-align: center;">min</td>
 <td style="text-align: left;">1.4_importing_exploring_exporting</td>
 <td style="text-align: left;">Return the lowest value in a numeric vector (integer or double) as a one-value numeric or integer vector (depending on input)</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">.Primitive</td>
+<td style="text-align: center;">rep</td>
+<td style="text-align: left;">1.3_objects</td>
+<td style="text-align: left;">Replicate elements of a vector a certain number of times</td>
 </tr>
 <tr class="odd">
 <td style="text-align: center;">.Primitive</td>
@@ -27264,7 +27263,7 @@ Functions introduced through the end of this module
 <tr class="odd">
 <td style="text-align: center;">.Primitive</td>
 <td style="text-align: center;">&amp;#124;</td>
-<td style="text-align: left;">0.3_values</td>
+<td style="text-align: left;">2.1_subsetting_and_extraction</td>
 <td style="text-align: left;">Infix logical operator (or)</td>
 </tr>
 <tr class="even">
@@ -27281,15 +27280,15 @@ Functions introduced through the end of this module
 </tr>
 <tr class="even">
 <td style="text-align: center;">base</td>
-<td style="text-align: center;">as.matrix</td>
-<td style="text-align: left;">3.3_constructing_and_converting_shapefiles</td>
-<td style="text-align: left;">Convert a data frame to a matrix</td>
+<td style="text-align: center;">anyNA</td>
+<td style="text-align: left;">4.2_nonspatial_joins</td>
+<td style="text-align: left;">A logical test of whether an object contains one or more [NA] values</td>
 </tr>
 <tr class="odd">
 <td style="text-align: center;">base</td>
-<td style="text-align: center;">cat</td>
-<td style="text-align: left;">4.4_iteration</td>
-<td style="text-align: left;">Write its arguments to the console with no quoting and no element numbers.</td>
+<td style="text-align: center;">as.matrix</td>
+<td style="text-align: left;">3.3_constructing_and_converting_shapefiles</td>
+<td style="text-align: left;">Convert a data frame to a matrix</td>
 </tr>
 <tr class="even">
 <td style="text-align: center;">base</td>
@@ -27317,177 +27316,177 @@ Functions introduced through the end of this module
 </tr>
 <tr class="even">
 <td style="text-align: center;">base</td>
-<td style="text-align: center;">environment</td>
-<td style="text-align: left;">1.3_objects</td>
-<td style="text-align: left;">Print the environment of a given function</td>
-</tr>
-<tr class="odd">
-<td style="text-align: center;">base</td>
 <td style="text-align: center;">factor</td>
 <td style="text-align: left;">0.3_values</td>
 <td style="text-align: left;">Convert a character vector to a factor</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: center;">base</td>
 <td style="text-align: center;">file.remove</td>
 <td style="text-align: left;">1.4_importing_exploring_exporting</td>
 <td style="text-align: left;">Delete a file from your hard drive</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: center;">base</td>
 <td style="text-align: center;">length</td>
 <td style="text-align: left;">0.4_objects</td>
 <td style="text-align: left;">Determine the length of an object -- for atomic vectors and matrices, this returns the number of values; for lists and data frames, this returns the number of component objects.</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: center;">base</td>
 <td style="text-align: center;">levels</td>
 <td style="text-align: left;">1.4_importing_exploring_exporting</td>
 <td style="text-align: left;">Generate a character vector of factor levels in a factor variable</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: center;">base</td>
 <td style="text-align: center;">library</td>
 <td style="text-align: left;">0.2_environment_and_functions</td>
 <td style="text-align: left;">Attach the package environment for a given package to the current R session</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: center;">base</td>
 <td style="text-align: center;">list.files</td>
 <td style="text-align: left;">1.4_importing_exploring_exporting</td>
 <td style="text-align: left;">List files in a specified folder on your computer&#39;s hard drive</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: center;">base</td>
 <td style="text-align: center;">list2env</td>
 <td style="text-align: left;">2.1_subsetting_and_extraction</td>
 <td style="text-align: left;">Assign the items in a list to a specified environment</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: center;">base</td>
 <td style="text-align: center;">ls</td>
 <td style="text-align: left;">0.2_environment_and_functions</td>
 <td style="text-align: left;">Generate a character vector of names in a specified environment (default is the global environment)</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: center;">base</td>
 <td style="text-align: center;">matrix</td>
 <td style="text-align: left;">0.4_objects</td>
 <td style="text-align: left;">Generate a matrix object by adding dimensional attributes to an atomic vector</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: center;">base</td>
 <td style="text-align: center;">mean</td>
 <td style="text-align: left;">0.2_environment_and_functions</td>
 <td style="text-align: left;">Generate a one-value double numeric vector that describes the mean of a vector</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: center;">base</td>
 <td style="text-align: center;">names</td>
 <td style="text-align: left;">0.4_objects</td>
 <td style="text-align: left;">Get or set the names attribute of an object.</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: center;">base</td>
 <td style="text-align: center;">ncol</td>
 <td style="text-align: left;">0.4_objects</td>
 <td style="text-align: left;">Return the number of columns (i.e., variables or list items) in a data frame as a one-value integer vector</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: center;">base</td>
 <td style="text-align: center;">nrow</td>
 <td style="text-align: left;">0.4_objects</td>
 <td style="text-align: left;">Return the number of rows (i.e., observations) in a data frame as a one-value integer vector</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: center;">base</td>
 <td style="text-align: center;">plot</td>
 <td style="text-align: left;">0.3_values</td>
 <td style="text-align: left;">Generate a basic plot of a data object</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: center;">base</td>
 <td style="text-align: center;">rm</td>
 <td style="text-align: left;">0.2_environment_and_functions</td>
 <td style="text-align: left;">Remove a name from a specified environment (default is the global environment)</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: center;">base</td>
 <td style="text-align: center;">row.names</td>
 <td style="text-align: left;">0.4_objects</td>
 <td style="text-align: left;">Assign row names to a data frame, or print assigned row names</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: center;">base</td>
 <td style="text-align: center;">rownames</td>
 <td style="text-align: left;">0.4_objects</td>
 <td style="text-align: left;">Assign row names to a matrix, or print assigned row names</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: center;">base</td>
 <td style="text-align: center;">search</td>
 <td style="text-align: left;">1.3_objects</td>
 <td style="text-align: left;">Print a character vector of attached objects associated with your current R session</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: center;">base</td>
 <td style="text-align: center;">seq</td>
 <td style="text-align: left;">4.5_cartography</td>
 <td style="text-align: left;">Generate a numeric vector between a range of values by some increment</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: center;">base</td>
 <td style="text-align: center;">source</td>
 <td style="text-align: left;">3.2_introduction_to_shapefiles</td>
 <td style="text-align: left;">Execute a source script (in its entirety)</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: center;">base</td>
 <td style="text-align: center;">summary</td>
 <td style="text-align: left;">1.4_importing_exploring_exporting</td>
 <td style="text-align: left;">Print summary stats for a data object</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: center;">base</td>
 <td style="text-align: center;">table</td>
 <td style="text-align: left;">1.4_importing_exploring_exporting</td>
 <td style="text-align: left;">Count the number of unique observations in an atomic vector</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: center;">base</td>
 <td style="text-align: center;">tolower</td>
 <td style="text-align: left;">1.5_assignments</td>
 <td style="text-align: left;">Convert a character vector to lowercase</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: center;">base</td>
 <td style="text-align: center;">typeof</td>
 <td style="text-align: left;">0.3_values</td>
 <td style="text-align: left;">Print a one-value character vector that represents how a data object is stored on your computer</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: center;">base</td>
 <td style="text-align: center;">unique</td>
 <td style="text-align: left;">1.4_importing_exploring_exporting</td>
 <td style="text-align: left;">Subset an atomic vector to the unique values in the set</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: center;">base</td>
 <td style="text-align: center;">unit</td>
 <td style="text-align: left;">2.5_intro_to_data_vis</td>
 <td style="text-align: left;">Set or create a unit object</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: center;">base</td>
 <td style="text-align: center;">which</td>
 <td style="text-align: left;">0.5_indexing</td>
 <td style="text-align: left;">Determine the position of a value where a logical test evaluates to TRUE</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: center;">cols4all</td>
 <td style="text-align: center;">c4a_gui</td>
 <td style="text-align: left;">3.5_introduction_to_tmap</td>
 <td style="text-align: left;">Launch an interactive color-palette explorer (tmap v4&#39;s replacement for tmaptools::palette_explorer()).</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">dplyr</td>
+<td style="text-align: center;">across</td>
+<td style="text-align: left;">2.6_tidy_data</td>
+<td style="text-align: left;">Apply a function across multiple variables in a data frame</td>
 </tr>
 <tr class="odd">
 <td style="text-align: center;">dplyr</td>
@@ -27504,7 +27503,7 @@ Functions introduced through the end of this module
 <tr class="odd">
 <td style="text-align: center;">dplyr</td>
 <td style="text-align: center;">bind_cols</td>
-<td style="text-align: left;">1.3_objects</td>
+<td style="text-align: left;">2.4_reshaping_data_frames</td>
 <td style="text-align: left;">Combine two variables or columns of two tibbles to create a new tibble</td>
 </tr>
 <tr class="even">
@@ -27539,363 +27538,351 @@ Functions introduced through the end of this module
 </tr>
 <tr class="odd">
 <td style="text-align: center;">dplyr</td>
-<td style="text-align: center;">first</td>
-<td style="text-align: left;">4.4_iteration</td>
-<td style="text-align: left;">Return the first value of a vector</td>
-</tr>
-<tr class="even">
-<td style="text-align: center;">dplyr</td>
 <td style="text-align: center;">full_join</td>
 <td style="text-align: left;">4.2_nonspatial_joins</td>
 <td style="text-align: left;">A mutating join that joins a source table to a target table and maintains all records in both tables, regardless of matching key values</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: center;">dplyr</td>
 <td style="text-align: center;">group_by</td>
 <td style="text-align: left;">2.3_grouped_operations_and_summarize</td>
 <td style="text-align: left;">Group the data in a data frame by a given variable such that one or more subsequent analyses are run separately on each group</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: center;">dplyr</td>
 <td style="text-align: center;">inner_join</td>
 <td style="text-align: left;">4.2_nonspatial_joins</td>
 <td style="text-align: left;">A mutating join that joins a source table to a target table and maintains only records with matching key values</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: center;">dplyr</td>
 <td style="text-align: center;">join_by</td>
 <td style="text-align: left;">3.5_introduction_to_tmap</td>
 <td style="text-align: left;">Specify the key columns within a join function</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: center;">dplyr</td>
 <td style="text-align: center;">left_join</td>
 <td style="text-align: left;">2.4_reshaping_data_frames</td>
 <td style="text-align: left;">A mutating join that joins a source table to a target table and maintains all records found in the target table, regardless of matching key values</td>
 </tr>
-<tr class="odd">
-<td style="text-align: center;">dplyr</td>
-<td style="text-align: center;">mutate</td>
-<td style="text-align: left;">2.2_mutation</td>
-<td style="text-align: left;">Add or modify a column in a data frame</td>
-</tr>
 <tr class="even">
 <td style="text-align: center;">dplyr</td>
-<td style="text-align: center;">n</td>
-<td style="text-align: left;">1.6_course_style_guide</td>
-<td style="text-align: left;">Calculate the number of observations (rows)</td>
+<td style="text-align: center;">mutate</td>
+<td style="text-align: left;">2.1_subsetting_and_extraction</td>
+<td style="text-align: left;">Add or modify a column in a data frame</td>
 </tr>
 <tr class="odd">
+<td style="text-align: center;">dplyr</td>
+<td style="text-align: center;">n</td>
+<td style="text-align: left;">2.3_grouped_operations_and_summarize</td>
+<td style="text-align: left;">Calculate the number of observations (rows)</td>
+</tr>
+<tr class="even">
 <td style="text-align: center;">dplyr</td>
 <td style="text-align: center;">n_distinct</td>
 <td style="text-align: left;">4.2_nonspatial_joins</td>
 <td style="text-align: left;">Count the number of distinct values in one or more vectors</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: center;">dplyr</td>
 <td style="text-align: center;">na_if</td>
 <td style="text-align: left;">2.2_mutation</td>
 <td style="text-align: left;">Convert a value in a vector to NA</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: center;">dplyr</td>
 <td style="text-align: center;">pull</td>
-<td style="text-align: left;">2.1_subsetting_and_extraction</td>
+<td style="text-align: left;">0.5_indexing</td>
 <td style="text-align: left;">Extract a column from a data frame as a vector</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: center;">dplyr</td>
 <td style="text-align: center;">rename</td>
 <td style="text-align: left;">1.5_assignments</td>
 <td style="text-align: left;">Change the name assigned to a column in a data frame</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: center;">dplyr</td>
 <td style="text-align: center;">row_number</td>
 <td style="text-align: left;">2.2_mutation</td>
 <td style="text-align: left;">Generate a sequence of integer values from 1 to the number of rows in a data frame</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: center;">dplyr</td>
 <td style="text-align: center;">select</td>
-<td style="text-align: left;">1.6_course_style_guide</td>
+<td style="text-align: left;">2.1_subsetting_and_extraction</td>
 <td style="text-align: left;">Subset columns in a data frame by name (without quotes!)</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: center;">dplyr</td>
 <td style="text-align: center;">semi_join</td>
 <td style="text-align: left;">4.2_nonspatial_joins</td>
 <td style="text-align: left;">A filtering join that joins a source table to a target table and maintains only records with matching key values</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: center;">dplyr</td>
 <td style="text-align: center;">slice</td>
 <td style="text-align: left;">2.1_subsetting_and_extraction</td>
 <td style="text-align: left;">Subset a data frame by row or rows using the row position(s)</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: center;">dplyr</td>
 <td style="text-align: center;">slice_head</td>
 <td style="text-align: left;">1.4_importing_exploring_exporting</td>
 <td style="text-align: left;">Subset a data frame to the first row (default) or rows</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: center;">dplyr</td>
 <td style="text-align: center;">slice_max</td>
 <td style="text-align: left;">2.1_subsetting_and_extraction</td>
 <td style="text-align: left;">Sort a data frame by a variable and subset to the rows associated with the highest values of that variable</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: center;">dplyr</td>
 <td style="text-align: center;">slice_min</td>
 <td style="text-align: left;">2.1_subsetting_and_extraction</td>
 <td style="text-align: left;">Sort a data frame by a variable and subset to the rows associated with the lowest values of that variable</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: center;">dplyr</td>
 <td style="text-align: center;">slice_tail</td>
 <td style="text-align: left;">1.4_importing_exploring_exporting</td>
 <td style="text-align: left;">Subset a data frame to the last row (default) or rows</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: center;">dplyr</td>
 <td style="text-align: center;">summarize</td>
-<td style="text-align: left;">1.6_course_style_guide</td>
+<td style="text-align: left;">2.3_grouped_operations_and_summarize</td>
 <td style="text-align: left;">Calculate one or more summary statistics on a variable or variables in a data frame (often used in conjunction with `group_by()` but may also be used with `.by = ...`)</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: center;">dplyr</td>
 <td style="text-align: center;">transmute</td>
 <td style="text-align: left;">2.2_mutation</td>
 <td style="text-align: left;">Mutate a data frame while subsetting the columns to those specified in the function</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: center;">dplyr</td>
 <td style="text-align: center;">ungroup</td>
 <td style="text-align: left;">2.3_grouped_operations_and_summarize</td>
 <td style="text-align: left;">Remove any grouping on a data frame</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: center;">ggplot2</td>
 <td style="text-align: center;">aes</td>
 <td style="text-align: left;">2.5_intro_to_data_vis</td>
 <td style="text-align: left;">Define aesthetics</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: center;">ggplot2</td>
 <td style="text-align: center;">coord_flip</td>
 <td style="text-align: left;">2.5_intro_to_data_vis</td>
 <td style="text-align: left;">Switch the mapping to the horizontal and vertical coordinates</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: center;">ggplot2</td>
 <td style="text-align: center;">element_line</td>
 <td style="text-align: left;">2.5_intro_to_data_vis</td>
 <td style="text-align: left;">Set the theme for a line element</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: center;">ggplot2</td>
 <td style="text-align: center;">element_rect</td>
 <td style="text-align: left;">2.5_intro_to_data_vis</td>
 <td style="text-align: left;">Set the theme for a shape element</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: center;">ggplot2</td>
 <td style="text-align: center;">element_text</td>
 <td style="text-align: left;">2.5_intro_to_data_vis</td>
 <td style="text-align: left;">Set the theme for a text element</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: center;">ggplot2</td>
 <td style="text-align: center;">expansion</td>
 <td style="text-align: left;">2.5_intro_to_data_vis</td>
 <td style="text-align: left;">Set upper and lower values or proportions to expand an axis by</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: center;">ggplot2</td>
 <td style="text-align: center;">facet_wrap</td>
 <td style="text-align: left;">2.5_intro_to_data_vis</td>
 <td style="text-align: left;">Split plot into facets</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: center;">ggplot2</td>
 <td style="text-align: center;">geom_bar</td>
 <td style="text-align: left;">2.5_intro_to_data_vis</td>
 <td style="text-align: left;">Create a bar geometry</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: center;">ggplot2</td>
 <td style="text-align: center;">geom_histogram</td>
 <td style="text-align: left;">4.5_cartography</td>
 <td style="text-align: left;">Draw the distribution of a continuous variable as a histogram</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: center;">ggplot2</td>
 <td style="text-align: center;">geom_point</td>
 <td style="text-align: left;">2.5_intro_to_data_vis</td>
 <td style="text-align: left;">Create a point geometry</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: center;">ggplot2</td>
 <td style="text-align: center;">geom_sf</td>
 <td style="text-align: left;">3.2_introduction_to_shapefiles</td>
 <td style="text-align: left;">Add an sf layer to a ggplot</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: center;">ggplot2</td>
 <td style="text-align: center;">geom_sf_text</td>
 <td style="text-align: left;">3.3_constructing_and_converting_shapefiles</td>
 <td style="text-align: left;">Add an sf layer to a ggplot as a text</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: center;">ggplot2</td>
 <td style="text-align: center;">geom_smooth</td>
 <td style="text-align: left;">2.5_intro_to_data_vis</td>
 <td style="text-align: left;">Add a line-of-best-fit geometry</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: center;">ggplot2</td>
 <td style="text-align: center;">ggplot</td>
 <td style="text-align: left;">2.5_intro_to_data_vis</td>
 <td style="text-align: left;">Set the data and, potentially, the aesthetics of a plot</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: center;">ggplot2</td>
 <td style="text-align: center;">ggsave</td>
 <td style="text-align: left;">2.5_intro_to_data_vis</td>
 <td style="text-align: left;">Save a ggplot to your computer</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: center;">ggplot2</td>
 <td style="text-align: center;">labs</td>
 <td style="text-align: left;">2.5_intro_to_data_vis</td>
 <td style="text-align: left;">Add or modify the labels of a plot</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: center;">ggplot2</td>
 <td style="text-align: center;">scale_color_brewer</td>
 <td style="text-align: left;">2.5_intro_to_data_vis</td>
 <td style="text-align: left;">Apply a named RColorBrewer palette to a color aesthetic</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: center;">ggplot2</td>
 <td style="text-align: center;">scale_color_manual</td>
 <td style="text-align: left;">2.5_intro_to_data_vis</td>
 <td style="text-align: left;">Manually define the colors of a geometry</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: center;">ggplot2</td>
 <td style="text-align: center;">scale_color_viridis_c</td>
 <td style="text-align: left;">4.2_nonspatial_joins</td>
 <td style="text-align: left;">Set a continuous color scale to a viridis palette, which is designed to remain readable for a reader with a color vision deficiency</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: center;">ggplot2</td>
 <td style="text-align: center;">scale_fill_brewer</td>
 <td style="text-align: left;">2.5_intro_to_data_vis</td>
 <td style="text-align: left;">Fill a geometry with colors from a RColorBrewer palette</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: center;">ggplot2</td>
 <td style="text-align: center;">scale_fill_viridis_c</td>
 <td style="text-align: left;">4.5_cartography</td>
 <td style="text-align: left;">Add a continuous virdis color scale to a plot</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: center;">ggplot2</td>
 <td style="text-align: center;">scale_size_continuous</td>
 <td style="text-align: left;">4.2_nonspatial_joins</td>
 <td style="text-align: left;">Set the scale that maps a continuous variable to the size of a geometry</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: center;">ggplot2</td>
 <td style="text-align: center;">scale_x_continuous</td>
 <td style="text-align: left;">2.5_intro_to_data_vis</td>
 <td style="text-align: left;">Set the scale of the x axis</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: center;">ggplot2</td>
 <td style="text-align: center;">scale_y_continuous</td>
 <td style="text-align: left;">2.5_intro_to_data_vis</td>
 <td style="text-align: left;">Set the scale of the y axis</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: center;">ggplot2</td>
 <td style="text-align: center;">theme</td>
 <td style="text-align: left;">2.5_intro_to_data_vis</td>
 <td style="text-align: left;">Define the theme elements of a plot</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: center;">ggplot2</td>
 <td style="text-align: center;">theme_bw</td>
 <td style="text-align: left;">2.5_intro_to_data_vis</td>
 <td style="text-align: left;">Generate a pre-packaged light background theme for a plot</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: center;">ggplot2</td>
 <td style="text-align: center;">theme_set</td>
 <td style="text-align: left;">3.3_constructing_and_converting_shapefiles</td>
 <td style="text-align: left;">Set the ggplot theme for an entire session</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: center;">ggplot2</td>
 <td style="text-align: center;">theme_void</td>
 <td style="text-align: left;">3.3_constructing_and_converting_shapefiles</td>
 <td style="text-align: left;">A ggplot theme that contains no axes or panel background</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: center;">gis_functions.R</td>
 <td style="text-align: center;">clean_names</td>
 <td style="text-align: left;">3.2_introduction_to_shapefiles</td>
 <td style="text-align: left;">Standardize a shapefile&#39;s or data frame&#39;s column names to snake_case (course-authored helper in src/r/gis_functions.R).</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: center;">gis_functions.R</td>
 <td style="text-align: center;">count_vertices</td>
 <td style="text-align: left;">3.2_introduction_to_shapefiles</td>
 <td style="text-align: left;">Count the vertices in a simple features object.</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: center;">gis_functions.R</td>
 <td style="text-align: center;">lonlat_to_utm</td>
 <td style="text-align: left;">3.4_crs</td>
 <td style="text-align: left;">Determine the EPSG code of the UTM zone that contains a given longitude/latitude coordinate (course-authored helper in src/r/gis_functions.R, adapted from Lovelace, Nowosad, and Muenchow&#39;s *Geocomputation with R*).</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: center;">lobstr</td>
 <td style="text-align: center;">ref</td>
 <td style="text-align: left;">1.5_assignments</td>
 <td style="text-align: left;">View the structure of an object in your computer&#39;s memory</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: center;">lubridate</td>
 <td style="text-align: center;">year</td>
 <td style="text-align: left;">2.1_subsetting_and_extraction</td>
 <td style="text-align: left;">Extract the year from a properly formatted date value</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: center;">magrittr</td>
 <td style="text-align: center;">%&gt;%</td>
 <td style="text-align: left;">1.5_assignments</td>
 <td style="text-align: left;">The pipe operator passes the output of the LHS argument to the function on the right</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: center;">purrr</td>
 <td style="text-align: center;">imap</td>
 <td style="text-align: left;">4.4_iteration</td>
 <td style="text-align: left;">Iterate across a vector with each element&#39;s name available, and return a list</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: center;">purrr</td>
 <td style="text-align: center;">iwalk</td>
 <td style="text-align: left;">4.4_iteration</td>
 <td style="text-align: left;">Iterate across a vector with each element&#39;s name available, calling a function for its side effect and returning the input</td>
-</tr>
-<tr class="even">
-<td style="text-align: center;">purrr</td>
-<td style="text-align: center;">list_rbind</td>
-<td style="text-align: left;">4.4_iteration</td>
-<td style="text-align: left;">Combine a list of data frames into one data frame. Note that the simple features class is not retained; use bind_rows() for simple features objects</td>
 </tr>
 <tr class="odd">
 <td style="text-align: center;">purrr</td>
@@ -28055,27 +28042,39 @@ Functions introduced through the end of this module
 </tr>
 <tr class="odd">
 <td style="text-align: center;">sf</td>
+<td style="text-align: center;">st_coordinates</td>
+<td style="text-align: left;">3.3_constructing_and_converting_shapefiles</td>
+<td style="text-align: left;">Extract coordinates from an sf object as a matrix</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">sf</td>
 <td style="text-align: center;">st_crs</td>
 <td style="text-align: left;">3.2_introduction_to_shapefiles</td>
 <td style="text-align: left;">Get the CRS of a shapefile</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: center;">sf</td>
 <td style="text-align: center;">st_disjoint</td>
 <td style="text-align: left;">4.1_spatial_filtering</td>
 <td style="text-align: left;">A spatial predicate that tests whether two geometries share no space</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: center;">sf</td>
 <td style="text-align: center;">st_distance</td>
 <td style="text-align: left;">3.6_geometric_operations</td>
 <td style="text-align: left;">Calculate the pairwise distance between features in a shapefile (or between different shapefiles)</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: center;">sf</td>
 <td style="text-align: center;">st_drop_geometry</td>
 <td style="text-align: left;">4.3_spatial_joins</td>
 <td style="text-align: left;">Remove the geometry column from an sf file and (thus) convert to a data frame</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">sf</td>
+<td style="text-align: center;">st_equals</td>
+<td style="text-align: left;">4.1_spatial_filtering</td>
+<td style="text-align: left;">A spatial predicate that tests whether two geometries are identical</td>
 </tr>
 <tr class="odd">
 <td style="text-align: center;">sf</td>
@@ -28139,165 +28138,165 @@ Functions introduced through the end of this module
 </tr>
 <tr class="odd">
 <td style="text-align: center;">sf</td>
+<td style="text-align: center;">st_point_on_surface</td>
+<td style="text-align: left;">3.6_geometric_operations</td>
+<td style="text-align: left;">Generate a point that is guaranteed to fall within each feature of a polygon object.</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">sf</td>
 <td style="text-align: center;">st_polygon</td>
 <td style="text-align: left;">3.3_constructing_and_converting_shapefiles</td>
 <td style="text-align: left;">Convert a list to a polygon geometry object</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: center;">sf</td>
 <td style="text-align: center;">st_read</td>
 <td style="text-align: left;">3.2_introduction_to_shapefiles</td>
 <td style="text-align: left;">Read in a simple features or other GIS shapefile</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: center;">sf</td>
 <td style="text-align: center;">st_sf</td>
 <td style="text-align: left;">3.3_constructing_and_converting_shapefiles</td>
 <td style="text-align: left;">Convert a simple features column object to an sf object</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: center;">sf</td>
 <td style="text-align: center;">st_sfc</td>
 <td style="text-align: left;">3.3_constructing_and_converting_shapefiles</td>
 <td style="text-align: left;">Store a geometry in a simple features column object</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: center;">sf</td>
 <td style="text-align: center;">st_touches</td>
 <td style="text-align: left;">4.1_spatial_filtering</td>
 <td style="text-align: left;">A spatial predicate that tests whether two geometries share boundary points but no interior points</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: center;">sf</td>
 <td style="text-align: center;">st_transform</td>
 <td style="text-align: left;">3.2_introduction_to_shapefiles</td>
 <td style="text-align: left;">Transform the CRS of a shapefile to a different CRS</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: center;">sf</td>
 <td style="text-align: center;">st_union</td>
-<td style="text-align: left;">3.6_geometric_operations</td>
+<td style="text-align: left;">3.3_constructing_and_converting_shapefiles</td>
 <td style="text-align: left;">Dissolve boundaries between polygons</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: center;">sf</td>
 <td style="text-align: center;">st_within</td>
 <td style="text-align: left;">4.1_spatial_filtering</td>
 <td style="text-align: left;">A spatial predicate that tests whether the first geometry is completely inside the second</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: center;">sf</td>
 <td style="text-align: center;">st_write</td>
 <td style="text-align: left;">4.4_iteration</td>
 <td style="text-align: left;">Write a simple features object to a spatial vector file</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: center;">stats</td>
 <td style="text-align: center;">median</td>
 <td style="text-align: left;">1.4_importing_exploring_exporting</td>
 <td style="text-align: left;">Calculate the median value of a numeric vector and return as a one-value double numeric or integer vector</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: center;">stats</td>
 <td style="text-align: center;">quantile</td>
 <td style="text-align: left;">4.5_cartography</td>
 <td style="text-align: left;">Return the quantiles of a numeric vector</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: center;">stats</td>
 <td style="text-align: center;">sd</td>
 <td style="text-align: left;">1.4_importing_exploring_exporting</td>
 <td style="text-align: left;">Calculate the standard deviation of a numeric vector and return as a one-value double numeric vector</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: center;">stats</td>
 <td style="text-align: center;">var</td>
 <td style="text-align: left;">1.4_importing_exploring_exporting</td>
 <td style="text-align: left;">Calculate the variance of a numeric vector and return as a one-value double numeric vector</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: center;">stringr</td>
 <td style="text-align: center;">str_c</td>
 <td style="text-align: left;">0.2_environment_and_functions</td>
 <td style="text-align: left;">Concatenate strings, with or without (default) a separator</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: center;">tibble</td>
 <td style="text-align: center;">as_tibble</td>
 <td style="text-align: left;">0.4_objects</td>
 <td style="text-align: left;">Convert a data frame (and some other non-tibble objects!) to a tibble data frame</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: center;">tibble</td>
 <td style="text-align: center;">tibble</td>
 <td style="text-align: left;">0.4_objects</td>
 <td style="text-align: left;">Column-wise creation of a tibble data frame</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: center;">tibble</td>
 <td style="text-align: center;">tribble</td>
 <td style="text-align: left;">1.3_objects</td>
 <td style="text-align: left;">Row-wise creation of a tibble data frame</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: center;">tidyr</td>
 <td style="text-align: center;">drop_na</td>
 <td style="text-align: left;">2.1_subsetting_and_extraction</td>
 <td style="text-align: left;">Remove rows that contain NA values</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: center;">tidyr</td>
 <td style="text-align: center;">pivot_longer</td>
 <td style="text-align: left;">2.4_reshaping_data_frames</td>
 <td style="text-align: left;">Convert a data frame from wide to long format</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: center;">tidyr</td>
 <td style="text-align: center;">pivot_wider</td>
-<td style="text-align: left;">2.3_grouped_operations_and_summarize</td>
+<td style="text-align: left;">2.4_reshaping_data_frames</td>
 <td style="text-align: left;">Convert a data frame from long to wide format</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: center;">tidyr</td>
 <td style="text-align: center;">replace_na</td>
 <td style="text-align: left;">2.2_mutation</td>
 <td style="text-align: left;">Replace an NA value in a vector with a different value</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: center;">tidyr</td>
 <td style="text-align: center;">separate</td>
 <td style="text-align: left;">2.4_reshaping_data_frames</td>
 <td style="text-align: left;">Separate a single column into multiple columns by a delimiter</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: center;">tidyr</td>
 <td style="text-align: center;">separate_wider_delim</td>
-<td style="text-align: left;">2.6_tidy_data</td>
+<td style="text-align: left;">2.4_reshaping_data_frames</td>
 <td style="text-align: left;">Split a single column into multiple columns at a delimiter (the current replacement for separate())</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: center;">tidyr</td>
 <td style="text-align: center;">unite</td>
 <td style="text-align: left;">2.4_reshaping_data_frames</td>
 <td style="text-align: left;">Combine columns in a data frame to create a single column</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: center;">tidyselect</td>
 <td style="text-align: center;">everything</td>
 <td style="text-align: left;">3.2_introduction_to_shapefiles</td>
 <td style="text-align: left;">Used in combination with select, this selects all but the specified columns.</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: center;">tidyverse</td>
 <td style="text-align: center;">tidyverse_packages</td>
 <td style="text-align: left;">1.3_objects</td>
 <td style="text-align: left;">Generate a character vector of package names in the tidyverse metapackage</td>
-</tr>
-<tr class="odd">
-<td style="text-align: center;">tidyverse</td>
-<td style="text-align: center;">tidyverse_update</td>
-<td style="text-align: left;">1.2_getting_started</td>
-<td style="text-align: left;">Update packages in the tidyverse metapackage</td>
 </tr>
 <tr class="even">
 <td style="text-align: center;">tmap</td>
@@ -28392,7 +28391,7 @@ Functions introduced through the end of this module
 <tr class="odd">
 <td style="text-align: center;">tmap</td>
 <td style="text-align: center;">tmap_options</td>
-<td style="text-align: left;">4.1_spatial_filtering</td>
+<td style="text-align: left;">3.6_geometric_operations</td>
 <td style="text-align: left;">Get or set global tmap options for the current session.</td>
 </tr>
 <tr class="even">
@@ -28414,12 +28413,6 @@ Functions introduced through the end of this module
 <td style="text-align: left;">Download and install one or more packages onto your computer.</td>
 </tr>
 <tr class="odd">
-<td style="text-align: center;">utils</td>
-<td style="text-align: center;">news</td>
-<td style="text-align: left;">1.2_getting_started</td>
-<td style="text-align: left;">View the version history of a package</td>
-</tr>
-<tr class="even">
 <td style="text-align: center;">utils</td>
 <td style="text-align: center;">str</td>
 <td style="text-align: left;">0.5_indexing</td>
