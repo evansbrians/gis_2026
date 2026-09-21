@@ -36,7 +36,7 @@ install.packages(
 
 ## Video lesson
 
-Notes: 
+Notes:
 
 * I describe this lesson on Shiny apps, which is truly the case, but this is very applicable to big data operations as well!
 * At the end of the video (which is a couple of years old), I describe that I use the package *lineprof* the most for benchmarking. This is no longer the case. Later in this module you will see my current go-to package.

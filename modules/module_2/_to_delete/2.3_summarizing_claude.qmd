@@ -83,7 +83,7 @@ Now we are going to add our data for this lesson ... let's do it as a "Now you!"
 
 In a single piped statement:
 
-* Read in the file [district_birds.rds]{.mono};
+* Read in the file `district_birds.rds`;
 * Extract the list item assigned to the name `captures`;
 * Subset `captures` to the columns `spp`, `sex`, `wing`, and `mass`;
 * Assign the resultant object to your global environment with the name `measures`.

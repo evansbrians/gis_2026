@@ -33,10 +33,10 @@ We are finally there! The last module of the course! In this module we will expl
 
 Please complete the following steps *prior* to beginning this week's lessons:
 
-1. **Place** [control_flow_if_else.R]{.mono} and [memory_and_time.R]{.mono} inside of the [scripts]{.mono} folder 
-2. **Create** a new folder in the top level of your project called "[output]{.mono}".
-3. **Download** [trout_app.zip]{.mono} and unzip the contents (not the parent folder) to the [output]{.mono} folder. This is the app that we will use/create during the video portion of ***8.4 Introduction to shiny apps***.
-4. **Download** [covid_app_guide.zip]{.mono} and unzip the contents (not the parent folder) to the output folder. This contains a tutorial that will walk you through making a shiny dashboard (and cover the basics of shiny app development). The tutorial is also available via a provided link in ***8.4 Introduction to shiny apps***.
+1. **Place** `control_flow_if_else.R` and `memory_and_time.R` inside of the `scripts` folder
+2. **Create** a new folder in the top level of your project called "`output`".
+3. **Download** `trout_app.zip` and unzip the contents (not the parent folder) to the `output` folder. This is the app that we will use/create during the video portion of ***8.4 Introduction to shiny apps***.
+4. **Download** `covid_app_guide.zip` and unzip the contents (not the parent folder) to the output folder. This contains a tutorial that will walk you through making a shiny dashboard (and cover the basics of shiny app development). The tutorial is also available via a provided link in ***8.4 Introduction to shiny apps***.
 5. Run the following to install several new packages!
 
 ```{r}

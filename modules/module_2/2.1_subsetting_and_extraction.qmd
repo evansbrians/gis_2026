@@ -1002,12 +1002,7 @@ We will continue to build decision trees throughout this course. Please know tha
    </div>
 
    <script>
-   window.parsonsProblems = window.parsonsProblems || [];
-   window.parsonsProblems.push({
-     id: "p-2-1-02",
-     maxDistractors: 1,
-     code: 'district_birds %>%\n  pluck("birds") %>%\n  pull(common_name)\n  pluck(birds) #distractor'
-   });
+   window.parsonsProblems = window.parsonsProblems || []; window.parsonsProblems.push({ id: "p-2-1-02", maxDistractors: 1, code: 'district_birds %>%\n  pluck("birds") %>%\n  pull(common_name)\n  pluck(birds) #distractor' });
    </script>
 
 4. Drag and drop: From the same set of functions, drag the **subsetting** functions into your answer, and leave the extraction functions in the trash. The order of your answer does not matter.
@@ -1022,14 +1017,7 @@ We will continue to build decision trees throughout this course. Please know tha
    </div>
 
    <script>
-   window.parsonsProblems = window.parsonsProblems || [];
-   window.parsonsProblems.push({
-     id: "p-2-1-03",
-     unordered: true,
-     answerNoun: "functions",
-     maxDistractors: 6,
-     code: "select()\nslice()\nfilter()\ndistinct()\npull() #distractor\npluck() #distractor\nlist2env() #distractor\nclass() #distractor\nnames() #distractor\ndim() #distractor"
-   });
+   window.parsonsProblems = window.parsonsProblems || []; window.parsonsProblems.push({ id: "p-2-1-03", unordered: true, answerNoun: "functions", maxDistractors: 6, code: "select()\nslice()\nfilter()\ndistinct()\npull() #distractor\npluck() #distractor\nlist2env() #distractor\nclass() #distractor\nnames() #distractor\ndim() #distractor" });
    </script>
 
 5. True or false: `filter(measures, wing > 80)` returns every row in which `wing` is greater than 80, plus the rows in which `wing` is `NA`.
@@ -1048,12 +1036,7 @@ We will continue to build decision trees throughout this course. Please know tha
    </div>
 
    <script>
-   window.parsonsProblems = window.parsonsProblems || [];
-   window.parsonsProblems.push({
-     id: "p-2-1-01",
-     maxDistractors: 1,
-     code: "captures %>%\n  filter(\n    spp == \"NOCA\"\n  ) %>%\n  pull(band_number)\n  select(band_number) #distractor"
-   });
+   window.parsonsProblems = window.parsonsProblems || []; window.parsonsProblems.push({ id: "p-2-1-01", maxDistractors: 1, code: "captures %>%\n  filter(\n    spp == \"NOCA\"\n  ) %>%\n  pull(band_number)\n  select(band_number) #distractor" });
    </script>
 :::
 

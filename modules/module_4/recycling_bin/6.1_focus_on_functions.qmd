@@ -63,7 +63,7 @@ Please do the following to ensure that you are working in a clean session:
 
 1. In the *Environment* tab of your *workspace pane*, ensure that your *Global Environment* is empty. If it is not, click the *broom* to remove all objects. *Note: Conversely, you can remove all items with `rm(list = ls())`*.
 2. In the *History* tab of your *workspace pane*, ensure that your history is empty. If it is not, click the *broom* to remove your history.
-3. Open the script file [functions.R]{.mono} (Windows: [Ctrl + O]{.mono}; Mac: [Cmd + O]{.mono}).
+3. Open the script file `functions.R` (Windows: `Ctrl + O`; Mac: `Cmd + O`).
 4. Run the setup section of the script.
 
 ```{r}
@@ -106,7 +106,7 @@ multiply_by_two <-
   }
 ```
 
-Note: The other operations that we have conducted in this class allow you to place your cursor anywhere within the code block and hit [Ctrl + Enter]{.mono} (Windows) or [Cmd + Enter]{.mono} (Mac) to run your code. When assigning a function to your global environment, however, you can only run the full code block if your cursor is placed anywhere *outside* of the curly braces. We will discuss why this happens soon!
+Note: The other operations that we have conducted in this class allow you to place your cursor anywhere within the code block and hit `Ctrl + Enter` (Windows) or `Cmd + Enter` (Mac) to run your code. When assigning a function to your global environment, however, you can only run the full code block if your cursor is placed anywhere *outside* of the curly braces. We will discuss why this happens soon!
 
 In the above, we:
 
@@ -388,7 +388,7 @@ populations_co2 %>%
   summary()
 ```
 
-... because the population data contain an [NA]{.mono} value! 
+... because the population data contain an `NA` value! 
 
 As we know, we can use `na.rm = TRUE` inside of `sum()` to avoid this error:
 
@@ -407,7 +407,7 @@ calculate_total_co2_yr <-
 calculate_total_co2_yr(2015)
 ```
 
-Perhaps we do not always want to remove [NA]{.mono} values though? For example, the presence of [NA]{.mono} values are very important if we are calculating global CO~2~ emissions! 
+Perhaps we do not always want to remove `NA` values though? For example, the presence of `NA` values are very important if we are calculating global CO~2~ emissions! 
 
 We can address this by making it a formal of our function:
 

@@ -1,114 +1,83 @@
 ---
-title: "Module 4: Programming in R"
+title: "Module 4: Subsetting, joining, and iterating spatial vector data"
 format: live-html
 ---
 
 ```{r}
 #| include: false
 
+source("src/r/course_functions.R")
 source("src/r/reference_lookup.R")
 
 module_refs <- find_module_references(4)
 ```
 <hr>
 
-![](../../src/images/hex_complex.png){.intro_image}
+![](../../src/images/hex_complex.png){.intro_image fig-alt="Course logo"}
 
-*... because there comes a point in everyone's semester in which they must face the challenge of iteration. Be brave!*
+Much of our work in ecology requires us to combine information stored in different objects. Site locations may be stored in one file, habitat polygons in another, and observations in a set of related data frames. In this module, we will use spatial relationships and shared keys to subset and combine these data. We will then use *purrr* to apply the same operations to several objects.
 
-In this module we will focus most of our attention on programmatic tools for streamlining your code. Specifically, you will learn:
+In this module, you will learn how to:
 
-* How to write your own custom functions
-* The basics of iteration with the tidyverse *purrr* package
-* How to use iteration in a GIS context
+* Subset spatial objects based on their spatial relationship to other objects
+* Join spatial objects by location
+* Join data frames using shared keys
+* Identify unmatched and repeated matches when joining objects
+* Apply the same operation to several objects with *purrr*
 
-*Note: Please continue to ignore references to the folder structure from our data science class.*
+After completing these lessons, you will be able to determine how spatial and tabular objects relate, combine the information stored in them, and repeat an operation across a set of objects. Optional lessons on cartography and Quarto provide additional tools for mapping and communicating your results.
 
 ## Module overview
 
-* **4.1 The function in focus**: This written tutorial reviews the concept of functions, will help you understand how they are constructed, and gives you the tools to create your own functions.
-* **4.2 Introduction to iteration**: This video lesson (runtime: 24:48) and written tutorial will introduce the basics of iteration with the tidyverse packages *purrr* and *dplyr*.
-* **4.3 Applying iteration to GIS in R**: In this video lesson (runtime: 23:39), we review iteration with `purrr::map()` functions through applications to common spatial data processing tasks. There are a lot of challenges in this lecture (it is mostly challenges) - you may want to allocate a pretty big time block to complete it!
+* **4.1 Spatial filtering: Subsetting features by location**: We will use `st_filter()` to subset spatial features based on the relationships between geometries. You will also learn how to choose a spatial predicate and interpret what it returns.
+* **4.2 Non-spatial joins**: We will use shared keys to join related data frames, predict how a join will affect the number of rows, and prepare the results for mapping.
+* **4.3 Spatial joins**: We will use `st_join()` to add fields to a simple features object based on location. You will also learn how unmatched and repeated matches affect the returned object.
+* **4.4 Iteration with purrr**: We will use `map()`, `walk()`, `imap()`, and `pmap()` to apply common spatial operations to several objects.
+* **4.5 Cartography with ggplot2 and tmap** (optional): We will use *ggplot2* and *tmap* to make deliberate choices about map layers, visual variables, classifications, colors, and supporting elements.
+* **4.6 Communicating spatial data with Quarto** (optional): We will use Quarto to combine an analysis, its maps, and the text that explains them in a document that can be updated and shared.
 
-**Problem Set** (due 17 Nov): District crime
+**Problem Set**: Planning ARU placement
 
 ## Getting started
 
-Please complete the following steps *prior* to beginning this week's lessons:
+This module does not require additional data files or packages. However, before you begin, please confirm that the following are in the correct location:
 
-* Download [module_4_files.zip]{.mono} and:
-    * Place the folder [lanternfly_tmap]{.mono} inside of the folder [data/processed]{.mono}. *Note: Please place the folder itself in that location, not the data within the folder. Additionally, please do not change the name of the folder!*
-    * Place [populations_co2.rds]{.mono} in [data/processed]{.mono}
-    * Place [earley_works.csv]{.mono} in [data/raw]{.mono}
-    * Place the R script files ([*.R]) inside of the [scripts]{.mono} folder 
-* Run the following to install several new packages (*Note: It will suggest that you install the development version of an update of the package. Please do not do so!*):
+* In `data/raw/shapefiles`: `dc_census.geojson`, `rock_creek_park.geojson`, `dc_forests.geojson`, and `dc_rivers.geojson`
+* In `data/raw`: `district_birds.rds`
+* In `scripts`: `source_script_module_3.R`, which supplies `clean_names()`
 
-```{r}
-#| eval: false
-
-install.packages(
-  c(
-    "geosphere",
-    "gifski",
-    "shiny",
-    "shinyjs"
-  )
-)
-```
+*Note: ***4.4 Iteration with purrr*** writes files to `data/processed`. Create that folder if you do not have it.*
 
 ## About this week's data
-
-There are lots of files that we are going to use this week, so we have reduced this to a button ...
 
 <button class="accordion">Please click on the button below to explore the data that we will use in this module!</button>
 
 ::: panel
 
-This week we will use the following data files in our exercises:
+```{r}
+#| echo: false
+#| output: asis
 
-[**capital_bike_share_locations.csv**]{.mono}: This is a tabular dataset that provides information (and coordinates) associated with bike share docking stations from the Capital Bikeshare DC group. Location data were recorded in a geodetic CRS (EPSG:4326). The data were downloaded from [Open Data DC](https://opendata.dc.gov/).
-
-[**census ([.dbf]{.mono}, [.prj]{.mono}, [.shp]{.mono}, [.shx]{.mono})**]{.mono}: This is a shapefile from the US Census Bureau that provides tract-level census data for the District of Columbia, Maryland, and Virginia. The data were downloaded using the *tigris* and *tidycensus* packages in R.
-
-[**counties.geojson**]{.mono}: This is a shapefile file of United States counties obtained from the US Census Bureau using the *tigris package*. The resolution of this file is 1:5 million. Each row in the dataset represents a US county.
-
-[**counties_low_res.geojson**]{.mono}: This is a lower resolution (1:20 million) version of the US counties shapefile above. This will be very useful if you have memory or processing limitations on your screen.
-
-[**counties_east.geojson**]{.mono}: The shapefile [counties.geojson]{.mono} subset to the Eastern United States.
-
-[**dc_census ([.dbf]{.mono}, [.prj]{.mono}, [.shp]{.mono}, [.shx]{.mono})**]{.mono}: This is a shapefile from the US Census Bureau that provides tract-level census data for the District of Columbia. The data were downloaded using the *tigris* and *tidycensus* packages in R.
-
-[**earley_works.csv**]{.mono}: A tabular dataset that provides a subset of locations in greater Washington DC where the artist/architect John Joseph Earley installed polychrome concrete mosaics.
-
-[**lanternfly_proc.rds**]{.mono}: A subset of [**spotted_lanternfly.rds**]{.mono}.
-
-[**iris.rds**]{.mono}: This is Edgar Anderson’s famous dataset that provides the measurements of flowers of three species of iris, *Iris setosa*, *I. versicolor*, and *I. virginica*. See `?iris` for more information.
-
-**[populations_co2.rds]{.mono}**: These data were compiled by the [World Bank DataBank](https://databank.worldbank.org/home.aspx){target="_blank"} and provide information on the emissions of greenhouse gases and the populations of countries around the world. I normalized these data (the original version was *extremely* untidy) and saved them as a list file
-
-[**portal.csv**]{.mono}: This data sets provides measurements taken in a long term study (the Portal project) on rodent traits in Portal, Arizona. The provided data were collected in a fixed grid established in 1977 and include when an individual was measured, where the measurement occurred, the sex and species of the individual, and their hindfoot length. You can read more about this study and the data they collected at this [link](https://portal.weecology.org/){target="_blank"}.
-
-[**sites.csv**]{.mono}: This is simple tabular dataset that contains three variables: a site name and the longitude and latitude of site locations. The sites and their locations in this file are derived from [Neighborhood Nestwatch](https://nationalzoo.si.edu/migratory-birds/neighborhood-nestwatch) data and represent the locations of banding stations in the greater Washington DC region.
-
-[**spotted_lanternfly.rds**]{.mono}: This is a tabular dataset of [iNaturalist observations of spotted lanternfly (*Lycorma delicatula*)](https://www.inaturalist.org/projects/spotted-lanternfly), an invasive pest species whose spread is of commercial and ecological concern. Each row is an observation submitted by a community science participant via a web or smartphone application.
-
-[**states ([.dbf]{.mono}, [.prj]{.mono}, [.shp]{.mono}, [.shx]{.mono})**]{.mono}{.mono}: This is shapefile of US states that I obtained from the R package *spData*.
-
-[**states_east.geojson**]{.mono}: The shapefile [states.shp]{.mono} subset to the Eastern United States.
-
-[**weather_tidy.rds**]{.mono}: These data are formatted as a list of two tibble data frames that represent the normalized (i.e., tidy data version) of messy_weather.csv.
+cat(dataset_markdown(.module = 4))
+```
 
 :::
 
 ## Readings and resources
 
-### **Required readings:**
+### Required readings
 
-Wickham & Grolemund:
+Wickham, Çetinkaya-Rundel & Grolemund, *R for Data Science*, second edition:
 
--   [21: Iteration](https://r4ds.had.co.nz/iteration.html){target="_blank"}
+-   [19: Joins](https://r4ds.hadley.nz/joins.html){target="_blank"}
+-   [26: Iteration](https://r4ds.hadley.nz/iteration.html){target="_blank"}
 
-### **Cheatsheets**:
+Lovelace, Nowosad & Muenchow, *Geocomputation with R*:
+
+-   [4.2: Spatial operations on vector data](https://r.geocompx.org/spatial-operations){target="_blank"}
+-   [9: Making maps with R](https://r.geocompx.org/adv-map){target="_blank"}
+
+### Cheatsheets
 
 -   [purrr](https://github.com/rstudio/cheatsheets/blob/main/purrr.pdf){target="_blank"}
 -   [Spatial manipulation with sf](https://github.com/rstudio/cheatsheets/blob/main/sf.pdf){target="_blank"}

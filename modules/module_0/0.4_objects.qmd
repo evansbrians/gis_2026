@@ -562,12 +562,7 @@ bunny_matrix
 </div>
 
 <script>
-window.parsonsProblems = window.parsonsProblems || [];
-window.parsonsProblems.push({
-  id: "p-0-4-01",
-  maxDistractors: 2,
-  code: "bunny_matrix &lt;-\n  matrix(\n    bunnies,\n    ncol = 2,\n    byrow = TRUE\n  )\ncolnames(bunny_matrix) &lt;-\n  c(\"hello\", \"world\")\nbunny_matrix\n    byrow = FALSE #distractor\nrownames(bunny_matrix) &lt;- c(\"hello\", \"world\") #distractor"
-});
+window.parsonsProblems = window.parsonsProblems || []; window.parsonsProblems.push({ id: "p-0-4-01", maxDistractors: 2, code: "bunny_matrix &lt;-\n  matrix(\n    bunnies,\n    ncol = 2,\n    byrow = TRUE\n  )\ncolnames(bunny_matrix) &lt;-\n  c(\"hello\", \"world\")\nbunny_matrix\n    byrow = FALSE #distractor\nrownames(bunny_matrix) &lt;- c(\"hello\", \"world\") #distractor" });
 </script>
 :::
 
@@ -719,12 +714,7 @@ matrix(
 </div>
 
 <script>
-window.parsonsProblems = window.parsonsProblems || [];
-window.parsonsProblems.push({
-  id: "p-0-4-02",
-  maxDistractors: 1,
-  code: "matrix(\n  my_object,\n  ncol = 2,\n  dimnames =\n    list(\n      c(\"a\", \"b\"),\n      c(\"x\", \"y\")\n    )\n)\n  dimnames = c(\"a\", \"b\"), #distractor"
-});
+window.parsonsProblems = window.parsonsProblems || []; window.parsonsProblems.push({ id: "p-0-4-02", maxDistractors: 1, code: "matrix(\n  my_object,\n  ncol = 2,\n  dimnames =\n    list(\n      c(\"a\", \"b\"),\n      c(\"x\", \"y\")\n    )\n)\n  dimnames = c(\"a\", \"b\"), #distractor" });
 </script>
 :::
 
@@ -798,12 +788,7 @@ Because `attributes()` assignment replaces the full attribute list, leaving an a
 </div>
 
 <script>
-window.parsonsProblems = window.parsonsProblems || [];
-window.parsonsProblems.push({
-  id: "p-0-4-03",
-  maxDistractors: 2,
-  code: "attributes(my_matrix) &lt;-\n  list(\n    dim = c(2, 2),\n    author = \"Brian\",\n    reason = \"To show attribute lists\"\n  )\nattributes(my_matrix)\n    colnames = c(\"hello\", \"world\"), #distractor\nattributes(my_matrix) &lt;- c(\"hello\", \"world\") #distractor"
-});
+window.parsonsProblems = window.parsonsProblems || []; window.parsonsProblems.push({ id: "p-0-4-03", maxDistractors: 2, code: "attributes(my_matrix) &lt;-\n  list(\n    dim = c(2, 2),\n    author = \"Brian\",\n    reason = \"To show attribute lists\"\n  )\nattributes(my_matrix)\n    colnames = c(\"hello\", \"world\"), #distractor\nattributes(my_matrix) &lt;- c(\"hello\", \"world\") #distractor" });
 </script>
 :::
 

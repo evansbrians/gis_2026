@@ -879,12 +879,7 @@ my_vector %in% c("apple", "banana")
 </div>
 
 <script>
-window.parsonsProblems = window.parsonsProblems || [];
-window.parsonsProblems.push({
-  id: "p-1-3-01",
-  maxDistractors: 1,
-  code: "musicians <- c(\"roger\", \"pete\", \"john\", \"keith\")\nmy_tibble <- tibble(musician = musicians, number = 1:4)\nmy_tibble[[\"musician\"]]\nmy_tibble[[1]] #distractor"
-});
+window.parsonsProblems = window.parsonsProblems || []; window.parsonsProblems.push({ id: "p-1-3-01", maxDistractors: 1, code: "musicians <- c(\"roger\", \"pete\", \"john\", \"keith\")\nmy_tibble <- tibble(musician = musicians, number = 1:4)\nmy_tibble[[\"musician\"]]\nmy_tibble[[1]] #distractor" });
 </script>
 :::
 

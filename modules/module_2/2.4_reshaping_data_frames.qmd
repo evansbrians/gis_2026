@@ -932,12 +932,7 @@ As in ***2.1 Introduction to subsetting and extraction***, this tree is a visual
 </div>
 
 <script>
-window.parsonsProblems = window.parsonsProblems || [];
-window.parsonsProblems.push({
-  id: "p-2-4-01",
-  maxDistractors: 1,
-  code: "observations %>%\n  left_join(\n    taxonomy_distinct,\n    by = \"sci_name\"\n  )\n  bind_cols(taxonomy_distinct) %>% #distractor"
-});
+window.parsonsProblems = window.parsonsProblems || []; window.parsonsProblems.push({ id: "p-2-4-01", maxDistractors: 1, code: "observations %>%\n  left_join(\n    taxonomy_distinct,\n    by = \"sci_name\"\n  )\n  bind_cols(taxonomy_distinct) %>% #distractor" });
 </script>
 :::
 

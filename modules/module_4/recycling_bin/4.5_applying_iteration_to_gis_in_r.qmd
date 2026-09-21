@@ -59,11 +59,11 @@ lesson_metadata(.dataset = c("counties_east.geojson", "states_east.geojson", "la
 
 ## Video content
 
-In this lesson, you will code along with the script file [purrr_applied.R]{.mono} -- this file should be located in the [scripts]{.mono} folder of your project directory. 
+In this lesson, you will code along with the script file `purrr_applied.R` -- this file should be located in the `scripts` folder of your project directory. 
 
 Before you begin, please note:
 
-* Your [purrr_applied.R]{.mono} file may look slightly different than the one used in the video tutorial. Your version of the file has been updated to adhere to the course style guide. I have also included the script file [purrr_applied_key.R]{.mono} so you can see the script in more modern code styling (but please do not peak until after you have completed all of the challenges!).
+* Your `purrr_applied.R` file may look slightly different than the one used in the video tutorial. Your version of the file has been updated to adhere to the course style guide. I have also included the script file `purrr_applied_key.R` so you can see the script in more modern code styling (but please do not peak until after you have completed all of the challenges!).
 * I attach the *lubridate* library at the start of this session. The *lubridate* package is now part of the **core tidyverse** and thus does not need to be explicitly attached.
 * I use single rather than double quotes in the video. The latter is my current preference.
 * My indentation is off at several points. 

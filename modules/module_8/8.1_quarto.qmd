@@ -22,7 +22,7 @@ This lesson will include:
 
 ## Introduction to Markdown
 
-Computer languages allow us to write instructions that control our computers behavior. Quarto documents are written in the Markdown language. 
+Computer languages allow us to write instructions that control our computers behavior. Quarto documents are written in the Markdown language.
 
 ### What is Markdown?
 
@@ -48,7 +48,7 @@ There are also several disadvantages to WYSIWYG markup:
 
 Let's have a look at our sentence written using the hypertext markup language (HTML), the standard markup language for web documents:
 
-```        
+```
 <p>Here is an example sentence with some <i>italic</i> and <b>bold</b> text.</p>
 ```
 
@@ -79,7 +79,7 @@ Now let's look at how our sentence is written in markdown language.
 Here is an example sentence with some *italic* and **bold** text.
 ```
 
-In the above, the italic text is defined by `*italic*`, the bold text is defined by `**bold**` and the rest of the text is written just like the Word version. This is nearly as simple to read as the Word version but has all of the fine-tuning advantages as the HTML version! 
+In the above, the italic text is defined by `*italic*`, the bold text is defined by `**bold**` and the rest of the text is written just like the Word version. This is nearly as simple to read as the Word version but has all of the fine-tuning advantages as the HTML version!
 
 When generating web pages with Markdown (including with RMarkdown and Quarto), you **render** the document. Rendering converts the Markdown to HTML. As you might imagine, rendering the above returns:
 
@@ -374,7 +374,7 @@ Brian's silly examples:
   * Boy
   * Howdy
 :::
-  
+
 To make the document more readable prior to knitting, I like to use a different symbol for the lower-level list:
 
 ```
@@ -485,14 +485,11 @@ Let's add a tibble to our code block:
 
 library(tidyverse)
 
-tibble(
-  boy = c(1, 1),
-  howdy = 2:3
-)
+tibble( boy = c(1, 1), howdy = 2:3 )
 ```
 ````
 
-Once rendered, this returns: 
+Once rendered, this returns:
 
 ```{r}
 #| message: false
@@ -515,10 +512,7 @@ Sometimes we want to include only the output (e.g., for public reports or when s
 
 library(tidyverse)
 
-tibble(
-  boy = c(1, 1),
-  howdy = 2:3
-)
+tibble( boy = c(1, 1), howdy = 2:3 )
 ```
 ````
 
@@ -543,10 +537,7 @@ To display the code itself without running it, add `#| eval: false` immediately 
 
 library(tidyverse)
 
-tibble(
-  boy = c(1, 1),
-  howdy = 2:3
-)
+tibble( boy = c(1, 1), howdy = 2:3 )
 ```
 ````
 
@@ -587,7 +578,7 @@ To modify the style of your Quarto document, or elements within your Quarto docu
 
 #### Add styling to sections
 
-Web pages are divided into sections that act as invisible containers for HTML elements. Sections can have their own style and behavior. Below, I created a section for my sentence about Tara's font preference and defined the font-family of the section as Times New Roman. 
+Web pages are divided into sections that act as invisible containers for HTML elements. Sections can have their own style and behavior. Below, I created a section for my sentence about Tara's font preference and defined the font-family of the section as Times New Roman.
 
 :::{class=quarto_box style="font-family: Times;"}
 Tara prefers to write documents in Times New Roman.
@@ -655,9 +646,7 @@ We can define a style across our entire document by adding a CSS code chunk. Bec
 ```{{css}}
 #| echo: false
 
-.tara_style {
-  font-family: Times;
-}
+.tara_style { font-family: Times; }
 ```
 ````
 *Note on the above: We used* `#| echo: false` *because we do not want to show the reader our CSS! Also note that the period in* `.tara_style` *defines a uniquely identified class.*
@@ -742,9 +731,7 @@ While I prefer to place my CSS code chunk near the top of a document, you can ac
 ```{{css}}
 #| echo: false
 
-p {
-  font-family: Times;
-}
+p { font-family: Times; }
 ```
 ````
 

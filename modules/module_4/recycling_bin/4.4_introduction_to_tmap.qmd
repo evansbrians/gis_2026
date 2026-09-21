@@ -88,7 +88,7 @@ lesson_metadata(
 
 ## Introductory video
 
-In this portion of the lesson, you will code along with the script file [tmap_lanternfly.R]{.mono} -- this file should be located in the [scripts]{.mono} folder of your project directory.
+In this portion of the lesson, you will code along with the script file `tmap_lanternfly.R` -- this file should be located in the `scripts` folder of your project directory.
 
 This video was made in 2022, which is pretty old in code-years, so please take a moment to review the following notes on the video content:
 
@@ -99,14 +99,14 @@ This video was made in 2022, which is pretty old in code-years, so please take a
 * I used collapsed closing parentheses -- it is now my preference to use hanging parentheses.
 * I use the base R function `paste` in the code. I rarely use this function and much prefer the *stringr* (**core tidyverse**) function `str_c`.
 * In the video I use `tmaptools::palette_explorer()` to choose colors. In version 4, color palettes are managed by the *cols4all* package, so we now use `cols4all::c4a_gui()` instead.
-* Your [tmap_lanterfly.R]{.mono} file will look slightly different than the one used in the video tutorial. Your version of the file has been updated to adhere to the course style guide and more modern coding preferences.
+* Your `tmap_lanterfly.R` file will look slightly different than the one used in the video tutorial. Your version of the file has been updated to adhere to the course style guide and more modern coding preferences.
 * Because we used an `inner_join()` at 30:11, it was not necessary to also include `st_filter(spotted_lanternfly)`. The `inner_join()` already reduces `shapes$counties` to those with observations of spotted lanternflies.
 
 {{< video https://www.youtube.com/embed/uTufFT75wT4?si=k6-NsLw1aQAMNTMH >}}
 
 ## Set up your session (tutorial)
 
-**Important!** Before continuing, please save and close [tmap_lanternfly.R]{.mono}.
+**Important!** Before continuing, please save and close `tmap_lanternfly.R`.
 
 Please do the following to ensure that you are working in a clean session:
 
@@ -115,10 +115,10 @@ Please do the following to ensure that you are working in a clean session:
 
 Now that we are working in a clean session:
 
-1. Create a script file (Windows: [Ctrl + Shift + N]{.mono}; Mac: [Cmd + Shift + N]{.mono}).
-2. Save your script file as "[scripts/tmap_tutorial.R]{.mono}".
+1. Create a script file (Windows: `Ctrl + Shift + N`; Mac: `Cmd + Shift + N`).
+2. Save your script file as "`scripts/tmap_tutorial.R`".
 3. Add metadata as a comment on the top of the file (e.g., `# My code for the tmap tutorial`).
-4. Following your metadata, create a new **code section** (Windows: [Ctrl + Shift + R]{.mono}; Mac: [Cmd + Shift + R]{.mono}) and call it "`setup`".
+4. Following your metadata, create a new **code section** (Windows: `Ctrl + Shift + R`; Mac: `Cmd + Shift + R`) and call it "`setup`".
 5. Following your section header, attach the `sf` package, the `tmap` package, and packages that comprise the **core tidyverse** (`library(tidyverse)`)
 6. Read in the `census.shp` shapefile, subset to features in which `STATEFP` is 11, and subset to the fields `GEOID`, and `population`.
 7. Read in the `capital_bike_share_locations.csv` data set, change the field names to lowercase, and convert the data to a spatial points shapefile.

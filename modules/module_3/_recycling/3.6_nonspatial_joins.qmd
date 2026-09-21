@@ -85,7 +85,7 @@ Please do the following to ensure that you are working in a clean session:
 
 1. In the *Environment* tab of your *workspace pane*, ensure that your *Global Environment* is empty. If it is not, click the *broom* to remove all objects. *Note: Conversely, you can remove all items with `rm(list = ls())`*.
 2. In the *History* tab of your *workspace pane*, ensure that your history is empty. If it is not, click the *broom* to remove your history.
-3. Open the script file [joins.R]{.mono} (Windows: [Ctrl + O]{.mono}; Mac: [Cmd + O]{.mono}).
+3. Open the script file `joins.R` (Windows: `Ctrl + O`; Mac: `Cmd + O`).
 
 ### Video content
 
@@ -107,10 +107,10 @@ Please do the following to ensure that you are working in a clean session:
 
 Now that we are working in a clean session:
 
-1. Create a script file (Windows: [Ctrl + Shift + N]{.mono}; Mac: [Cmd + Shift + N]{.mono}).
+1. Create a script file (Windows: `Ctrl + Shift + N`; Mac: `Cmd + Shift + N`).
 2. Save your script file as "`scripts/joins_written_content.R`".
 3. Add metadata as a comment on the top of the file (e.g., `# My code for the joining tutorial`).
-4. Following your metadata, create a new **code section** (Windows: [Ctrl + Shift + R]{.mono}; Mac: [Cmd + Shift + R]{.mono}) and call it "`setup`".
+4. Following your metadata, create a new **code section** (Windows: `Ctrl + Shift + R`; Mac: `Cmd + Shift + R`) and call it "`setup`".
 5. Following your section header, attach the packages that comprise the **core tidyverse** (`library(tidyverse)`)
 
 At this point, your script should look something like:
@@ -130,7 +130,7 @@ Now we are going to add our data for this lesson ... let's do this again as two 
 :::{.now_you}
 <button class="accordion">{{< fa user-circle size=2x >}}&nbsp; In a single piped statement:
 
-* Read in the list [district_birds.rds]{.mono}
+* Read in the list `district_birds.rds`
 * Assign the names of the individual list items to your global environment
 
 </button>

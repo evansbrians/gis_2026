@@ -14,7 +14,7 @@ source("src/r/course_functions.R")
 
 In the first lesson of this week, you learned how to create static websites using R Markdown (or Quarto). Although such websites may contain interactive features, interactivity is somewhat limited and requires coding in other languages. For example, the "Functions that you may use ..." buttons in your problem sets are written in JavaScript and CSS (Cascading Style Sheets). Any interactivity on a website is constrained by the programs available to the web server. When you run an R code chunk in an R Markdown or Quarto document, that code chunk is evaluated in program R on *your computer*, thus none of the interactive elements in a Markdown-generated website are powered by program R (at least not out-of-the-box). This is where *shiny* applications come in -- a *shiny* app is a website in which the web server is running program R. Because program R is running in the background, you can use R to develop interactive elements! For example, the preliminary lessons for this course (e.g., [Preliminary Lesson 2: Values](https://smbc.shinyapps.io/L1-rValues/ "https://smbc.shinyapps.io/L1-rValues/"){target="_blank"}) are *shiny* apps -- this is why you can write and evaluate code in the lessons. I use *shiny* apps for all sorts of things, from developing interactive content for middle school students (e.g., [Follow that bird!](https://smbc.shinyapps.io/followthatbird/){target="_blank"}), and even as a data entry portal for a participatory science project ([Neighborhood Nestwatch](https://smbc.shinyapps.io/NeighborhoodNestwatch/){target="_blank"}).
 
-In this lesson (our last lesson of the course!), you will learn the core knowledge required to start developing your own shiny applications. Specifically, you will learn: 
+In this lesson (our last lesson of the course!), you will learn the core knowledge required to start developing your own shiny applications. Specifically, you will learn:
 
 * What a *shiny* app is
 * How *shiny* apps are structured (User Interface and Server)
@@ -28,7 +28,7 @@ In this lesson (our last lesson of the course!), you will learn the core knowled
 
 This is actually the oldest video of the series and it shows! It was created for the very first iteration of our online Data Science course (which at one time included both GIS in R and data science content).
 
-**Important!** The website for the written portion of this lesson can be a bit dodgy. If you have issues with disconnecting (you almost certainly will), I recommend knitting the RMarkdown file [dashboard_app.Rmd]{.mono}.
+**Important!** The website for the written portion of this lesson can be a bit dodgy. If you have issues with disconnecting (you almost certainly will), I recommend knitting the RMarkdown file `dashboard_app.Rmd`.
 
 **Also note**: I unfortunately used `setwd()` in this lesson. This could have (and should have) been avoided. I never use `setwd()` in the real world!
 

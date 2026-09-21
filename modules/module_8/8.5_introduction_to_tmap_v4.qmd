@@ -64,7 +64,7 @@ lesson_metadata(.dataset = c("lanternfly_proc.rds", "states_east.geojson")) %>%
 
 ## Set up your session
 
-**Important!** Before continuing, please save and close [tmap_lanternfly.R]{.mono}.
+**Important!** Before continuing, please save and close `tmap_lanternfly.R`.
 
 Please do the following to ensure that you are working in a clean session:
 
@@ -171,6 +171,8 @@ Basic map-making in tmap Version 4 is the same as earlier versions. We start wit
 Below, I pass the data assigned to the name `states` in `shapes` to `tm_shape()` and the use `tm_polygons()` to display the data:
 
 ```{r}
+# Add the states layer:
+
 states %>% 
   tm_shape() +
   tm_polygons()
@@ -179,6 +181,8 @@ states %>%
 While making a basic map is the same, one of the biggest changes in version 4 relates to how to specify the fill colors of a choropleth map. In earlier versions of tmap, we used the `tm_polygons()` argument `col = ...` to specify a fill color ...
 
 ```{r}
+# Add the states layer:
+
 states %>% 
   tm_shape() +
   tm_polygons(col = "n")
@@ -189,6 +193,8 @@ states %>%
 The fill color in Version 4 is defined by the `fill = ...` argument:
 
 ```{r}
+# Add the states layer:
+
 states %>% 
   tm_shape() +
   tm_polygons(fill = "n")
@@ -197,6 +203,8 @@ states %>%
 This allows us to specify the border with the `col = ...` argument:
 
 ```{r}
+# Add the states layer:
+
 states %>% 
   tm_shape() +
   tm_polygons(
@@ -207,11 +215,13 @@ states %>%
 
 ## The legend
 
-Let's now turn our attention to the legend, which has also seen some major changes. 
+Let's now turn our attention to the legend, which has also seen some major changes.
 
 Previously, we modified the title of a legend with the `title = ...` argument of `tm_polygons()`:
 
 ```{r}
+# Add the states layer:
+
 states %>% 
   tm_shape() +
   tm_polygons(
@@ -220,11 +230,13 @@ states %>%
   )
 ```
 
-The above worked, but notice that we get a warning message (`tmap v3 code detected`)! In the new version, we specify the title as a function of the visual element of a legend item and use the function `tm_legend()` to modify the legend defaults. 
+The above worked, but notice that we get a warning message (`tmap v3 code detected`)! In the new version, we specify the title as a function of the visual element of a legend item and use the function `tm_legend()` to modify the legend defaults.
 
 Below, I specify the visual element as "fill" with the argument `fill.legend = ...` and use `tm_legend(title = ...)` to change the title from variable name, "n", to "Observations":
 
 ```{r}
+# Add the states layer:
+
 states %>% 
   tm_shape() +
   tm_polygons(
@@ -237,6 +249,8 @@ states %>%
 Notice another change here. In the earlier versions of tmap, the title was placed inside of the map frame by default. Here, the title is placed outside of the map frame. We can move the legend inside the plot with the `position = ...` argument of `tm_legend()` and the function `tm_pos_in()`:
 
 ```{r}
+# Add the states layer:
+
 states %>% 
   tm_shape() +
   tm_polygons(
@@ -251,11 +265,13 @@ states %>%
 
 I am sure that you noticed that the overlap is very annoying. We can adjust this by:
 
-* Adding the `tm_layout()` function 
+* Adding the `tm_layout()` function
 * Specifying the inner margins of the plot with the argument `inner.margins = ...`
 * Defining the margins with `c()` and a vector of four values representing the bottom, left, and top (in device units)
 
 ```{r}
+# Add the states layer:
+
 states %>% 
   tm_shape() +
   tm_polygons(
@@ -277,6 +293,8 @@ Notice that the default position of the legend is the upper-left corner of the p
 We can move the legend in the horizontal dimension by specifying the `pos.h = ...` argument of `tm_pos_in()`:
 
 ```{r}
+# Add the states layer:
+
 states %>% 
   tm_shape() +
   tm_polygons(
@@ -299,6 +317,8 @@ states %>%
 We can move the legend in the vertical dimension by specifying the horizontal position as "right":
 
 ```{r}
+# Add the states layer:
+
 states %>% 
   tm_shape() +
   tm_polygons(
@@ -319,6 +339,8 @@ states %>%
 ... or move the legend horizontally *and* vertically:
 
 ```{r}
+# Add the states layer:
+
 states %>% 
   tm_shape() +
   tm_polygons(
@@ -342,6 +364,8 @@ states %>%
 Although the default position of the legend is outside, we can use `tm_pos_out()` to specify the location outside of the map window:
 
 ```{r}
+# Add the states layer:
+
 states %>% 
   tm_shape() +
   tm_polygons(
@@ -357,6 +381,8 @@ states %>%
 We can move it horizontally and vertically:
 
 ```{r}
+# Add the states layer:
+
 states %>% 
   tm_shape() +
   tm_polygons(
@@ -372,6 +398,8 @@ states %>%
 ... and even change it to landscape orientation with `orientation = "landscape"`:
 
 ```{r}
+# Add the states layer:
+
 states %>% 
   tm_shape() +
   tm_polygons(
@@ -388,6 +416,8 @@ states %>%
 The `tm_legend` function is feature-rich and can allow you to do things like remove the legend frame with `frame = FALSE`:
 
 ```{r}
+# Add the states layer:
+
 states %>% 
   tm_shape() +
   tm_polygons(
@@ -405,6 +435,8 @@ states %>%
 ... or change the background color:
 
 ```{r}
+# Add the states layer:
+
 states %>% 
   tm_shape() +
   tm_polygons(
@@ -423,6 +455,8 @@ states %>%
 It also gives you a lot of (potentially dangerous) control over the font. Below, I make some *very questionable* font choices:
 
 ```{r}
+# Add the states layer:
+
 states %>% 
   tm_shape() +
   tm_polygons(
@@ -448,6 +482,9 @@ Let's add the "Esri.WorldGrayCanvas" basemap to our static plot:
 
 ```{r}
 tm_basemap("Esri.WorldGrayCanvas") +
+
+  # Add the states layer:
+
   states %>% 
   tm_shape() +
   tm_polygons(
@@ -469,6 +506,9 @@ We can also add "OpenStreetMap":
 
 ```{r}
 tm_basemap("OpenStreetMap") +
+
+  # Add the states layer:
+
   states %>%
   tm_shape() +
   tm_polygons(
@@ -488,6 +528,9 @@ tm_basemap("OpenStreetMap") +
 
 ```{r}
 tm_basemap("Esri.WorldImagery") +
+
+  # Add the states layer:
+
   states %>% 
   tm_shape() +
   tm_polygons(
@@ -517,6 +560,9 @@ In the previous versions of tmap, we added a title to a plot with `tm_layout(tit
 
 ```{r}
 tm_basemap("OpenStreetMap") +
+
+  # Add the states layer:
+
   states %>% 
   tm_shape() +
   tm_polygons(
@@ -537,6 +583,9 @@ We now get a warning message and the title is in an awful spot! In Version 4, we
 
 ```{r}
 tm_basemap("Esri.WorldImagery") +
+
+  # Add the states layer:
+
   states %>% 
   tm_shape() +
   tm_polygons(
@@ -557,6 +606,9 @@ We have plenty of control over the title element with `tm_title()` (see `?tm_tit
 
 ```{r}
 tm_basemap("Esri.WorldImagery") +
+
+  # Add the states layer:
+
   states %>% 
   tm_shape() +
   tm_polygons(
@@ -581,6 +633,9 @@ Although we no longer use `tm_layout()` to generate the title of the plot, it is
 
 ```{r}
 tm_basemap("OpenStreetMap") +
+
+  # Add the states layer:
+
   states %>% 
   tm_shape() +
   tm_polygons(
@@ -600,11 +655,13 @@ tm_basemap("OpenStreetMap") +
   )
 ```
 
-We can simplify this by specifying the font family across all elements inside
-of `tm_layout()`:
+We can simplify this by specifying the font family across all elements inside of `tm_layout()`:
 
 ```{r}
 tm_basemap("OpenStreetMap") +
+
+  # Add the states layer:
+
   states %>% 
   tm_shape() +
   tm_polygons(
@@ -632,6 +689,9 @@ In the previous versions of tmap we specified a color scale using the `palette` 
 
 ```{r}
 tm_basemap("OpenStreetMap") +
+
+  # Add the states layer:
+
   states %>% 
   tm_shape() +
   tm_polygons(
@@ -657,6 +717,9 @@ That is a lot ... and a *big* change! Here's how our plotting *should* look in V
 
 ```{r}
 tm_basemap("OpenStreetMap") +
+
+  # Add the states layer:
+
   states %>% 
   tm_shape() +
   tm_polygons(
@@ -675,6 +738,9 @@ I imagine that you are a little annoyed -- so am I. The change, however, is a go
 
 ```{r}
 tm_basemap("OpenStreetMap") +
+
+  # Add the states layer:
+
   states %>%
   tm_shape() +
   tm_polygons(
@@ -703,6 +769,9 @@ Here is how we would do this in Version 4:
 
 ```{r}
 tm_basemap("OpenStreetMap") +
+
+  # Add the states layer:
+
   states %>%
   tm_shape() +
   tm_polygons(
@@ -731,6 +800,9 @@ Likewise, we can specify the number of scale intervals in `tm_scale()`:
 
 ```{r}
 tm_basemap("OpenStreetMap") +
+
+  # Add the states layer:
+
   states %>%
   tm_shape() +
   tm_polygons(
@@ -752,6 +824,9 @@ tm_basemap("OpenStreetMap") +
 
 ```{r}
 tm_basemap("OpenStreetMap") +
+
+  # Add the states layer:
+
   states %>%
   tm_shape() +
   tm_polygons(
@@ -774,6 +849,9 @@ tm_basemap("OpenStreetMap") +
 
 ```{r}
 tm_basemap("OpenStreetMap") +
+
+  # Add the states layer:
+
   states %>%
   tm_shape() +
   tm_polygons(
@@ -797,6 +875,9 @@ Notice in the above that the scale is *both* continuous *and* binned. If we want
 
 ```{r}
 tm_basemap("OpenStreetMap") +
+
+  # Add the states layer:
+
   states %>%
   tm_shape() +
   tm_polygons(
@@ -814,6 +895,9 @@ Finally, let's take a moment to look at the colors themselves. Recall that we ge
 
 ```{r}
 tm_basemap("OpenStreetMap") +
+
+  # Add the states layer:
+
   states %>%
   tm_shape() +
   tm_polygons(
@@ -831,6 +915,9 @@ tm_basemap("OpenStreetMap") +
 
 ```{r}
 tm_basemap("OpenStreetMap") +
+
+  # Add the states layer:
+
   states %>%
   tm_shape() +
   tm_polygons(
@@ -858,6 +945,9 @@ For example, you can subset to color-blind friendly palettes and choose from a w
 
 ```{r}
 tm_basemap("OpenStreetMap") +
+
+  # Add the states layer:
+
   states %>%
   tm_shape() +
   tm_polygons(
@@ -875,8 +965,7 @@ tm_basemap("OpenStreetMap") +
 ## Quick reference: *tmap* v3 → v4
 
 ::: callout-note
-This table summarizes how common v3 patterns translate into v4 syntax.  
-(Left column = **what you want to do**, middle = **old v3 way**, right = **new v4 way**.)
+This table summarizes how common v3 patterns translate into v4 syntax. (Left column = **what you want to do**, middle = **old v3 way**, right = **new v4 way**.)
 :::
 
 | Task / goal                            | tmap v3 syntax                                         | tmap v4 syntax                                                                 |

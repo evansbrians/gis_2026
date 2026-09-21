@@ -29,13 +29,13 @@ This module will be our first foray into working with spatial data (this is, aft
 ## Module overview
 
 * **3.1 What is a GIS?**: This video lesson (runtime: 13:17) provides a brief overview of foundational concepts of Geographic Information Systems, including types of spatial data files and coordinate systems.
-* **3.2 Introduction to spatial vector data with sf**: This written tutorial and *optional* video (runtime: 35:33) provide an overview of common spatial vector data operations, including reading spatial files, pre-processing simple features objects, and transforming a coordinate reference system. This will also be our first use of [source_script_module_3.R]{.mono}!
+* **3.2 Introduction to spatial vector data with sf**: This written tutorial and *optional* video (runtime: 35:33) provide an overview of common spatial vector data operations, including reading spatial files, pre-processing simple features objects, and transforming a coordinate reference system. This will also be our first use of `source_script_module_3.R`!
 * **3.3 Constructing and converting simple features**: This written tutorial will really help you understand what simple features objects are by building sf points, lines, and polygons from the ground up. You will also learn how to convert one geometry type to another (e.g., points to polygons).
 * **3.4 The coordinate reference system**: In this written tutorial, you will learn what a CRS is, how to read its well-known text representation, how to transform a CRS, and how to choose a CRS that is appropriate for a given task.
 * **3.5 Introduction to tmap**: In this written tutorial, you will use `left_join()` to add attributes to a simple features object, create static and interactive maps, layer polygon and point geometries, and control the basemap, colors, title, and legend.
 * **3.6 Geometric operations with sf**: In this written tutorial, you will practice aggregating geometries, calculate centroids, distances, and areas, work with the units of spatial measurements, and create convex hulls and spatial buffers.
 
-**Problem Set** (due 10 Nov): Cicada emergence
+**Problem Set** (due 13 Sep): Nests in a patchy landscape
 
 ## About this week's data
 

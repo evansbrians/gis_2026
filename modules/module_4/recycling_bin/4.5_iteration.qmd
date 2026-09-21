@@ -81,11 +81,11 @@ lesson_metadata(.dataset = c("census", "dc_census", "portal.csv", "spotted_lante
 
 ## Video: Introduction to iteration with *purrr*
 
-For the video portion of this lesson you will use the script file [purrr.R]{.mono}!
+For the video portion of this lesson you will use the script file `purrr.R`!
 
 Some notes on the content:
 
-* Your [purrr.R]{.mono} file may look slightly different than the one used in the video tutorial. Your version of the file has been updated to adhere to the course style guide.
+* Your `purrr.R` file may look slightly different than the one used in the video tutorial. Your version of the file has been updated to adhere to the course style guide.
 * I use single quotes (`'Boy howdy!'`) rather than double quotes (`"Boy howdy!"`). The latter is my current preference by far.
 * I currently prefer to use exploded parentheses, especially for the end of nested code blocks.
 * I include a space between the closing parenthesis and opening curly brace of function (`function() {`). This does not impact the output of the code and goes against the course style guide (it should be `function(){`).
@@ -101,10 +101,10 @@ Please do the following to ensure that you are working in a clean session:
 
 Now that we are working in a clean session:
 
-1. Create a script file (Windows: [Ctrl + Shift + N]{.mono}; Mac: [Cmd + Shift + N]{.mono}).
-2. Save your script file as "[scripts/iteration.R]{.mono}".
+1. Create a script file (Windows: `Ctrl + Shift + N`; Mac: `Cmd + Shift + N`).
+2. Save your script file as "`scripts/iteration.R`".
 3. Add metadata as a comment on the top of the file (e.g., `# My code for the iteration tutorial`).
-4. Following your metadata, create a new **code section** (Windows: [Ctrl + Shift + R]{.mono}; Mac: [Cmd + Shift + R]{.mono}) and call it "`setup`".
+4. Following your metadata, create a new **code section** (Windows: `Ctrl + Shift + R`; Mac: `Cmd + Shift + R`) and call it "`setup`".
 5. Following your section header, attach the `sf` package and the packages that comprise the **core tidyverse** (`library(tidyverse)`).
 6. Read in the `portal.csv` dataset, the `spotted_lanternfly.rds` dataset, and the `observations` data frame from the list file `weather_tidy.rds`.
 
@@ -462,7 +462,7 @@ list.files(
 )
 ```
 
-The above searches for files in [data/raw/shapefiles]{.mono} that contain the pattern [shp]{.mono} and returns a character vector of file names that match the pattern. 
+The above searches for files in `data/raw/shapefiles` that contain the pattern `shp` and returns a character vector of file names that match the pattern. 
 
 We can add the **relative file path** to each file by adding the argument `full.names = TRUE` (`FALSE` is the default, see `?list.files`):
 

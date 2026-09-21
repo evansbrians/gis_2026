@@ -62,7 +62,7 @@ lesson_metadata(.dataset = c("dc_census.geojson", "dc_crimes.csv", "dc_forests.g
 
 ## Video lesson
 
-Notes: 
+Notes:
 
 * You will see me complain about my usage of hanging parentheses ... but that is now my preference!
 * Your script will not exactly match my video script. Wherever possible, I have modified the script to adhere to the course style guide (e.g., indentation) and replaced single quotes with double quotes.
@@ -251,7 +251,7 @@ tm_basemap("Esri.WorldImagery") +
 
 ### Change raster resolution
 
-Resampling rasters describes the process of aligning each cell of one raster to the location and resolution of a second raster. 
+Resampling rasters describes the process of aligning each cell of one raster to the location and resolution of a second raster.
 
 By clicking around the map below, you might see that our three rasters have very different resolutions (`canopy` = 30m, `elevation` = 10m, `land_cover` = 1m):
 
@@ -513,7 +513,7 @@ tm_basemap("Esri.WorldImagery") +
   )
 ```
 
-Adding this with the original elevation model and a bit of transparency can really make us feel like we are heading into the mountains. 
+Adding this with the original elevation model and a bit of transparency can really make us feel like we are heading into the mountains.
 
 In the below, I add hillshade above elevation and add a gray color scale with `gray.colors()` (see `?gray.colors`:
 
@@ -716,7 +716,7 @@ tm_basemap("Esri.WorldImagery") +
   )
 ```
 
-Given the dense cluster of points above, using `tm_dots()` is not the best way to visualize the distribution of iNaturalist observations. Instead, we can convert the points to rasters! 
+Given the dense cluster of points above, using `tm_dots()` is not the best way to visualize the distribution of iNaturalist observations. Instead, we can convert the points to rasters!
 
 We will start by creating a template raster. For this, we will crop and mask `canopy` to the Smithsonian-Mason School of Conservation campus (`smsc_campus`):
 
@@ -810,7 +810,7 @@ If you are disappointed with the above, so am I. As such, let's turn our attenti
 
 Density can mean different things in spatial analyses. For example, the number of observations per unit area is a density measure. We have derived density in this way when we looked at the human population and the number of iNaturalist observations per unit area of census tracts. Here, we will look at the probability density, which can be loosely thought of as the probability of a given outcome relative to the other values in a sample.
 
-I can more than understand if I lost you a bit in the above. My PhD was in quantitative ecology and I remember reaching a point somewhere around the second year in which I screamed into the sky *Why is there so much danged math in this field*? We are going to skip the math and more formal definitions of probability density and go straight to application. 
+I can more than understand if I lost you a bit in the above. My PhD was in quantitative ecology and I remember reaching a point somewhere around the second year in which I screamed into the sky *Why is there so much danged math in this field*? We are going to skip the math and more formal definitions of probability density and go straight to application.
 
 Continuing with our example of the distribution of iNaturalist observations at the Smithsonian Conservation Biology Institute, our goal will be to determine where iNaturalist observations are most, and least, likely to occur.
 
@@ -830,7 +830,7 @@ tm_basemap("Esri.WorldImagery") +
   )
 ```
 
-Our method for calculating density will be a bit old school, unfortunately. I have hunted around for an easy-to-follow modern version but have come up empty. We are going to follow a tried-and-true method that uses the *SpatStat* package. 
+Our method for calculating density will be a bit old school, unfortunately. I have hunted around for an easy-to-follow modern version but have come up empty. We are going to follow a tried-and-true method that uses the *SpatStat* package.
 
 As an overview of the steps in this process:
 
@@ -896,6 +896,10 @@ smsc_owin <-
   smsc_campus %>% 
   st_transform(5070) %>% 
   as.owin()
+```
+
+```{r}
+#| echo: false
 
 smsc_owin
 ```
@@ -947,13 +951,17 @@ inat_ppp <-
 
 #### 4. Calculate density
 
-We are now ready to calculate the probability density of our points! This is not an explicitly spatial procedure -- we will use the *stats* package (provided with base R) function `density` to calculate this. 
+We are now ready to calculate the probability density of our points! This is not an explicitly spatial procedure -- we will use the *stats* package (provided with base R) function `density` to calculate this.
 
 We supply (at a minimum) the point pattern object that we would like to calculate the density of.
 
 ```{r}
 inat_density <-
   stats::density(inat_ppp)
+```
+
+```{r}
+#| echo: false
 
 inat_density
 ```

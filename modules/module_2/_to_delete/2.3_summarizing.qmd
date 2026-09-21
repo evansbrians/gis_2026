@@ -63,10 +63,10 @@ Please do the following to ensure that you are working in a clean session:
 
 Now that we are working in a clean session:
 
-1. Create a script file (Windows: [Ctrl + Shift + N]{.mono}; Mac: [Cmd + Shift + N]{.mono}).
-2. Save your script file as "[scripts/summarize_written_content.R]{.mono}".
+1. Create a script file (Windows: `Ctrl + Shift + N`; Mac: `Cmd + Shift + N`).
+2. Save your script file as "`scripts/summarize_written_content.R`".
 3. Add metadata as a comment on the top of the file (e.g., `# My code for the summarizing tutorial`).
-4. Following your metadata, create a new **code section** (Windows: [Ctrl + Shift + R]{.mono}; Mac: [Cmd + Shift + R]{.mono}) and call it "`setup`".
+4. Following your metadata, create a new **code section** (Windows: `Ctrl + Shift + R`; Mac: `Cmd + Shift + R`) and call it "`setup`".
 5. Following your section header, attach the packages that comprise the **core tidyverse** (`library(tidyverse)`).
 
 At this point, your script should look something like:
@@ -88,7 +88,7 @@ Now we are going to add our data for this lesson ... let's do this as a "Now you
 
 In a single piped statement:
 
-* Read in the file [district_birds.rds]{.mono};
+* Read in the file `district_birds.rds`;
 * Use the `pluck()` function to extract the list item assigned to the name `captures`;
 * Subset `captures` to the columns `spp`, `sex`, `wing`, `mass`, and `bp_cp`;
 * Use `replace_na()` to change `NA` values in `bp_cp` to `-`;
@@ -390,7 +390,7 @@ Modify the above such that:
 
 * The `NA` values in `sex` are removed;
 * The code does not include `ungroup()` and the resultant object is *not* grouped;
-* The [spp]{.mono} column is named [species]{.mono} in the resultant object.
+* The `spp` column is named `species` in the resultant object.
 
 *Hint: We removed `NA` values with `is.na()` and `drop_na()` in **2.1 Introduction to subsetting and extraction**, and renamed a column while selecting it in **Changing column names**, in the same lesson.*
 

@@ -277,12 +277,7 @@ Reorder the lines below to read the `garden_life` worksheet and skip its first t
 </div>
 
 <script>
-window.parsonsProblems = window.parsonsProblems || [];
-window.parsonsProblems.push({
-  id: "p-1-4-01",
-  maxDistractors: 1,
-  code: "garden_life <-\n  readxl::read_excel(\n    \"data/raw/my_covid_garden.xlsx\",\n    sheet = \"garden_life\",\n    skip = 2\n  )\nread_csv(\"data/raw/my_covid_garden.xlsx\") #distractor"
-});
+window.parsonsProblems = window.parsonsProblems || []; window.parsonsProblems.push({ id: "p-1-4-01", maxDistractors: 1, code: "garden_life <-\n  readxl::read_excel(\n    \"data/raw/my_covid_garden.xlsx\",\n    sheet = \"garden_life\",\n    skip = 2\n  )\nread_csv(\"data/raw/my_covid_garden.xlsx\") #distractor" });
 </script>
 :::
 
@@ -727,12 +722,7 @@ It is important to consider when a file should be written to your hard drive. De
 </div>
 
 <script>
-window.parsonsProblems = window.parsonsProblems || [];
-window.parsonsProblems.push({
-  id: "p-1-4-02",
-  maxDistractors: 1,
-  code: "write_csv(my_garden, \"data/raw/temp.csv\")\ncheck <- read_csv(\"data/raw/temp.csv\")\nfile.remove(\"data/raw/temp.csv\")\nwrite_csv(\"data/raw/temp.csv\", my_garden) #distractor"
-});
+window.parsonsProblems = window.parsonsProblems || []; window.parsonsProblems.push({ id: "p-1-4-02", maxDistractors: 1, code: "write_csv(my_garden, \"data/raw/temp.csv\")\ncheck <- read_csv(\"data/raw/temp.csv\")\nfile.remove(\"data/raw/temp.csv\")\nwrite_csv(\"data/raw/temp.csv\", my_garden) #distractor" });
 </script>
 :::
 

@@ -1,82 +1,111 @@
 ---
-title: "Module 6: Classifying spatial and non-spatial objects"
+title: "Module 6: Raster data with terra"
 format: live-html
 ---
 
 ```{r}
 #| include: false
 
+source("src/r/course_functions.R")
 source("src/r/reference_lookup.R")
 
 module_refs <- find_module_references(6)
 ```
 <hr>
 
-![](../../src/images/hex_complex.png){.intro_image}
+![](../../src/images/hex_complex.png){.intro_image fig-alt="Course logo"}
 
-In this module we will explore how to classify data into categories and reclassify existing categories. This is often a super important task when doing spatial analyses! Specifically, you will learn how to:
+Modules 3 to 5 worked with features: things somebody decided were worth recording separately, each with a geometry and a row of its own. Elevation, temperature, canopy cover and land cover are not like that. They have a value everywhere, and the data model that records them is a grid.
 
-* Classify and reclassify objects using base R (`cut()`) and *stringr* and *dplyr* functions (both are **core tidyverse** packages);
-* Create and modify factor data with the **core tidyverse** *forcats* package;
-* Apply these techniques to spatial data.
+This module is about that model and the package that handles it. *terra* is the current package for raster data in R, and *tidyterra* supplies the *dplyr* verbs and the *ggplot2* geoms that let a raster be handled with the vocabulary the rest of this course has been building. Most of the work happens on one landscape: the Smithsonian Conservation Biology Institute campus, where this course is taught.
 
-*Note: Please continue to ignore references to the folder structure from our data science class.*
+In this module you will learn:
+
+* What a raster is, how a `SpatRaster` records one, and what a *stars* data cube adds
+* How to calculate with a raster, and how to pull values out of one at the places you care about
+* How to build classes out of a quantity, and how to work with a raster whose values are already classes
+* How to move between rasters and the vector data of the previous modules, in both directions
+* How to read a landscape out of an elevation model
+* How to build a finished raster map, and how to hand one to a reader who can pan and zoom it themselves
 
 ## Module overview
 
-* **6.1 Categorizing data**: In this video lesson (runtime: 28:06) and written tutorial you will learn base R, *stringr*, and *dplyr* methods for classifying and reclassifying continuous and categorical data.
-* **6.2 Factors are forcats**: This video lesson (runtime: 25:46) and compendium tutorial will really unlock the power of using the *forcats* package for classifying and reclassifying factors. I have spent the majority of my life trying to avoid factors ... with the *forcats* package I am all in!
-* **6.3 Categorizing non-spatial and spatial data**: In this video lesson (runtime: 32:14) and written tutorial, we will learn how to apply our base R and tidyverse classification tools to shapefile and raster data!
+* **6.1 Introduction to rasters with terra and stars**: What a `SpatRaster` is, how to read and draw one, how to put two rasters onto one grid, the *dplyr* verbs *tidyterra* supplies, the *stars* cube for data with a third axis, and writing a raster to a file.
+* **6.2 Modifying rasters and extracting useful information**: Map algebra, the four kinds of raster calculation, and reading raster values at points and summarizing them within polygons.
+* **6.3 Raster classification**: Building classes out of a quantity with `classify()`, the table of labels a categorical raster carries, and merging classes without changing cells by accident.
+* **6.4 Vectorizing rasters and rasterizing vectors**: Cropping and masking with a polygon, turning a vector into a raster, and turning a raster back into points, lines or polygons.
+* **6.5 Terrain models**: Slope, aspect and the other terrain variables, hillshading, and rendering a landscape in three dimensions with *rayshader*.
+* **6.6 Advanced tmap**: Building a finished raster map: layered rasters and vectors, legends, insets and layouts.
+* **6.7 Introduction to leaflet** (optional): The shortest path from a raster to a map a reader can pan and zoom.
 
-**Problem Set** (due 5 Oct): Environmental equity
+**Problem Set**: A mountain holiday for Tara
 
 ## Getting started
 
-Please complete the following steps *prior* to beginning this week's lessons:
+Download `module_6_files.zip` and:
 
-* Download [module_6_files.zip]{.mono} and:
-    * Place the file [bird_cicadas_lc.rds]{.mono} inside of the [data/processed]{.mono} folder
-    * Place the file [forcats_data.rds]{.mono} inside of the [data/raw]{.mono} folder
-    * Place the R script files ([*.R]) inside of the [scripts]{.mono} folder 
+* Place the folder `gis_scbi` inside `data/raw`. *Note: Please place the folder itself in that location, not the files within it, and do not change its name.*
+* Place any `*.tif` files that are not inside that folder in `data/raw/rasters`.
 
-***Important!***: *terra* will attempt to temporarily store raster files in your computer's memory. If it is unable to do so, it will store the data as a hidden temporary file on your hard drive Be sure to clear up enough space in your hard disk (at least 5 GB) to complete *terra* operations. If it is unable to store the file, you will get a very vague message about running out of memory (but this message actually has to do with running of hard disk space).
+Every lesson also loads `source_script_module_3.R` from `scripts`, which supplies `clean_names()` and `lonlat_to_utm()`.
+
+Run the following to install the packages this module adds:
+
+```{r}
+#| eval: false
+
+install.packages(
+  c(
+    "ggnewscale",
+    "leaflet",
+    "rayshader",
+    "stars",
+    "terra",
+    "tidyterra"
+  )
+)
+```
+
+***Important!***: *terra* will attempt to hold raster values in your computer's memory, and will write them to a temporary file on your hard drive when it cannot. Clear enough space on your disk to work comfortably. When *terra* is unable to store a file, the message you receive names memory rather than disk space, which sends most people looking in the wrong place.
 
 ## About this week's data
 
-This week we will use the following data files in our exercises:
+<button class="accordion">Please click on the button below to explore the data that we will use in this module!</button>
 
-[**birds_cicadas_lc.rds**]{.mono}:  This is a list object associated with a Smithsonian Migratory Bird Center study on a bird mortality event that occurred in 2021 (you can read about the event at [this link](https://www.scientificamerican.com/article/suspect-list-narrows-in-mysterious-bird-die-off/){target="_blank"}). The data includes information on sick birds, cicada observations, and the land cover associated with each observation. The bird data are from a wildlife rescue agency in the District of Columbia, the land cover data were obtained from the [Multi-Resolution Land Characteristics Consortium (MRLC)](https://www.mrlc.gov/data){target="_blank"}, and the cicada data were obtained from iNaturalist using the R package rinat.
+::: panel
 
-[**canopy_cover.tif**]{.mono}:  This is geotiff raster obtained from the [Multi-Resolution Land Characteristics Consortium (MRLC)](https://www.mrlc.gov/data){target="_blank"} that describes the canopy cover in the greater Washington DC region. Cell values are continuous and represent the percentage of each cell that is covered by tree canopy.
+```{r}
+#| echo: false
+#| output: asis
 
-[**dc_census.geojson**]{.mono}: This is a shapefile from the US Census Bureau that provides tract-level census data for the District of Columbia. The data were downloaded using the *tigris* and *tidycensus* packages in R.
+cat(dataset_markdown(.module = 6))
+```
 
-[**dc_crimes.csv**]{.mono}: Crime data were obtained from <a href="https://opendata.dc.gov/" target="_blank">Open Data DC</a>. This is a tabular dataset and each row represents the record for an individual crime committed.
-
-[**forcats_data.rds**]{.mono}:  This is a list object with example data that we will use in our forcats lesson. The list contains three character vectors and a small subset of the Smithsonian Migratory Bird Center’s banding data that we have used in the past.
-
-[**impervious_surface.tif**]{.mono}: This is geotiff raster obtained from the [Multi-Resolution Land Characteristics Consortium (MRLC)](https://www.mrlc.gov/data){target="_blank"} that describes the impervious surface cover in the greater Washington DC region. Cell values are continuous and represent the percentage of each cell that is covered by man-made materials (e.g., pavement, sidewalks, rooftops).
-
-[**nlcd.tif**]{.mono}: This is geotiff raster obtained from the [Multi-Resolution Land Characteristics Consortium (MRLC)](https://www.mrlc.gov/data){target="_blank"} that describes the land cover in the greater Washington DC region. Values are categorical and each value represents the dominant land cover class ([link](https://www.mrlc.gov/data/legends/national-land-cover-database-class-legend-and-description){target="_blank"}) of each cell.
-
-[**sick_birds.geojson**]{.mono}: This is a point shapefile that represents sick birds that were brought to City Wildlife, a wildlife rehabilitation center in the District of Columbia, in the spring of 2021. These data were obtained directly from City Wildlife staff.
+:::
 
 ## Readings and resources
 
-### **Readings:**
+### **Required readings:**
 
-Wickham & Grolemund:
+Lovelace, Nowosad & Muenchow, *Geocomputation with R*:
 
--   [14 Strings](https://r4ds.had.co.nz/strings.html){target="_blank"}
--   [15 Factors](https://r4ds.had.co.nz/factors.html#factors){target="_blank"}
+-   [2.3: Raster data](https://r.geocompx.org/spatial-class#raster-data){target="_blank"}
+-   [4.3: Spatial operations on raster data](https://r.geocompx.org/spatial-operations#spatial-ras){target="_blank"}
+-   [6: Raster-vector interactions](https://r.geocompx.org/raster-vector){target="_blank"}
 
-Lovelace:
+### **Further reading:**
 
--   [6.4 Rasterization](https://geocompr.robinlovelace.net/raster-vector.html#rasterization){target="_blank"}
+Hernangómez, D. (2023). Using the tidyverse with terra objects: the tidyterra package. *Journal of Open Source Software*, 8(91), 5751. [https://doi.org/10.21105/joss.05751](https://doi.org/10.21105/joss.05751){target="_blank"}
 
-### **Cheatsheets**:
+Lovelace, Nowosad & Muenchow, *Geocomputation with R*:
 
--   [forcats](https://rstudio.github.io/cheatsheets/html/factors.html){target="_blank"}
--   [stringr](https://rstudio.github.io/cheatsheets/html/strings.html){target="_blank"}
+-   [5.3: Geometry operations on raster data](https://r.geocompx.org/geometry-operations#geo-ras){target="_blank"}
+-   [7.8: Reprojecting raster geometries](https://r.geocompx.org/reproj-geo-data#reproj-ras){target="_blank"}
+
+### **Documentation and cheatsheets**:
+
+-   [tidyterra](https://dieghernan.github.io/tidyterra/){target="_blank"}
+-   [rayshader](https://www.rayshader.com/){target="_blank"}
+-   [Spatial manipulation with sf](https://github.com/rstudio/cheatsheets/blob/main/sf.pdf){target="_blank"}
 
 {{< include /src/includes/_reference_section_intro.qmd >}}

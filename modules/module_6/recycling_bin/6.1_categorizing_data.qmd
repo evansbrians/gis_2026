@@ -63,7 +63,7 @@ Please do the following to ensure that you are working in a clean session:
 
 1. In the *Environment* tab of your *workspace pane*, ensure that your *Global Environment* is empty. If it is not, click the *broom* to remove all objects. *Note: Conversely, you can remove all items with `rm(list = ls())`*.
 2. In the *History* tab of your *workspace pane*, ensure that your history is empty. If it is not, click the *broom* to remove your history.
-3. Open the script file [categorize.R]{.mono} (Windows: [Ctrl + O]{.mono}; Mac: [Cmd + O]{.mono}).
+3. Open the script file `categorize.R` (Windows: `Ctrl + O`; Mac: `Cmd + O`).
 
 ## Video content
 
@@ -73,7 +73,7 @@ Please do the following to ensure that you are working in a clean session:
 
 In this written portion of the tutorial, we will again attach the core packages in the tidyverse to our current session and:
 
-* Read in [data/processed/birds_cicadas_lc.rds]{.mono};
+* Read in `data/processed/birds_cicadas_lc.rds`;
 * Extract the list item assigned to the name `cicadas` with `pluck()`;
 * Globally assign the object to the name `cicadas`.
 
@@ -416,7 +416,7 @@ tibble(x = 1:5) %>%
   )
 ```
 
-We can also add categories for missing values. By default, these will be classified as [NA]{.mono}:
+We can also add categories for missing values. By default, these will be classified as `NA`:
 
 ```{r}
 tibble(

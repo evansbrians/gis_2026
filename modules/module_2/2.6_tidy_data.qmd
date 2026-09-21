@@ -493,9 +493,9 @@ observations
 
 Converting those columns to numeric is a **data cleaning** step. Cleaning corrects the *content* of a dataset, which includes classes, units, misspellings, impossible values, and missing data codes. Tidying corrects the *structure* of a dataset, which is what the three rules govern. A dataset can be perfectly tidy and full of errors, and it can be scrupulously clean and completely untidy. The distinction matters because:
 
-* Tidying and cleaning are done for different reasons  
+* Tidying and cleaning are done for different reasons
 * Tidying and cleaning are typically done at different points in a workflow
-* A tidy dataset is far easier to clean than a messy one. 
+* A tidy dataset is far easier to clean than a messy one.
 
 Now that each variable has a column, we can convert all four of them in one step. The *dplyr* function `across()` applies the same change to a selection of columns, and we call it inside `mutate()`. Within `across()` we supply the following arguments:
 
@@ -721,12 +721,7 @@ You will meet `weather_tidy.rds` again in later lessons, and it will be a great 
    </div>
 
    <script>
-   window.parsonsProblems = window.parsonsProblems || [];
-   window.parsonsProblems.push({
-     id: "p-2-6-01",
-     maxDistractors: 1,
-     code: "read_csv(\"data/raw/messy_weather.csv\") %>%\n  pivot_longer(\n    march_1:march_31,\n    names_to = \"day\",\n    values_to = \"value\"\n  )\n    names_to = \"value\", #distractor"
-   });
+   window.parsonsProblems = window.parsonsProblems || []; window.parsonsProblems.push({ id: "p-2-6-01", maxDistractors: 1, code: "read_csv(\"data/raw/messy_weather.csv\") %>%\n  pivot_longer(\n    march_1:march_31,\n    names_to = \"day\",\n    values_to = \"value\"\n  )\n    names_to = \"value\", #distractor" });
    </script>
 :::
 

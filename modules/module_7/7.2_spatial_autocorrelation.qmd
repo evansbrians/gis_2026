@@ -66,7 +66,7 @@ lesson_metadata(
 
 ## Video lesson
 
-Notes: 
+Notes:
 
 * You will see me complain about my usage of hanging parentheses ... but that is now (usually) my preference!
 * Your script will not exactly match my video script. Wherever possible, I have modified the script to adhere to the course style guide (e.g., indentation) and replaced single quotes with double quotes.
@@ -245,7 +245,7 @@ rando_points %>%
   )
 ```
 
-But the level of improvement is minimal -- there are now more points per raster cell, however points are still rather difficult to observe. We can improve this by aggregating the data even further. I like to aim towards a target resolution that might make sense. 
+But the level of improvement is minimal -- there are now more points per raster cell, however points are still rather difficult to observe. We can improve this by aggregating the data even further. I like to aim towards a target resolution that might make sense.
 
 For example, perhaps my goal is to determine the number of samples per square kilometer (1 km^2^ is 1000 x 1000m). I can use the resolution of the current raster cells to determine how many cells I need to aggregate. We can use `terra::res()` to return a vector with the x and y resolution of a raster:
 

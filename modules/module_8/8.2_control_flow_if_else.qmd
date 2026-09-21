@@ -30,7 +30,7 @@ rm(has_annotations)
 <div>
 ![](../../src/images/hex_complex.png){.intro_image}
 
-**Control flow** operations are processes that modify the order in which your computer executes code (and sometimes whether that code is executed at all!). We have used control flow operations previously -- for example, when we use `purrr::map()` we are conducting a control flow operation. In this lesson, which includes only a video, we will deal with operations that determine whether a given code is run or not run -- this is the purview of *if else* or, as it is written in R, `if(TRUE) {this} else {that}`. Along the way, we will review and look at applications of `purrr::map()` where the function is super useful! 
+**Control flow** operations are processes that modify the order in which your computer executes code (and sometimes whether that code is executed at all!). We have used control flow operations previously -- for example, when we use `purrr::map()` we are conducting a control flow operation. In this lesson, which includes only a video, we will deal with operations that determine whether a given code is run or not run -- this is the purview of *if else* or, as it is written in R, `if(TRUE) {this} else {that}`. Along the way, we will review and look at applications of `purrr::map()` where the function is super useful!
 
 **Important!** Before starting this tutorial, be sure that you have completed all preliminary and previous lessons!
 
@@ -60,7 +60,7 @@ Please do the following to ensure that you are working in a clean session:
 
 1. In the *Environment* tab of your *workspace pane*, ensure that your *Global Environment* is empty. If it is not, click the *broom* to remove all objects. *Note: Conversely, you can remove all items with `rm(list = ls())`*.
 2. In the *History* tab of your *workspace pane*, ensure that your history is empty. If it is not, click the *broom* to remove your history.
-3. Open the script file [control_flow_if_else.R]{.mono} (Windows: [Ctrl + O]{.mono}; Mac: [Cmd + O]{.mono}).
+3. Open the script file `control_flow_if_else.R` (Windows: `Ctrl + O`; Mac: `Cmd + O`).
 
 ## Video content
 

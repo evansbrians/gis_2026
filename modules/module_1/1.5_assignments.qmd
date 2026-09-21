@@ -519,12 +519,7 @@ Reorder the lines below to assign a version of `bad_df` in which `BED` and `Ligh
 </div>
 
 <script>
-window.parsonsProblems = window.parsonsProblems || [];
-window.parsonsProblems.push({
-  id: "p-1-5-01",
-  maxDistractors: 1,
-  code: "clean_df <-\n  rename(\n    bad_df,\n    bed = BED,\n    light_access = LightAccess\n  )\nrename(bed = BED, bad_df) #distractor"
-});
+window.parsonsProblems = window.parsonsProblems || []; window.parsonsProblems.push({ id: "p-1-5-01", maxDistractors: 1, code: "clean_df <-\n  rename(\n    bad_df,\n    bed = BED,\n    light_access = LightAccess\n  )\nrename(bed = BED, bad_df) #distractor" });
 </script>
 :::
 
@@ -948,12 +943,7 @@ Piped code can be readily explored! In this video, I demonstrate a process that 
 </div>
 
 <script>
-window.parsonsProblems = window.parsonsProblems || [];
-window.parsonsProblems.push({
-  id: "p-1-5-02",
-  maxDistractors: 1,
-  code: "my_list_add_names %>%\n  names() %>%\n  tolower() %>%\n  set_names(my_list_add_names, .)\nset_names(., my_list_add_names) #distractor"
-});
+window.parsonsProblems = window.parsonsProblems || []; window.parsonsProblems.push({ id: "p-1-5-02", maxDistractors: 1, code: "my_list_add_names %>%\n  names() %>%\n  tolower() %>%\n  set_names(my_list_add_names, .)\nset_names(., my_list_add_names) #distractor" });
 </script>
 :::
 

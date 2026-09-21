@@ -617,8 +617,7 @@ Which grouping method would you use for each of the following, and why?
 
 ## Putting it all together
 
-At this point my hope is that you have a mental model for grouped operations. Choosing the operation
-might look something like this (click to expand):
+At this point my hope is that you have a mental model for grouped operations. Choosing the operation might look something like this (click to expand):
 
 ![](../../src/images/decision_trees/grouped_operations.svg){.zoomable data-title="Decision tree: Choosing the operation" data-pdf-key="grouped_operations" fig-alt="Decision tree. The first question is what result you want. A subset of the existing rows leads to a further question, how the rows should be chosen: by a condition gives filter(), and by rank gives slice_max() or slice_min(). Every row, with a new variable, gives mutate(). One row for each group leads to a further question, what that row should contain: only a count gives count() or summarize(), and summary statistics give summarize()."}
 
@@ -690,12 +689,7 @@ As in ***2.1 Introduction to subsetting and extraction***, these trees are a vis
    </div>
 
    <script>
-   window.parsonsProblems = window.parsonsProblems || [];
-   window.parsonsProblems.push({
-     id: "p-2-3-01",
-     maxDistractors: 1,
-     code: "measures %>%\n  slice_max(\n    mass,\n    n = 1,\n    by = spp\n  )\n    .by = spp #distractor"
-   });
+   window.parsonsProblems = window.parsonsProblems || []; window.parsonsProblems.push({ id: "p-2-3-01", maxDistractors: 1, code: "measures %>%\n  slice_max(\n    mass,\n    n = 1,\n    by = spp\n  )\n    .by = spp #distractor" });
    </script>
 :::
 

@@ -69,10 +69,10 @@ Please do the following to ensure that you are working in a clean session:
 
 Now that we are working in a clean session:
 
-1. Create a script file (Windows: [Ctrl + Shift + N]{.mono}; Mac: [Cmd + Shift + N]{.mono}).
-2. Save your script file as "[scripts/function_in_focus_written_content.R]{.mono}".
+1. Create a script file (Windows: `Ctrl + Shift + N`; Mac: `Cmd + Shift + N`).
+2. Save your script file as "`scripts/function_in_focus_written_content.R`".
 3. Add metadata as a comment on the top of the file (e.g., `# My code for the function in focus tutorial`).
-4. Following your metadata, create a new **code section** (Windows: [Ctrl + Shift + R]{.mono}; Mac: [Cmd + Shift + R]{.mono}) and call it "`setup`".
+4. Following your metadata, create a new **code section** (Windows: `Ctrl + Shift + R`; Mac: `Cmd + Shift + R`) and call it "`setup`".
 5. Following your section header, attach the `sf` package and the packages that comprise the **core tidyverse** (`library(tidyverse)`)
 
 At this point, your script should look something like:
@@ -145,7 +145,7 @@ multiply_by_two <-
   }
 ```
 
-Note: The other operations that we have conducted in this class allow you to place your cursor anywhere within the code block and hit [Ctrl + Enter]{.mono} (Windows) or [Cmd + Enter]{.mono} (Mac) to run your code. When assigning a function to your global environment, however, you can only run the full code block if your cursor is placed anywhere *outside* of the curly braces. We will discuss why this happens soon!
+Note: The other operations that we have conducted in this class allow you to place your cursor anywhere within the code block and hit `Ctrl + Enter` (Windows) or `Cmd + Enter` (Mac) to run your code. When assigning a function to your global environment, however, you can only run the full code block if your cursor is placed anywhere *outside* of the curly braces. We will discuss why this happens soon!
 
 In the above, we:
 
@@ -526,7 +526,7 @@ populations_co2 %>%
   summary()
 ```
 
-... because the population data contain an [NA]{.mono} value! 
+... because the population data contain an `NA` value! 
 
 As we know, we can use `na.rm = TRUE` inside of `sum()` to avoid this error:
 
@@ -545,7 +545,7 @@ calculate_total_co2_yr <-
 calculate_total_co2_yr(2015)
 ```
 
-Perhaps we do not always want to remove [NA]{.mono} values though? For example, the presence of [NA]{.mono} values are very important if we are calculating global CO~2~ emissions! 
+Perhaps we do not always want to remove `NA` values though? For example, the presence of `NA` values are very important if we are calculating global CO~2~ emissions! 
 
 We can address this by making it a formal of our function:
 

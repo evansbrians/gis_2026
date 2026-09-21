@@ -6,6 +6,7 @@ format: live-html
 ```{r}
 #| include: false
 
+source("src/r/course_functions.R")
 source("src/r/reference_lookup.R")
 
 module_refs <- find_module_references(7)
@@ -34,12 +35,12 @@ In this module we will go deeper into our exploration of raster data! You will l
 
 Please complete the following steps *prior* to beginning this week's lessons:
 
-* Download [module_7_files.zip]{.mono} and:
-    * Place the folder [gis_scbi]{.mono} inside of the [data/raw]{.mono} folder
-    * Place any remaining [*.rds]{.mono} or [*.csv]{.mono files} inside of the [data/raw]{.mono} folder
-    * Place any remaining [*.geojson]{.mono} files inside of the [data/raw/shapefiles]{.mono} folder
-    * Place any remaining [*.tif]{.mono} files inside of the [data/raw/rasters]{.mono} folder
-    * Place any R script files ([*.R]) inside of the [scripts]{.mono} folder 
+* Download `module_7_files.zip` and:
+    * Place the folder `gis_scbi` inside of the `data/raw` folder
+    * Place any remaining `*.rds` or `*.csv` files inside of the `data/raw` folder
+    * Place any remaining `*.geojson` files inside of the `data/raw/shapefiles` folder
+    * Place any remaining `*.tif` files inside of the `data/raw/rasters` folder
+    * Place any R script files ([*.R]) inside of the `scripts` folder
 * Run the following to install several new packages!
 
 ```{r}
@@ -61,49 +62,17 @@ install.packages(
 
 This week we will use the following data files in our exercises:
 
-**[birds_cicadas_lc.rds]{.mono}**: This is the list of files that we used in the categorize video. For this module, we will only use:
+```{r}
+#| echo: false
+#| output: asis
 
--   [nlcd_key]{.mono}: A key to the National Land Cover Database classified raster that includes the land cover class (id), the class name, color value intended to be used for a class, and the class description. If you work with spatial data, this might be really handy to have!
-
-**[canopy_cover.tif]{.mono}**: This is geotiff raster obtained from the [Multi-Resolution Land Characteristics Consortium (MRLC)](https://www.mrlc.gov/data){target="_blank"} that describes the canopy cover in the greater Washington DC region. Cell values are continuous and represent the percentage of each cell that is covered by tree canopy.
-  
-**[dc_census.geojson]{.mono}**: This is a polygon shapefile (EPSG 32618; UTM Zone 18N) from the US Census Bureau that provides tract-level census data for the District of Columbia. The data were downloaded using the *tigris* and *tidycensus* packages in R.
-
-**[dc_crimes.csv]{.mono}**: This is a tabular that provides the location and types of crimes in the District of Columbia from 2019-2021. The data were collected with the CRS EPSG 4326 and downloaded from [Open Data DC](https://opendata.dc.gov/){target="_blank"}.
-
-**[dc_forests.geojson]{.mono}**: This is a polygon shapefile of forested land in Washington DC. Each polygon represents an individual forest and represent a subset of the original file (to polygon areas greater than 9 hectares). The data were obtained from [Open Data DC](https://opendata.dc.gov/){target="_blank"} and the CRS is EPSG 4326.
-
-**[dc_land.geojson]{.mono}**: This is a multipolygon shapefile of land (as opposed to water) in Washington DC. We made this (or something very similar) in one of the earlier video lessons. The CRS is projected (NAD83/Conus Albers; EPSG 5070).
-
-**[dc_rivers.geojson]{.mono}**: This is a polygon shapefile of water bodies that are classified as "River" in Washington DC. The data were derived from the Water Bodies shapefile obtained from [Open Data DC](https://opendata.dc.gov/){target="_blank"} and the CRS is EPSG 4326.
-
-**[dc_stack.tif]{.mono}**: This is geotiff a raster stack of land cover files from [Multi-Resolution Land Characteristics Consortium (MRLC)](https://www.mrlc.gov/data){target="_blank"}. The resolution of the stack is 30 by 30 meters and the CRS of the object is EPSG 5070. Layers include canopy (proportion of canopy cover), imp (proportion of impervious surface), nlcd (classified land cover of each cell), and land (binary raster representing cells over land (as opposed to water).
-
-**[dc_street_trees.geojson]{.mono}**: This is a point shapefile of georeferenced street trees in Washington DC. Each point represents a single tree. Because the file is rather large, I subset the data to only trees where the crown area was greater than the median crown area across trees (n = 174,305 trees). The data were obtained from [Open Data DC](https://opendata.dc.gov/){target="_blank"} and are in an unprojected coordinate system (datum = WGS84).
-
-**[dc_tmax_july.tif]{.mono}**: This is a geotiff raster of maximum July temperatures in the greater Washington DC region, averaged over a 30-year period. These data were modeled by, and obtained from, the Prism Climate Group at Oregon State University ([link](https://prism.oregonstate.edu/){"target=_blank"}). The resolution of these data are roughly 800 x 800 m and the CRS is unprojected (EPSG 4269).
-
-**[dem_dc_10m.tif]{.mono}**: This is geotiff raster of elevation in Washington DC. Elevation values are provided in meters above sea level. The data were obtained from the [National Map download tool](https://apps.nationalmap.gov/downloader/){target="_blank"}. The resolution of the raster is approximately 9 x 9 m and the CRS is EPSG 5070 (NAD83/Conus Albers).
-
-**[impervious_surface.tif]{.mono}**: This is geotiff raster obtained from the [Multi-Resolution Land Characteristics Consortium (MRLC)](https://www.mrlc.gov/data){target="_blank"} that describes the impervious surface cover in the greater Washington DC region. Cell values are continuous and represent the percentage of each cell that is covered by man-made materials (e.g., pavement, sidewalks, rooftops).
-
-**[inat_scbi.geojson]{.mono}**:  iNaturalist point shapefile observations from the campus of the Smithsonian-Mason School of Conservation in 2024. The data were downloaded using the R package *rinat* and are in the unprojected coordinate reference system EPSG 4326.
-
-**[lc_key_warren_county_va.csv]{.mono}**: These data are formatted as a tibble data frame and represent a land cover key for Warren County, Virginia (where the Smithsonian-Mason School of Conservation is located).
-
-**[roads_scbi.geojson]{.mono}**: Linestring shapefile of roads within the spatial extent of the Smithsonian Conservation Biology Institute. The data were obtained using the [National Map download tool](https://apps.nationalmap.gov/downloader/){target="_blank"} and are in an unprojected CRS (EPSG 4326).
-
-**[scbi_canopy_cover.tif]{.mono}**: Proportion of canopy cover within a 30m resolution map pixel, subset to the spatial extent of the Smithsonian Conservation Biology Institute. The data were obtained using the [MRLC viewer tool](https://www.mrlc.gov/viewer/){target="_blank} and are in an unprojected CRS (EPSG 4269).
-
-**[scbi_dem.tif]{.mono}**: Digital elevation model (raster; 10m resolution), subset to the spatial extent of the Smithsonian Conservation Biology Institute. The data were obtained using the [National Map download tool](https://apps.nationalmap.gov/downloader/){target="_blank"} and are in an unprojected CRS (EPSG 4269).
-
-**[scbi_lc.tif]{.mono}**: Classified land cover (raster; 1m resolution), subset to the spatial extent of the Smithsonian Conservation Biology Institute. The data were obtained using the [Chesapeake Conservancy tool](https://cicgis.org/portal/apps/webappviewer/index.html?id=bdf7ca3e249a40fd9a9d83d6e16100ea&extent=-88.252,35.0981,-62.3462,45.7489){target="_blank"} and are in an unprojected CRS (EPSG 4269)
-
-**[smsc_campus_scbi.geojson]{.mono}**: Shapefile that describes the boundaries of the Smithsonian-Mason-School of Conservation campus. Brian digitized this file by hand (poorly) and the data are in an unprojected CRS (EPSG 4326).
+cat(dataset_markdown(.module = 7))
+```
 
 *Note: The above does not include data that are used for this week's problem set. A description of those data are included in the instructions for the assignment.*
 
 ## Readings and resources
+
 
 ### Readings (optional)
 

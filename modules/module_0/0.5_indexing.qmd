@@ -755,12 +755,7 @@ Because of this behavior, I like to think of `[...]` as representing the word "w
 </div>
 
 <script>
-window.parsonsProblems = window.parsonsProblems || [];
-window.parsonsProblems.push({
-  id: "p-0-5-02",
-  maxDistractors: 1,
-  code: "my_object[my_object &gt; 1]\nmy_object[which(my_object &gt; 1)] #distractor"
-});
+window.parsonsProblems = window.parsonsProblems || []; window.parsonsProblems.push({ id: "p-0-5-02", maxDistractors: 1, code: "my_object[my_object &gt; 1]\nmy_object[which(my_object &gt; 1)] #distractor" });
 </script>
 :::
 
@@ -924,12 +919,7 @@ filter(
 </div>
 
 <script>
-window.parsonsProblems = window.parsonsProblems || [];
-window.parsonsProblems.push({
-  id: "p-0-5-03",
-  maxDistractors: 1,
-  code: "my_list[[3]] &lt;-\n  my_data_frame\nfilter(\n  pluck(my_list, 3),\n  words == \"hello\"\n)\n  my_list, #distractor"
-});
+window.parsonsProblems = window.parsonsProblems || []; window.parsonsProblems.push({ id: "p-0-5-03", maxDistractors: 1, code: "my_list[[3]] &lt;-\n  my_data_frame\nfilter(\n  pluck(my_list, 3),\n  words == \"hello\"\n)\n  my_list, #distractor" });
 </script>
 
 2. Which of the following is TRUE about recursive data objects?

@@ -55,13 +55,9 @@ An **environment** is a data structure that associates a set of **names** (also 
 
 <figure style="margin-bottom: 2em; text-align: center;">
   <img
-    src = "../../src/images/global_enviro.png"
-    width = "90%"
-    alt = "Diagram of an environment associating names with objects in memory">
+    src = "../../src/images/global_enviro.png" width = "90%" alt = "Diagram of an environment associating names with objects in memory">
   <figcaption style="font-size: 0.8em; font-style: italic; margin-top: 15px;">
-    Adapted from <a
-          href = "https://adv-r.hadley.nz/environments.html"
-          target="_blank">Advanced R</a> by Hadley Wickham
+    Adapted from <a href = "https://adv-r.hadley.nz/environments.html" target="_blank">Advanced R</a> by Hadley Wickham
   </figcaption>
 </figure>
 
@@ -310,12 +306,7 @@ mean(
 </div>
 
 <script>
-window.parsonsProblems = window.parsonsProblems || [];
-window.parsonsProblems.push({
-  id: "p-0-2-01",
-  maxDistractors: 1,
-  code: "mean(\n  c(5, 8, 13, NA),\n  na.rm = TRUE\n)\n  na.rm = \"TRUE\" #distractor"
-});
+window.parsonsProblems = window.parsonsProblems || []; window.parsonsProblems.push({ id: "p-0-2-01", maxDistractors: 1, code: "mean(\n  c(5, 8, 13, NA),\n  na.rm = TRUE\n)\n  na.rm = \"TRUE\" #distractor" });
 </script>
 :::
 
@@ -430,12 +421,7 @@ Warning! In the early stages of learning R, or even later if you have not spent 
 </div>
 
 <script>
-window.parsonsProblems = window.parsonsProblems || [];
-window.parsonsProblems.push({
-  id: "p-0-2-02",
-  maxDistractors: 2,
-  code: "install.packages(\"tidyverse\")\nlibrary(tidyverse)\nstr_c(c(\"Hello\", \"world\"), collapse = \" \")\ninstall.packages(tidyverse) #distractor\nlibrary(str_c) #distractor"
-});
+window.parsonsProblems = window.parsonsProblems || []; window.parsonsProblems.push({ id: "p-0-2-02", maxDistractors: 2, code: "install.packages(\"tidyverse\")\nlibrary(tidyverse)\nstr_c(c(\"Hello\", \"world\"), collapse = \" \")\ninstall.packages(tidyverse) #distractor\nlibrary(str_c) #distractor" });
 </script>
 :::
 
@@ -757,12 +743,7 @@ By removing the assignment `hello` above, the data object "hello world" was left
 </div>
 
 <script>
-window.parsonsProblems = window.parsonsProblems || [];
-window.parsonsProblems.push({
-  id: "p-0-2-03",
-  maxDistractors: 2,
-  code: "hello &lt;- \"hello world\"\nhello\nrm(hello)\nhello() #distractor\nrm &lt;- hello #distractor"
-});
+window.parsonsProblems = window.parsonsProblems || []; window.parsonsProblems.push({ id: "p-0-2-03", maxDistractors: 2, code: "hello &lt;- \"hello world\"\nhello\nrm(hello)\nhello() #distractor\nrm &lt;- hello #distractor" });
 </script>
 :::
 

@@ -1,0 +1,652 @@
+---
+title: "4.2 Non-spatial joins"
+format: live-html
+---
+
+```{r}
+#| include: false
+
+library(sf)
+library(tidyverse)
+library(webexercises)
+
+source("src/r/course_functions.R")
+source("src/r/reference_lookup.R")
+
+lesson_refs <- find_lesson_references()
+```
+
+<hr>
+
+<div>
+![](../../src/images/hex_complex.png){.intro_image fig-alt="Course logo"}
+
+Tidy data often place different levels of observation in different tables. In these bird data, site coordinates, visits, counts, captures, and species traits belong to five different tables. This structure prevents us from repeating the same coordinates or traits across thousands of records, but an analysis often needs information from several tables. We combine that information with joins.
+
+In this lesson, we will use shared keys to decide which tables and joins answer a question. You will learn how to:
+
+* Identify primary, foreign, and compound keys
+* Choose the target and source tables for a join
+* Conduct mutating joins with `left_join()`, `inner_join()`, and `full_join()`
+* Conduct filtering joins with `semi_join()` and `anti_join()`
+* Predict and check the number of rows returned by a join
+* Join tables at the same level of observation
+* Join attributes to coordinates and map the result with *ggplot2*
+
+**Important!** Before starting this tutorial, be sure that you have completed all preliminary and previous lessons!
+
+</div>
+
+## Data for this lesson
+
+<button class="accordion">Please click on the button below to explore the metadata for this lesson!</button>
+::: panel
+In this lesson, we will explore:
+
+```{r}
+#| echo: false
+#| output: asis
+
+lesson_metadata(.dataset = "district_birds.rds") %>%
+  cat()
+```
+:::
+
+## Set up your session
+
+Please complete the following to ensure that you are working in a clean session:
+
+1. Please ensure that your **Global Environment** is empty.
+2. In the *History* tab of your **workspace pane**, ensure that your **session history** is empty.
+
+Now that we are working in a clean session:
+
+1. Create a script file.
+2. Save your script file as `scripts/nonspatial_joins.R`.
+3. Add metadata as a comment on the top of the file.
+4. Following your metadata, create a new **code section** and call it "`setup`".
+5. Following your section header, attach *sf* and the packages that comprise the **core tidyverse**.
+
+```{r}
+#| eval: false
+
+# My code for the non-spatial joins tutorial
+
+# setup --------------------------------------------------------
+
+library(sf)
+library(tidyverse)
+```
+
+The banding data are stored as a list of tibbles. We will read the list and assign the name of each tibble to the global environment:
+
+```{r}
+read_rds("data/raw/district_birds.rds") %>%
+  list2env(.GlobalEnv)
+```
+
+::: now_you
+{{< fa user-circle size=2x >}} [Now you!]{style="font-size: 1.25em; padding-left: 0.5em;"}
+
+Consult the metadata above and convert `sites` to an *sf* POINT object and assign to the name `sites`.
+
+[Click here to see my answer]{.answer_link data-answer="a-4-2-sites-sf"}
+
+::: {.answer_body #a-4-2-sites-sf}
+
+```{r}
+
+# Convert sites to an sf point object:
+
+sites <-
+  sites %>%
+  st_as_sf(
+    coords = c("long", "lat"),
+    crs = 4326
+  )
+```
+
+:::
+:::
+
+## On joining tables
+
+Below, we see how tables in a relational database are interconnected. Each connection is defined by primary and foreign keys (image source: Wickham and Grolemund):
+
+<div class = "row">
+<a href = "https://r4ds.had.co.nz/relational-data.html" title = "Relational data in R for Data Science" target = "_blank">
+<img src = "https://d33wubrfki0l68.cloudfront.net/245292d1ea724f6c3fd8a92063dcd7bfb9758d02/5751b/diagrams/relational-nycflights.png"
+alt = "Diagram of a flights table connected to airlines by carrier, airports by origin and destination, planes by tail number, and weather by airport and time."
+style = "float: right; margin-top: 1em; margin-bottom: 1em; width: 100%; height: auto;">
+</a>
+</div>
+
+The connections above represent common columns used to connect information across data frames. Before conducting a join, identify the target table and the source table:
+
+* **Source table**: A data frame that is referenced by the target table.
+* **Target table**: A data frame that you wish to join data to.
+
+A join combines two data frames by matching rows using one or more key variables. The variables used to match rows across tables are called **keys**, and they must represent the same information in both data frames.
+
+The target table typically contains the foreign key, while the source table contains the corresponding primary key. Their order can change with the question that we are asking. In this course, we will explore two classes of joins:
+
+* A **mutating join** adds variables to a table.
+* A **filtering join** subsets a table based on the values in another table.
+
+Take a moment to explore the following tables:
+
+```{r}
+sites
+
+visits
+
+counts
+
+captures
+
+birds
+```
+
+Each table represents a different level of observation, and shared keys connect the information among them. A **primary key** is one or more columns whose values uniquely identify every row and are never missing. A **foreign key** contains values that refer to a primary key in another table:
+
+* `sites` has one row per banding site. `site_id` is its primary key.
+* `visits` has one row per visit to a site. `visit_id` is its primary key, and `site_id` is a foreign key pointing at `sites`.
+* `counts` has one row per species count during a visit. `count_id` is its primary key, `visit_id` is a foreign key pointing at `visits`, and `spp` is a foreign key pointing at `birds`.
+* `captures` has one row per capture. `capture_id` is its primary key, `visit_id` is a foreign key pointing at `visits`, and `spp` is a foreign key pointing at `birds`.
+* `birds` has one row per species. `species` is its primary key.
+
+Those keys provide a map of the data. For example, we can obtain the coordinates associated with each capture through `visits`, and the traits of each captured species through `birds`.
+
+::: mysecret
+{{< fa user-secret size=2x >}} [Check that a primary key is unique before you trust it!]{style="font-size: 1.25em; padding-left: 0.5em;"}
+
+A single-column primary key contains no repeated or missing values. We can check each requirement directly:
+
+```{r}
+n_distinct(visits$visit_id) == nrow(visits)
+
+!anyNA(visits$visit_id)
+```
+
+`anyNA()` returns `TRUE` when an object contains one or more missing values, so negating it confirms that none are missing. Both tests return `TRUE`, so `visit_id` is unique and contains no missing values. A key with repeated values is the most common cause of a join that returns more rows than we expected. Be sure to check the key before the join rather than diagnosing the result afterward. We will extend the uniqueness check to compound keys below.
+
+:::
+
+## Mutating joins
+
+We will begin with mutating joins. `left_join()`, which we used in ***2.4 Reshaping data frames*** and ***3.5 Introduction to tmap***, is the mutating join that I use most often.
+
+We supply the following arguments:
+
+* The target table, passed to the function by a pipe
+* The source table, which supplies the columns
+* The keys that pair the rows, through the `by = ` argument and `join_by()`
+
+Let's add each captured bird's traits to the capture records. The foreign key is named `spp` in `captures`, while the corresponding primary key is named `species` in `birds`. Within `join_by()`, `spp == species` states how the differently named columns correspond:
+
+```{r}
+captures %>%
+  left_join(
+    birds,
+    by = join_by(spp == species)
+  )
+```
+
+Here, `captures` is the target and `birds` is the source. The result contains the original capture records with `common_name`, `foraging`, and `diet` added from `birds`.
+
+We can filter or subset the source table within the join when we need only some of its rows or columns. Be sure to retain the key used to match the tables. The inner join below uses both operations.
+
+### Which mutating join
+
+Joins differ in what they do with non-matching rows.
+
+`left_join()` retains every row of the target table. When a row has no match, the columns supplied by the source contain `NA`. This is the join I use most because it keeps the observations that I set out to describe.
+
+An `inner_join()` keeps only matching rows and adds the columns from both tables. Below, I use an inner join to subset `captures` to granivores and add the common name and foraging guild:
+
+```{r}
+captures %>%
+  inner_join(
+    birds %>%
+      filter(diet == "granivore") %>%
+      select(!diet),
+    by = join_by(spp == species)
+  )
+```
+
+A `full_join()` keeps the unmatched rows of both tables and returns a row for every matching pair. Columns from the table without a matching row contain `NA`.
+
+Let's see what happens when we use a `full_join()` to join `birds` to `captures`:
+
+```{r}
+captures %>%
+  full_join(
+    birds,
+    by = join_by(spp == species)
+  )
+```
+
+The result has 15 more rows than `captures`. The `birds` table describes 38 species and only 23 of them were ever captured, so a full join adds one row for each species that the banders never caught, with `NA` in every capture column.
+
+We can verify this by filtering the result for rows where `capture_id` is `NA`:
+
+```{r}
+captures %>%
+  full_join(
+    birds,
+    by = join_by(spp == species)
+  ) %>%
+  filter(
+    is.na(capture_id)
+  )
+```
+
+The `NA` values report that no matching capture row exists. Whether that absence represents a biological zero or missing information depends on how the data were collected, not on the join.
+
+### A join can add rows
+
+After a join, the number of rows depends on the type of join and on the number of matches for each key. Losing track of the level of observation can produce duplicated counts and misleading summaries.
+
+**A mutating join returns a row for every pair of matching rows.** When each key value appears once in the source table, a left join cannot increase the count. When a key value repeats, the join returns a row for each of them:
+
+```{r}
+sites %>%
+  left_join(
+    visits,
+    by = join_by(site_id)
+  ) %>%
+  nrow()
+```
+
+The join returns 1,394 rows from 80 sites, because each site was visited many times and the join returns a row for every visit. This is the expected behavior. The result is a table of visits with the site coordinates attached, which is a perfectly good object, and it is not a table of sites. Summarize its `long` and `lat` and you will average each site's coordinates as many times as it was visited.
+
+::: mysecret
+{{< fa user-secret size=2x >}} [Predict the row count before you run a join!]{style="font-size: 1.25em; padding-left: 0.5em;"}
+
+Is the key unique in the **source** table? If it is, a left join cannot increase the row count. If it is not, the result holds a row for every match, and you should have a sense of how many that will be before you join the data.
+
+After each join, I recommend checking the number of rows to ensure that it produced the expected result.
+:::
+
+::: now_you
+{{< fa user-circle size=2x >}} [Now you!]{style="font-size: 1.25em; padding-left: 0.5em;"}
+
+Attach each capture's site coordinates by joining `captures` to `visits`, and then to `sites`. Before you run it, predict the number of rows.
+
+*Hint: Ask whether the key is unique in each table being joined to.*
+
+[Click here to see my answer]{.answer_link data-answer="a-4-2-chain"}
+
+::: {.answer_body #a-4-2-chain}
+
+```{r}
+captures %>%
+  left_join(
+    visits,
+    by = join_by(visit_id)
+  ) %>%
+  left_join(
+    sites,
+    by = join_by(site_id)
+  ) %>%
+  nrow()
+```
+
+The result contains 6,835 rows, the number that we started with. The values of `visit_id` are unique in `visits` and the values of `site_id` are unique in `sites`, so neither join can add a row.
+
+:::
+:::
+
+### Joining tables at the same level of observation
+
+The third tidy data rule states that every level of observation forms a table. We most often apply this rule by separating different levels of observation, but two tables can also represent the same level. We join them when we need their variables together.
+
+Suppose that we want to compare daily Gray Catbird and Northern Cardinal counts at each site. We will begin by creating one table for each species:
+
+```{r}
+catbird_counts <-
+  counts %>%
+  filter(spp == "GRCA") %>%
+  left_join(
+    visits,
+    by = join_by(visit_id)
+  ) %>%
+  select(
+    site_id,
+    date,
+    n_catbirds = count
+  )
+
+cardinal_counts <-
+  counts %>%
+  filter(spp == "NOCA") %>%
+  left_join(
+    visits,
+    by = join_by(visit_id)
+  ) %>%
+  select(
+    site_id,
+    date,
+    n_cardinals = count
+  )
+```
+
+Both tables have one row per site and date. Neither `site_id` nor `date` identifies a row on its own. Their combined values do, so the two columns form a **compound key**:
+
+```{r}
+n_distinct(
+  catbird_counts$site_id,
+  catbird_counts$date
+) == nrow(catbird_counts)
+```
+
+We name every column in a compound key within `join_by()`. A full join fits this question because we want each site-date combination at which either species was recorded:
+
+```{r}
+catbird_counts %>%
+  full_join(
+    cardinal_counts,
+    by = join_by(site_id, date)
+  )
+```
+
+The result has one row per site-date combination and separate count columns for the two species. An `NA` means that the other table contained no matching row for that site and date. As above, the sampling protocol determines whether that absence should be interpreted as zero or as missing information.
+
+## Filtering joins
+
+`semi_join()` and `anti_join()` are filtering joins. They add no columns: `semi_join()` keeps target rows that have a match in the source, while `anti_join()` keeps those that do not.
+
+Let's determine which species were captured:
+
+```{r}
+birds %>%
+  semi_join(
+    captures,
+    by = join_by(species == spp)
+  ) %>%
+  nrow()
+```
+
+And which were never captured?
+
+```{r}
+birds %>%
+  anti_join(
+    captures,
+    by = join_by(species == spp)
+  )
+```
+
+Fifteen species appear in the trait table and in no capture record.
+
+An `anti_join()` is a great method for checking a key before trusting it. Every non-missing foreign-key value should have a matching primary-key value, and an anti-join returns the rows that do not. The table holding the foreign key goes first:
+
+```{r}
+visits %>%
+  anti_join(
+    sites,
+    by = join_by(site_id)
+  ) %>%
+  nrow()
+```
+
+The anti-join returns no rows, so every visit points at a site that the `sites` table contains.
+
+The order of the tables determines the question that the join answers. Reverse the two tables and the question changes to *which sites were never visited*:
+
+```{r}
+sites %>%
+  anti_join(
+    visits,
+    by = join_by(site_id)
+  ) %>%
+  nrow()
+```
+
+The reversed call also returns no rows, so the two results look alike for these data. They do not answer the same question. With `sites` as the target, the anti-join tests for sites without visits. It does not test whether each value of the foreign key `visits$site_id` has a match in `sites$site_id`.
+
+::: now_you
+{{< fa user-circle size=2x >}} [Check your understanding]{style="padding-left: 0.5em;"}
+
+A table of 500 observations is joined to a lookup table of 20 species with `left_join()`. The species column is unique in the lookup. How many rows does the result hold?
+
+`r longmcq(c(answer = "500", "20", "520", "10,000"))`
+
+Which join returns the rows of the first table that have no partner in the second, without adding columns?
+
+`r longmcq(c("full_join()", "left_join()", answer = "anti_join()", "semi_join()"))`
+
+True or false: `semi_join()` adds the columns of the second table to the first.
+
+`r torf(FALSE)`
+:::
+
+## Joining attributes to spatial data and mapping
+
+For these data, joins connect the capture records to the geometry that we need for a map. To map the number of captures at each site, we will summarize the captures by site and then join the result to `sites`.
+
+Let's use a `left_join()` to determine how many birds were captured at each site:
+
+```{r}
+captures %>%
+  left_join(
+    visits,
+    by = join_by(visit_id)
+  ) %>%
+  summarize(
+    n_captures = n(),
+    .by = site_id
+  ) %>%
+  left_join(
+    sites,
+    by = join_by(site_id)
+  )
+```
+
+The above used three operations, and their order matters. To map the data, we need the coordinates from `sites` but `site_id` is not in the `captures` table! Instead, we must:
+
+1. Join `visits` to `captures` to add a `site_id` column.
+2. Use the resultant object to `summarize()` the number of captures by `site_id`.
+3. Join `sites` to the resultant object by `site_id`.
+
+The result is a tibble containing an `sfc` geometry column rather than an *sf* object. The non-spatial summary was the target table, and a *dplyr* join returns the same class as its target.
+
+We can convert the result to an *sf* object after the join ...
+
+```{r}
+captures %>%
+  left_join(
+    visits,
+    by = join_by(visit_id)
+  ) %>%
+  summarize(
+    n_captures = n(),
+    .by = site_id
+  ) %>%
+  left_join(
+    sites,
+    by = join_by(site_id)
+  ) %>%
+  st_as_sf()
+```
+
+... or use a placeholder to make the *sf* object the target table:
+
+```{r}
+captures %>%
+  left_join(
+    visits,
+    by = join_by(visit_id)
+  ) %>%
+  summarize(
+    n_captures = n(),
+    .by = site_id
+  ) %>%
+  left_join(
+    sites,
+    .,
+    by = join_by(site_id)
+  )
+```
+
+We can map the returned *sf* object with *ggplot2*. The count is a continuous value, so we map it to both size and color. We set the color scale with `scale_color_viridis_c()`, which uses a perceptually uniform gradient designed to remain distinguishable for readers with color-vision deficiencies:
+
+```{r}
+#| fig-alt: "Banding sites across the greater Washington, D.C., region, drawn as points sized and colored by the number of birds captured. The sites are spread across a wide area, with capture totals ranging from a handful to more than two hundred."
+
+captures %>%
+  left_join(
+    visits,
+    by = join_by(visit_id)
+  ) %>%
+  summarize(
+    n_captures = n(),
+    .by = site_id
+  ) %>%
+  left_join(
+    sites,
+    .,
+    by = join_by(site_id)
+  ) %>%
+  ggplot() +
+
+  # Add geometry:
+
+  geom_sf(
+    aes(
+      size = n_captures,
+      color = n_captures
+    )
+  ) +
+
+  # Modify the scales:
+
+  scale_color_viridis_c("Captures") +
+  scale_size_continuous("Captures") +
+
+  # Modify the label and theme:
+
+  labs(title = "Birds captured per banding site") +
+  theme_bw()
+```
+
+::: now_you
+{{< fa user-circle size=2x >}} [Now you!]{style="font-size: 1.25em; padding-left: 0.5em;"}
+
+Map the number of insectivorous birds captured at each site. Use `birds` to decide which captures count.
+
+*Hint: You want to subset the captures rather than describe them, so a filtering join fits.*
+
+[Click here to see my answer]{.answer_link data-answer="a-4-2-insectivores"}
+
+::: {.answer_body #a-4-2-insectivores}
+
+```{r}
+#| fig-alt: "Banding sites drawn as dots whose fill color varies with the number of insectivorous birds captured at each."
+
+# Count insectivores captured per site:
+
+captures %>%
+  semi_join(
+    filter(birds, diet == "insectivore"),
+    by = join_by(spp == species)
+  ) %>%
+  left_join(
+    visits,
+    by = join_by(visit_id)
+  ) %>%
+  summarize(
+    n_insectivores = n(),
+    .by = site_id
+  ) %>%
+  left_join(
+    sites,
+    .,
+    by = join_by(site_id)
+  ) %>%
+  ggplot() +
+
+  # Add geometry:
+
+  geom_sf(
+    aes(
+      size = n_insectivores,
+      color = n_insectivores
+    )
+  ) +
+
+  # Modify the scales:
+
+  scale_color_viridis_c("Insectivores") +
+  scale_size_continuous("Insectivores") +
+
+  # Modify the label and theme:
+
+  labs(title = "Insectivorous birds captured per banding site") +
+  theme_bw()
+```
+
+We used a semi-join because we wanted to subset the captures rather than describe them. A `left_join()` followed by `filter(diet == "insectivore")` returns the same rows and carries three columns we do not need. I use the filtering join whenever the second table is answering a question about membership, because the statement then says what I meant rather than leaving a reader to work out why the extra columns are there.
+
+:::
+:::
+
+## Putting it all together
+
+Choosing a join comes down to two questions: whether you want columns or a subset, and what should happen to the rows that find no partner (click to expand):
+
+![](../../src/images/decision_trees/choosing_a_join.svg){.zoomable data-title="Decision tree: Choosing a non-spatial join" data-pdf-key="choosing_a_join" fig-alt="Decision tree for choosing a non-spatial join. The first question is what you want to return. To return the target table with new variables, use a mutating join, and the next question is which rows are maintained: left_join() for all target rows, where unmatched rows receive NA; inner_join() for the matching rows only; and full_join() for all rows of both tables, where unmatched rows receive NA. To return a subset of the target table, use a filtering join, and the next question is which rows survive: semi_join() for the rows that have a match, and anti_join() for the rows that do not."}
+
+{{< include ../../src/includes/decision_tree_pdfs/choosing_a_join.qmd >}}
+
+::: {.callout-note}
+
+This tree is a visualization of *my* mental model for these functions. It is totally okay if your model differs! What is important is that you have a *working* model, a system in place that allows you to retrieve the function or functions that you need to solve a problem.
+
+:::
+
+## Take-home points
+
+* A primary key consists of one or more columns whose values uniquely identify every row and are never missing. A foreign key points at another table's primary key. The keys are the map of a relational dataset.
+* For a single-column key, `n_distinct(x) == nrow(df)` tests uniqueness and `!anyNA(x)` tests for missing values.
+* The target table supplies the rows that we start with. The source table supplies columns or determines which rows match. We choose their order based on the observations we want returned.
+* A mutating join adds columns. `left_join()` retains the rows of the first table, `inner_join()` retains only the matches, and `full_join()` retains the rows of both.
+* `join_by()` pairs the key columns, and `join_by(a == b)` pairs columns whose names differ.
+* Two tables can represent the same level of observation. When more than one column is required to identify a row, name every column of that compound key in `join_by()`.
+* A mutating join returns a row for every matching pair, so a key that repeats in the second table adds rows. A left join on a unique key cannot increase the count. Predict the count, then check it with `nrow()`.
+* A filtering join subsets rows and adds no columns. `semi_join()` keeps the rows with a match and `anti_join()` keeps the rows without one.
+* With the foreign-key table as the target and the primary-key table as the source, `anti_join()` returns orphaned rows.
+* To map a summary, summarize to the site level and join the geometry. Either convert the result with `st_as_sf()` or use the *sf* object as the target table.
+
+## Exercises
+
+::: now_you
+{{< fa user-circle size=2x >}} [Test your knowledge!]{style="font-size: 1.25em; padding-left: 0.5em;"}
+
+1. `visits` holds 1,394 rows and `sites` holds 80. What does `left_join(visits, sites, by = join_by(site_id))` return?
+
+`r longmcq(c(answer = "1,394 rows, each carrying its site's coordinates", "80 rows, one per site", "1,474 rows", "111,520 rows"))`
+
+2. You want the visits at which no bird was captured. Which statement returns them?
+
+`r longmcq(c(answer = "visits %>% anti_join(captures, by = join_by(visit_id))", "visits %>% semi_join(captures, by = join_by(visit_id))", "visits %>% left_join(captures, by = join_by(visit_id))", "visits %>% full_join(captures, by = join_by(visit_id))"))`
+
+3. A **left join** returns more rows than the table you piped into it. What is the cause?
+
+`r longmcq(c(answer = "The key repeats in the table being joined, so some rows matched more than once", "The join dropped unmatched rows", "The two tables use different key names", "A filtering join was used"))`
+
+4. A table contains one row per sampling site and date. Neither column is unique on its own. Which expression supplies its compound key to a join?
+
+`r longmcq(c(answer = "join_by(site_id, date)", "join_by(site_id == date)", "join_by(site_id)", "join_by(date)"))`
+
+
+5. A source table contains non-key columns, and every row of the target table has a match. True or false: `semi_join()` and `inner_join()` can retain the same target rows, but only `inner_join()` adds columns from the source table.
+
+`r torf(TRUE)`
+
+6. Suppose that `capture_totals` is a non-spatial tibble with one row per sampled `site_id`, but it may omit sites with no captures. The `sites` object contains every site and is an *sf* object. Which statement retains every site and returns an *sf* object?
+
+`r longmcq(c(answer = "sites %>% left_join(capture_totals, by = join_by(site_id))", "capture_totals %>% left_join(sites, by = join_by(site_id))", "sites %>% semi_join(capture_totals, by = join_by(site_id))", "capture_totals %>% full_join(sites, by = join_by(site_id))"))`
+:::
+
+{{< include /src/includes/_reference_section.qmd >}}

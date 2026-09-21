@@ -173,6 +173,8 @@ Let's pipe our `census` object into `tm_shape()` and add its polygon geometry:
 ```{r}
 #| fig-alt: "DC census tract polygons, showing the boundaries before mapping an attribute."
 
+# Add the census tracts layer:
+
 census %>%
   tm_shape() +
   tm_polygons()
@@ -201,6 +203,8 @@ Now let's fill our polygons by population. The argument, `fill = ` specifies the
 
 ```{r}
 #| fig-alt: "DC census tracts colored by population count. The legend groups counts into intervals, and tract areas differ."
+
+# Add the census tracts layer:
 
 census %>%
   tm_shape() +
@@ -376,6 +380,9 @@ tm_basemap("Esri.WorldImagery") +
     fill.legend =
       tm_legend(title = "Population")
   ) +
+
+  # Add the bikeshare stations layer:
+
   bikes %>%
   tm_shape() +
   tm_dots(
@@ -418,6 +425,9 @@ census %>%
       tm_legend(title = "Population"),
     group = "Census tracts"
   ) +
+
+  # Add the bikeshare stations layer:
+
   bikes %>%
   tm_shape() +
   tm_dots(

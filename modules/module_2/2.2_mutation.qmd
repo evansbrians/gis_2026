@@ -606,12 +606,7 @@ As in ***2.1 Introduction to subsetting and extraction***, this tree is a visual
    </div>
 
    <script>
-   window.parsonsProblems = window.parsonsProblems || [];
-   window.parsonsProblems.push({
-     id: "p-2-2-01",
-     maxDistractors: 1,
-     code: "measures %>%\n  mutate(\n    bp_cp = replace_na(bp_cp, \"-\"),\n    bp_cp = na_if(bp_cp, \"U\"),\n    .keep = \"none\"\n  )\n    bp_cp = drop_na(bp_cp), #distractor"
-   });
+   window.parsonsProblems = window.parsonsProblems || []; window.parsonsProblems.push({ id: "p-2-2-01", maxDistractors: 1, code: "measures %>%\n  mutate(\n    bp_cp = replace_na(bp_cp, \"-\"),\n    bp_cp = na_if(bp_cp, \"U\"),\n    .keep = \"none\"\n  )\n    bp_cp = drop_na(bp_cp), #distractor" });
    </script>
 :::
 

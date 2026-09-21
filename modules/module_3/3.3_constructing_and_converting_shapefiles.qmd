@@ -803,12 +803,7 @@ These trees are a visualization of *my* mental model for these functions. It is 
    </div>
 
    <script>
-   window.parsonsProblems = window.parsonsProblems || [];
-   window.parsonsProblems.push({
-     id: "p-3-3-01",
-     maxDistractors: 1,
-     code: "landmarks %>%\n  summarize(\n    geometry = st_combine(geometry)\n  ) %>%\n    st_polygon() %>% #distractor\n  st_cast(\"POLYGON\")"
-   });
+   window.parsonsProblems = window.parsonsProblems || []; window.parsonsProblems.push({ id: "p-3-3-01", maxDistractors: 1, code: "landmarks %>%\n  summarize(\n    geometry = st_combine(geometry)\n  ) %>%\n    st_polygon() %>% #distractor\n  st_cast(\"POLYGON\")" });
    </script>
 :::
 

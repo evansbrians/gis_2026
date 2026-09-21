@@ -1,101 +1,109 @@
 ---
-title: "Module 5: Spatial memory management and introduction to rasters"
+title: "Module 5: Points, lines, and polygons"
 format: live-html
 ---
 
 ```{r}
 #| include: false
 
+source("src/r/course_functions.R")
 source("src/r/reference_lookup.R")
 
 module_refs <- find_module_references(5)
 ```
 <hr>
 
-![](../../src/images/hex_complex.png){.intro_image}
+![](../../src/images/hex_complex.png){.intro_image fig-alt="Course logo"}
 
-In this module we will extend our work with spatial vector data by learning how to manage the memory required by large and complex geometries. We will also take our first steps into working with raster data! Specifically, you will learn:
+Modules 3 and 4 introduced spatial vector data and the operations that compare features by location. This module looks more closely at the geometry itself. Points, lines, and polygons store different kinds of spatial information, so each supports different questions and requires different decisions.
 
-* How to manage the memory allocation of a session
-* The *terra* package -- the new(ish) package for working with raster data in R.
+A point records a position, lines connect positions in a specified order, and polygons enclose an area. We will use those differences to clean occurrence records, build movement paths, work with polygon attributes, and decide which results the data support.
 
-*Note: Please continue to ignore references to the folder structure from our data science class.*
+In this module you will learn how to:
+
+* Clean an occurrence dataset, and how to generate points for a sampling design
+* Build a movement path from records, measure it, and keep it honest
+* Repair a broken polygon, clip a layer, and move a value between two sets of polygons
+* Classify spatial data, and how a class boundary changes what a map says
+* Give a map the context, labels, and projection a reader needs
+* Build one report per site from one document
 
 ## Module overview
 
-* **5.2 Memory management and shapefiles**: In this lesson we will review some of our core shapefile tools while learning how to avoid dreaded out-of-memory errors when working with shapefiles.
-* **5.3 Introduction to raster data**: In this video lesson (runtime: 47:04) and brief written tutorial, we will review what raster files are and how to use the *terra* package for reading in raster data, raster pre-processing, and data extraction.
+* **5.1 Focus on points: Occurrence records and sampling**: We will clean point records, examine what `summarize()` returns for a group of points, and generate points for a survey design.
+* **5.2 Focus on lines: Paths through a landscape**: We will build movement tracks from ordered GPS records, measure them, and split them where the collar did not record the path.
+* **5.3 Focus on polygons: Areas, and what happens when we cut them**: We will repair invalid polygons, distinguish subsetting from clipping, and examine what happens to a field when its polygon changes.
+* **5.4 Categorizing spatial data**: We will classify spatial data with `if_else()` and `case_when()`, derive classes from location, and document the rule used to draw a class boundary.
+* **5.5 Cartography II: Projection, context, and labels** (optional): We will choose a projection, add a locator map, label features, and decide when two variables belong on the same map.
+* **5.6 Communicating spatial results: Reports that scale** (optional): We will use Quarto parameters to generate separate reports from the same document.
 
-**Problem Set** (due 28 Sep): Community science
+**Problem Set**: Searching for nests
 
 ## Getting started
 
-Please complete the following steps *prior* to beginning this week's lessons:
+Download `module_5_files.zip` and:
 
-* Download [module_5_files.zip]{.mono} and:
-    * Place the [rasters]{.mono} folder in [data/raw]{.mono}. *Note: Please place the folder itself in that location, not the data within the folder. Additionally, please do not change the name of the folder!*
-    * Place any [\*.geojson]{.mono} files in [data/raw/shapefiles]{.mono}. *Note: The file ([dc_census.geojson]{.mono} was provided during the problem sets. You may overwrite your existing file.*
-    * The file [cicadas_brood_x_2021.csv]{.mono} was provided during the problem sets. Place this in [data/raw]{.mono}. You may overwrite your existing file.
-    * Place any R script files ([*.R]) inside of the [scripts]{.mono} folder 
-* Run the following to install several new packages!
+* Place any `*.geojson` files in `data/raw/shapefiles`. You may overwrite your existing files.
+* Place `kruger_buffalo.csv` in `data/raw`.
+
+Every lesson that reads a spatial file also loads `source_script_module_3.R` from `scripts`, which supplies `clean_names()`, `lonlat_to_utm()`, and `count_vertices()`.
+
+Run the following to install the packages this module adds:
 
 ```{r}
 #| eval: false
 
 install.packages(
   c(
-    "bench",
-    "mapview",
-    "rmapshaper",
-    "spData",
-    "terra"
+    "patchwork",
+    "quarto",
+    "spData"
   )
 )
 ```
 
-***Important!***: Raster functions in the *terra* package will attempt to temporarily store raster files in your computer's memory. If it is unable to do so, it will store the data as a hidden temporary file on your hard drive. Be sure to clear up enough space in your hard disk (at least 5 GB) to complete *terra* operations. If *terra* is unable to store the file, you will get a very vague message about running out of memory (but this message actually has to do with running out of hard disk space).
-
 ## About this week's data
 
-This week we will use the following data files in our exercises:
+<button class="accordion">Explore the data used in this module</button>
 
-**[canopy_cover.tif]{.mono}**: This is geotiff raster obtained from the [Multi-Resolution Land Characteristics Consortium (MRLC)](https://www.mrlc.gov/data){target="_blank"} that describes the canopy cover in the greater Washington DC region. Cell values are continuous and represent the percentage of each cell that is covered by tree canopy.
+::: panel
 
-**[census ([.dbf]{.mono}, [.prj]{.mono}, [.shp]{.mono}, [.shx]{.mono})]{.mono}**: This is a shapefile from the US Census Bureau that provides tract-level census data for the District of Columbia, Maryland, and Virginia. The data were downloaded using the *tigris* and *tidycensus* packages in R.
+```{r}
+#| echo: false
+#| output: asis
 
-**[cicadas_brood_x_2021.csv]{.mono}**: The cicada data is a tabular dataset collected by iNaturalist participants from February through September of 2021 and obtained using the R package *rinat*. The data represent iNaturalist observations of Brood X periodical cicadas from February through September of 2021.
+cat(dataset_markdown(.module = 5))
+```
 
-**[counties.geojson]{.mono}**: This is a shapefile of United States counties obtained from the US Census Bureau using the *tigris package*. The resolution of this file is 1:5 million. Each row in the dataset represents a US county.
+***5.5 Cartography II: Projection, context, and labels*** also uses the `world` dataset from the *spData* package, which is installed rather than downloaded.
 
-**[counties_low_res.geojson]{.mono}**: This is a lower resolution (1:20 million) version of the US counties shapefile above. This will be very useful if you have memory or processing limitations on your screen.
-
-**[dc_census.geojson]{.mono}**: This is a shapefile from the US Census Bureau that provides tract-level census data for the District of Columbia. The data were downloaded using the *tigris* and *tidycensus* packages in R.
-
-**[impervious_surface.tif]{.mono}**: This is geotiff raster obtained from the [Multi-Resolution Land Characteristics Consortium (MRLC)](https://www.mrlc.gov/data){target="_blank"} that describes the impervious surface cover in the greater Washington DC region. Cell values are continuous and represent the percentage of each cell that is covered by man-made materials (e.g., pavement, sidewalks, rooftops).
-
-**[nlcd.tif]{.mono}**: This is geotiff raster obtained from the [Multi-Resolution Land Characteristics Consortium (MRLC)](https://www.mrlc.gov/data){target="_blank"} that describes the land cover in the greater Washington DC region. Values are categorical and each value represents the dominant land cover class ([link](https://www.mrlc.gov/data/legends/national-land-cover-database-class-legend-and-description){target="_blank"}) of each cell.
-
-**[rock_creek_park.geojson]{.mono}**: This is a multipolygon shapefile (EPSG 32618; UTM Zone 18N) that represent Washington DC's Rock Creek Park, a National Park that bisects the city.  The data were obtained from [https://opendata.dc.gov/](https://opendata.dc.gov/){target="_blank"}.
-
-**[sick_birds.geojson]{.mono}**: This is a point shapefile that represents sick birds that were brought to City Wildlife, a wildlife rehabilitation center in the District of Columbia, in the spring of 2021. These data were obtained directly from City Wildlife staff.
-
-**[states (.dbf, .prj, .shp, .shx)]{.mono}**: This is shapefile of US states that I obtained from the R package *spData*.
-
-**[Waterbodies_2019.geojson]{.mono}** This is a polygon shapefile (EPSG 4326) that represents surface water in Washington DC.  The data were obtained from [https://opendata.dc.gov/](https://opendata.dc.gov/){target="_blank"}.
+:::
 
 ## Readings and resources
 
-### **Readings:**
+### Required readings
 
-Lovelace:
+Lovelace, Nowosad & Muenchow, *Geocomputation with R*:
 
--   [2.3 Rasters](https://geocompr.robinlovelace.net/spatial-class.html#raster-data){target="_blank"}
--   [4.2 Spatial operations on vector data](https://r.geocompx.org/spatial-operations#spatial-vec){target="_blank"}
+-   [5.2.1: Simplification](https://r.geocompx.org/geometry-operations#simplification){target="_blank"}
+-   [5.2.2: Centroids](https://r.geocompx.org/geometry-operations#centroids){target="_blank"}
+-   [5.2.5: Clipping](https://r.geocompx.org/geometry-operations#clipping){target="_blank"}
+-   [5.2.6: Subsetting and clipping](https://r.geocompx.org/geometry-operations#subsetting-and-clipping){target="_blank"}
+-   [5.2.8: Type transformations](https://r.geocompx.org/geometry-operations#type-trans){target="_blank"}
 
-### **Cheatsheets**:
+Pebesma & Bivand, *Spatial Data Science: With Applications in R*:
 
--   [purrr](https://github.com/rstudio/cheatsheets/blob/main/purrr.pdf){target="_blank"}
--   [tmap](http://riatelab.github.io/cartography/vignettes/cheatsheet/cartography_cheatsheet.pdf){target="_blank"}
+-   [5: Attributes and Support](https://r-spatial.org/book/05-Attributes.html){target="_blank"}
+
+### Further reading
+
+Pebesma & Bivand, *Spatial Data Science: With Applications in R*:
+
+-   [4: Spherical Geometries](https://r-spatial.org/book/04-Spherical.html){target="_blank"}, which is the material behind the difference between s2 and GEOS in ***5.3 Focus on polygons: Areas, and what happens when we cut them***
+
+### Cheatsheets
+
 -   [Spatial manipulation with sf](https://github.com/rstudio/cheatsheets/blob/main/sf.pdf){target="_blank"}
+-   [ggplot2](https://github.com/rstudio/cheatsheets/blob/main/data-visualization.pdf){target="_blank"}
 
 {{< include /src/includes/_reference_section_intro.qmd >}}

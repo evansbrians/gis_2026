@@ -27,9 +27,9 @@ Each problem set in this course will ask you to address three types of questions
 Here is my recommended workflow for solving problem sets:
 
 ::: {.workflow-list}
-1. **Functions that you may use**: Start by reviewing the "Functions that you may use …" list. If any functions are unfamiliar, place the cursor within the function name and press [F1]{.mono}, or run a help command such as `?mean`. Then use RStudio's Find in Files command ([Ctrl/Cmd + Shift + F]{.mono}) to search your code-along scripts and course tutorials for examples of how we have used the function.
+1. **Functions that you may use**: Start by reviewing the "Functions that you may use …" list. If any functions are unfamiliar, place the cursor within the function name and press `F1`, or run a help command such as `?mean`. Then use RStudio's Find in Files command (`Ctrl/Cmd + Shift + F`) to search your code-along scripts and course tutorials for examples of how we have used the function.
 
-2. **Explore the data**: Before heading to the questions (other than data loading), explore the dataset using functions such as `str()` and `summary()`. Pay careful attention to the class and type of values present, the container used to hold those values (e.g., a list or atomic vector), and whether there are any [NA]{.mono} values. Unless you are explicitly asked to do so, do not include data-exploration code in your submitted assignment.
+2. **Explore the data**: Before heading to the questions (other than data loading), explore the dataset using functions such as `str()` and `summary()`. Pay careful attention to the class and type of values present, the container used to hold those values (e.g., a list or atomic vector), and whether there are any `NA` values. Unless you are explicitly asked to do so, do not include data-exploration code in your submitted assignment.
 
 3. **Visualize**: For each question, visualize what you want the resulting object to look like. Look for clues in the language of the question to determine the *class* of the resulting object (e.g., should it be a single value or a data frame?).
 
@@ -53,15 +53,15 @@ While the first step is specific to our problem sets, steps 2–8 are also usefu
 
 You can protect your problem set score by following these practices:
 
-* Always ensure that the naming convention used for your assignment is [problem_set\_\[week\]\_\[last\_name\]\_\[first\_name\].R]{.mono}. For example, if I submitted a problem set for the first week, the name of my submitted document would be [problem_set_1_evans_brian.R]{.mono}.
+* Always ensure that the naming convention used for your assignment is `problem_set_[week]_[last_name]_[first_name].R`. For example, if I submitted a problem set for the first week, the name of my submitted document would be `problem_set_1_evans_brian.R`.
 
 * Never, never, never use `setwd()`!
 
-* Always use keyboard shortcuts for adding global assignment operators ([Alt/Option + Dash]{.mono}), comments ([Ctrl/Cmd + Shift + C]{.mono}), and pipes ([Ctrl/Cmd + Shift + M]{.mono}).
+* Always use keyboard shortcuts for adding global assignment operators (`Alt/Option + Dash`), comments (`Ctrl/Cmd + Shift + C`), and pipes (`Ctrl/Cmd + Shift + M`).
 
 * Before submitting your problem set:
 
-    * Select all content ([Ctrl/Cmd + A]{.mono}) and fix any potential indentation errors with the keyboard shortcut [Ctrl/Cmd + I]{.mono}.
+    * Select all content (`Ctrl/Cmd + A`) and fix any potential indentation errors with the keyboard shortcut `Ctrl/Cmd + I`.
 
     * Double-check your code formatting using the [***Course style guide***](https://evansbrians.github.io/gis_2026/resources/course_style_guide/){target="_blank"}.
 

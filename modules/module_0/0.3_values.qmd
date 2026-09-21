@@ -147,12 +147,7 @@ typeof(
 </div>
 
 <script>
-window.parsonsProblems = window.parsonsProblems || [];
-window.parsonsProblems.push({
-  id: "p-0-3-01",
-  maxDistractors: 1,
-  code: "my_values &lt;- c(8, 13, 21)\nmy_integers &lt;- as.integer(my_values)\ntypeof(my_integers)\nmy_integers &lt;- as.numeric(my_values) #distractor"
-});
+window.parsonsProblems = window.parsonsProblems || []; window.parsonsProblems.push({ id: "p-0-3-01", maxDistractors: 1, code: "my_values &lt;- c(8, 13, 21)\nmy_integers &lt;- as.integer(my_values)\ntypeof(my_integers)\nmy_integers &lt;- as.numeric(my_values) #distractor" });
 </script>
 :::
 
@@ -385,12 +380,7 @@ plot(
 </div>
 
 <script>
-window.parsonsProblems = window.parsonsProblems || [];
-window.parsonsProblems.push({
-  id: "p-0-3-02",
-  maxDistractors: 1,
-  code: "plot(\n  factor(\n    c(\"one\", \"one\", \"two\", \"three\"),\n    levels = c(\"one\", \"two\", \"three\")\n  )\n)\nsort() #distractor"
-});
+window.parsonsProblems = window.parsonsProblems || []; window.parsonsProblems.push({ id: "p-0-3-02", maxDistractors: 1, code: "plot(\n  factor(\n    c(\"one\", \"one\", \"two\", \"three\"),\n    levels = c(\"one\", \"two\", \"three\")\n  )\n)\nsort() #distractor" });
 </script>
 :::
 
@@ -425,12 +415,7 @@ plot(
 </div>
 
 <script>
-window.parsonsProblems = window.parsonsProblems || [];
-window.parsonsProblems.push({
-  id: "p-0-3-03",
-  maxDistractors: 1,
-  code: "plot(\n  factor(\n    c(\"one\", \"one\", \"two\", \"three\"),\n    levels = c(\"one\", \"two\", \"three\"),\n    labels = c(\"One\", \"Two\", \"Three\")\n  )\n)\nlabels = c(\"One\", \"Two\", \"Three\"), #distractor"
-});
+window.parsonsProblems = window.parsonsProblems || []; window.parsonsProblems.push({ id: "p-0-3-03", maxDistractors: 1, code: "plot(\n  factor(\n    c(\"one\", \"one\", \"two\", \"three\"),\n    levels = c(\"one\", \"two\", \"three\"),\n    labels = c(\"One\", \"Two\", \"Three\")\n  )\n)\nlabels = c(\"One\", \"Two\", \"Three\"), #distractor" });
 </script>
 :::
 
@@ -579,12 +564,7 @@ sum(summer %in% spring)
 </div>
 
 <script>
-window.parsonsProblems = window.parsonsProblems || [];
-window.parsonsProblems.push({
-  id: "p-0-3-04",
-  maxDistractors: 1,
-  code: "sum(\n  summer %in% spring\n)\nspring %in% summer #distractor"
-});
+window.parsonsProblems = window.parsonsProblems || []; window.parsonsProblems.push({ id: "p-0-3-04", maxDistractors: 1, code: "sum(\n  summer %in% spring\n)\nspring %in% summer #distractor" });
 </script>
 
 2. Which statement best describes how `%in%` behaves?

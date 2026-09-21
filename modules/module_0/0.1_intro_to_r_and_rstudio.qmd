@@ -32,8 +32,7 @@ Throughout these preliminary lessons there are a number of icons and formats to 
 
 * [Keyboard shortcuts and file paths are provided in a monospace font]{style="font-family: monospace;"}. A table of keyboard shortcuts is provided at the end of each lesson.
 
-*  :::{style="font-family: monospace; background-color: #f0f0f0; font-size: 0.75em;"}
-Sections that appear exactly as they would in R are provided in a monospace font and are highlighted in gray. A table of functions used is provided at the end of each lesson.
+*  :::{style="font-family: monospace; background-color: #f0f0f0; font-size: 0.75em;"} Sections that appear exactly as they would in R are provided in a monospace font and are highlighted in gray. A table of functions used is provided at the end of each lesson.
 :::
 
 * ::: now_you
@@ -107,7 +106,7 @@ RStudio can restore a previously saved workspace at startup, save the current wo
 
 {{< fa user-secret size=2x >}} [Why should I avoid saving the workspace and command history across sessions?]{style="font-size: 1.25em; padding-left: 0.5em;"}
 
-* Saving your workspace across sessions is generally considered bad practice because it can negatively impact the reproducibility of your analysis. 
+* Saving your workspace across sessions is generally considered bad practice because it can negatively impact the reproducibility of your analysis.
 * I choose to avoid saving history across sessions to ensure that the information provided is limited to the most recent, relevant commands.
 
 :::
@@ -306,20 +305,20 @@ The **Output Pane** organizes several tools and outputs into the following tabs:
 ![](../../src/images/panes_output.png){style="width: 100%;"  fig-alt="Image highlighting the location of the output pane"}
 
 ## 3. Exercises
- 
+
 ::: now_you
 {{< fa user-circle size=2x >}} [Test your knowledge!]{style="padding-left: 0.5em;"}
- 
+
 1. Which pane of the RStudio IDE would be best to use to search for code that you previously executed in the Console Pane?
- 
+
 `r longmcq(c("Source", "Console", answer = "Environment", "Output"))`
- 
+
 2. You are writing a line of code whose output later lines will depend on. In which pane should you write and run it?
- 
+
 `r longmcq(c(answer = "Source", "Console", "Environment", "Output"))`
- 
+
 3. TRUE/FALSE: In this course, you should set RStudio to "Save workspace to .RData on exit" so that your objects are automatically restored the next time you open R.
- 
+
 `r torf(FALSE)`
 
 4. Match each RStudio keyboard shortcut to what it does. Click a shortcut, then click its action; when you're finished, select "Check My Matches".

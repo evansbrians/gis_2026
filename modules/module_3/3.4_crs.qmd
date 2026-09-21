@@ -413,12 +413,7 @@ Parsons problem: Reorder the lines below to read in `sites.csv`, convert it to a
 </div>
 
 <script>
-window.parsonsProblems = window.parsonsProblems || [];
-window.parsonsProblems.push({
-  id: "p-3-4-01",
-  maxDistractors: 1,
-  code: "read_csv(\"data/raw/sites.csv\") %>%\n  st_as_sf(\n    coords = c(\"lon\", \"lat\"),\n    crs = 4326\n  ) %>%\n    crs = 32618 #distractor\n  st_transform(\n    st_crs(census)\n  )"
-});
+window.parsonsProblems = window.parsonsProblems || []; window.parsonsProblems.push({ id: "p-3-4-01", maxDistractors: 1, code: "read_csv(\"data/raw/sites.csv\") %>%\n  st_as_sf(\n    coords = c(\"lon\", \"lat\"),\n    crs = 4326\n  ) %>%\n    crs = 32618 #distractor\n  st_transform(\n    st_crs(census)\n  )" });
 </script>
 :::
 

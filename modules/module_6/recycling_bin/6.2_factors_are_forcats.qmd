@@ -67,7 +67,7 @@ Please do the following to ensure that you are working in a clean session:
 
 1. In the *Environment* tab of your *workspace pane*, ensure that your *Global Environment* is empty. If it is not, click the *broom* to remove all objects. *Note: Conversely, you can remove all items with `rm(list = ls())`*.
 2. In the *History* tab of your *workspace pane*, ensure that your history is empty. If it is not, click the *broom* to remove your history.
-3. Open the script file [factors_are_forcats.R]{.mono} (Windows: [Ctrl + O]{.mono}; Mac: [Cmd + O]{.mono}).
+3. Open the script file `factors_are_forcats.R` (Windows: `Ctrl + O`; Mac: `Cmd + O`).
 
 ## Video content
 
@@ -75,7 +75,7 @@ Please do the following to ensure that you are working in a clean session:
 
 ## Compendium tutorial
 
-In this written portion of the tutorial, we will again attach the core packages in the tidyverse to our current session and read in and globally assign each of the list items in  [forcats_data.rds]{.mono}:
+In this written portion of the tutorial, we will again attach the core packages in the tidyverse to our current session and read in and globally assign each of the list items in  `forcats_data.rds`:
 
 ```{r}
 # R script for the factors are forcats compendium
@@ -363,7 +363,7 @@ bird_measures %>%
   count(age)
 ```
 
-Since [NA]{.mono} values represent missing data, we *may* not want to include [NA]{.mono} in our counts. We can remove [NA]{.mono} `age` values from the data frame with `drop_na()`:
+Since `NA` values represent missing data, we *may* not want to include `NA` in our counts. We can remove `NA` `age` values from the data frame with `drop_na()`:
 
 ```{r}
 bird_measures %>% 
@@ -521,7 +521,7 @@ if_else(
   factor()
 ```
 
-Again, to convert those "unknown" values to [NA]{.mono}, we can modify them with `na_if()` prior to converting the data to a factor:
+Again, to convert those "unknown" values to `NA`, we can modify them with `na_if()` prior to converting the data to a factor:
 
 ```{r}
 if_else(
@@ -683,7 +683,7 @@ case_when(
   table()
 ```
 
-What if, however, we wanted to convert "unknown" values to [NA]{.mono}? Let's go back to the distribution of unique values in our original vector:
+What if, however, we wanted to convert "unknown" values to `NA`? Let's go back to the distribution of unique values in our original vector:
 
 ```{r}
 table(bad_age)
@@ -701,7 +701,7 @@ case_when(
   table() 
 ```
 
-... or explicitly define which values to transform to [NA]{.mono}: 
+... or explicitly define which values to transform to `NA`: 
 
 ```{r}
 case_when(
@@ -712,7 +712,7 @@ case_when(
   table()
 ```
 
-However, any values without a match in our `case_when()` statement are assigned to the value [NULL]{.mono}. As such, this could be written more simply as:
+However, any values without a match in our `case_when()` statement are assigned to the value `NULL`. As such, this could be written more simply as:
 
 ```{r}
 case_when(
@@ -852,7 +852,7 @@ age %>%
 
 Notice in the above that I assigned new factor labels *while* modifying the values and generating a factor (+1 for parsimony!).
 
-If we want to convert a value or values to [NA]{.mono}, we assign those values to `NULL`:
+If we want to convert a value or values to `NA`, we assign those values to `NULL`:
 
 ```{r}
 age %>% 

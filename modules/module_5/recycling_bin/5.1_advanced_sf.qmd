@@ -1584,8 +1584,8 @@ I recognize that the example above is pretty silly, but if you are *brave* enoug
 The video below has some issues, but completing the "Now you!" challenges makes this video worth watching. A couple of things to note prior to watching the video:
 
 * I jump around the code a good bit -- my intention was to show you how a real code might look (i.e., placing elements of code where they would typically be in a script). In retrospect, this was just bad teaching for someone just learning the functions!
-* My indentation is off at several places and my video code is *very 2022*. As such, I have modified the code-along R script ([advanced_sf.R]{.mono}) and it will look a bit different than the version in the video. 
-* I have also provided a written key to the video content ([advanced_sf.R]{.mono}) with modern code styling. Please review this after you have watched the video!
+* My indentation is off at several places and my video code is *very 2022*. As such, I have modified the code-along R script (`advanced_sf.R`) and it will look a bit different than the version in the video. 
+* I have also provided a written key to the video content (`advanced_sf.R`) with modern code styling. Please review this after you have watched the video!
 * At about 37:00, I use `by_element = TRUE`. This worked at the time that I created the video. It no longer works because `by_element = TRUE` throws an error if the number of features compared are not equal. See "Distance" above for how to fix this.
 
 {{< video https://www.youtube.com/embed/uvZAtLYjbH0 >}}

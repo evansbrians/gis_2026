@@ -853,12 +853,7 @@ This diagram is a visualization of *my* mental model for this workflow. It is to
    </div>
 
    <script>
-   window.parsonsProblems = window.parsonsProblems || [];
-   window.parsonsProblems.push({
-     id: "p-3-2-01",
-     maxDistractors: 1,
-     code: "st_read(\n  \"data/raw/shapefiles/counties.geojson\",\n  quiet = TRUE\n) %>%\n  clean_names() %>%\n  filter(state_name == \"District of Columbia\") %>%\n  select(geoid) %>%\n    st_as_sf(coords = c(\"long\", \"lat\")) %>% #distractor\n  st_transform(\n    st_crs(census)\n  )"
-   });
+   window.parsonsProblems = window.parsonsProblems || []; window.parsonsProblems.push({ id: "p-3-2-01", maxDistractors: 1, code: "st_read(\n  \"data/raw/shapefiles/counties.geojson\",\n  quiet = TRUE\n) %>%\n  clean_names() %>%\n  filter(state_name == \"District of Columbia\") %>%\n  select(geoid) %>%\n    st_as_sf(coords = c(\"long\", \"lat\")) %>% #distractor\n  st_transform(\n    st_crs(census)\n  )" });
    </script>
 :::
 

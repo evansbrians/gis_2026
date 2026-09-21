@@ -1088,12 +1088,7 @@ matching_game(
 {{< video https://www.youtube-nocookie.com/embed/YS7wDkPBvM4?si=f_ZUDOGa-mW2GSqQ >}}
 
 <script>
-window.parsonsProblems = window.parsonsProblems || [];
-window.parsonsProblems.push({
-  id: "p-2-5-01",
-  maxDistractors: 1,
-  code: "chickadees %>%\n  ggplot() +\n  aes(\n    x = wing,\n    y = mass,\n    color = spp\n  ) +\n  geom_point() +\n  facet_wrap(~ sex) +\n  labs(\n    x = \"Wing length (mm)\",\n    y = \"Mass (g)\"\n  ) +\n  theme_bw()\n  %>% geom_point() #distractor"
-});
+window.parsonsProblems = window.parsonsProblems || []; window.parsonsProblems.push({ id: "p-2-5-01", maxDistractors: 1, code: "chickadees %>%\n  ggplot() +\n  aes(\n    x = wing,\n    y = mass,\n    color = spp\n  ) +\n  geom_point() +\n  facet_wrap(~ sex) +\n  labs(\n    x = \"Wing length (mm)\",\n    y = \"Mass (g)\"\n  ) +\n  theme_bw()\n  %>% geom_point() #distractor" });
 </script>
 :::
 

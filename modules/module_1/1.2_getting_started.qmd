@@ -273,12 +273,7 @@ Learning keyboard shortcuts like those above will save you time in the long run!
 </div>
 
 <script>
-window.parsonsProblems = window.parsonsProblems || [];
-window.parsonsProblems.push({
-  id: "p-1-2-01",
-  maxDistractors: 1,
-  code: "Open gis_in_r.Rproj in RStudio\nrenv::restore()\nrenv::status()\nOpen or create the R script you need\nsetwd(\"/Users/your_name/gis_in_r\") #distractor"
-});
+window.parsonsProblems = window.parsonsProblems || []; window.parsonsProblems.push({ id: "p-1-2-01", maxDistractors: 1, code: "Open gis_in_r.Rproj in RStudio\nrenv::restore()\nrenv::status()\nOpen or create the R script you need\nsetwd(\"/Users/your_name/gis_in_r\") #distractor" });
 </script>
 :::
 
