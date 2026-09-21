@@ -1266,7 +1266,7 @@ const PARTS = [
     "blurb": "We will use shared keys to join related data frames, predict how a join will affect the number of rows, and prepare the results for mapping.",
     "mins": 35,
     "meta": "Tutorial · 35 min",
-    "search": "aes anti_join c cat filter full_join geom_sf ggplot inner_join is.na join_by labs left_join library list2env n n_distinct nrow read_rds scale_color_viridis_c scale_size_continuous select semi_join source st_as_sf summarize theme_bw",
+    "search": "aes anti_join anyNA c cat filter full_join geom_sf ggplot inner_join is.na join_by labs left_join library list2env n n_distinct nrow read_rds scale_color_viridis_c scale_size_continuous select semi_join source st_as_sf summarize theme_bw",
     "sections": [
      [
       "On joining tables",
@@ -1330,7 +1330,7 @@ const PARTS = [
     "blurb": "We will use map(), walk(), imap(), and pmap() to apply common spatial operations to several objects.",
     "mins": 30,
     "meta": "Tutorial · 30 min",
-    "search": "as.character as.numeric bind_rows c cat class count first imap iwalk library list_rbind map map_chr map_dbl map_int mutate names nrow pluck pmap pmap_dbl select set_units source st_area st_buffer st_crs st_drop_geometry st_geometry_type st_read st_sf st_transform st_union st_write str_c sum tm_legend tm_polygons tm_shape tm_title tmap_mode tribble walk",
+    "search": "as.character as.numeric bind_rows c cat count imap iwalk library list map map_chr map_int mutate nrow pluck pmap pmap_dbl select set_units source st_area st_buffer st_coordinates st_crs st_drop_geometry st_geometry_type st_read st_sf st_transform st_union st_write str_c tm_legend tm_polygons tm_shape tm_title tmap_mode tribble unique",
     "sections": [
      [
       "The repetition we are removing",
@@ -1392,9 +1392,9 @@ const PARTS = [
     "slug": "module_4/4.6_quarto/",
     "kind": "Tutorial (optional)",
     "blurb": "We will use Quarto to combine an analysis, its maps, and the text that explains them in a document that can be updated and shared.",
-    "mins": 25,
-    "meta": "Tutorial (optional) · 25 min",
-    "search": "c cat clean_names library nrow pluck read_rds source st_as_sf st_buffer st_crs st_filter st_read st_transform tm_dots tm_legend tm_polygons tm_scale_intervals tm_shape tmap_mode",
+    "mins": 20,
+    "meta": "Tutorial (optional) · 20 min",
+    "search": "c cat clean_names library pluck read_rds source st_as_sf st_buffer st_crs st_filter st_read st_transform tm_dots tm_legend tm_polygons tm_scale_intervals tm_shape tmap_mode",
     "sections": [
      [
       "The three parts of a Quarto document",
@@ -1415,6 +1415,301 @@ const PARTS = [
      [
       "When the analysis is slow",
       "when-the-analysis-is-slow"
+     ],
+     [
+      "Putting it all together",
+      "putting-it-all-together"
+     ]
+    ]
+   },
+   {
+    "id": "PS4",
+    "title": "Planning ARU placement",
+    "slug": "problem_sets/problem_set_4/",
+    "kind": "Problem set",
+    "blurb": "Practice with spatial filtering, the join family, and iteration across several spatial objects.",
+    "mins": 0,
+    "meta": "Problem set",
+    "search": "library",
+    "sections": [
+     [
+      "Grading",
+      "grading"
+     ],
+     [
+      "About the data",
+      "about-the-data"
+     ],
+     [
+      "Subsetting observations by location",
+      "subsetting-observations-by-location"
+     ],
+     [
+      "The keys of the county data",
+      "the-keys-of-the-county-data"
+     ],
+     [
+      "Joining the observations to the counties",
+      "joining-the-observations-to-the-counties"
+     ],
+     [
+      "Iterating over the three species",
+      "iterating-over-the-three-species"
+     ],
+     [
+      "Mapping the counts",
+      "mapping-the-counts"
+     ],
+     [
+      "Putting it together",
+      "putting-it-together"
+     ]
+    ]
+   }
+  ]
+ },
+ {
+  "n": 5,
+  "kicker": "Module 5",
+  "title": "Points, lines, and polygons",
+  "introTitle": "Module introduction",
+  "introBlurb": "What Module 5 covers, this week's data, and the required readings.",
+  "intro": "One geometry type at a time. A point records a position, a line connects positions in a specified order, and a polygon encloses an area — so each supports different questions and requires different decisions. Clean occurrence records and generate sampling points, build and split movement paths, repair and cut polygons, and classify the result.",
+  "problemSet": {
+   "id": "PS5",
+   "dir": "problem_set_5",
+   "blurb": "Practice with the geometry toolkit: building and splitting a search track, cutting it to a patch boundary, classifying nests, and mapping dense points."
+  },
+  "chapters": [
+   {
+    "id": "5.0",
+    "title": "Module introduction",
+    "slug": "module_5/5.0_module_intro/",
+    "kind": "Overview",
+    "blurb": "What Module 5 covers, this week's data, and the required readings.",
+    "mins": 10,
+    "meta": "Overview · 10 min",
+    "search": "c cat install.packages source",
+    "sections": [
+     [
+      "Module overview",
+      "module-overview"
+     ],
+     [
+      "Getting started",
+      "getting-started"
+     ],
+     [
+      "About this week's data",
+      "about-this-weeks-data"
+     ],
+     [
+      "Readings and resources",
+      "readings-and-resources"
+     ]
+    ]
+   },
+   {
+    "id": "5.1",
+    "title": "Focus on points: Occurrence records and sampling",
+    "slug": "module_5/5.1_focus_on_points/",
+    "kind": "Tutorial",
+    "blurb": "We will clean point records, examine what summarize() returns for a group of points, and generate points for a survey design.",
+    "mins": 40,
+    "meta": "Tutorial · 40 min",
+    "search": "c cat clean_names diag distinct filter group_by length library n nrow set.seed source st_as_sfc st_bbox st_cast st_centroid st_drop_geometry st_geometry_type st_point_on_surface st_read st_sample st_transform st_union st_within summarize table tm_borders tm_dots tm_polygons tm_shape tmap_mode",
+    "sections": [
+     [
+      "Records that repeat",
+      "records-that-repeat"
+     ],
+     [
+      "Mapping many points",
+      "mapping-many-points"
+     ],
+     [
+      "Gathering points into one feature",
+      "gathering-points-into-one-feature"
+     ],
+     [
+      "A point that represents an area",
+      "a-point-that-represents-an-area"
+     ],
+     [
+      "Points we generate",
+      "points-we-generate"
+     ],
+     [
+      "Putting it all together",
+      "putting-it-all-together"
+     ]
+    ]
+   },
+   {
+    "id": "5.2",
+    "title": "Focus on lines: Paths through a landscape",
+    "slug": "module_5/5.2_focus_on_lines/",
+    "kind": "Tutorial",
+    "blurb": "We will build movement tracks from ordered GPS records, measure them, and split them where the collar did not record the path.",
+    "mins": 35,
+    "meta": "Tutorial · 35 min",
+    "search": "arrange as.numeric c cat count cumsum difftime filter group_by lag library lonlat_to_utm mean median mutate n pull read_csv replace_na select set_units slice_head source st_as_sf st_cast st_distance st_drop_geometry st_length st_transform summarize summary tm_legend tm_lines tm_shape tmap_mode ungroup",
+    "sections": [
+     [
+      "The order of the points is the line",
+      "the-order-of-the-points-is-the-line"
+     ],
+     [
+      "One line per animal",
+      "one-line-per-animal"
+     ],
+     [
+      "How far did it walk?",
+      "how-far-did-it-walk"
+     ],
+     [
+      "The steps between fixes",
+      "the-steps-between-fixes"
+     ],
+     [
+      "A line the data does not support",
+      "a-line-the-data-does-not-support"
+     ],
+     [
+      "Putting it all together",
+      "putting-it-all-together"
+     ]
+    ]
+   },
+   {
+    "id": "5.3",
+    "title": "Focus on polygons: Areas, and what happens when we cut them",
+    "slug": "module_5/5.3_focus_on_polygons/",
+    "kind": "Tutorial",
+    "blurb": "We will repair invalid polygons, distinguish subsetting from clipping, and examine what happens to a field when its polygon changes.",
+    "mins": 40,
+    "meta": "Tutorial · 40 min",
+    "search": "as.numeric c cat clean_names count_vertices filter is.na library mutate nrow select set_units sf_use_s2 slice_head source st_agr st_area st_drop_geometry st_filter st_interpolate_aw st_intersection st_is_valid st_make_valid st_read st_sf st_simplify st_transform st_union sum summarize table tm_borders tm_polygons tm_shape tmap_mode",
+    "sections": [
+     [
+      "Is this polygon a polygon?",
+      "is-this-polygon-a-polygon"
+     ],
+     [
+      "Subsetting and clipping",
+      "subsetting-and-clipping"
+     ],
+     [
+      "Moving a value between two sets of polygons",
+      "moving-a-value-between-two-sets-of-polygons"
+     ],
+     [
+      "Fewer vertices",
+      "fewer-vertices"
+     ],
+     [
+      "Putting it all together",
+      "putting-it-all-together"
+     ]
+    ]
+   },
+   {
+    "id": "5.4",
+    "title": "Categorizing spatial data",
+    "slug": "module_5/5.4_categorizing_spatial_data/",
+    "kind": "Tutorial",
+    "blurb": "We will classify spatial data with if_else() and case_when(), derive classes from location, and document the rule used to draw a class boundary.",
+    "mins": 25,
+    "meta": "Tutorial · 25 min",
+    "search": "c case_when cat clean_names count if_else is.na lengths library median mutate n pull select source st_drop_geometry st_intersects st_read summarize summary tm_legend tm_polygons tm_shape tmap_mode",
+    "sections": [
+     [
+      "Two classes",
+      "two-classes"
+     ],
+     [
+      "More than two classes",
+      "more-than-two-classes"
+     ],
+     [
+      "A class that comes from location",
+      "a-class-that-comes-from-location"
+     ],
+     [
+      "Where the class boundaries come from",
+      "where-the-class-boundaries-come-from"
+     ],
+     [
+      "Putting it all together",
+      "putting-it-all-together"
+     ]
+    ]
+   },
+   {
+    "id": "5.5",
+    "title": "Cartography II: Projection, context, and labels",
+    "slug": "module_5/5.5_cartography_ii/",
+    "kind": "Tutorial (optional)",
+    "blurb": "We will choose a projection, add a locator map, label features, and decide when two variables belong on the same map.",
+    "mins": 30,
+    "meta": "Tutorial (optional) · 30 min",
+    "search": "aes c cat clean_names coord_sf filter geom_sf geom_sf_text ggplot inset_element labs library read_csv scale_fill_viridis_c scale_size_area scale_x_continuous select source st_as_sf st_as_sfc st_bbox st_point_on_surface st_read theme_bw theme_void tm_compass tm_polygons tm_scalebar tm_shape",
+    "sections": [
+     [
+      "The projection is a design decision",
+      "the-projection-is-a-design-decision"
+     ],
+     [
+      "Saying where in the world this is",
+      "saying-where-in-the-world-this-is"
+     ],
+     [
+      "Orientation and scale",
+      "orientation-and-scale"
+     ],
+     [
+      "Labeling the features",
+      "labeling-the-features"
+     ],
+     [
+      "Two variables on one map",
+      "two-variables-on-one-map"
+     ],
+     [
+      "Putting it all together",
+      "putting-it-all-together"
+     ]
+    ]
+   },
+   {
+    "id": "5.6",
+    "title": "Communicating spatial results: Reports that scale",
+    "slug": "module_5/5.6_reports_that_scale/",
+    "kind": "Tutorial (optional)",
+    "blurb": "We will use Quarto parameters to generate separate reports from the same document.",
+    "mins": 20,
+    "meta": "Tutorial (optional) · 20 min",
+    "search": "arrange as.numeric c cat cumsum difftime distinct filter group_by kable lag library list max min mutate n pull quarto_render read_csv replace_na set_units source st_as_sf st_cast st_drop_geometry st_length st_transform str_c str_to_lower summarize tm_dots tm_shape tmap_mode walk",
+    "sections": [
+     [
+      "A document that takes an argument",
+      "a-document-that-takes-an-argument"
+     ],
+     [
+      "One report for each member of a set",
+      "one-report-for-each-member-of-a-set"
+     ],
+     [
+      "A map the reader can explore",
+      "a-map-the-reader-can-explore"
+     ],
+     [
+      "The numbers behind the map",
+      "the-numbers-behind-the-map"
+     ],
+     [
+      "Citing what the map is made of",
+      "citing-what-the-map-is-made-of"
      ],
      [
       "Putting it all together",
