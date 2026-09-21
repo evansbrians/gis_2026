@@ -57,6 +57,9 @@ slot_points <-
   }
 
 # The criteria attached to a question that judges one answer several ways.
+# Only wordings the checks can decide are kept: a bullet that just describes
+# what the answer has to do is read as question text, and the answer is judged
+# against the key like any other.
 
 question_criteria <-
   function(.rubric) {
@@ -68,7 +71,8 @@ question_criteria <-
         item_label,
         criterion,
         max_points
-      )
+      ) %>%
+      filter(map_lgl(criterion, criterion_is_mechanical))
   }
 
 # The policies that can cost points anywhere in a submission.
@@ -113,6 +117,22 @@ criterion_met <-
     NA
   }
 
+# Whether a criterion's wording is one criterion_met() decides.
+
+criterion_is_mechanical <-
+  function(.criterion) {
+    decided <-
+      criterion_met(
+        .criterion,
+        character(0),
+        0L,
+        character(0),
+        TRUE
+      )
+
+    !is.na(decided)
+  }
+
 # Score every criterion of every criterion-style question. The rubric's
 # wording is carried under its own name: the slots already hold a "criterion"
 # column for their subquestion text, and the two must not collide.
@@ -123,7 +143,17 @@ score_criteria <-
       question_criteria(.rubric) %>%
       rename(criterion_text = criterion)
 
-    if (!nrow(criteria)) return(tibble())
+    if (!nrow(criteria)) {
+      return(
+        tibble(
+          student_id = character(0),
+          slot_id = integer(0),
+          criterion_text = character(0),
+          met = logical(0),
+          deduction = numeric(0)
+        )
+      )
+    }
 
     .checks %>%
       filter(question %in% criteria$question) %>%
@@ -320,14 +350,44 @@ naming_faults <-
     faults
   }
 
+# What the renaming bullet is worth: its own points when question 1 also asks
+# for code, and the whole question when renaming is all it asks.
+
+naming_points <-
+  function(.rubric, .template_slots) {
+    first_question <-
+      .rubric %>%
+      filter(item_type == "question", item_order == 1)
+
+    if (!nrow(first_question)) return(numeric(0))
+
+    answers <-
+      .template_slots %>%
+      filter(question == 1L, slot_type == "answer")
+
+    if (!nrow(answers)) return(first_question$max_points[1])
+
+    bullet <-
+      .rubric %>%
+      filter(
+        item_type %in% c("subquestion", "criterion"),
+        item_order %/% 100L == 1L,
+        str_detect(
+          str_to_lower(criterion),
+          "rename|name of the file|file name"
+        )
+      )
+
+    if (!nrow(bullet)) return(first_question$max_points[1])
+
+    bullet$max_points[1]
+  }
+
 # Score the naming question for every student.
 
 score_naming_question <-
-  function(.index, .problem_set, .rubric) {
-    points <-
-      .rubric %>%
-      filter(item_type == "question", item_order == 1) %>%
-      pull(max_points)
+  function(.index, .problem_set, .rubric, .template_slots) {
+    points <- naming_points(.rubric, .template_slots)
 
     if (!length(points)) return(tibble())
 
@@ -361,6 +421,45 @@ score_naming_question <-
       )
   }
 
+# Fold the naming judgment into question 1 when that question also has code
+# to score. A question that only asks for the renaming stands on its own.
+
+merge_naming <-
+  function(.questions, .naming) {
+    if (!nrow(.naming)) return(.questions)
+
+    if (!1L %in% .questions$question) return(bind_rows(.naming, .questions))
+
+    folded <-
+      .naming %>%
+      select(
+        student_id,
+        naming_deduction = deduction,
+        faults
+      )
+
+    .questions %>%
+      left_join(folded, join_by(student_id)) %>%
+      mutate(
+        naming_deduction =
+          if_else(
+            question == 1L,
+            coalesce(naming_deduction, 0),
+            0
+          ),
+        deduction = pmin(deduction + naming_deduction, question_points),
+        earned = question_points - deduction,
+        faults =
+          map2(
+            faults,
+            question,
+            \(.faults, .question) {
+              if (.question == 1L) .faults %||% character(0) else character(0)
+            }
+          )
+      )
+  }
+
 # scoring -----------------------------------------------------------------
 
 # Bring every check together into one row per answer slot, with the points it
@@ -368,13 +467,23 @@ score_naming_question <-
 
 score_slots <-
   function(.correctness, .functions, .style, .template_slots, .rubric,
-           .key_slots) {
+           .key_slots, .credits = NULL) {
     points <- slot_points(.template_slots, .rubric)
+
+    credits <-
+      .credits %||%
+      tibble(
+        slot_id = integer(0),
+        signature = character(0),
+        deduction = numeric(0),
+        note = character(0)
+      )
 
     joined <-
       .correctness %>%
       select(student_id, slot_id, question, answer_order, answer, found,
-             verdict, reason, signature, parses,
+             verdict, reason, signature, parses, key_missing,
+             matched_signature,
              any_of(c("mismatch", "submission_path", "line_start",
                       "line_end"))) %>%
       left_join(
@@ -388,6 +497,16 @@ score_slots <-
           select(student_id, slot_id, violations, violation_count,
                  style_clean),
         by = c("student_id", "slot_id")
+      ) %>%
+      left_join(
+        credits %>%
+          select(
+            slot_id,
+            matched_signature = signature,
+            credit_cost = deduction,
+            credit_note = note
+          ),
+        by = join_by(slot_id, matched_signature)
       ) %>%
       left_join(
         points %>%
@@ -431,10 +550,14 @@ score_slots <-
             .default = 0
           ),
 
-        # The repair check is deterministic, so it never needs a second look.
+        # The repair check is deterministic, so it never needs a second look,
+        # and an answer left uncompared by a gap in the key is the key's
+        # business rather than one to settle twenty times.
 
         needs_review =
-          !is_repair & (verdict == "review" | !found | !parses)
+          !is_repair &
+            !key_missing &
+            (verdict == "review" | !found | !parses)
       )
 
     criteria_costs <-
@@ -482,8 +605,11 @@ score_slots <-
             0,
             criteria_cost
           ),
+        # What an approach the key accepts at a cost takes off.
+
+        credit_cost = coalesce(credit_cost, 0),
         raw_cost =
-          correctness_cost + criteria_cost + unapproved_cost +
+          correctness_cost + criteria_cost + credit_cost + unapproved_cost +
             assignment_cost + index_cost,
         deduction = pmin(raw_cost, slot_points),
         earned = slot_points - deduction,

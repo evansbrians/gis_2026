@@ -1,0 +1,63 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 985 747" width="985" height="747" font-family="Helvetica Neue,Helvetica,Arial,sans-serif" role="img">
+<rect width="985" height="747" fill="#ffffff"/>
+<text x="492" y="34" text-anchor="middle" font-size="19" font-weight="700" fill="#292093">Workflow: From an elevation model to a terrain map</text>
+<line x1="40" y1="50" x2="945" y2="50" stroke="#9db0e6" stroke-width="1.2"/>
+<g transform="translate(0,52)">
+<path d="M 196.0 134.0 V 167.0" fill="none" stroke="#9db0e6" stroke-width="1.8"/>
+<polygon points="196.0,178.0 191.0,166.0 201.0,166.0" fill="#9db0e6"/>
+<rect x="179.2" y="150.0" width="33.6" height="17.0" rx="3" fill="#ffffff"/>
+<text x="196.0" y="161.0" text-anchor="middle" font-size="12" fill="#4a5aa0">then</text>
+<path d="M 196.0 274.0 V 307.0" fill="none" stroke="#9db0e6" stroke-width="1.8"/>
+<polygon points="196.0,318.0 191.0,306.0 201.0,306.0" fill="#9db0e6"/>
+<rect x="179.2" y="290.0" width="33.6" height="17.0" rx="3" fill="#ffffff"/>
+<text x="196.0" y="301.0" text-anchor="middle" font-size="12" fill="#4a5aa0">then</text>
+<path d="M 768.0 261.0 V 290.0" fill="none" stroke="#9db0e6" stroke-width="1.8"/>
+<polygon points="768.0,301.0 763.0,289.0 773.0,289.0" fill="#9db0e6"/>
+<rect x="751.2" y="275.0" width="33.6" height="17.0" rx="3" fill="#ffffff"/>
+<text x="768.0" y="286.0" text-anchor="middle" font-size="12" fill="#4a5aa0">then</text>
+<path d="M 768.0 529.0 V 558.0" fill="none" stroke="#9db0e6" stroke-width="1.8"/>
+<polygon points="768.0,569.0 763.0,557.0 773.0,557.0" fill="#9db0e6"/>
+<rect x="751.2" y="543.0" width="33.6" height="17.0" rx="3" fill="#ffffff"/>
+<text x="768.0" y="554.0" text-anchor="middle" font-size="12" fill="#4a5aa0">then</text>
+<path d="M 384.0 352.0 H 396.0 V 214.0 H 546.0" fill="none" stroke="#9db0e6" stroke-width="1.8" stroke-linejoin="round"/>
+<polygon points="557.0,214.0 545.0,209.0 545.0,219.0" fill="#9db0e6"/>
+<path d="M 384.0 352.0 H 396.0 V 490.0 H 546.0" fill="none" stroke="#9db0e6" stroke-width="1.8" stroke-linejoin="round"/>
+<polygon points="557.0,490.0 545.0,485.0 545.0,495.0" fill="#9db0e6"/>
+<rect x="428.6" y="193.0" width="95.7" height="17.0" rx="3" fill="#ffffff"/>
+<text x="476.5" y="204.0" text-anchor="middle" font-size="12" fill="#4a5aa0">on a flat map</text>
+<rect x="407.9" y="469.0" width="137.1" height="17.0" rx="3" fill="#ffffff"/>
+<text x="476.5" y="480.0" text-anchor="middle" font-size="12" fill="#4a5aa0">in three dimensions</text>
+<rect x="8.0" y="40.0" width="376" height="94" rx="9" fill="#ffffff" stroke="#9db0e6" stroke-width="1.6"/>
+<text x="196.0" y="68.0" text-anchor="middle" font-size="15" font-weight="700" font-family="Menlo,Consolas,monospace" fill="#292093">project("EPSG:xxxxx")</text>
+<text x="196.0" y="85.0" text-anchor="middle" font-size="12" fill="#5d5d70">every terrain variable is a change in elevation over</text>
+<text x="196.0" y="101.0" text-anchor="middle" font-size="12" fill="#5d5d70">a distance on the ground, so the raster goes into a</text>
+<text x="196.0" y="117.0" text-anchor="middle" font-size="12" fill="#5d5d70">projected CRS before anything is calculated from it</text>
+<rect x="8.0" y="180.0" width="376" height="94" rx="9" fill="#ffffff" stroke="#9db0e6" stroke-width="1.6"/>
+<text x="196.0" y="208.0" text-anchor="middle" font-size="15" font-weight="700" font-family="Menlo,Consolas,monospace" fill="#292093">terrain(v = , unit = )</text>
+<text x="196.0" y="225.0" text-anchor="middle" font-size="12" fill="#5d5d70">slope, aspect, TPI, TRI, roughness and flowdir, one</text>
+<text x="196.0" y="241.0" text-anchor="middle" font-size="12" fill="#5d5d70">layer for each named in v; aspect is circular, so take</text>
+<text x="196.0" y="257.0" text-anchor="middle" font-size="12" fill="#5d5d70">cos() of it in radians rather than its mean</text>
+<rect x="8.0" y="320.0" width="376" height="64" rx="9" fill="#eaf0ff" stroke="#292093" stroke-width="2.0"/>
+<text x="196.0" y="347.0" text-anchor="middle" font-size="15" fill="#333333">How do you want to</text>
+<text x="196.0" y="366.0" text-anchor="middle" font-size="15" fill="#333333">show the surface?</text>
+<rect x="559.0" y="167.0" width="418" height="94" rx="9" fill="#ffffff" stroke="#9db0e6" stroke-width="1.6"/>
+<text x="768.0" y="195.0" text-anchor="middle" font-size="15" font-weight="700" font-family="Menlo,Consolas,monospace" fill="#292093">shade(slope, aspect, angle, direction)</text>
+<text x="768.0" y="212.0" text-anchor="middle" font-size="12" fill="#5d5d70">slope and aspect in radians; angle is the elevation of</text>
+<text x="768.0" y="228.0" text-anchor="middle" font-size="12" fill="#5d5d70">the light and direction its bearing, conventionally 315,</text>
+<text x="768.0" y="244.0" text-anchor="middle" font-size="12" fill="#5d5d70">because a light from the southeast inverts the relief</text>
+<rect x="559.0" y="303.0" width="418" height="94" rx="9" fill="#ffffff" stroke="#9db0e6" stroke-width="1.6"/>
+<text x="768.0" y="331.0" text-anchor="middle" font-size="15" font-weight="700" font-family="Menlo,Consolas,monospace" fill="#292093">ggnewscale::new_scale_fill()</text>
+<text x="768.0" y="348.0" text-anchor="middle" font-size="12" fill="#5d5d70">sits between two geom_spatraster() calls: the grey</text>
+<text x="768.0" y="364.0" text-anchor="middle" font-size="12" fill="#5d5d70">hillshade below, the colored layer above it with alpha,</text>
+<text x="768.0" y="380.0" text-anchor="middle" font-size="12" fill="#5d5d70">so the relief shows through the colors</text>
+<rect x="559.0" y="451.0" width="418" height="78" rx="9" fill="#ffffff" stroke="#9db0e6" stroke-width="1.6"/>
+<text x="768.0" y="479.0" text-anchor="middle" font-size="15" font-weight="700" font-family="Menlo,Consolas,monospace" fill="#292093">rayshader::raster_to_matrix()</text>
+<text x="768.0" y="496.0" text-anchor="middle" font-size="12" fill="#5d5d70">rayshader works on a matrix rather than a SpatRaster;</text>
+<text x="768.0" y="512.0" text-anchor="middle" font-size="12" fill="#5d5d70">the matrix is the transpose of the raster's grid</text>
+<rect x="559.0" y="571.0" width="418" height="94" rx="9" fill="#ffffff" stroke="#9db0e6" stroke-width="1.6"/>
+<text x="768.0" y="599.0" text-anchor="middle" font-size="15" font-weight="700" font-family="Menlo,Consolas,monospace" fill="#292093">sphere_shade()  ray_shade()  add_shadow()</text>
+<text x="768.0" y="616.0" text-anchor="middle" font-size="12" fill="#5d5d70">then plot_map() for an image or plot_3d() for a scene;</text>
+<text x="768.0" y="632.0" text-anchor="middle" font-size="12" fill="#5d5d70">zscale is the horizontal cell spacing divided by the</text>
+<text x="768.0" y="648.0" text-anchor="middle" font-size="12" fill="#5d5d70">vertical unit, and ray_shade() is slow: build it small</text>
+</g>
+</svg>

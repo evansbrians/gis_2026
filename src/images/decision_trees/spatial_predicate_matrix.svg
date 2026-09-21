@@ -1,0 +1,91 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1012 662" width="1012" height="662" font-family="Helvetica Neue,Helvetica,Arial,sans-serif" role="img">
+<rect width="1012" height="662" fill="#ffffff"/>
+<text x="506" y="31" text-anchor="middle" font-size="21" font-weight="700" fill="#292093">Which spatial predicates are TRUE?</text>
+<text x="506" y="50" text-anchor="middle" font-size="14" fill="#5d5d70">The blue polygon is x, the grey polygon is y, in predicate(x, y)</text>
+<line x1="14" y1="58" x2="998" y2="58" stroke="#9db0e6" stroke-width="1.2"/>
+<text x="270.0" y="92.0" text-anchor="middle" font-size="12.5" font-weight="700" font-family="Menlo,Consolas,monospace" fill="#292093">st_intersects()</text>
+<text x="382.0" y="92.0" text-anchor="middle" font-size="12.5" font-weight="700" font-family="Menlo,Consolas,monospace" fill="#292093">st_disjoint()</text>
+<text x="494.0" y="92.0" text-anchor="middle" font-size="12.5" font-weight="700" font-family="Menlo,Consolas,monospace" fill="#292093">st_touches()</text>
+<text x="606.0" y="92.0" text-anchor="middle" font-size="12.5" font-weight="700" font-family="Menlo,Consolas,monospace" fill="#292093">st_overlaps()</text>
+<text x="718.0" y="92.0" text-anchor="middle" font-size="12.5" font-weight="700" font-family="Menlo,Consolas,monospace" fill="#292093">st_within()</text>
+<text x="830.0" y="92.0" text-anchor="middle" font-size="12.5" font-weight="700" font-family="Menlo,Consolas,monospace" fill="#292093">st_contains()</text>
+<text x="942.0" y="92.0" text-anchor="middle" font-size="12.5" font-weight="700" font-family="Menlo,Consolas,monospace" fill="#292093">st_equals()</text>
+<rect x="35.9" y="133.9" width="45.5" height="45.5" fill="#c9c9d4" fill-opacity="0.65" stroke="#8a8a99" stroke-width="1.2"/>
+<rect x="104.1" y="156.6" width="22.7" height="22.7" fill="#4a5aa0" fill-opacity="0.30" stroke="#292093" stroke-width="1.8"/>
+<text x="136.0" y="161.0" font-size="14" fill="#333333">apart</text>
+<line x1="264.0" y1="156.0" x2="276.0" y2="156.0" stroke="#c9c9d4" stroke-width="2.2" stroke-linecap="round"/>
+<circle cx="382.0" cy="156.0" r="11" fill="#eaf0ff" stroke="#292093" stroke-width="1.8"/>
+<path d="M 377.0 156.0 l 3.4 3.6 l 6.4 -7.4" fill="none" stroke="#292093" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+<line x1="488.0" y1="156.0" x2="500.0" y2="156.0" stroke="#c9c9d4" stroke-width="2.2" stroke-linecap="round"/>
+<line x1="600.0" y1="156.0" x2="612.0" y2="156.0" stroke="#c9c9d4" stroke-width="2.2" stroke-linecap="round"/>
+<line x1="712.0" y1="156.0" x2="724.0" y2="156.0" stroke="#c9c9d4" stroke-width="2.2" stroke-linecap="round"/>
+<line x1="824.0" y1="156.0" x2="836.0" y2="156.0" stroke="#c9c9d4" stroke-width="2.2" stroke-linecap="round"/>
+<line x1="936.0" y1="156.0" x2="948.0" y2="156.0" stroke="#c9c9d4" stroke-width="2.2" stroke-linecap="round"/>
+<line x1="14" y1="198.0" x2="998" y2="198.0" stroke="#e4e4ee" stroke-width="1"/>
+<rect x="35.9" y="217.9" width="45.5" height="45.5" fill="#c9c9d4" fill-opacity="0.65" stroke="#8a8a99" stroke-width="1.2"/>
+<rect x="81.4" y="229.3" width="22.7" height="22.7" fill="#4a5aa0" fill-opacity="0.30" stroke="#292093" stroke-width="1.8"/>
+<text x="136.0" y="245.0" font-size="14" fill="#333333">touching</text>
+<circle cx="270.0" cy="240.0" r="11" fill="#eaf0ff" stroke="#292093" stroke-width="1.8"/>
+<path d="M 265.0 240.0 l 3.4 3.6 l 6.4 -7.4" fill="none" stroke="#292093" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+<line x1="376.0" y1="240.0" x2="388.0" y2="240.0" stroke="#c9c9d4" stroke-width="2.2" stroke-linecap="round"/>
+<circle cx="494.0" cy="240.0" r="11" fill="#eaf0ff" stroke="#292093" stroke-width="1.8"/>
+<path d="M 489.0 240.0 l 3.4 3.6 l 6.4 -7.4" fill="none" stroke="#292093" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+<line x1="600.0" y1="240.0" x2="612.0" y2="240.0" stroke="#c9c9d4" stroke-width="2.2" stroke-linecap="round"/>
+<line x1="712.0" y1="240.0" x2="724.0" y2="240.0" stroke="#c9c9d4" stroke-width="2.2" stroke-linecap="round"/>
+<line x1="824.0" y1="240.0" x2="836.0" y2="240.0" stroke="#c9c9d4" stroke-width="2.2" stroke-linecap="round"/>
+<line x1="936.0" y1="240.0" x2="948.0" y2="240.0" stroke="#c9c9d4" stroke-width="2.2" stroke-linecap="round"/>
+<line x1="14" y1="282.0" x2="998" y2="282.0" stroke="#e4e4ee" stroke-width="1"/>
+<rect x="35.9" y="301.9" width="45.5" height="45.5" fill="#c9c9d4" fill-opacity="0.65" stroke="#8a8a99" stroke-width="1.2"/>
+<rect x="70.0" y="313.3" width="34.1" height="22.7" fill="#4a5aa0" fill-opacity="0.30" stroke="#292093" stroke-width="1.8"/>
+<text x="136.0" y="329.0" font-size="14" fill="#333333">overlapping</text>
+<circle cx="270.0" cy="324.0" r="11" fill="#eaf0ff" stroke="#292093" stroke-width="1.8"/>
+<path d="M 265.0 324.0 l 3.4 3.6 l 6.4 -7.4" fill="none" stroke="#292093" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+<line x1="376.0" y1="324.0" x2="388.0" y2="324.0" stroke="#c9c9d4" stroke-width="2.2" stroke-linecap="round"/>
+<line x1="488.0" y1="324.0" x2="500.0" y2="324.0" stroke="#c9c9d4" stroke-width="2.2" stroke-linecap="round"/>
+<circle cx="606.0" cy="324.0" r="11" fill="#eaf0ff" stroke="#292093" stroke-width="1.8"/>
+<path d="M 601.0 324.0 l 3.4 3.6 l 6.4 -7.4" fill="none" stroke="#292093" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+<line x1="712.0" y1="324.0" x2="724.0" y2="324.0" stroke="#c9c9d4" stroke-width="2.2" stroke-linecap="round"/>
+<line x1="824.0" y1="324.0" x2="836.0" y2="324.0" stroke="#c9c9d4" stroke-width="2.2" stroke-linecap="round"/>
+<line x1="936.0" y1="324.0" x2="948.0" y2="324.0" stroke="#c9c9d4" stroke-width="2.2" stroke-linecap="round"/>
+<line x1="14" y1="366.0" x2="998" y2="366.0" stroke="#e4e4ee" stroke-width="1"/>
+<rect x="35.9" y="385.9" width="45.5" height="45.5" fill="#c9c9d4" fill-opacity="0.65" stroke="#8a8a99" stroke-width="1.2"/>
+<rect x="47.3" y="397.3" width="22.7" height="22.7" fill="#4a5aa0" fill-opacity="0.30" stroke="#292093" stroke-width="1.8"/>
+<text x="136.0" y="413.0" font-size="14" fill="#333333">inside</text>
+<circle cx="270.0" cy="408.0" r="11" fill="#eaf0ff" stroke="#292093" stroke-width="1.8"/>
+<path d="M 265.0 408.0 l 3.4 3.6 l 6.4 -7.4" fill="none" stroke="#292093" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+<line x1="376.0" y1="408.0" x2="388.0" y2="408.0" stroke="#c9c9d4" stroke-width="2.2" stroke-linecap="round"/>
+<line x1="488.0" y1="408.0" x2="500.0" y2="408.0" stroke="#c9c9d4" stroke-width="2.2" stroke-linecap="round"/>
+<line x1="600.0" y1="408.0" x2="612.0" y2="408.0" stroke="#c9c9d4" stroke-width="2.2" stroke-linecap="round"/>
+<circle cx="718.0" cy="408.0" r="11" fill="#eaf0ff" stroke="#292093" stroke-width="1.8"/>
+<path d="M 713.0 408.0 l 3.4 3.6 l 6.4 -7.4" fill="none" stroke="#292093" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+<line x1="824.0" y1="408.0" x2="836.0" y2="408.0" stroke="#c9c9d4" stroke-width="2.2" stroke-linecap="round"/>
+<line x1="936.0" y1="408.0" x2="948.0" y2="408.0" stroke="#c9c9d4" stroke-width="2.2" stroke-linecap="round"/>
+<line x1="14" y1="450.0" x2="998" y2="450.0" stroke="#e4e4ee" stroke-width="1"/>
+<rect x="35.9" y="469.9" width="45.5" height="45.5" fill="#c9c9d4" fill-opacity="0.65" stroke="#8a8a99" stroke-width="1.2"/>
+<rect x="24.5" y="458.5" width="68.2" height="68.2" fill="#4a5aa0" fill-opacity="0.30" stroke="#292093" stroke-width="1.8"/>
+<text x="136.0" y="497.0" font-size="14" fill="#333333">surrounding</text>
+<circle cx="270.0" cy="492.0" r="11" fill="#eaf0ff" stroke="#292093" stroke-width="1.8"/>
+<path d="M 265.0 492.0 l 3.4 3.6 l 6.4 -7.4" fill="none" stroke="#292093" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+<line x1="376.0" y1="492.0" x2="388.0" y2="492.0" stroke="#c9c9d4" stroke-width="2.2" stroke-linecap="round"/>
+<line x1="488.0" y1="492.0" x2="500.0" y2="492.0" stroke="#c9c9d4" stroke-width="2.2" stroke-linecap="round"/>
+<line x1="600.0" y1="492.0" x2="612.0" y2="492.0" stroke="#c9c9d4" stroke-width="2.2" stroke-linecap="round"/>
+<line x1="712.0" y1="492.0" x2="724.0" y2="492.0" stroke="#c9c9d4" stroke-width="2.2" stroke-linecap="round"/>
+<circle cx="830.0" cy="492.0" r="11" fill="#eaf0ff" stroke="#292093" stroke-width="1.8"/>
+<path d="M 825.0 492.0 l 3.4 3.6 l 6.4 -7.4" fill="none" stroke="#292093" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+<line x1="936.0" y1="492.0" x2="948.0" y2="492.0" stroke="#c9c9d4" stroke-width="2.2" stroke-linecap="round"/>
+<line x1="14" y1="534.0" x2="998" y2="534.0" stroke="#e4e4ee" stroke-width="1"/>
+<rect x="35.9" y="553.9" width="45.5" height="45.5" fill="#c9c9d4" fill-opacity="0.65" stroke="#8a8a99" stroke-width="1.2"/>
+<rect x="35.9" y="553.9" width="45.5" height="45.5" fill="#4a5aa0" fill-opacity="0.30" stroke="#292093" stroke-width="1.8"/>
+<text x="136.0" y="581.0" font-size="14" fill="#333333">identical</text>
+<circle cx="270.0" cy="576.0" r="11" fill="#eaf0ff" stroke="#292093" stroke-width="1.8"/>
+<path d="M 265.0 576.0 l 3.4 3.6 l 6.4 -7.4" fill="none" stroke="#292093" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+<line x1="376.0" y1="576.0" x2="388.0" y2="576.0" stroke="#c9c9d4" stroke-width="2.2" stroke-linecap="round"/>
+<line x1="488.0" y1="576.0" x2="500.0" y2="576.0" stroke="#c9c9d4" stroke-width="2.2" stroke-linecap="round"/>
+<line x1="600.0" y1="576.0" x2="612.0" y2="576.0" stroke="#c9c9d4" stroke-width="2.2" stroke-linecap="round"/>
+<circle cx="718.0" cy="576.0" r="11" fill="#eaf0ff" stroke="#292093" stroke-width="1.8"/>
+<path d="M 713.0 576.0 l 3.4 3.6 l 6.4 -7.4" fill="none" stroke="#292093" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+<circle cx="830.0" cy="576.0" r="11" fill="#eaf0ff" stroke="#292093" stroke-width="1.8"/>
+<path d="M 825.0 576.0 l 3.4 3.6 l 6.4 -7.4" fill="none" stroke="#292093" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+<circle cx="942.0" cy="576.0" r="11" fill="#eaf0ff" stroke="#292093" stroke-width="1.8"/>
+<path d="M 937.0 576.0 l 3.4 3.6 l 6.4 -7.4" fill="none" stroke="#292093" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

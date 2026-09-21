@@ -81,6 +81,11 @@ div(
   class = "gd-bar gd-grid gd-grid-controls",
   uiOutput("where"),
   checkboxInput(
+    "only_attention",
+    "Only answers wanting attention",
+    value = TRUE
+  ),
+  checkboxInput(
     "reveal_names",
     "Reveal names",
     value = FALSE
@@ -102,13 +107,6 @@ div(
 )
 
 uiOutput("compare")
-
-uiOutput("accept_answer_ui")
-```
-
-```{r}
-#| label: mark
-#| echo: false
 
 div(
   class = "gd-card gd-grid gd-grid-mark",
@@ -138,6 +136,19 @@ div(
     height = "110px"
   )
 )
+
+uiOutput("key_panel")
+
+uiOutput("key_editor")
+
+uiOutput("accept_answer_ui")
+
+uiOutput("comment_bank_ui")
+```
+
+```{r}
+#| label: navigation
+#| echo: false
 
 div(
   class = "gd-nav",
@@ -450,7 +461,28 @@ part_table <-
       arrange(question, answer_order)
   }
 
-parts <- reactive(part_table(results()))
+# The answers still wanting a person: the ones the checks flagged, the ones
+# they call wrong, and the ones that lost style credit.
+
+wants_attention <-
+  function(.slots) {
+    .slots %>%
+      filter(
+        coalesce(needs_review, TRUE) |
+          coalesce(verdict == "incorrect", FALSE) |
+          !coalesce(style_clean, FALSE)
+      )
+  }
+
+parts <-
+  reactive({
+    rows <- part_table(results())
+
+    if (!isTRUE(input$only_attention)) return(rows)
+
+    rows %>%
+      filter(slot_id %in% wants_attention(results()$slots)$slot_id)
+  })
 
 part_index <- reactiveVal(1L)
 
@@ -497,8 +529,13 @@ current_responses <-
 
     if (is.null(part)) return(results()$slots[0, ])
 
-    results()$slots %>%
-      filter(slot_id == part$slot_id) %>%
+    rows <-
+      results()$slots %>%
+      filter(slot_id == part$slot_id)
+
+    if (isTRUE(input$only_attention)) rows <- wants_attention(rows)
+
+    rows %>%
       mutate(order_key = response_order_key(student_id, slot_id)) %>%
       arrange(order_key)
   })
@@ -517,6 +554,16 @@ current_response <-
 output$where <-
   renderUI({
     part <- current_part()
+
+    if (is.null(part) && isTRUE(input$only_attention)) {
+      return(
+        HTML(
+          "<p class=\"gd-where\">Nothing is waiting on you. Turn off
+           <strong>Only answers wanting attention</strong> to see them
+           all.</p>"
+        )
+      )
+    }
 
     if (is.null(part)) return(HTML(""))
 
@@ -904,6 +951,36 @@ capture_current <-
     invisible(NULL)
   }
 
+# The approaches the run holds for one slot, without re-reading the key file
+# on every render.
+
+run_alternatives <-
+  function(.slot_id) {
+    key <- results()$key
+
+    found <- key$alternatives[key$slot_id == .slot_id]
+
+    if (!length(found)) return(character(0))
+
+    found[[1]] %||% character(0)
+  }
+
+# Read the key back after it has been edited, so the panels show what the
+# file now holds.
+
+refresh_key <-
+  function() {
+    refreshed <- results()
+
+    refreshed$key <- key_slots(dashboard_problem_set)
+
+    refreshed$credits <- key_credits(dashboard_problem_set)
+
+    results(refreshed)
+
+    invisible(NULL)
+  }
+
 # moving ------------------------------------------------------------------
 
 # Every move captures first, then changes position, then points the boxes at
@@ -928,6 +1005,12 @@ observeEvent(
   TRUE,
   move_to(1L, 1L),
   once = TRUE
+)
+
+observeEvent(
+  input$only_attention,
+  move_to(1L, 1L),
+  ignoreInit = TRUE
 )
 
 observeEvent(
@@ -1002,6 +1085,149 @@ observeEvent(
 # appends the code to the key file as a new alternative and marks every
 # matching proposal on this question correct.
 
+# The approaches the key accepts for the part on screen, with what each one
+# costs.
+
+output$key_panel <-
+  renderUI({
+    part <- current_part()
+
+    if (is.null(part)) return(NULL)
+
+    run <- results()
+
+    alternatives <-
+      run$key$alternatives[run$key$slot_id == part$slot_id][[1]] %||%
+      character(0)
+
+    priced <- run$credits %||% key_credits(dashboard_problem_set)
+
+    shown_alternatives <-
+      map_chr(
+        alternatives,
+        \(.alternative) {
+          cost <-
+            priced$deduction[
+              priced$slot_id == part$slot_id &
+                priced$signature == answer_signature(.alternative)
+            ]
+
+          str_c(
+            code_panel(.alternative),
+            if (length(cost) && cost[1] > 0) {
+              str_c(
+                "<p class=\"gd-empty\">Costs ",
+                formatC(cost[1], format = "f", digits = 2),
+                "</p>"
+              )
+            } else {
+              ""
+            }
+          )
+        }
+      )
+
+    HTML(
+      str_c(
+        "<h4>The key accepts ",
+        length(alternatives),
+        " approach",
+        if (length(alternatives) == 1) "" else "es",
+        " here</h4>",
+        str_c(shown_alternatives, collapse = "")
+      )
+    )
+  })
+
+# Editing what the key accepts. The approach is chosen by number, its code is
+# shown as it sits in the key file, and what it costs is set beside it.
+
+output$key_editor <-
+  renderUI({
+    part <- current_part()
+
+    if (is.null(part)) return(NULL)
+
+    alternatives <- run_alternatives(part$slot_id)
+
+    if (!length(alternatives)) return(NULL)
+
+    div(
+      class = "gd-card",
+      selectInput(
+        "key_choice",
+        "Approach",
+        choices = set_names(seq_along(alternatives), seq_along(alternatives)),
+        width = "100%"
+      ),
+      textAreaInput(
+        "key_code",
+        "Its code, as the key holds it",
+        width = "100%",
+        height = "140px"
+      ),
+      div(
+        class = "gd-grid gd-grid-mark",
+        numericInput(
+          "key_cost",
+          "What it costs",
+          value = 0,
+          min = 0,
+          step = 0.05,
+          width = "100%"
+        ),
+        textAreaInput(
+          "key_note",
+          "What the student reads when it costs something",
+          width = "100%",
+          height = "70px"
+        )
+      ),
+      div(
+        class = "gd-nav gd-nav-row",
+        actionButton("key_save", "Save this approach", class = "btn-primary"),
+        actionButton("key_remove", "Remove this approach")
+      )
+    )
+  })
+
+# The comment bank, so a new reason or suggestion is written once and then
+# dropped into any answer's feedback.
+
+output$comment_bank_ui <-
+  renderUI({
+    bank <- results()$bank %||% grading_comment_bank()
+
+    div(
+      class = "gd-card",
+      selectInput(
+        "bank_choice",
+        "Comment bank",
+        choices = bank$short_name,
+        width = "100%"
+      ),
+      div(
+        class = "gd-nav gd-nav-row",
+        actionButton("bank_insert", "Add it to the feedback box")
+      ),
+      textInput(
+        "bank_name",
+        "Short name for a new comment",
+        width = "100%"
+      ),
+      textAreaInput(
+        "bank_text",
+        "What it says",
+        width = "100%",
+        height = "70px"
+      ),
+      div(
+        class = "gd-nav gd-nav-row",
+        actionButton("bank_save", "Save this comment to the bank")
+      )
+    )
+  })
+
 output$accept_answer_ui <-
   renderUI({
     slot <- current_response()
@@ -1009,10 +1235,30 @@ output$accept_answer_ui <-
     if (is.null(slot) || slot$verdict != "incorrect") return(NULL)
 
     div(
-      class = "gd-nav gd-nav-row",
-      actionButton(
-        "accept_answer",
-        "Accept this answer and add it to the key"
+      class = "gd-card",
+      div(
+        class = "gd-grid gd-grid-mark",
+        numericInput(
+          "accept_cost",
+          "What this approach costs",
+          value = 0,
+          min = 0,
+          step = 0.05,
+          width = "100%"
+        ),
+        textAreaInput(
+          "accept_note",
+          "What the student reads when it costs something",
+          width = "100%",
+          height = "70px"
+        )
+      ),
+      div(
+        class = "gd-nav gd-nav-row",
+        actionButton(
+          "accept_answer",
+          "Accept this answer and add it to the key"
+        )
       )
     )
   })
@@ -1065,6 +1311,56 @@ observeEvent(
         filter(!(slot_id == slot$slot_id & student_id == slot$student_id))
     )
 
+    cost <- coalesce(input$accept_cost, 0)
+
+    note <- str_trim(coalesce(input$accept_note, ""))
+
+    signature <- answer_signature(slot$answer)
+
+    priced <- 0L
+
+    if (cost > 0 && !is.na(signature) &&
+          has_name(updated$slots, "matched_signature")) {
+      set_key_credit(
+        dashboard_problem_set,
+        slot$slot_id,
+        signature,
+        cost,
+        if (nzchar(note)) note else NA_character_
+      )
+
+      # The rule is kept in the database, which holds from the next run.
+      # These answers are marked now, through the same overrides a person
+      # would otherwise type one at a time.
+
+      matching <-
+        updated$slots %>%
+        filter(
+          slot_id == slot$slot_id,
+          coalesce(matched_signature, "") == signature
+        )
+
+      priced <- nrow(matching)
+
+      edits(
+        bind_rows(
+          edits() %>%
+            filter(
+              !(slot_id == slot$slot_id &
+                  student_id %in% matching$student_id)
+            ),
+          tibble(
+            slot_id = matching$slot_id,
+            student_id = matching$student_id,
+            question = as.integer(matching$question),
+            new_deduction = matching$deduction + cost,
+            new_note = if (nzchar(note)) note else NA_character_,
+            new_style_credit = NA_real_
+          )
+        )
+      )
+    }
+
     showNotification(
       str_c(
         "Added to the key. ",
@@ -1073,13 +1369,234 @@ observeEvent(
         if (marked == 1) "" else "s",
         " on this question ",
         if (marked == 1) "is" else "are",
-        " now marked correct."
+        " now marked correct.",
+        if (priced) {
+          str_c(
+            " ",
+            priced,
+            " carr",
+            if (priced == 1) "ies" else "y",
+            " a cost of ",
+            formatC(cost, format = "f", digits = 2),
+            ", waiting on Save."
+          )
+        } else {
+          ""
+        }
       ),
       duration = 6,
       type = "message"
     )
 
     show_response(current_response())
+  }
+)
+
+# key editing -------------------------------------------------------------
+
+# The credit set on one approach, or nothing when it is worth full marks.
+
+credit_of <-
+  function(.slot_id, .code) {
+    priced <- results()$credits %||% key_credits(dashboard_problem_set)
+
+    signature <- answer_signature(.code)
+
+    if (is.na(signature)) return(NULL)
+
+    found <-
+      priced %>%
+      filter(slot_id == .slot_id, signature == !!signature)
+
+    if (!nrow(found)) return(NULL)
+
+    found[1, ]
+  }
+
+# Point the editing boxes at the approach that is selected.
+
+observeEvent(
+  list(input$key_choice, current_part()),
+  {
+    part <- current_part()
+
+    if (is.null(part)) return(invisible(NULL))
+
+    alternatives <- run_alternatives(part$slot_id)
+
+    index <- suppressWarnings(as.integer(input$key_choice))
+
+    if (is.na(index) || index < 1 || index > length(alternatives)) {
+      return(invisible(NULL))
+    }
+
+    code <- alternatives[[index]]
+
+    priced <- credit_of(part$slot_id, code)
+
+    updateTextAreaInput(session, "key_code", value = code)
+
+    updateNumericInput(
+      session,
+      "key_cost",
+      value = if (is.null(priced)) 0 else priced$deduction
+    )
+
+    updateTextAreaInput(
+      session,
+      "key_note",
+      value = if (is.null(priced)) "" else coalesce(priced$note, "")
+    )
+  },
+  ignoreInit = TRUE
+)
+
+# Write an edited approach back to the key file, with what it costs.
+
+observeEvent(
+  input$key_save,
+  {
+    part <- current_part()
+
+    if (is.null(part)) return(invisible(NULL))
+
+    index <- suppressWarnings(as.integer(input$key_choice))
+
+    code <- str_trim(coalesce(input$key_code, ""))
+
+    if (is.na(index) || !nzchar(code)) {
+      showNotification(
+        "Nothing to save: choose an approach and give it code.",
+        duration = 4,
+        type = "warning"
+      )
+
+      return(invisible(NULL))
+    }
+
+    replace_key_alternative(
+      dashboard_problem_set,
+      part$slot_id,
+      index,
+      code
+    )
+
+    cost <- coalesce(input$key_cost, 0)
+
+    note <- str_trim(coalesce(input$key_note, ""))
+
+    signature <- answer_signature(code)
+
+    if (!is.na(signature)) {
+      if (cost > 0) {
+        set_key_credit(
+          dashboard_problem_set,
+          part$slot_id,
+          signature,
+          cost,
+          if (nzchar(note)) note else NA_character_
+        )
+      } else {
+        remove_key_credit(dashboard_problem_set, part$slot_id, signature)
+      }
+    }
+
+    refresh_key()
+
+    showNotification(
+      "Saved to the key. Re-grade to apply it to the marks.",
+      duration = 6,
+      type = "message"
+    )
+  }
+)
+
+# Drop an approach from the key, and whatever it was worth.
+
+observeEvent(
+  input$key_remove,
+  {
+    part <- current_part()
+
+    if (is.null(part)) return(invisible(NULL))
+
+    index <- suppressWarnings(as.integer(input$key_choice))
+
+    alternatives <- slot_alternatives(dashboard_problem_set, part$slot_id)
+
+    if (is.na(index) || index < 1 || index > length(alternatives)) {
+      return(invisible(NULL))
+    }
+
+    signature <- answer_signature(alternatives[[index]])
+
+    remove_key_alternative(dashboard_problem_set, part$slot_id, index)
+
+    if (!is.na(signature)) {
+      remove_key_credit(dashboard_problem_set, part$slot_id, signature)
+    }
+
+    refresh_key()
+
+    showNotification(
+      "Removed from the key. Re-grade to apply it to the marks.",
+      duration = 6,
+      type = "message"
+    )
+  }
+)
+
+# comment bank ------------------------------------------------------------
+
+observeEvent(
+  input$bank_insert,
+  {
+    bank <- results()$bank %||% grading_comment_bank()
+
+    text <- bank$comment_text[bank$short_name == input$bank_choice]
+
+    if (!length(text)) return(invisible(NULL))
+
+    written <- str_trim(coalesce(input$override_note, ""))
+
+    updateTextAreaInput(
+      session,
+      "override_note",
+      value = str_c(c(written, text[1]) %>% keep(nzchar), collapse = "\n")
+    )
+  }
+)
+
+observeEvent(
+  input$bank_save,
+  {
+    short_name <- str_trim(coalesce(input$bank_name, ""))
+
+    text <- str_trim(coalesce(input$bank_text, ""))
+
+    if (!nzchar(short_name) || !nzchar(text)) {
+      showNotification(
+        "A comment needs a short name and something to say.",
+        duration = 4,
+        type = "warning"
+      )
+
+      return(invisible(NULL))
+    }
+
+    set_grading_comment(short_name, text)
+
+    refreshed <- results()
+
+    refreshed$bank <- grading_comment_bank()
+
+    results(refreshed)
+
+    showNotification(
+      "Saved to the comment bank.",
+      duration = 4,
+      type = "message"
+    )
   }
 )
 

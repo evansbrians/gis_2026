@@ -80,13 +80,135 @@ signature_pieces <-
       filter(!text %in% c("%>%", "|>")) %>%
       filter(!id %in% index_strings) %>%
       left_join(argument_names(parse_data), by = "id") %>%
+      left_join(enclosing_calls(parse_data), by = "id") %>%
       mutate(
         token = if_else(token == "LBB", "'$'", token),
         text = if_else(token == "'$'", "$", text),
-        text = str_remove_all(text, "^[\"']|[\"']$")
+        text = str_remove_all(text, "^[\"']|[\"']$"),
+        text = str_replace(text, "colour", "color"),
+        argument = str_replace(argument, "colour", "color"),
+        text =
+          if_else(
+            is_path(token, text),
+            str_remove(text, "^.*/"),
+            text
+          )
       ) %>%
+      filter(!chosen_by_student(token, text, argument, call)) %>%
       distinct(token, text, .keep_all = TRUE) %>%
       select(token, text, argument)
+  }
+
+# Where a literal is the student's to choose:
+
+label_calls <- c("labs", "ggtitle", "xlab", "ylab", "labeller")
+
+palette_arguments <-
+  c("values", "color", "fill", "low", "high", "mid", "na.value")
+
+# The literals a question leaves open: the words in a label, the name a
+# legend carries, and any color.
+
+chosen_by_student <-
+  function(.token, .text, .argument, .call) {
+    named_scale <-
+      str_detect(coalesce(.call, ""), "^scale_") & is.na(.argument)
+
+    .token %in% c("STR_CONST", "NUM_CONST") &
+      (
+        str_detect(.text, "^#[0-9A-Fa-f]{3,8}$") |
+          coalesce(.argument, "") %in% palette_arguments |
+          coalesce(.call, "") %in% label_calls |
+          named_scale
+      )
+  }
+
+# The call each piece sits inside, so a literal can be read as a label or a
+# palette rather than as part of the answer.
+
+enclosing_calls <-
+  function(.parse_data) {
+    empty <- tibble(id = integer(0), call = character(0))
+
+    named <- .parse_data$id[.parse_data$token == "SYMBOL_FUNCTION_CALL"]
+
+    if (!length(named)) return(empty)
+
+    wrappers <- .parse_data$parent[match(named, .parse_data$id)]
+
+    calls <- .parse_data$parent[match(wrappers, .parse_data$id)]
+
+    call_of <-
+      set_names(
+        .parse_data$text[match(named, .parse_data$id)],
+        calls
+      )
+
+    parent_of <- set_names(.parse_data$parent, .parse_data$id)
+
+    nearest <-
+      function(.id) {
+        at <- unname(parent_of[as.character(.id)])
+
+        while (!is.na(at) && at != 0) {
+          hit <- call_of[as.character(at)]
+
+          if (!is.na(hit)) return(unname(hit))
+
+          at <- unname(parent_of[as.character(at)])
+        }
+
+        NA_character_
+      }
+
+    ids <- .parse_data$id[.parse_data$terminal]
+
+    tibble(
+      id = ids,
+      call = map_chr(ids, nearest)
+    )
+  }
+
+# Whether a string names a file. A path is compared by its file name alone,
+# since a student whose project sits one folder over reads the same data from
+# a different path.
+
+is_path <-
+  function(.token, .text) {
+    .token == "STR_CONST" &
+      str_detect(
+        .text,
+        regex(
+          "/|\\.(rds|csv|tsv|txt|xlsx|xls|geojson|shp|gpkg|json|tiff?)$",
+          ignore_case = TRUE
+        )
+      )
+  }
+
+# One comparable label per piece, naming what it is as well as what it says.
+
+piece_keys <-
+  function(.pieces) {
+    str_c(
+      .pieces$token,
+      "|",
+      .pieces$text,
+      "|",
+      coalesce(.pieces$argument, "")
+    )
+  }
+
+# A piece under the name the allowed-function lists use, so an operator can
+# be matched against the functions an assignment permits.
+
+piece_function_names <-
+  function(.pieces) {
+    mapped <-
+      parser_token_names$function_name[
+        match(.pieces$token, parser_token_names$token)
+      ]
+
+    coalesce(mapped, .pieces$text)
   }
 
 # Every node under the given ones, the given ones included.
@@ -318,18 +440,111 @@ mismatch_description <-
     generic
   }
 
-# Whether an answer reduces to the same thing as any of the key's accepted
-# alternatives.
+# Whether an answer covers an alternative once the differences the course does
+# not judge are set aside: an argument the key does not pass, and a package
+# attached where the answer also does the work.
+
+pieces_cover <-
+  function(.answer, .key) {
+    if (is.null(.answer) || is.null(.key)) return(FALSE)
+
+    answer_keys <- piece_keys(.answer)
+
+    if (length(setdiff(piece_keys(.key), answer_keys))) return(FALSE)
+
+    extra <- .answer[!answer_keys %in% piece_keys(.key), ]
+
+    all(!is.na(extra$argument) | extra$text == "library")
+  }
+
+# Whether the only thing between an answer and an accepted approach is the
+# function it reached for. The function is charged by the policy that lists
+# what the assignment permits, and the answer is not charged again.
+
+matches_but_for_unapproved <-
+  function(.code, .alternatives, .unapproved) {
+    if (!length(.alternatives) || !length(.unapproved)) return(FALSE)
+
+    answer <- signature_pieces(.code)
+
+    if (is.null(answer)) return(FALSE)
+
+    kept <- answer[!piece_function_names(answer) %in% .unapproved, ]
+
+    swapped <- nrow(answer) - nrow(kept)
+
+    if (!swapped) return(FALSE)
+
+    map_lgl(
+      .alternatives,
+      \(.alternative) {
+        key <- signature_pieces(.alternative)
+
+        if (is.null(key)) return(FALSE)
+
+        missing <- setdiff(piece_keys(key), piece_keys(kept))
+
+        calls <- key$token %in% c("SYMBOL_FUNCTION_CALL", "SPECIAL")
+
+        length(missing) == swapped &&
+          all(missing %in% piece_keys(key[calls, ])) &&
+          !length(setdiff(piece_keys(kept), piece_keys(key)))
+      }
+    ) %>%
+      any()
+  }
+
+# Which of the key's accepted alternatives an answer reduces to, or NA. An
+# exact reduction is tried first, so a tolerance can only settle an answer
+# the strict comparison turned down.
+#
+# Which one matched is what carries the credit: an approach the key accepts
+# at a cost is named in the database by the signature it reduces to.
+
+matched_alternative <-
+  function(.code, .alternatives) {
+    if (!length(.alternatives)) return(NA_integer_)
+
+    signature <- answer_signature(.code)
+
+    if (is.na(signature)) return(NA_integer_)
+
+    exact <- match(signature, map_chr(.alternatives, answer_signature))
+
+    if (!is.na(exact)) return(as.integer(exact))
+
+    answer <- signature_pieces(.code)
+
+    covered <-
+      .alternatives %>%
+      map_lgl(
+        \(.alternative) {
+          pieces_cover(answer, signature_pieces(.alternative))
+        }
+      )
+
+    if (any(covered)) which(covered)[1] else NA_integer_
+  }
+
+# Whether an answer reduces to any accepted alternative.
 
 signature_matches <-
   function(.code, .alternatives) {
     if (!length(.alternatives)) return(NA)
 
-    signature <- answer_signature(.code)
+    !is.na(matched_alternative(.code, .alternatives))
+  }
 
-    if (is.na(signature)) return(FALSE)
+# The signature of the alternative an answer matched, which is how a credit
+# in the database finds the approach it belongs to.
 
-    signature %in% map_chr(.alternatives, answer_signature)
+matched_signature <-
+  function(.code, .alternatives) {
+    matched <- matched_alternative(.code, .alternatives)
+
+    if (is.na(matched)) return(NA_character_)
+
+    answer_signature(.alternatives[[matched]])
   }
 
 # verdicts ----------------------------------------------------------------
@@ -360,7 +575,15 @@ review_reason <-
 # Compare every answer slot of every student to the key.
 
 check_correctness <-
-  function(.slots, .key_slots) {
+  function(.slots, .key_slots, .functions = NULL) {
+    charged <-
+      .functions %||%
+      tibble(
+        student_id = character(0),
+        slot_id = integer(0),
+        unapproved = list()
+      )
+
     .slots %>%
       filter(slot_type == "answer") %>%
       left_join(
@@ -368,12 +591,48 @@ check_correctness <-
           select(slot_id, alternatives),
         by = join_by(slot_id)
       ) %>%
+      left_join(
+        charged %>%
+          select(student_id, slot_id, unapproved),
+        by = join_by(student_id, slot_id)
+      ) %>%
       mutate(
-        signature =
+        unapproved = map(unapproved, \(.names) .names %||% character(0)),
+
+        # A slot the key gives no answer for cannot be compared. It is the
+        # key's gap, not the student's, so it is reported once rather than
+        # flagged on every submission.
+
+        key_missing =
+          map_lgl(
+            alternatives,
+            \(.alternatives) !length(.alternatives)
+          ),
+        strict =
           map2_lgl(
             answer,
             alternatives,
             signature_matches
+          ),
+
+        # An answer that reaches an accepted approach with a function the
+        # assignment does not permit is charged for the function alone.
+
+        substitution =
+          pmap_lgl(
+            list(answer, alternatives, unapproved),
+            matches_but_for_unapproved
+          ),
+        signature = strict | substitution,
+
+        # Which approach it was, so the credit set on that approach can be
+        # found when the answer is scored.
+
+        matched_signature =
+          map2_chr(
+            answer,
+            alternatives,
+            matched_signature
           ),
         parses = map_lgl(answer, \(.a) !is.null(parse_data_of(.a))),
 
@@ -401,5 +660,6 @@ check_correctness <-
             parses,
             found
           )
-      )
+      ) %>%
+      select(-strict, -substitution, -unapproved)
   }

@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 492 665" width="492" height="665" font-family="Helvetica Neue,Helvetica,Arial,sans-serif" role="img">
+<rect width="492" height="665" fill="#ffffff"/>
+<text x="246" y="34" text-anchor="middle" font-size="19" font-weight="700" fill="#292093">Workflow: The parts of a Shiny app</text>
+<line x1="40" y1="50" x2="452" y2="50" stroke="#9db0e6" stroke-width="1.2"/>
+<g transform="translate(0,52)">
+<path d="M 246.0 135.0 V 168.0" fill="none" stroke="#9db0e6" stroke-width="1.8"/>
+<polygon points="246.0,179.0 241.0,167.0 251.0,167.0" fill="#9db0e6"/>
+<rect x="229.2" y="151.0" width="33.6" height="17.0" rx="3" fill="#ffffff"/>
+<text x="246.0" y="162.0" text-anchor="middle" font-size="12" fill="#4a5aa0">then</text>
+<path d="M 246.0 292.0 V 325.0" fill="none" stroke="#9db0e6" stroke-width="1.8"/>
+<polygon points="246.0,336.0 241.0,324.0 251.0,324.0" fill="#9db0e6"/>
+<rect x="229.2" y="308.0" width="33.6" height="17.0" rx="3" fill="#ffffff"/>
+<text x="246.0" y="319.0" text-anchor="middle" font-size="12" fill="#4a5aa0">then</text>
+<path d="M 246.0 449.0 V 482.0" fill="none" stroke="#9db0e6" stroke-width="1.8"/>
+<polygon points="246.0,493.0 241.0,481.0 251.0,481.0" fill="#9db0e6"/>
+<rect x="229.2" y="465.0" width="33.6" height="17.0" rx="3" fill="#ffffff"/>
+<text x="246.0" y="476.0" text-anchor="middle" font-size="12" fill="#4a5aa0">then</text>
+<rect x="8.0" y="40.0" width="476" height="95" rx="9" fill="#ffffff" stroke="#9db0e6" stroke-width="1.6"/>
+<text x="246.0" y="65.0" text-anchor="middle" font-size="12" font-weight="700" letter-spacing="1.2" fill="#292093">AT THE TOP OF THE FILE</text>
+<text x="246.0" y="85.0" text-anchor="middle" font-size="15" font-weight="700" font-family="Menlo,Consolas,monospace" fill="#292093">attach the packages; read, project and resample</text>
+<text x="246.0" y="102.0" text-anchor="middle" font-size="12" fill="#5d5d70">this runs once when the app starts, so everything that</text>
+<text x="246.0" y="118.0" text-anchor="middle" font-size="12" fill="#5d5d70">does not depend on an input belongs here</text>
+<rect x="8.0" y="181.0" width="476" height="111" rx="9" fill="#ffffff" stroke="#9db0e6" stroke-width="1.6"/>
+<text x="246.0" y="206.0" text-anchor="middle" font-size="12" font-weight="700" letter-spacing="1.2" fill="#292093">THE USER INTERFACE</text>
+<text x="246.0" y="226.0" text-anchor="middle" font-size="15" font-weight="700" font-family="Menlo,Consolas,monospace" fill="#292093">fluidPage()   sliderInput()   plotOutput()</text>
+<text x="246.0" y="243.0" text-anchor="middle" font-size="12" fill="#5d5d70">an input carries an inputId naming the value it</text>
+<text x="246.0" y="259.0" text-anchor="middle" font-size="12" fill="#5d5d70">produces; an output placeholder names where a</text>
+<text x="246.0" y="275.0" text-anchor="middle" font-size="12" fill="#5d5d70">result will be drawn</text>
+<rect x="8.0" y="338.0" width="476" height="111" rx="9" fill="#ffffff" stroke="#9db0e6" stroke-width="1.6"/>
+<text x="246.0" y="363.0" text-anchor="middle" font-size="12" font-weight="700" letter-spacing="1.2" fill="#292093">THE SERVER</text>
+<text x="246.0" y="383.0" text-anchor="middle" font-size="15" font-weight="700" font-family="Menlo,Consolas,monospace" fill="#292093">function(input, output, session)</text>
+<text x="246.0" y="400.0" text-anchor="middle" font-size="12" fill="#5d5d70">reactive() holds a calculation that depends on an input</text>
+<text x="246.0" y="416.0" text-anchor="middle" font-size="12" fill="#5d5d70">and is re-evaluated only when that input changes;</text>
+<text x="246.0" y="432.0" text-anchor="middle" font-size="12" fill="#5d5d70">renderPlot() and renderText() assign to output$&lt;id&gt;</text>
+<rect x="8.0" y="495.0" width="476" height="94" rx="9" fill="#ffffff" stroke="#9db0e6" stroke-width="1.6"/>
+<text x="246.0" y="523.0" text-anchor="middle" font-size="15" font-weight="700" font-family="Menlo,Consolas,monospace" fill="#292093">shinyApp(ui, server)</text>
+<text x="246.0" y="540.0" text-anchor="middle" font-size="12" fill="#5d5d70">joins the two halves and runs them; nothing passes</text>
+<text x="246.0" y="556.0" text-anchor="middle" font-size="12" fill="#5d5d70">between them except through input and output, so a</text>
+<text x="246.0" y="572.0" text-anchor="middle" font-size="12" fill="#5d5d70">name that differs is why an app runs and shows nothing</text>
+</g>
+</svg>

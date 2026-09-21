@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 734 501" width="734" height="501" font-family="Helvetica Neue,Helvetica,Arial,sans-serif" role="img">
+<rect width="734" height="501" fill="#ffffff"/>
+<text x="367" y="34" text-anchor="middle" font-size="19" font-weight="700" fill="#292093">Decision tree: What the reader still needs</text>
+<line x1="40" y1="50" x2="694" y2="50" stroke="#9db0e6" stroke-width="1.2"/>
+<g transform="translate(0,52)">
+<path d="M 180.0 221.0 H 192.0 V 62.0 H 356.0" fill="none" stroke="#9db0e6" stroke-width="1.8" stroke-linejoin="round"/>
+<polygon points="367.0,62.0 355.0,57.0 355.0,67.0" fill="#9db0e6"/>
+<path d="M 180.0 221.0 H 192.0 V 168.0 H 356.0" fill="none" stroke="#9db0e6" stroke-width="1.8" stroke-linejoin="round"/>
+<polygon points="367.0,168.0 355.0,163.0 355.0,173.0" fill="#9db0e6"/>
+<path d="M 180.0 221.0 H 192.0 V 274.0 H 356.0" fill="none" stroke="#9db0e6" stroke-width="1.8" stroke-linejoin="round"/>
+<polygon points="367.0,274.0 355.0,269.0 355.0,279.0" fill="#9db0e6"/>
+<path d="M 180.0 221.0 H 192.0 V 380.0 H 356.0" fill="none" stroke="#9db0e6" stroke-width="1.8" stroke-linejoin="round"/>
+<polygon points="367.0,380.0 355.0,375.0 355.0,385.0" fill="#9db0e6"/>
+<rect x="221.3" y="28.0" width="116.4" height="30.0" rx="3" fill="#ffffff"/>
+<text x="279.5" y="39.0" text-anchor="middle" font-size="12" fill="#4a5aa0">how big or what</text>
+<text x="279.5" y="52.0" text-anchor="middle" font-size="12" fill="#4a5aa0">shape things are</text>
+<rect x="214.4" y="134.0" width="130.2" height="30.0" rx="3" fill="#ffffff"/>
+<text x="279.5" y="145.0" text-anchor="middle" font-size="12" fill="#4a5aa0">where in the world</text>
+<text x="279.5" y="158.0" text-anchor="middle" font-size="12" fill="#4a5aa0">the study area is</text>
+<rect x="231.7" y="240.0" width="95.7" height="30.0" rx="3" fill="#ffffff"/>
+<text x="279.5" y="251.0" text-anchor="middle" font-size="12" fill="#4a5aa0">which feature</text>
+<text x="279.5" y="264.0" text-anchor="middle" font-size="12" fill="#4a5aa0">is which</text>
+<rect x="204.1" y="346.0" width="150.9" height="30.0" rx="3" fill="#ffffff"/>
+<text x="279.5" y="357.0" text-anchor="middle" font-size="12" fill="#4a5aa0">whether two variables</text>
+<text x="279.5" y="370.0" text-anchor="middle" font-size="12" fill="#4a5aa0">go together</text>
+<rect x="8.0" y="179.5" width="172" height="83" rx="9" fill="#eaf0ff" stroke="#292093" stroke-width="2.0"/>
+<text x="94.0" y="206.5" text-anchor="middle" font-size="15" fill="#333333">What can the reader</text>
+<text x="94.0" y="225.5" text-anchor="middle" font-size="15" fill="#333333">not determine</text>
+<text x="94.0" y="244.5" text-anchor="middle" font-size="15" fill="#333333">from the map?</text>
+<rect x="369.0" y="23.0" width="357" height="78" rx="9" fill="#ffffff" stroke="#9db0e6" stroke-width="1.6"/>
+<text x="547.5" y="51.0" text-anchor="middle" font-size="15" font-weight="700" font-family="Menlo,Consolas,monospace" fill="#292093">coord_sf(crs = )</text>
+<text x="547.5" y="68.0" text-anchor="middle" font-size="12" fill="#5d5d70">use equal-area for area comparisons and</text>
+<text x="547.5" y="84.0" text-anchor="middle" font-size="12" fill="#5d5d70">conformal for outlines, and name it in the caption</text>
+<rect x="369.0" y="129.0" width="357" height="78" rx="9" fill="#ffffff" stroke="#9db0e6" stroke-width="1.6"/>
+<text x="547.5" y="157.0" text-anchor="middle" font-size="15" font-weight="700" font-family="Menlo,Consolas,monospace" fill="#292093">inset_element()</text>
+<text x="547.5" y="174.0" text-anchor="middle" font-size="12" fill="#5d5d70">a locator map built from st_bbox() and</text>
+<text x="547.5" y="190.0" text-anchor="middle" font-size="12" fill="#5d5d70">st_as_sfc(), drawn with theme_void()</text>
+<rect x="369.0" y="235.0" width="357" height="78" rx="9" fill="#ffffff" stroke="#9db0e6" stroke-width="1.6"/>
+<text x="547.5" y="263.0" text-anchor="middle" font-size="15" font-weight="700" font-family="Menlo,Consolas,monospace" fill="#292093">geom_sf_text()</text>
+<text x="547.5" y="280.0" text-anchor="middle" font-size="12" fill="#5d5d70">positions from st_point_on_surface(), labeling only</text>
+<text x="547.5" y="296.0" text-anchor="middle" font-size="12" fill="#5d5d70">the features needed by the text</text>
+<rect x="369.0" y="341.0" width="357" height="78" rx="9" fill="#ffffff" stroke="#9db0e6" stroke-width="1.6"/>
+<text x="547.5" y="369.0" text-anchor="middle" font-size="15" font-weight="700" font-family="Menlo,Consolas,monospace" fill="#292093">aes(size = ) on a second layer</text>
+<text x="547.5" y="386.0" text-anchor="middle" font-size="12" fill="#5d5d70">scale_size_area() anchors zero at zero size</text>
+<text x="547.5" y="402.0" text-anchor="middle" font-size="12" fill="#5d5d70">use separate maps unless shared space is needed</text>
+</g>
+</svg>

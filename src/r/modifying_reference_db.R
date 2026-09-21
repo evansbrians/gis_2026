@@ -107,5 +107,29 @@ tbl(con, "glossary") %>%
   filter(term == "Output pane") %>%
   collect()
 
+## add a function ---------------------------------------------------------
+
+# Allowed by problem set 2:
+
+scale_shape_manual <-
+  tibble(
+    package = "ggplot2",
+    function_name = "scale_shape_manual",
+    definition = "Manually define the shapes of a geometry"
+  )
+
+rows_insert(
+  tbl(con, "functions"),
+  scale_shape_manual,
+  by = c("package", "function_name"),
+  conflict = "ignore",
+  in_place = TRUE,
+  copy = "inline"
+)
+
+tbl(con, "functions") %>%
+  filter(function_name == "scale_shape_manual") %>%
+  collect()
+
 DBI::dbDisconnect(con)
 

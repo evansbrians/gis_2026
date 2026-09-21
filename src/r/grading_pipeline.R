@@ -65,6 +65,28 @@ grade_problem_set <-
 
     allowed <- assignment_allowed_functions(.problem_set)
 
+    # A template question with no rubric row carries no points, and an NA
+    # deduction surfaces much later as a cryptic failure inside the report
+    # writer. Say so here instead, where the cause is legible.
+
+    unrubricked <-
+      setdiff(
+        sort(unique(template$question[template$slot_type == "answer"])),
+        rubric$item_order[rubric$item_type == "question"]
+      )
+
+    if (length(unrubricked)) {
+      cli::cli_abort(
+        c(
+          "The rubric has no question row for these questions: {.val {unrubricked}}.",
+          i = "The rubric in the database describes a different version of
+               this assignment, so its questions carry no points.",
+          i = "Re-seed it in R: source(\"src/r/grading_db_setup.R\") then
+               seed_grading_db({(.problem_set)})."
+        )
+      )
+    }
+
     bank <- grading_comment_bank()
 
     bonus <- .bonus
@@ -76,6 +98,20 @@ grade_problem_set <-
     if (unlocated) {
       cli::cli_alert_warning(
         "{unlocated} answer slot{?s} could not be located and will be flagged."
+      )
+    }
+
+    blank_key <-
+      key %>%
+      filter(
+        slot_type == "answer",
+        map_lgl(alternatives, \(.alternatives) !length(.alternatives))
+      )
+
+    if (nrow(blank_key)) {
+      cli::cli_alert_warning(
+        "The key gives no answer for {nrow(blank_key)} slot{?s}
+         ({.val {blank_key$slot_id}}); nothing there is compared or flagged."
       )
     }
 
@@ -91,11 +127,13 @@ grade_problem_set <-
     cli::cli_alert_info("Checking answers against the key.")
 
     correctness <-
-      check_correctness(slots, key)
+      check_correctness(slots, key, functions)
 
     cli::cli_alert_info("Checking style.")
 
     style <- check_style(slots, bank)
+
+    credits <- key_credits(.problem_set)
 
     scored_slots <-
       score_slots(
@@ -104,21 +142,21 @@ grade_problem_set <-
         style,
         template,
         rubric,
-        key
+        key,
+        credits
       )
 
     naming <-
       score_naming_question(
         index,
         .problem_set,
-        rubric
+        rubric,
+        template
       )
 
     scored_questions <-
-      bind_rows(
-        naming,
-        score_questions(scored_slots)
-      ) %>%
+      score_questions(scored_slots) %>%
+      merge_naming(naming) %>%
       arrange(student_id, question)
 
     students <- score_students(scored_questions, bonus)
@@ -139,6 +177,7 @@ grade_problem_set <-
         allowed = allowed,
         bank = bank,
         bonus = bonus,
+        credits = credits,
         slots = scored_slots,
         questions = scored_questions,
         naming = naming,

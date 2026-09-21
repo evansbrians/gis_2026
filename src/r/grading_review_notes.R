@@ -126,7 +126,7 @@ style_notes <-
 # One question's section: what the key accepts, then each answer that wants
 # looking at.
 
-question_section <-
+review_question_section <-
   function(.question, .slots, .key, .questions) {
     rows <-
       .slots %>%
@@ -347,7 +347,7 @@ write_review_notes <-
     sections <-
       map_chr(
         sort(unique(slots$question)),
-        \(.q) question_section(.q, slots, run$key, questions)
+        \(.q) review_question_section(.q, slots, run$key, questions)
       )
 
     c(

@@ -16,9 +16,12 @@
 # Question 1 asks the student to name their file, so it has no answer to
 # show. It is reported with its mark and nothing else.
 #
-# A NEEDS REVIEW flag is the grader's, not the student's: it lives in the
-# dashboard and the review notes, and it never appears on a graded file. A
-# flagged slot that has not been reviewed still shows no deduction.
+# A question that wants judgement carries a plain NEEDS REVIEW line naming
+# the reason -- points deducted, no style credit, or a check that could not
+# settle it -- so the written files can be searched for them and triaged
+# without opening each question. It is the grader's marker, not the
+# student's, and comes out before a file is sent. A flagged slot that has not
+# been reviewed still shows no deduction.
 #
 # Source via source("src/r/grading_report.R").
 
@@ -126,6 +129,22 @@ deduction_reasons <-
             described
           } else {
             "The answer does not match an accepted approach to this question."
+          }
+        )
+    }
+
+    # An approach the key accepts at a cost says why in the words set on it.
+
+    if (isTRUE(field("credit_cost", 0) > 0)) {
+      credited <- field("credit_note", NA_character_)
+
+      reasons <-
+        c(
+          reasons,
+          if (!is.na(credited) && nzchar(credited)) {
+            credited
+          } else {
+            "The answer takes an approach that earns partial credit."
           }
         )
     }
@@ -387,11 +406,21 @@ style_block <-
       )
     }
 
+    # A question can reach here with nothing to show: its only answer was a
+    # slot the key leaves unanswered and the student left empty, so the slot
+    # is not reported and carries no violations with it. The credit is still
+    # written, because the heading counts it, but there is no reason to give.
+
+    violations <- bind_rows(.slots$violations)
+
     reasons <-
-      .slots$violations %>%
-      bind_rows() %>%
-      distinct(short_name, .keep_all = TRUE) %>%
-      pull(comment_text)
+      if (!nrow(violations)) {
+        character(0)
+      } else {
+        violations %>%
+          distinct(short_name, .keep_all = TRUE) %>%
+          pull(comment_text)
+      }
 
     marked_block(
       str_c(
@@ -471,6 +500,21 @@ code_fence <-
         str_trim(.answer)
       }
 
+    # A chunk is parsed even when it is not evaluated, so an answer that was
+    # left unfinished, or that runs past the comment the slot ends at, would
+    # stop the render of the whole document. It is shown as plain text.
+
+    if (inherits(try(parse(text = body), silent = TRUE), "try-error")) {
+      return(
+        str_c(
+          "```\n",
+          body,
+          "\n```\n\n",
+          "*Shown as text: this response is not complete R code on its own.*"
+        )
+      )
+    }
+
     str_c(
       "```{r}\n",
       "#| eval: false\n\n",
@@ -479,10 +523,68 @@ code_fence <-
     )
   }
 
+# The renaming mark, shown above the answers when question 1 asks for code as
+# well as for the file name.
+
+naming_block <-
+  function(.question_row, .file_name) {
+    if (.question_row$question != 1L) return(character(0))
+
+    carried <-
+      has_name(.question_row, "faults") &&
+        has_name(.question_row, "naming_deduction")
+
+    if (!carried || is.na(.file_name)) return(character(0))
+
+    faults <- .question_row$faults[[1]] %||% character(0)
+
+    submitted <-
+      str_c(
+        "Submitted as `",
+        .file_name,
+        "`"
+      )
+
+    if (!length(faults)) return(submitted)
+
+    c(
+      submitted,
+      marked_block(
+        format_points(.question_row$naming_deduction, "-"),
+        faults,
+        "deduction"
+      )
+    )
+  }
+
+# The grader's marker for a question that has to be looked at by hand: one
+# that lost points, one that did not earn the style credit, or one the checks
+# could not settle. Plain text rather than a div, so a search across the
+# written files finds every one of them, and the reason is on the same line
+# so a reviewer can triage without opening the question.
+
+review_marker <-
+  function(.question_row) {
+    reasons <-
+      c(
+        if (isTRUE(.question_row$deduction > 0)) "points deducted",
+        if (!isTRUE(.question_row$style_clean)) "no style credit",
+        if (isTRUE(.question_row$needs_review)) "the checks could not settle this"
+      )
+
+    if (!length(reasons)) return(character(0))
+
+    str_c(
+      "NEEDS REVIEW -- ",
+      str_c(reasons, collapse = "; ")
+    )
+  }
+
 # One question's whole section: its text, then every answer in it.
 
 question_section <-
-  function(.question_row, .question_text, .slots, .bank) {
+  function(.question_row, .question_text, .slots, .bank,
+           .file_name = NA_character_) {
     header <- question_heading(.question_row)
 
     answers <-
@@ -519,12 +621,14 @@ question_section <-
     c(
       header,
       .question_text,
+      naming_block(.question_row, .file_name),
       str_c(answers, collapse = "\n\n"),
       style_block(
         .question_row,
         .slots,
         .bank
-      )
+      ),
+      review_marker(.question_row)
     ) %>%
       str_c(collapse = "\n\n")
   }
@@ -619,12 +723,21 @@ graded_document <-
             coalesce("") %>%
             question_markdown_for_report()
 
+          # A slot the key leaves unanswered and the student left empty is
+          # not an answer to report.
+
           answers <-
             theirs %>%
-            filter(question == row$question) %>%
+            filter(
+              question == row$question,
+              !(
+                coalesce(key_missing, FALSE) &
+                  str_trim(coalesce(answer, "")) == ""
+              )
+            ) %>%
             arrange(answer_order)
 
-          if (!nrow(answers)) {
+          if (!nrow(answers) && row$question == 1L) {
             return(
               naming_section(
                 row,
@@ -638,7 +751,8 @@ graded_document <-
             row,
             text,
             answers,
-            .bank
+            .bank,
+            submitted_file_name(.file_name, .problem_set)
           )
         }
       )
@@ -717,24 +831,45 @@ write_graded_reports <-
       recursive = TRUE
     )
 
-    map_chr(
-      seq_len(nrow(.index)),
-      \(.i) {
-        path <- file.path(output_dir, .index$graded_name[.i])
+    # One student's report is written on its own, so a submission the writer
+    # cannot render stops only itself. The students it failed for are named
+    # rather than passed over in silence.
 
-        graded_document(
-          .index$student_id[.i],
-          .problem_set,
-          .scored_slots,
-          .scored_questions,
-          questions,
-          bank,
-          .index$file_name[.i],
-          .bonus
-        ) %>%
-          write_lines(path)
+    write_one <-
+      purrr::possibly(
+        \(.i) {
+          path <- file.path(output_dir, .index$graded_name[.i])
 
-        path
-      }
-    )
+          graded_document(
+            .index$student_id[.i],
+            .problem_set,
+            .scored_slots,
+            .scored_questions,
+            questions,
+            bank,
+            .index$file_name[.i],
+            .bonus
+          ) %>%
+            write_lines(path)
+
+          path
+        },
+        otherwise = NA_character_
+      )
+
+    paths <-
+      map_chr(
+        seq_len(nrow(.index)),
+        write_one
+      )
+
+    if (anyNA(paths)) {
+      failed <- .index$student_id[is.na(paths)]
+
+      cli::cli_alert_warning(
+        "No report was written for {.val {failed}}."
+      )
+    }
+
+    paths[!is.na(paths)]
   }

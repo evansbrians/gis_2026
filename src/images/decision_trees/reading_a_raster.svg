@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 405 618" width="405" height="618" font-family="Helvetica Neue,Helvetica,Arial,sans-serif" role="img">
+<rect width="405" height="618" fill="#ffffff"/>
+<text x="202" y="34" text-anchor="middle" font-size="19" font-weight="700" fill="#292093">Workflow: Reading a raster</text>
+<line x1="40" y1="50" x2="365" y2="50" stroke="#9db0e6" stroke-width="1.2"/>
+<g transform="translate(0,52)">
+<path d="M 202.5 118.0 V 151.0" fill="none" stroke="#9db0e6" stroke-width="1.8"/>
+<polygon points="202.5,162.0 197.5,150.0 207.5,150.0" fill="#9db0e6"/>
+<rect x="185.7" y="134.0" width="33.6" height="17.0" rx="3" fill="#ffffff"/>
+<text x="202.5" y="145.0" text-anchor="middle" font-size="12" fill="#4a5aa0">then</text>
+<path d="M 202.5 262.0 V 295.0" fill="none" stroke="#9db0e6" stroke-width="1.8"/>
+<polygon points="202.5,306.0 197.5,294.0 207.5,294.0" fill="#9db0e6"/>
+<rect x="185.7" y="278.0" width="33.6" height="17.0" rx="3" fill="#ffffff"/>
+<text x="202.5" y="289.0" text-anchor="middle" font-size="12" fill="#4a5aa0">then</text>
+<path d="M 202.5 402.0 V 435.0" fill="none" stroke="#9db0e6" stroke-width="1.8"/>
+<polygon points="202.5,446.0 197.5,434.0 207.5,434.0" fill="#9db0e6"/>
+<rect x="185.7" y="418.0" width="33.6" height="17.0" rx="3" fill="#ffffff"/>
+<text x="202.5" y="429.0" text-anchor="middle" font-size="12" fill="#4a5aa0">then</text>
+<rect x="8.0" y="40.0" width="389" height="78" rx="9" fill="#ffffff" stroke="#9db0e6" stroke-width="1.6"/>
+<text x="202.5" y="68.0" text-anchor="middle" font-size="15" font-weight="700" font-family="Menlo,Consolas,monospace" fill="#292093">rast("file.tif")</text>
+<text x="202.5" y="85.0" text-anchor="middle" font-size="12" fill="#5d5d70">reads the header rather than the values, so</text>
+<text x="202.5" y="101.0" text-anchor="middle" font-size="12" fill="#5d5d70">inMemory() is FALSE until something asks for them</text>
+<rect x="8.0" y="164.0" width="389" height="98" rx="9" fill="#ffffff" stroke="#9db0e6" stroke-width="1.6"/>
+<text x="202.5" y="192.0" text-anchor="middle" font-size="15" font-weight="700" font-family="Menlo,Consolas,monospace" fill="#292093">nrow()  ncol()  ncell()  nlyr()</text>
+<text x="202.5" y="212.0" text-anchor="middle" font-size="15" font-weight="700" font-family="Menlo,Consolas,monospace" fill="#292093">res()  ext()  crs()  global()</text>
+<text x="202.5" y="229.0" text-anchor="middle" font-size="12" fill="#5d5d70">the pieces of the printed summary one at a time, and</text>
+<text x="202.5" y="245.0" text-anchor="middle" font-size="12" fill="#5d5d70">global() the values; res() is in the units of the CRS</text>
+<rect x="8.0" y="308.0" width="389" height="94" rx="9" fill="#ffffff" stroke="#9db0e6" stroke-width="1.6"/>
+<text x="202.5" y="336.0" text-anchor="middle" font-size="15" font-weight="700" font-family="Menlo,Consolas,monospace" fill="#292093">geom_spatraster(aes(fill = layer))</text>
+<text x="202.5" y="353.0" text-anchor="middle" font-size="12" fill="#5d5d70">maps the first layer to fill unless one is named,</text>
+<text x="202.5" y="369.0" text-anchor="middle" font-size="12" fill="#5d5d70">and resamples to maxcell cells before drawing;</text>
+<text x="202.5" y="385.0" text-anchor="middle" font-size="12" fill="#5d5d70">scale_fill_hypso_c() and its family color a quantity</text>
+<rect x="8.0" y="448.0" width="389" height="94" rx="9" fill="#ffffff" stroke="#9db0e6" stroke-width="1.6"/>
+<text x="202.5" y="476.0" text-anchor="middle" font-size="15" font-weight="700" font-family="Menlo,Consolas,monospace" fill="#292093">select()  rename()  mutate()  filter()</text>
+<text x="202.5" y="493.0" text-anchor="middle" font-size="12" fill="#5d5d70">act on layers rather than columns; filter() sets</text>
+<text x="202.5" y="509.0" text-anchor="middle" font-size="12" fill="#5d5d70">the failing cells to NA and removes nothing, and</text>
+<text x="202.5" y="525.0" text-anchor="middle" font-size="12" fill="#5d5d70">as_tibble() is the last resort that leaves the grid</text>
+</g>
+</svg>

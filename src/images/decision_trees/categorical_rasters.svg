@@ -1,0 +1,48 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 710 545" width="710" height="545" font-family="Helvetica Neue,Helvetica,Arial,sans-serif" role="img">
+<rect width="710" height="545" fill="#ffffff"/>
+<text x="355" y="34" text-anchor="middle" font-size="19" font-weight="700" fill="#292093">Decision tree: Working with a categorical raster</text>
+<line x1="40" y1="50" x2="670" y2="50" stroke="#9db0e6" stroke-width="1.2"/>
+<g transform="translate(0,52)">
+<path d="M 164.0 239.0 H 176.0 V 62.0 H 299.0" fill="none" stroke="#9db0e6" stroke-width="1.8" stroke-linejoin="round"/>
+<polygon points="310.0,62.0 298.0,57.0 298.0,67.0" fill="#9db0e6"/>
+<path d="M 164.0 239.0 H 176.0 V 180.0 H 299.0" fill="none" stroke="#9db0e6" stroke-width="1.8" stroke-linejoin="round"/>
+<polygon points="310.0,180.0 298.0,175.0 298.0,185.0" fill="#9db0e6"/>
+<path d="M 164.0 239.0 H 176.0 V 298.0 H 299.0" fill="none" stroke="#9db0e6" stroke-width="1.8" stroke-linejoin="round"/>
+<polygon points="310.0,298.0 298.0,293.0 298.0,303.0" fill="#9db0e6"/>
+<path d="M 164.0 239.0 H 176.0 V 416.0 H 299.0" fill="none" stroke="#9db0e6" stroke-width="1.8" stroke-linejoin="round"/>
+<polygon points="310.0,416.0 298.0,411.0 298.0,421.0" fill="#9db0e6"/>
+<rect x="195.2" y="28.0" width="95.7" height="30.0" rx="3" fill="#ffffff"/>
+<text x="243.0" y="39.0" text-anchor="middle" font-size="12" fill="#4a5aa0">to read</text>
+<text x="243.0" y="52.0" text-anchor="middle" font-size="12" fill="#4a5aa0">what they are</text>
+<rect x="198.6" y="159.0" width="88.8" height="17.0" rx="3" fill="#ffffff"/>
+<text x="243.0" y="170.0" text-anchor="middle" font-size="12" fill="#4a5aa0">to draw them</text>
+<rect x="188.2" y="264.0" width="109.5" height="30.0" rx="3" fill="#ffffff"/>
+<text x="243.0" y="275.0" text-anchor="middle" font-size="12" fill="#4a5aa0">to build them</text>
+<text x="243.0" y="288.0" text-anchor="middle" font-size="12" fill="#4a5aa0">from a quantity</text>
+<rect x="195.2" y="395.0" width="95.7" height="17.0" rx="3" fill="#ffffff"/>
+<text x="243.0" y="406.0" text-anchor="middle" font-size="12" fill="#4a5aa0">to merge them</text>
+<rect x="8.0" y="207.0" width="156" height="64" rx="9" fill="#eaf0ff" stroke="#292093" stroke-width="2.0"/>
+<text x="86.0" y="234.0" text-anchor="middle" font-size="15" fill="#333333">What do you want</text>
+<text x="86.0" y="253.0" text-anchor="middle" font-size="15" fill="#333333">from the classes?</text>
+<rect x="312.0" y="15.0" width="390" height="94" rx="9" fill="#ffffff" stroke="#9db0e6" stroke-width="1.6"/>
+<text x="507.0" y="43.0" text-anchor="middle" font-size="15" font-weight="700" font-family="Menlo,Consolas,monospace" fill="#292093">is.factor()  cats()  freq()</text>
+<text x="507.0" y="60.0" text-anchor="middle" font-size="12" fill="#5d5d70">is.factor() reports whether a layer is categorical,</text>
+<text x="507.0" y="76.0" text-anchor="middle" font-size="12" fill="#5d5d70">cats() returns the table pairing each code with its</text>
+<text x="507.0" y="92.0" text-anchor="middle" font-size="12" fill="#5d5d70">label, and freq() counts the cells in each class</text>
+<rect x="312.0" y="133.0" width="390" height="94" rx="9" fill="#ffffff" stroke="#9db0e6" stroke-width="1.6"/>
+<text x="507.0" y="161.0" text-anchor="middle" font-size="15" font-weight="700" font-family="Menlo,Consolas,monospace" fill="#292093">geom_spatraster()  scale_fill_coltab()</text>
+<text x="507.0" y="178.0" text-anchor="middle" font-size="12" fill="#5d5d70">the color table in the file is used when there is one;</text>
+<text x="507.0" y="194.0" text-anchor="middle" font-size="12" fill="#5d5d70">scale_fill_coltab() applies another raster's table, and</text>
+<text x="507.0" y="210.0" text-anchor="middle" font-size="12" fill="#5d5d70">a raster with none takes a discrete fill scale</text>
+<rect x="312.0" y="251.0" width="390" height="94" rx="9" fill="#ffffff" stroke="#9db0e6" stroke-width="1.6"/>
+<text x="507.0" y="279.0" text-anchor="middle" font-size="15" font-weight="700" font-family="Menlo,Consolas,monospace" fill="#292093">classify(m)  then  levels(x) &lt;-</text>
+<text x="507.0" y="296.0" text-anchor="middle" font-size="12" fill="#5d5d70">m is a matrix of lower bound, upper bound and new</text>
+<text x="507.0" y="312.0" text-anchor="middle" font-size="12" fill="#5d5d70">value; an unmatched cell keeps its own value unless</text>
+<text x="507.0" y="328.0" text-anchor="middle" font-size="12" fill="#5d5d70">others is set, and the result holds codes, not classes</text>
+<rect x="312.0" y="369.0" width="390" height="94" rx="9" fill="#ffffff" stroke="#9db0e6" stroke-width="1.6"/>
+<text x="507.0" y="397.0" text-anchor="middle" font-size="15" font-weight="700" font-family="Menlo,Consolas,monospace" fill="#292093">classify(lookup)  then  levels(x) &lt;-</text>
+<text x="507.0" y="414.0" text-anchor="middle" font-size="12" fill="#5d5d70">lookup pairs each old code with a new one; classify()</text>
+<text x="507.0" y="430.0" text-anchor="middle" font-size="12" fill="#5d5d70">reads the codes and ignores the labels, so the new table</text>
+<text x="507.0" y="446.0" text-anchor="middle" font-size="12" fill="#5d5d70">attaches to the codes the merge produced</text>
+</g>
+</svg>

@@ -135,6 +135,24 @@ setup_grading_db <-
        )"
     )
 
+    # What an accepted approach is worth. The approach itself lives in the
+    # key file; the points it costs and the words the student reads live
+    # here, against the signature the answer reduces to.
+
+    DBI::dbExecute(
+      connection,
+      "create table if not exists key_credits (
+         credit_id     integer primary key autoincrement,
+         assignment_id integer not null references assignments(assignment_id)
+                         on delete cascade,
+         slot_id       integer not null,
+         signature     text not null,
+         deduction     real not null default 0,
+         note          text,
+         unique (assignment_id, slot_id, signature)
+       )"
+    )
+
     # The empty-argument primitive is listed in every problem set but was
     # never entered in the functions table.
 
@@ -185,6 +203,32 @@ allow_both_pipes <-
       )
   }
 
+# A source script is named in a problem set for the file students load, not
+# the file the functions table records, so its functions match on name alone.
+
+match_script_functions <-
+  function(.resolved, .known) {
+    scripts <-
+      .known %>%
+      filter(str_detect(package, "\\.[Rr]$")) %>%
+      select(
+        function_name,
+        script_id = function_id
+      )
+
+    .resolved %>%
+      left_join(scripts, join_by(function_name)) %>%
+      mutate(
+        function_id =
+          if_else(
+            is.na(function_id) & str_detect(package, "\\.[Rr]$"),
+            script_id,
+            function_id
+          )
+      ) %>%
+      select(-script_id)
+  }
+
 resolve_allowed_functions <-
   function(.problem_set, .db_path = grading_db_path) {
     listed <- allowed_functions_from_qmd(.problem_set)
@@ -199,6 +243,7 @@ resolve_allowed_functions <-
     resolved <-
       listed %>%
       left_join(known, by = c("package", "function_name")) %>%
+      match_script_functions(known) %>%
       allow_both_pipes(known)
 
     missing <- resolved %>% filter(is.na(function_id))
@@ -250,6 +295,49 @@ seed_allowed_functions <-
     DBI::dbAppendTable(
       connection,
       "allowed_functions",
+      rows
+    )
+
+    nrow(rows)
+  }
+
+# Replace one assignment's question rows, from the .score markup in its .qmd.
+
+seed_rubric_questions <-
+  function(.problem_set, .db_path = grading_db_path) {
+    assignment_id <- assignment_id_of(.problem_set, .db_path)
+
+    rows <-
+      questions_from_qmd(.problem_set) %>%
+      transmute(
+        assignment_id = assignment_id,
+        item_type = "question",
+        item_order = question,
+        item_label = str_c("Q", question),
+        criterion =
+          stem %>%
+          str_squish() %>%
+          str_remove(":$"),
+        max_points = points
+      )
+
+    connection <- connect_grading_db(.db_path, .write = TRUE)
+
+    on.exit(DBI::dbDisconnect(connection))
+
+    # Bullets point at the questions, so they go first:
+
+    DBI::dbExecute(
+      connection,
+      "delete from rubric_items
+       where assignment_id = ?
+         and item_type in ('question', 'subquestion', 'criterion')",
+      params = list(assignment_id)
+    )
+
+    DBI::dbAppendTable(
+      connection,
+      "rubric_items",
       rows
     )
 
@@ -339,16 +427,20 @@ seed_grading_db <-
       function(.problem_set) {
         functions <- seed_allowed_functions(.problem_set, .db_path)
 
+        questions <- seed_rubric_questions(.problem_set, .db_path)
+
         bullets <- seed_rubric_subitems(.problem_set, .db_path)
 
         cli::cli_alert_success(
           "Problem set {.val {(.problem_set)}}: {functions} allowed
-           function{?s}, {bullets} scored bullet{?s}."
+           function{?s}, {questions} question{?s}, {bullets} scored
+           bullet{?s}."
         )
 
         tibble(
           problem_set = .problem_set,
           allowed_functions = functions,
+          questions = questions,
           scored_bullets = bullets
         )
       }

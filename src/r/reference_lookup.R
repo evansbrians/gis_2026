@@ -270,12 +270,26 @@ find_lesson_references <-
     # this, a function that a lesson only ever calls with :: is absent from
     # the accordion.
 
+    # A function can also be *used* without being called: a predicate handed to
+    # .predicate = or join = , or a function handed to .f = or fun = , is the
+    # tool the lesson is teaching even though its name is never followed by a
+    # parenthesis. 4.1 Spatial filtering supplies st_disjoint, st_within and
+    # st_is_within_distance this way and no other, so without this they were
+    # absent from the lesson's own reference panel.
+
     called_functions <-
       code_text %>%
       str_extract_all(
         "(?:[a-zA-Z0-9._]+::)?[a-zA-Z._][a-zA-Z0-9._]*(?=\\()"
       ) %>%
       unlist() %>%
+      c(
+        code_text %>%
+          str_extract_all(
+            "(?<=\\.predicate = |join = |\\.f = |fun = |FUN = )[a-zA-Z._][a-zA-Z0-9._]*"
+          ) %>%
+          unlist()
+      ) %>%
       c(str_remove(., "^[a-zA-Z0-9._]+::")) %>%
       unique()
 

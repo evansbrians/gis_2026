@@ -133,8 +133,12 @@ render_module <-
       add = TRUE
     )
 
-    qmd_paths |>
-      purrr::walk(
+    # The renders are attempted one at a time so that a lesson which will not
+    # render stops only itself, and the lessons that failed are named at the
+    # end rather than left for the reader to notice.
+
+    render_one <-
+      purrr::possibly(
         \(.qmd_path) {
           lesson_name <-
             fs::path_ext_remove(
@@ -166,6 +170,21 @@ render_module <-
           fs::file_move(rendered_html, index_path)
 
           cli::cli_inform("Wrote {.path {index_path}}")
-        }
+
+          .qmd_path
+        },
+        otherwise = NA_character_
       )
+
+    rendered <- purrr::map_chr(qmd_paths, render_one)
+
+    failed <- qmd_paths[is.na(rendered)]
+
+    if (length(failed)) {
+      cli::cli_alert_warning(
+        "These lessons did not render: {.path {failed}}."
+      )
+    }
+
+    invisible(rendered[!is.na(rendered)])
   }

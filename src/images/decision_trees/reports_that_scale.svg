@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 688 501" width="688" height="501" font-family="Helvetica Neue,Helvetica,Arial,sans-serif" role="img">
+<rect width="688" height="501" fill="#ffffff"/>
+<text x="344" y="34" text-anchor="middle" font-size="19" font-weight="700" fill="#292093">Decision tree: Where each piece of a report belongs</text>
+<line x1="40" y1="50" x2="648" y2="50" stroke="#9db0e6" stroke-width="1.2"/>
+<g transform="translate(0,52)">
+<path d="M 148.0 221.0 H 160.0 V 62.0 H 317.0" fill="none" stroke="#9db0e6" stroke-width="1.8" stroke-linejoin="round"/>
+<polygon points="328.0,62.0 316.0,57.0 316.0,67.0" fill="#9db0e6"/>
+<path d="M 148.0 221.0 H 160.0 V 168.0 H 317.0" fill="none" stroke="#9db0e6" stroke-width="1.8" stroke-linejoin="round"/>
+<polygon points="328.0,168.0 316.0,163.0 316.0,173.0" fill="#9db0e6"/>
+<path d="M 148.0 221.0 H 160.0 V 274.0 H 317.0" fill="none" stroke="#9db0e6" stroke-width="1.8" stroke-linejoin="round"/>
+<polygon points="328.0,274.0 316.0,269.0 316.0,279.0" fill="#9db0e6"/>
+<path d="M 148.0 221.0 H 160.0 V 380.0 H 317.0" fill="none" stroke="#9db0e6" stroke-width="1.8" stroke-linejoin="round"/>
+<polygon points="328.0,380.0 316.0,375.0 316.0,385.0" fill="#9db0e6"/>
+<rect x="182.3" y="28.0" width="123.3" height="30.0" rx="3" fill="#ffffff"/>
+<text x="244.0" y="39.0" text-anchor="middle" font-size="12" fill="#4a5aa0">a reusable</text>
+<text x="244.0" y="52.0" text-anchor="middle" font-size="12" fill="#4a5aa0">analytical choice</text>
+<rect x="192.7" y="134.0" width="102.6" height="30.0" rx="3" fill="#ffffff"/>
+<text x="244.0" y="145.0" text-anchor="middle" font-size="12" fill="#4a5aa0">exact values</text>
+<text x="244.0" y="158.0" text-anchor="middle" font-size="12" fill="#4a5aa0">shown by a map</text>
+<rect x="189.2" y="240.0" width="109.5" height="30.0" rx="3" fill="#ffffff"/>
+<text x="244.0" y="251.0" text-anchor="middle" font-size="12" fill="#4a5aa0">the sources the</text>
+<text x="244.0" y="264.0" text-anchor="middle" font-size="12" fill="#4a5aa0">map rests on</text>
+<rect x="172.0" y="346.0" width="144.0" height="30.0" rx="3" fill="#ffffff"/>
+<text x="244.0" y="357.0" text-anchor="middle" font-size="12" fill="#4a5aa0">one report for</text>
+<text x="244.0" y="370.0" text-anchor="middle" font-size="12" fill="#4a5aa0">each member of a set</text>
+<rect x="8.0" y="179.5" width="140" height="83" rx="9" fill="#eaf0ff" stroke="#292093" stroke-width="2.0"/>
+<text x="78.0" y="206.5" text-anchor="middle" font-size="15" fill="#333333">Where does this</text>
+<text x="78.0" y="225.5" text-anchor="middle" font-size="15" fill="#333333">piece of the</text>
+<text x="78.0" y="244.5" text-anchor="middle" font-size="15" fill="#333333">report belong?</text>
+<rect x="330.0" y="23.0" width="350" height="78" rx="9" fill="#ffffff" stroke="#9db0e6" stroke-width="1.6"/>
+<text x="505.0" y="51.0" text-anchor="middle" font-size="15" font-weight="700" font-family="Menlo,Consolas,monospace" fill="#292093">params:  in the YAML header</text>
+<text x="505.0" y="68.0" text-anchor="middle" font-size="12" fill="#5d5d70">read in code and prose as params$name</text>
+<text x="505.0" y="84.0" text-anchor="middle" font-size="12" fill="#5d5d70">a render can override the default</text>
+<rect x="330.0" y="129.0" width="350" height="78" rx="9" fill="#ffffff" stroke="#9db0e6" stroke-width="1.6"/>
+<text x="505.0" y="157.0" text-anchor="middle" font-size="15" font-weight="700" font-family="Menlo,Consolas,monospace" fill="#292093">knitr::kable()</text>
+<text x="505.0" y="174.0" text-anchor="middle" font-size="12" fill="#5d5d70">in a chunk labeled tbl-something with a tbl-cap,</text>
+<text x="505.0" y="190.0" text-anchor="middle" font-size="12" fill="#5d5d70">referred to in the prose as @tbl-something</text>
+<rect x="330.0" y="235.0" width="350" height="78" rx="9" fill="#ffffff" stroke="#9db0e6" stroke-width="1.6"/>
+<text x="505.0" y="263.0" text-anchor="middle" font-size="15" font-weight="700" font-family="Menlo,Consolas,monospace" fill="#292093">bibliography:  in the YAML header</text>
+<text x="505.0" y="280.0" text-anchor="middle" font-size="12" fill="#5d5d70">cite the data, the software and the boundary</text>
+<text x="505.0" y="296.0" text-anchor="middle" font-size="12" fill="#5d5d70">layers, so that the report can be checked</text>
+<rect x="330.0" y="341.0" width="350" height="78" rx="9" fill="#ffffff" stroke="#9db0e6" stroke-width="1.6"/>
+<text x="505.0" y="369.0" text-anchor="middle" font-size="15" font-weight="700" font-family="Menlo,Consolas,monospace" fill="#292093">walk()  over  quarto_render()</text>
+<text x="505.0" y="386.0" text-anchor="middle" font-size="12" fill="#5d5d70">execute_params = takes a named list that overrides</text>
+<text x="505.0" y="402.0" text-anchor="middle" font-size="12" fill="#5d5d70">the header, while output_file = names the result</text>
+</g>
+</svg>

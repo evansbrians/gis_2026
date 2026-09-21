@@ -3,7 +3,7 @@
 [39m[31m
 
 processing file: grading_dashboard.qmd
-[39m  |                                                                   |                                                           |   0%  |                                                                   |.......                                                    |  11%             |                                                                   |.............                                              |  22% [setup]     |                                                                   |....................                                       |  33%             |                                                                   |..........................                                 |  44% [controls]  |                                                                   |.................................                          |  56%             |                                                                   |.......................................                    |  67% [mark]      |                                                                   |..............................................             |  78%             |                                                                   |....................................................       |  89% [server]    |                                                                   |...........................................................| 100%                                                                                                                
+[39m  |                                                                 |                                                         |   0%  |                                                                 |......                                                   |  11%               |                                                                 |.............                                            |  22% [setup]       |                                                                 |...................                                      |  33%               |                                                                 |.........................                                |  44% [controls]    |                                                                 |................................                         |  56%               |                                                                 |......................................                   |  67% [navigation]  |                                                                 |............................................             |  78%               |                                                                 |...................................................      |  89% [server]      |                                                                 |.........................................................| 100%                                                                                                                    
 [31moutput file: grading_dashboard.knit.md
 
 [39m[1mpandoc [22m
@@ -30,7 +30,7 @@ processing file: grading_dashboard.qmd
   editor_options:
     chunk_output_type: console
   engines:
-    - path: /Users/brianevans/Applications/RStudio Project Launchers/gis_2026.app/Contents/Resources/app/quarto/share/extension-subtrees/julia-engine/_extensions/julia-engine/julia-engine.js
+    - path: /Applications/RStudio.app/Contents/Resources/app/quarto/share/extension-subtrees/julia-engine/_extensions/julia-engine/julia-engine.js
   toc-location: left
   search: false
   theme:
@@ -61,7 +61,7 @@ Attaching package: ‘DT’
 ✖ dplyr::filter() masks stats::filter()
 ✖ dplyr::lag()    masks stats::lag()
 ℹ Use the conflicted package (<http://conflicted.r-lib.org/>) to force all conflicts to become errors
-[39mListening on http://localhost:4243/
+[39mListening on http://localhost:4244/
 [31m
 
 [39m

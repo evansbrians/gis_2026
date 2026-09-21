@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 746 501" width="746" height="501" font-family="Helvetica Neue,Helvetica,Arial,sans-serif" role="img">
+<rect width="746" height="501" fill="#ffffff"/>
+<text x="373" y="34" text-anchor="middle" font-size="19" font-weight="700" fill="#292093">Decision tree: Putting two rasters on one grid</text>
+<line x1="40" y1="50" x2="706" y2="50" stroke="#9db0e6" stroke-width="1.2"/>
+<g transform="translate(0,52)">
+<path d="M 180.0 221.0 H 192.0 V 62.0 H 342.0" fill="none" stroke="#9db0e6" stroke-width="1.8" stroke-linejoin="round"/>
+<polygon points="353.0,62.0 341.0,57.0 341.0,67.0" fill="#9db0e6"/>
+<path d="M 180.0 221.0 H 192.0 V 168.0 H 342.0" fill="none" stroke="#9db0e6" stroke-width="1.8" stroke-linejoin="round"/>
+<polygon points="353.0,168.0 341.0,163.0 341.0,173.0" fill="#9db0e6"/>
+<path d="M 180.0 221.0 H 192.0 V 274.0 H 342.0" fill="none" stroke="#9db0e6" stroke-width="1.8" stroke-linejoin="round"/>
+<polygon points="353.0,274.0 341.0,269.0 341.0,279.0" fill="#9db0e6"/>
+<path d="M 180.0 221.0 H 192.0 V 380.0 H 342.0" fill="none" stroke="#9db0e6" stroke-width="1.8" stroke-linejoin="round"/>
+<polygon points="353.0,380.0 341.0,375.0 341.0,385.0" fill="#9db0e6"/>
+<rect x="214.3" y="28.0" width="116.4" height="30.0" rx="3" fill="#ffffff"/>
+<text x="272.5" y="39.0" text-anchor="middle" font-size="12" fill="#4a5aa0">the coordinate</text>
+<text x="272.5" y="52.0" text-anchor="middle" font-size="12" fill="#4a5aa0">reference system</text>
+<rect x="203.9" y="134.0" width="137.1" height="30.0" rx="3" fill="#ffffff"/>
+<text x="272.5" y="145.0" text-anchor="middle" font-size="12" fill="#4a5aa0">only the cell size,</text>
+<text x="272.5" y="158.0" text-anchor="middle" font-size="12" fill="#4a5aa0">by a whole factor</text>
+<rect x="217.8" y="240.0" width="109.5" height="30.0" rx="3" fill="#ffffff"/>
+<text x="272.5" y="251.0" text-anchor="middle" font-size="12" fill="#4a5aa0">anything else</text>
+<text x="272.5" y="264.0" text-anchor="middle" font-size="12" fill="#4a5aa0">about the grids</text>
+<rect x="207.4" y="346.0" width="130.2" height="30.0" rx="3" fill="#ffffff"/>
+<text x="272.5" y="357.0" text-anchor="middle" font-size="12" fill="#4a5aa0">nothing: the grids</text>
+<text x="272.5" y="370.0" text-anchor="middle" font-size="12" fill="#4a5aa0">already match</text>
+<rect x="8.0" y="179.5" width="172" height="83" rx="9" fill="#eaf0ff" stroke="#292093" stroke-width="2.0"/>
+<text x="94.0" y="206.5" text-anchor="middle" font-size="15" fill="#333333">What does not match</text>
+<text x="94.0" y="225.5" text-anchor="middle" font-size="15" fill="#333333">between the two</text>
+<text x="94.0" y="244.5" text-anchor="middle" font-size="15" fill="#333333">rasters?</text>
+<rect x="355.0" y="15.0" width="383" height="94" rx="9" fill="#ffffff" stroke="#9db0e6" stroke-width="1.6"/>
+<text x="546.5" y="43.0" text-anchor="middle" font-size="15" font-weight="700" font-family="Menlo,Consolas,monospace" fill="#292093">project()</text>
+<text x="546.5" y="60.0" text-anchor="middle" font-size="12" fill="#5d5d70">builds a new grid in the target CRS and calculates</text>
+<text x="546.5" y="76.0" text-anchor="middle" font-size="12" fill="#5d5d70">its cells from the old one, so the cell count changes;</text>
+<text x="546.5" y="92.0" text-anchor="middle" font-size="12" fill="#5d5d70">method is bilinear for a quantity and near for a class</text>
+<rect x="355.0" y="121.0" width="383" height="94" rx="9" fill="#ffffff" stroke="#9db0e6" stroke-width="1.6"/>
+<text x="546.5" y="149.0" text-anchor="middle" font-size="15" font-weight="700" font-family="Menlo,Consolas,monospace" fill="#292093">aggregate()  and  disagg()</text>
+<text x="546.5" y="166.0" text-anchor="middle" font-size="12" fill="#5d5d70">combine or split blocks of cells; fun names the</text>
+<text x="546.5" y="182.0" text-anchor="middle" font-size="12" fill="#5d5d70">statistic, and aggregate() rounds the number of</text>
+<text x="546.5" y="198.0" text-anchor="middle" font-size="12" fill="#5d5d70">blocks up, so the round trip does not return the grid</text>
+<rect x="355.0" y="227.0" width="383" height="94" rx="9" fill="#ffffff" stroke="#9db0e6" stroke-width="1.6"/>
+<text x="546.5" y="255.0" text-anchor="middle" font-size="15" font-weight="700" font-family="Menlo,Consolas,monospace" fill="#292093">resample()</text>
+<text x="546.5" y="272.0" text-anchor="middle" font-size="12" fill="#5d5d70">moves one raster onto the grid of another, whatever the</text>
+<text x="546.5" y="288.0" text-anchor="middle" font-size="12" fill="#5d5d70">relationship: the alignment, the extent, or a cell size</text>
+<text x="546.5" y="304.0" text-anchor="middle" font-size="12" fill="#5d5d70">that is not a whole multiple; move the coarse raster</text>
+<rect x="355.0" y="341.0" width="383" height="78" rx="9" fill="#ffffff" stroke="#9db0e6" stroke-width="1.6"/>
+<text x="546.5" y="369.0" text-anchor="middle" font-size="15" font-weight="700" font-family="Menlo,Consolas,monospace" fill="#292093">c()</text>
+<text x="546.5" y="386.0" text-anchor="middle" font-size="12" fill="#5d5d70">stacks the rasters into one multi-layer object,</text>
+<text x="546.5" y="402.0" text-anchor="middle" font-size="12" fill="#5d5d70">matched by position on the grid rather than by a key</text>
+</g>
+</svg>

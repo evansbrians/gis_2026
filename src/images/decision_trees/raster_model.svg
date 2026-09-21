@@ -1,0 +1,99 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1391 1128" width="1391" height="1128" font-family="Helvetica Neue,Helvetica,Arial,sans-serif" role="img">
+<rect width="1391" height="1128" fill="#ffffff"/>
+<text x="696" y="34" text-anchor="middle" font-size="19" font-weight="700" fill="#292093">The raster model, and what follows from it</text>
+<line x1="40" y1="50" x2="1351" y2="50" stroke="#9db0e6" stroke-width="1.2"/>
+<g transform="translate(0,52)">
+<path d="M 212.0 543.0 H 224.0 V 999.0 H 429.0" fill="none" stroke="#9db0e6" stroke-width="1.8" stroke-linejoin="round"/>
+<polygon points="440.0,999.0 428.0,994.0 428.0,1004.0" fill="#9db0e6"/>
+<path d="M 212.0 543.0 H 224.0 V 879.0 H 429.0" fill="none" stroke="#9db0e6" stroke-width="1.8" stroke-linejoin="round"/>
+<polygon points="440.0,879.0 428.0,874.0 428.0,884.0" fill="#9db0e6"/>
+<path d="M 212.0 543.0 H 224.0 V 759.0 H 429.0" fill="none" stroke="#9db0e6" stroke-width="1.8" stroke-linejoin="round"/>
+<polygon points="440.0,759.0 428.0,754.0 428.0,764.0" fill="#9db0e6"/>
+<path d="M 212.0 543.0 H 224.0 V 639.0 H 429.0" fill="none" stroke="#9db0e6" stroke-width="1.8" stroke-linejoin="round"/>
+<polygon points="440.0,639.0 428.0,634.0 428.0,644.0" fill="#9db0e6"/>
+<path d="M 212.0 543.0 H 224.0 V 423.0 H 429.0" fill="none" stroke="#9db0e6" stroke-width="1.8" stroke-linejoin="round"/>
+<polygon points="440.0,423.0 428.0,418.0 428.0,428.0" fill="#9db0e6"/>
+<path d="M 212.0 543.0 H 224.0 V 207.0 H 429.0" fill="none" stroke="#9db0e6" stroke-width="1.8" stroke-linejoin="round"/>
+<polygon points="440.0,207.0 428.0,202.0 428.0,212.0" fill="#9db0e6"/>
+<path d="M 212.0 543.0 H 224.0 V 87.0 H 429.0" fill="none" stroke="#9db0e6" stroke-width="1.8" stroke-linejoin="round"/>
+<polygon points="440.0,87.0 428.0,82.0 428.0,92.0" fill="#9db0e6"/>
+<path d="M 832.0 423.0 H 844.0 V 319.0 H 994.0" fill="none" stroke="#9db0e6" stroke-width="1.8" stroke-linejoin="round"/>
+<polygon points="1005.0,319.0 993.0,314.0 993.0,324.0" fill="#9db0e6"/>
+<path d="M 832.0 423.0 H 844.0 V 423.0 H 994.0" fill="none" stroke="#9db0e6" stroke-width="1.8" stroke-linejoin="round"/>
+<polygon points="1005.0,423.0 993.0,418.0 993.0,428.0" fill="#9db0e6"/>
+<path d="M 832.0 423.0 H 844.0 V 527.0 H 994.0" fill="none" stroke="#9db0e6" stroke-width="1.8" stroke-linejoin="round"/>
+<polygon points="1005.0,527.0 993.0,522.0 993.0,532.0" fill="#9db0e6"/>
+<rect x="280.7" y="978.0" width="102.6" height="17.0" rx="3" fill="#ffffff"/>
+<text x="332.0" y="989.0" text-anchor="middle" font-size="12" fill="#4a5aa0">writing a file</text>
+<rect x="270.4" y="845.0" width="123.3" height="30.0" rx="3" fill="#ffffff"/>
+<text x="332.0" y="856.0" text-anchor="middle" font-size="12" fill="#4a5aa0">when two axes are</text>
+<text x="332.0" y="869.0" text-anchor="middle" font-size="12" fill="#4a5aa0">not enough</text>
+<rect x="253.1" y="738.0" width="157.8" height="17.0" rx="3" fill="#ffffff"/>
+<text x="332.0" y="749.0" text-anchor="middle" font-size="12" fill="#4a5aa0">combining measurements</text>
+<rect x="260.0" y="605.0" width="144.0" height="30.0" rx="3" fill="#ffffff"/>
+<text x="332.0" y="616.0" text-anchor="middle" font-size="12" fill="#4a5aa0">so a failing cell is</text>
+<text x="332.0" y="629.0" text-anchor="middle" font-size="12" fill="#4a5aa0">emptied, not removed</text>
+<rect x="235.8" y="389.0" width="192.3" height="30.0" rx="3" fill="#ffffff"/>
+<text x="332.0" y="400.0" text-anchor="middle" font-size="12" fill="#4a5aa0">so there is no key:</text>
+<text x="332.0" y="413.0" text-anchor="middle" font-size="12" fill="#4a5aa0">the grids must be identical</text>
+<rect x="266.9" y="186.0" width="130.2" height="17.0" rx="3" fill="#ffffff"/>
+<text x="332.0" y="197.0" text-anchor="middle" font-size="12" fill="#4a5aa0">the size of a cell</text>
+<rect x="280.7" y="66.0" width="102.6" height="17.0" rx="3" fill="#ffffff"/>
+<text x="332.0" y="77.0" text-anchor="middle" font-size="12" fill="#4a5aa0">reading a file</text>
+<rect x="897.4" y="298.0" width="54.3" height="17.0" rx="3" fill="#ffffff"/>
+<text x="924.5" y="309.0" text-anchor="middle" font-size="12" fill="#4a5aa0">the CRS</text>
+<rect x="856.0" y="389.0" width="137.1" height="30.0" rx="3" fill="#ffffff"/>
+<text x="924.5" y="400.0" text-anchor="middle" font-size="12" fill="#4a5aa0">only the cell size,</text>
+<text x="924.5" y="413.0" text-anchor="middle" font-size="12" fill="#4a5aa0">by a whole factor</text>
+<rect x="876.6" y="506.0" width="95.7" height="17.0" rx="3" fill="#ffffff"/>
+<text x="924.5" y="517.0" text-anchor="middle" font-size="12" fill="#4a5aa0">anything else</text>
+<rect x="8.0" y="501.5" width="204" height="83" rx="9" fill="#eaf0ff" stroke="#292093" stroke-width="2.0"/>
+<text x="110.0" y="528.5" text-anchor="middle" font-size="15" fill="#333333">A value for each cell</text>
+<text x="110.0" y="547.5" text-anchor="middle" font-size="15" fill="#333333">of a grid, and no</text>
+<text x="110.0" y="566.5" text-anchor="middle" font-size="15" fill="#333333">location stored with it</text>
+<rect x="442.0" y="40.0" width="390" height="94" rx="9" fill="#ffffff" stroke="#9db0e6" stroke-width="1.6"/>
+<text x="637.0" y="68.0" text-anchor="middle" font-size="15" font-weight="700" font-family="Menlo,Consolas,monospace" fill="#292093">terra::rast()   terra::inMemory()</text>
+<text x="637.0" y="85.0" text-anchor="middle" font-size="12" fill="#5d5d70">the header is a few numbers whatever the size of the</text>
+<text x="637.0" y="101.0" text-anchor="middle" font-size="12" fill="#5d5d70">file, so the values stay on disk; the source line is a</text>
+<text x="637.0" y="117.0" text-anchor="middle" font-size="12" fill="#5d5d70">filename until an operation puts the result in memory</text>
+<rect x="442.0" y="160.0" width="390" height="94" rx="9" fill="#ffffff" stroke="#9db0e6" stroke-width="1.6"/>
+<text x="637.0" y="188.0" text-anchor="middle" font-size="15" font-weight="700" font-family="Menlo,Consolas,monospace" fill="#292093">terra::res()   terra::cellSize()</text>
+<text x="637.0" y="205.0" text-anchor="middle" font-size="12" fill="#5d5d70">res() is in the units of the CRS, so it is an angle in</text>
+<text x="637.0" y="221.0" text-anchor="middle" font-size="12" fill="#5d5d70">a geographic one; cellSize() returns a real area, and</text>
+<text x="637.0" y="237.0" text-anchor="middle" font-size="12" fill="#5d5d70">the gap between them is why the CRS is settled first</text>
+<rect x="442.0" y="400.5" width="390" height="45" rx="9" fill="#eaf0ff" stroke="#292093" stroke-width="2.0"/>
+<text x="637.0" y="427.5" text-anchor="middle" font-size="15" fill="#333333">What does not match?</text>
+<rect x="1007.0" y="280.0" width="376" height="78" rx="9" fill="#ffffff" stroke="#9db0e6" stroke-width="1.6"/>
+<text x="1195.0" y="308.0" text-anchor="middle" font-size="15" font-weight="700" font-family="Menlo,Consolas,monospace" fill="#292093">terra::project()</text>
+<text x="1195.0" y="325.0" text-anchor="middle" font-size="12" fill="#5d5d70">a new grid in the target CRS, every cell recalculated;</text>
+<text x="1195.0" y="341.0" text-anchor="middle" font-size="12" fill="#5d5d70">method is bilinear for a quantity, near for a class</text>
+<rect x="1007.0" y="384.0" width="376" height="78" rx="9" fill="#ffffff" stroke="#9db0e6" stroke-width="1.6"/>
+<text x="1195.0" y="412.0" text-anchor="middle" font-size="15" font-weight="700" font-family="Menlo,Consolas,monospace" fill="#292093">terra::aggregate()   terra::disagg()</text>
+<text x="1195.0" y="429.0" text-anchor="middle" font-size="12" fill="#5d5d70">blocks of cells combined or split; aggregate() rounds</text>
+<text x="1195.0" y="445.0" text-anchor="middle" font-size="12" fill="#5d5d70">the block count up, so disagg() is not an undo</text>
+<rect x="1007.0" y="488.0" width="376" height="78" rx="9" fill="#ffffff" stroke="#9db0e6" stroke-width="1.6"/>
+<text x="1195.0" y="516.0" text-anchor="middle" font-size="15" font-weight="700" font-family="Menlo,Consolas,monospace" fill="#292093">terra::resample()</text>
+<text x="1195.0" y="533.0" text-anchor="middle" font-size="12" fill="#5d5d70">one raster onto the grid of another, whatever the</text>
+<text x="1195.0" y="549.0" text-anchor="middle" font-size="12" fill="#5d5d70">relationship; move the coarse raster, not the fine</text>
+<rect x="442.0" y="592.0" width="390" height="94" rx="9" fill="#ffffff" stroke="#9db0e6" stroke-width="1.6"/>
+<text x="637.0" y="620.0" text-anchor="middle" font-size="15" font-weight="700" font-family="Menlo,Consolas,monospace" fill="#292093">filter()</text>
+<text x="637.0" y="637.0" text-anchor="middle" font-size="12" fill="#5d5d70">empties the failing cells rather than removing them,</text>
+<text x="637.0" y="653.0" text-anchor="middle" font-size="12" fill="#5d5d70">so ncell() does not move and a count of cells stops</text>
+<text x="637.0" y="669.0" text-anchor="middle" font-size="12" fill="#5d5d70">being a count of values</text>
+<rect x="442.0" y="712.0" width="390" height="94" rx="9" fill="#ffffff" stroke="#9db0e6" stroke-width="1.6"/>
+<text x="637.0" y="740.0" text-anchor="middle" font-size="15" font-weight="700" font-family="Menlo,Consolas,monospace" fill="#292093">c()   select()   rename()   mutate()</text>
+<text x="637.0" y="757.0" text-anchor="middle" font-size="12" fill="#5d5d70">c() stacks rasters that share a grid, matched by</text>
+<text x="637.0" y="773.0" text-anchor="middle" font-size="12" fill="#5d5d70">position; the verbs then address layers the way their</text>
+<text x="637.0" y="789.0" text-anchor="middle" font-size="12" fill="#5d5d70">dplyr forms address columns</text>
+<rect x="442.0" y="832.0" width="390" height="94" rx="9" fill="#ffffff" stroke="#9db0e6" stroke-width="1.6"/>
+<text x="637.0" y="860.0" text-anchor="middle" font-size="15" font-weight="700" font-family="Menlo,Consolas,monospace" fill="#292093">read_stars()</text>
+<text x="637.0" y="877.0" text-anchor="middle" font-size="12" fill="#5d5d70">a cube with a named dimension for every axis, which</text>
+<text x="637.0" y="893.0" text-anchor="middle" font-size="12" fill="#5d5d70">is what a time series or a spectral band needs; terra</text>
+<text x="637.0" y="909.0" text-anchor="middle" font-size="12" fill="#5d5d70">can only flatten such an axis into layer names</text>
+<rect x="442.0" y="952.0" width="390" height="94" rx="9" fill="#ffffff" stroke="#9db0e6" stroke-width="1.6"/>
+<text x="637.0" y="980.0" text-anchor="middle" font-size="15" font-weight="700" font-family="Menlo,Consolas,monospace" fill="#292093">terra::writeRaster()</text>
+<text x="637.0" y="997.0" text-anchor="middle" font-size="12" fill="#5d5d70">datatype sets the bits per cell and truncates the values</text>
+<text x="637.0" y="1013.0" text-anchor="middle" font-size="12" fill="#5d5d70">that do not fit; COMPRESS=DEFLATE is lossless, and</text>
+<text x="637.0" y="1029.0" text-anchor="middle" font-size="12" fill="#5d5d70">saves most on a layer of repeated whole numbers</text>
+</g>
+</svg>

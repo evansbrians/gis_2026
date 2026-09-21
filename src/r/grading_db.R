@@ -134,3 +134,132 @@ grading_comment_text <-
 
     found[1]
   }
+
+# credits -----------------------------------------------------------------
+
+# Whether a table is there yet, so a run against a database that has not been
+# set up reads an empty result rather than stopping.
+
+grading_table_exists <-
+  function(.table, .db_path = grading_db_path) {
+    found <-
+      grading_query(
+        "select name from sqlite_master where type = 'table' and name = ?",
+        list(.table),
+        .db_path
+      )
+
+    nrow(found) > 0
+  }
+
+# What each accepted approach costs, for one assignment. An approach with no
+# row here is worth full marks, which is what accepting an answer has always
+# meant.
+
+key_credits <-
+  function(.problem_set, .db_path = grading_db_path) {
+    if (!grading_table_exists("key_credits", .db_path)) {
+      return(
+        tibble(
+          credit_id = integer(0),
+          slot_id = integer(0),
+          signature = character(0),
+          deduction = numeric(0),
+          note = character(0)
+        )
+      )
+    }
+
+    grading_query(
+      "select credit_id, slot_id, signature, deduction, note
+       from key_credits
+       where assignment_id = ?
+       order by slot_id",
+      list(assignment_id_of(.problem_set, .db_path)),
+      .db_path
+    )
+  }
+
+# Set what one approach costs, replacing whatever it cost before.
+
+set_key_credit <-
+  function(.problem_set, .slot_id, .signature, .deduction = 0,
+           .note = NA_character_, .db_path = grading_db_path) {
+    connection <- connect_grading_db(.db_path, .write = TRUE)
+
+    on.exit(DBI::dbDisconnect(connection))
+
+    DBI::dbExecute(
+      connection,
+      "insert into key_credits
+         (assignment_id, slot_id, signature, deduction, note)
+       values (?, ?, ?, ?, ?)
+       on conflict (assignment_id, slot_id, signature)
+       do update set deduction = excluded.deduction, note = excluded.note",
+      params =
+        list(
+          assignment_id_of(.problem_set, .db_path),
+          as.integer(.slot_id),
+          .signature,
+          as.numeric(.deduction),
+          .note
+        )
+    )
+
+    invisible(.signature)
+  }
+
+# Put an approach back to full marks.
+
+remove_key_credit <-
+  function(.problem_set, .slot_id, .signature,
+           .db_path = grading_db_path) {
+    connection <- connect_grading_db(.db_path, .write = TRUE)
+
+    on.exit(DBI::dbDisconnect(connection))
+
+    DBI::dbExecute(
+      connection,
+      "delete from key_credits
+       where assignment_id = ? and slot_id = ? and signature = ?",
+      params =
+        list(
+          assignment_id_of(.problem_set, .db_path),
+          as.integer(.slot_id),
+          .signature
+        )
+    )
+
+    invisible(.signature)
+  }
+
+# comments ----------------------------------------------------------------
+
+# Add a comment to the bank, or reword one that is already there. The classes
+# the table allows are fixed by its own constraint.
+
+set_grading_comment <-
+  function(.short_name, .comment_text, .comment_class = "best_practice",
+           .comment_subclass = "grab_bag", .db_path = grading_db_path) {
+    connection <- connect_grading_db(.db_path, .write = TRUE)
+
+    on.exit(DBI::dbDisconnect(connection))
+
+    DBI::dbExecute(
+      connection,
+      "insert into grading_comments
+         (short_name, comment_class, comment_subclass, comment_text)
+       values (?, ?, ?, ?)
+       on conflict (short_name)
+       do update set comment_text = excluded.comment_text",
+      params =
+        list(
+          .short_name,
+          .comment_class,
+          .comment_subclass,
+          .comment_text
+        )
+    )
+
+    invisible(.short_name)
+  }

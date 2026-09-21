@@ -425,6 +425,25 @@ call_violations <-
     bind_rows(found)
   }
 
+# The expression a named argument is given, for reading where its value
+# starts and where it ends.
+
+argument_value <-
+  function(.parse_data, .id) {
+    parent <- .parse_data$parent[.parse_data$id == .id]
+
+    value <-
+      .parse_data[
+        .parse_data$parent == parent &
+          .parse_data$id > .id &
+          .parse_data$token == "expr",
+      ]
+
+    if (!nrow(value)) return(NULL)
+
+    value[1, ]
+  }
+
 # The name of the function a call expression invokes.
 
 call_name_of <-
@@ -481,6 +500,33 @@ block_violations <-
               )
             )
           )
+      }
+    }
+
+    # A named argument whose value continues onto another line must break
+    # right after the `=`.
+
+    if (!is.null(.parse_data)) {
+      for (id in .parse_data$id[.parse_data$token == "EQ_SUB"]) {
+        value <- argument_value(.parse_data, id)
+
+        if (is.null(value)) next
+
+        opened <- .parse_data$line1[.parse_data$id == id]
+
+        if (value$line1 == opened && value$line2 > value$line1) {
+          found <-
+            c(
+              found,
+              list(
+                violation(
+                  "line_assignment",
+                  value$line1,
+                  .lines[value$line1]
+                )
+              )
+            )
+        }
       }
     }
 

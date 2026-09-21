@@ -161,11 +161,22 @@ comment_similarity <-
   }
 
 # Which question each comment run belongs to, from the section headers the
-# template and every submission carry ("# question 4 ------").
+# template and every submission carry ("# question 4 ---" or "# 4 ---").
+#
+# A student may retitle a header -- RStudio's own section headers carry a
+# label, so "# 5 The coordinate reference system ---" is what the editor
+# encourages -- and may pad the hash ("### 2 ---"). The number still leads,
+# and the line still ends in the rule, so the label between them is allowed
+# to be anything. Without this, a retitled header belongs to no question,
+# the search is confined to nothing, and every slot in the file is lost.
 
 question_of_comments <-
   function(.content) {
-    matches <- str_match(.content, "^\\s*#\\s*question\\s+(\\d+)\\s*-")
+    matches <-
+      str_match(
+        .content,
+        "^\\s*#+\\s*(?:question\\s+)?(\\d+)\\b.*-{3,}\\s*$"
+      )
 
     vctrs::vec_fill_missing(
       as.integer(matches[, 2]),
@@ -569,12 +580,103 @@ append_key_alternative <-
     invisible(path)
   }
 
+# Write a slot's accepted approaches back to the key file, separated the way
+# key_alternatives() reads them. An empty list leaves the slot blank, which
+# grade_problem_set() reports as a gap in the key.
+
+write_key_alternatives <-
+  function(.problem_set, .slot_id, .alternatives) {
+    path <- problem_set_file(.problem_set, "_key.R")
+
+    slot <-
+      key_slots(.problem_set) %>%
+      filter(slot_id == .slot_id)
+
+    if (!nrow(slot) || !slot$found || is.na(slot$line_start)) {
+      cli::cli_abort(
+        "Slot {(.slot_id)} could not be located in {.file {path}}."
+      )
+    }
+
+    written <-
+      if (!length(.alternatives)) {
+        character(0)
+      } else {
+        .alternatives %>%
+          map(\(.code) str_split_1(str_trim(.code), "\n")) %>%
+          reduce(\(.kept, .next_one) c(.kept, "", "# Or:", "", .next_one))
+      }
+
+    # The span runs from just after the prompt to just before the next one,
+    # so it carries the blank line at each end.
+
+    body <-
+      if (!length(written)) "" else c("", written, "")
+
+    lines <- read_lines(path)
+
+    c(
+      lines[seq_len(slot$line_start - 1L)],
+      body,
+      lines[-seq_len(slot$line_end)]
+    ) %>%
+      write_lines(path)
+
+    invisible(path)
+  }
+
+# Replace one accepted approach with different code.
+
+replace_key_alternative <-
+  function(.problem_set, .slot_id, .index, .code) {
+    alternatives <- slot_alternatives(.problem_set, .slot_id)
+
+    if (.index < 1 || .index > length(alternatives)) {
+      cli::cli_abort("Slot {(.slot_id)} has no approach {(.index)}.")
+    }
+
+    alternatives[[.index]] <- str_trim(.code)
+
+    write_key_alternatives(.problem_set, .slot_id, alternatives)
+  }
+
+# Drop one accepted approach.
+
+remove_key_alternative <-
+  function(.problem_set, .slot_id, .index) {
+    alternatives <- slot_alternatives(.problem_set, .slot_id)
+
+    if (.index < 1 || .index > length(alternatives)) {
+      cli::cli_abort("Slot {(.slot_id)} has no approach {(.index)}.")
+    }
+
+    write_key_alternatives(
+      .problem_set,
+      .slot_id,
+      alternatives[-.index]
+    )
+  }
+
+# The approaches the key accepts for one slot.
+
+slot_alternatives <-
+  function(.problem_set, .slot_id) {
+    found <-
+      key_slots(.problem_set) %>%
+      filter(slot_id == .slot_id)
+
+    if (!nrow(found)) return(character(0))
+
+    found$alternatives[[1]] %||% character(0)
+  }
+
 # qmd ---------------------------------------------------------------------
 
 # The functions a problem set permits, read from the accordion panel in its
-# .qmd. Entries are written either as ".Primitive, name" or "package::name";
-# both are normalized to a package and a function name. The empty-argument
-# primitive is spelled "()" in some problem sets and "(...)" in others.
+# .qmd. Entries are written either as "source, name" -- for primitives and for
+# course source scripts -- or as "package::name"; both are normalized to a
+# package and a function name. The empty-argument primitive is spelled "()" in
+# some problem sets and "(...)" in others.
 
 allowed_functions_from_qmd <-
   function(.problem_set) {
@@ -604,14 +706,14 @@ allowed_functions_from_qmd <-
       mutate(
         package =
           if_else(
-            str_detect(entry, "^\\.Primitive,"),
-            ".Primitive",
+            str_detect(entry, ","),
+            str_extract(entry, "^[^,]+"),
             str_extract(entry, "^[^:]+")
           ),
         function_name =
           if_else(
-            str_detect(entry, "^\\.Primitive,"),
-            str_remove(entry, "^\\.Primitive,\\s*"),
+            str_detect(entry, ","),
+            str_remove(entry, "^[^,]+,\\s*"),
             str_remove(entry, "^[^:]+::")
           ),
         function_name =

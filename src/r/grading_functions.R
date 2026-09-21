@@ -308,13 +308,14 @@ nesting_depth <-
 #
 # `library()` is on problem set 1's list of permitted functions, so attaching
 # a package costs nothing. It is still worth saying: a function is reached
-# with `::` unless the question asks for the package to be attached, and a
-# question that asks for it says so in its own text.
+# with `::` unless the question asks for the package to be attached. The whole
+# question is read, since the request often sits in a scored bullet rather
+# than in the question's opening line.
 
 questions_asking_to_attach <-
   function(.problem_set) {
     questions_from_qmd(.problem_set) %>%
-      filter(str_detect(str_to_lower(stem), "attach|library")) %>%
+      filter(str_detect(str_to_lower(markdown), "attach|library")) %>%
       pull(question)
   }
 

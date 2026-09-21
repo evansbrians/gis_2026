@@ -324,7 +324,7 @@ dataset_markdown <-
           str_split(fixed(", ")) %>%
           map_chr(
             \(.files) {
-              str_c("[", .files, "]{.mono}", collapse = ", ")
+              str_c("`", .files, "`", collapse = ", ")
             }
           ),
         label =
@@ -332,9 +332,9 @@ dataset_markdown <-
             !is.na(display_name) ~
               str_c("**", display_name, "** (", file_list, ")"),
             !is.na(files) ~
-              str_c("**[", dataset_name, "]{.mono}** (", file_list, ")"),
+              str_c("**`", dataset_name, "`** (", file_list, ")"),
             .default =
-              str_c("**[", dataset_name, "]{.mono}**")
+              str_c("**`", dataset_name, "`**")
           ),
         note = str_c(" ", note),
         note = replace_na(note, ""),
@@ -452,7 +452,7 @@ variable_bullets <-
     .variables %>%
       mutate(
         bullet =
-          str_c("* [", variable, "]{.mono}, ", type, ": ", description)
+          str_c("* `", variable, "`, ", type, ": ", description)
       ) %>%
       pull(bullet) %>%
       str_flatten("\n")
@@ -495,11 +495,11 @@ lesson_metadata <-
           file_list <-
             coalesce(this$files, this$requested) %>%
             str_split_1(fixed(", ")) %>%
-            str_c("[", ., "]{.mono}", collapse = ", ")
+            str_c("`", ., "`", collapse = ", ")
 
           label <-
             if (str_detect(coalesce(this$files, ""), fixed(", "))) {
-              str_c("**[", this$requested, "]{.mono}** (", file_list, ")")
+              str_c("**`", this$requested, "`** (", file_list, ")")
             } else {
               str_c("**", file_list, "**")
             }
@@ -577,7 +577,7 @@ lesson_metadata <-
                     tables %>%
                     filter(table_name == .table)
 
-                  header <- str_c("[", .table, "]{.mono}")
+                  header <- str_c("`", .table, "`")
 
                   if (!is.na(detail$description)) {
                     header <- str_c(header, ": ", detail$description)

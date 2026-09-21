@@ -1,0 +1,64 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1003 663" width="1003" height="663" font-family="Helvetica Neue,Helvetica,Arial,sans-serif" role="img">
+<rect width="1003" height="663" fill="#ffffff"/>
+<text x="502" y="34" text-anchor="middle" font-size="19" font-weight="700" fill="#292093">Decision tree: Crossing between rasters and vectors</text>
+<line x1="40" y1="50" x2="963" y2="50" stroke="#9db0e6" stroke-width="1.2"/>
+<g transform="translate(0,52)">
+<path d="M 226.0 85.0 V 285.0" fill="none" stroke="#9db0e6" stroke-width="1.8"/>
+<polygon points="226.0,296.0 221.0,284.0 231.0,284.0" fill="#9db0e6"/>
+<rect x="209.2" y="184.5" width="33.6" height="17.0" rx="3" fill="#ffffff"/>
+<text x="226.0" y="195.5" text-anchor="middle" font-size="12" fill="#4a5aa0">then</text>
+<path d="M 444.0 330.0 H 456.0 V 118.0 H 592.0" fill="none" stroke="#9db0e6" stroke-width="1.8" stroke-linejoin="round"/>
+<polygon points="603.0,118.0 591.0,113.0 591.0,123.0" fill="#9db0e6"/>
+<path d="M 444.0 330.0 H 456.0 V 224.0 H 592.0" fill="none" stroke="#9db0e6" stroke-width="1.8" stroke-linejoin="round"/>
+<polygon points="603.0,224.0 591.0,219.0 591.0,229.0" fill="#9db0e6"/>
+<path d="M 444.0 330.0 H 456.0 V 330.0 H 592.0" fill="none" stroke="#9db0e6" stroke-width="1.8" stroke-linejoin="round"/>
+<polygon points="603.0,330.0 591.0,325.0 591.0,335.0" fill="#9db0e6"/>
+<path d="M 444.0 330.0 H 456.0 V 436.0 H 592.0" fill="none" stroke="#9db0e6" stroke-width="1.8" stroke-linejoin="round"/>
+<polygon points="603.0,436.0 591.0,431.0 591.0,441.0" fill="#9db0e6"/>
+<path d="M 444.0 330.0 H 456.0 V 542.0 H 592.0" fill="none" stroke="#9db0e6" stroke-width="1.8" stroke-linejoin="round"/>
+<polygon points="603.0,542.0 591.0,537.0 591.0,547.0" fill="#9db0e6"/>
+<rect x="471.3" y="84.0" width="116.4" height="30.0" rx="3" fill="#ffffff"/>
+<text x="529.5" y="95.0" text-anchor="middle" font-size="12" fill="#4a5aa0">a raster trimmed</text>
+<text x="529.5" y="108.0" text-anchor="middle" font-size="12" fill="#4a5aa0">to the vector</text>
+<rect x="467.9" y="190.0" width="123.3" height="30.0" rx="3" fill="#ffffff"/>
+<text x="529.5" y="201.0" text-anchor="middle" font-size="12" fill="#4a5aa0">a raster with the</text>
+<text x="529.5" y="214.0" text-anchor="middle" font-size="12" fill="#4a5aa0">outside blanked</text>
+<rect x="471.3" y="296.0" width="116.4" height="30.0" rx="3" fill="#ffffff"/>
+<text x="529.5" y="307.0" text-anchor="middle" font-size="12" fill="#4a5aa0">raster values at</text>
+<text x="529.5" y="320.0" text-anchor="middle" font-size="12" fill="#4a5aa0">vector locations</text>
+<rect x="471.3" y="402.0" width="116.4" height="30.0" rx="3" fill="#ffffff"/>
+<text x="529.5" y="413.0" text-anchor="middle" font-size="12" fill="#4a5aa0">a vector written</text>
+<text x="529.5" y="426.0" text-anchor="middle" font-size="12" fill="#4a5aa0">onto a grid</text>
+<rect x="481.6" y="508.0" width="95.7" height="30.0" rx="3" fill="#ffffff"/>
+<text x="529.5" y="519.0" text-anchor="middle" font-size="12" fill="#4a5aa0">features from</text>
+<text x="529.5" y="532.0" text-anchor="middle" font-size="12" fill="#4a5aa0">a raster</text>
+<rect x="8.0" y="7.0" width="436" height="78" rx="9" fill="#ffffff" stroke="#9db0e6" stroke-width="1.6"/>
+<text x="226.0" y="35.0" text-anchor="middle" font-size="15" font-weight="700" font-family="Menlo,Consolas,monospace" fill="#292093">st_transform()  then  vect()</text>
+<text x="226.0" y="52.0" text-anchor="middle" font-size="12" fill="#5d5d70">crop() stops on a CRS mismatch, mask() warns and returns</text>
+<text x="226.0" y="68.0" text-anchor="middle" font-size="12" fill="#5d5d70">all NA, and extract() transforms silently: settle the CRS first</text>
+<rect x="8.0" y="298.0" width="436" height="64" rx="9" fill="#eaf0ff" stroke="#292093" stroke-width="2.0"/>
+<text x="226.0" y="325.0" text-anchor="middle" font-size="15" fill="#333333">What does the</text>
+<text x="226.0" y="344.0" text-anchor="middle" font-size="15" fill="#333333">question need?</text>
+<rect x="605.0" y="71.0" width="390" height="94" rx="9" fill="#ffffff" stroke="#9db0e6" stroke-width="1.6"/>
+<text x="800.0" y="99.0" text-anchor="middle" font-size="15" font-weight="700" font-family="Menlo,Consolas,monospace" fill="#292093">crop(x, v)</text>
+<text x="800.0" y="116.0" text-anchor="middle" font-size="12" fill="#5d5d70">cuts the raster to the bounding box of the vector, so</text>
+<text x="800.0" y="132.0" text-anchor="middle" font-size="12" fill="#5d5d70">the grid gets smaller; mask = TRUE also sets the cells</text>
+<text x="800.0" y="148.0" text-anchor="middle" font-size="12" fill="#5d5d70">outside the vector to NA</text>
+<rect x="605.0" y="185.0" width="390" height="78" rx="9" fill="#ffffff" stroke="#9db0e6" stroke-width="1.6"/>
+<text x="800.0" y="213.0" text-anchor="middle" font-size="15" font-weight="700" font-family="Menlo,Consolas,monospace" fill="#292093">mask(x, v)</text>
+<text x="800.0" y="230.0" text-anchor="middle" font-size="12" fill="#5d5d70">sets the cells outside the vector to NA and leaves</text>
+<text x="800.0" y="246.0" text-anchor="middle" font-size="12" fill="#5d5d70">the grid where it was, so the extent does not change</text>
+<rect x="605.0" y="291.0" width="390" height="78" rx="9" fill="#ffffff" stroke="#9db0e6" stroke-width="1.6"/>
+<text x="800.0" y="319.0" text-anchor="middle" font-size="15" font-weight="700" font-family="Menlo,Consolas,monospace" fill="#292093">terra::extract()</text>
+<text x="800.0" y="336.0" text-anchor="middle" font-size="12" fill="#5d5d70">one row per point, in the order of the points; every</text>
+<text x="800.0" y="352.0" text-anchor="middle" font-size="12" fill="#5d5d70">covered cell for a polygon, unless fun summarizes them</text>
+<rect x="605.0" y="397.0" width="390" height="78" rx="9" fill="#ffffff" stroke="#9db0e6" stroke-width="1.6"/>
+<text x="800.0" y="425.0" text-anchor="middle" font-size="15" font-weight="700" font-family="Menlo,Consolas,monospace" fill="#292093">rasterize()</text>
+<text x="800.0" y="442.0" text-anchor="middle" font-size="12" fill="#5d5d70">field sets what a cell holds, fun summarizes the</text>
+<text x="800.0" y="458.0" text-anchor="middle" font-size="12" fill="#5d5d70">features that fall in one, and background sets the rest</text>
+<rect x="605.0" y="503.0" width="390" height="78" rx="9" fill="#ffffff" stroke="#9db0e6" stroke-width="1.6"/>
+<text x="800.0" y="531.0" text-anchor="middle" font-size="15" font-weight="700" font-family="Menlo,Consolas,monospace" fill="#292093">as.polygons()  then  st_as_sf()</text>
+<text x="800.0" y="548.0" text-anchor="middle" font-size="12" fill="#5d5d70">dissolves the cells of each class into one multipolygon,</text>
+<text x="800.0" y="564.0" text-anchor="middle" font-size="12" fill="#5d5d70">whose boundaries are cell edges rather than real ones</text>
+</g>
+</svg>

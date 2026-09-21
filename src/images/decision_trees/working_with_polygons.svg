@@ -1,0 +1,62 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 912 655" width="912" height="655" font-family="Helvetica Neue,Helvetica,Arial,sans-serif" role="img">
+<rect width="912" height="655" fill="#ffffff"/>
+<text x="456" y="34" text-anchor="middle" font-size="19" font-weight="700" fill="#292093">Decision tree: Choosing a polygon operation</text>
+<line x1="40" y1="50" x2="872" y2="50" stroke="#9db0e6" stroke-width="1.2"/>
+<g transform="translate(0,52)">
+<path d="M 173.0 81.0 V 277.0" fill="none" stroke="#9db0e6" stroke-width="1.8"/>
+<polygon points="173.0,288.0 168.0,276.0 178.0,276.0" fill="#9db0e6"/>
+<rect x="156.2" y="178.5" width="33.6" height="17.0" rx="3" fill="#ffffff"/>
+<text x="173.0" y="189.5" text-anchor="middle" font-size="12" fill="#4a5aa0">then</text>
+<path d="M 338.0 322.0 H 350.0 V 110.0 H 541.0" fill="none" stroke="#9db0e6" stroke-width="1.8" stroke-linejoin="round"/>
+<polygon points="552.0,110.0 540.0,105.0 540.0,115.0" fill="#9db0e6"/>
+<path d="M 338.0 322.0 H 350.0 V 216.0 H 541.0" fill="none" stroke="#9db0e6" stroke-width="1.8" stroke-linejoin="round"/>
+<polygon points="552.0,216.0 540.0,211.0 540.0,221.0" fill="#9db0e6"/>
+<path d="M 338.0 322.0 H 350.0 V 322.0 H 541.0" fill="none" stroke="#9db0e6" stroke-width="1.8" stroke-linejoin="round"/>
+<polygon points="552.0,322.0 540.0,317.0 540.0,327.0" fill="#9db0e6"/>
+<path d="M 338.0 322.0 H 350.0 V 428.0 H 541.0" fill="none" stroke="#9db0e6" stroke-width="1.8" stroke-linejoin="round"/>
+<polygon points="552.0,428.0 540.0,423.0 540.0,433.0" fill="#9db0e6"/>
+<path d="M 338.0 322.0 H 350.0 V 534.0 H 541.0" fill="none" stroke="#9db0e6" stroke-width="1.8" stroke-linejoin="round"/>
+<polygon points="552.0,534.0 540.0,529.0 540.0,539.0" fill="#9db0e6"/>
+<rect x="399.7" y="76.0" width="102.6" height="30.0" rx="3" fill="#ffffff"/>
+<text x="451.0" y="87.0" text-anchor="middle" font-size="12" fill="#4a5aa0">which features</text>
+<text x="451.0" y="100.0" text-anchor="middle" font-size="12" fill="#4a5aa0">are involved</text>
+<rect x="382.4" y="182.0" width="137.1" height="30.0" rx="3" fill="#ffffff"/>
+<text x="451.0" y="193.0" text-anchor="middle" font-size="12" fill="#4a5aa0">how much of a layer</text>
+<text x="451.0" y="206.0" text-anchor="middle" font-size="12" fill="#4a5aa0">is inside another</text>
+<rect x="375.6" y="288.0" width="150.9" height="30.0" rx="3" fill="#ffffff"/>
+<text x="451.0" y="299.0" text-anchor="middle" font-size="12" fill="#4a5aa0">what each field means</text>
+<text x="451.0" y="312.0" text-anchor="middle" font-size="12" fill="#4a5aa0">for its geometry</text>
+<rect x="361.8" y="394.0" width="178.5" height="30.0" rx="3" fill="#ffffff"/>
+<text x="451.0" y="405.0" text-anchor="middle" font-size="12" fill="#4a5aa0">how to put a value on a</text>
+<text x="451.0" y="418.0" text-anchor="middle" font-size="12" fill="#4a5aa0">different set of polygons</text>
+<rect x="372.1" y="500.0" width="157.8" height="30.0" rx="3" fill="#ffffff"/>
+<text x="451.0" y="511.0" text-anchor="middle" font-size="12" fill="#4a5aa0">how to reduce the file</text>
+<text x="451.0" y="524.0" text-anchor="middle" font-size="12" fill="#4a5aa0">size for drawing</text>
+<rect x="8.0" y="3.0" width="330" height="78" rx="9" fill="#ffffff" stroke="#9db0e6" stroke-width="1.6"/>
+<text x="173.0" y="31.0" text-anchor="middle" font-size="15" font-weight="700" font-family="Menlo,Consolas,monospace" fill="#292093">st_make_valid()</text>
+<text x="173.0" y="48.0" text-anchor="middle" font-size="12" fill="#5d5d70">st_is_valid(reason = TRUE) names the fault; run</text>
+<text x="173.0" y="64.0" text-anchor="middle" font-size="12" fill="#5d5d70">the repair as part of reading a polygon file</text>
+<rect x="8.0" y="290.0" width="330" height="64" rx="9" fill="#eaf0ff" stroke="#292093" stroke-width="2.0"/>
+<text x="173.0" y="317.0" text-anchor="middle" font-size="15" fill="#333333">What does the</text>
+<text x="173.0" y="336.0" text-anchor="middle" font-size="15" fill="#333333">question need?</text>
+<rect x="554.0" y="79.0" width="350" height="62" rx="9" fill="#ffffff" stroke="#9db0e6" stroke-width="1.6"/>
+<text x="729.0" y="107.0" text-anchor="middle" font-size="15" font-weight="700" font-family="Menlo,Consolas,monospace" fill="#292093">st_filter()</text>
+<text x="729.0" y="124.0" text-anchor="middle" font-size="12" fill="#5d5d70">whole features, with their fields untouched</text>
+<rect x="554.0" y="177.0" width="350" height="78" rx="9" fill="#ffffff" stroke="#9db0e6" stroke-width="1.6"/>
+<text x="729.0" y="205.0" text-anchor="middle" font-size="15" font-weight="700" font-family="Menlo,Consolas,monospace" fill="#292093">st_intersection()</text>
+<text x="729.0" y="222.0" text-anchor="middle" font-size="12" fill="#5d5d70">the geometry cut to the overlap; an area</text>
+<text x="729.0" y="238.0" text-anchor="middle" font-size="12" fill="#5d5d70">field has to be recalculated with st_area()</text>
+<rect x="554.0" y="283.0" width="350" height="78" rx="9" fill="#ffffff" stroke="#9db0e6" stroke-width="1.6"/>
+<text x="729.0" y="311.0" text-anchor="middle" font-size="15" font-weight="700" font-family="Menlo,Consolas,monospace" fill="#292093">st_agr()</text>
+<text x="729.0" y="328.0" text-anchor="middle" font-size="12" fill="#5d5d70">constant, aggregate or identity, recorded so the</text>
+<text x="729.0" y="344.0" text-anchor="middle" font-size="12" fill="#5d5d70">warning names the fields you have declared</text>
+<rect x="554.0" y="389.0" width="350" height="78" rx="9" fill="#ffffff" stroke="#9db0e6" stroke-width="1.6"/>
+<text x="729.0" y="417.0" text-anchor="middle" font-size="15" font-weight="700" font-family="Menlo,Consolas,monospace" fill="#292093">st_interpolate_aw()</text>
+<text x="729.0" y="434.0" text-anchor="middle" font-size="12" fill="#5d5d70">extensive = TRUE for a total and FALSE for a rate;</text>
+<text x="729.0" y="450.0" text-anchor="middle" font-size="12" fill="#5d5d70">assumes an even spread within each source polygon</text>
+<rect x="554.0" y="495.0" width="350" height="78" rx="9" fill="#ffffff" stroke="#9db0e6" stroke-width="1.6"/>
+<text x="729.0" y="523.0" text-anchor="middle" font-size="15" font-weight="700" font-family="Menlo,Consolas,monospace" fill="#292093">st_simplify()</text>
+<text x="729.0" y="540.0" text-anchor="middle" font-size="12" fill="#5d5d70">dTolerance in the units of the CRS; shared</text>
+<text x="729.0" y="556.0" text-anchor="middle" font-size="12" fill="#5d5d70">boundaries pull apart, so simplify a copy</text>
+</g>
+</svg>
