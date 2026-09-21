@@ -26833,7 +26833,7 @@ Explore the metadata for this lesson
 <span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">&quot;scripts/source_script_module_3.R&quot;</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p><em>Note: We stay in <code>tmap_mode(&quot;plot&quot;)</code>, the default, throughout this lesson. These techniques apply to a map that will be printed or embedded in a report. An interactive map answers most of these questions by letting the reader pan and zoom.</em></p>
-<p>Next, create a code section called “<code>read and pre-process data</code>”. Read the buffalo locations, Rock Creek Park, and the District’s census tracts:</p>
+<p>Next, please create a code section called “<code>read and pre-process data</code>”. We will read the buffalo locations, Rock Creek Park, and the District’s census tracts:</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>buffalo <span class="ot">&lt;-</span></span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">read_csv</span>(</span>
@@ -26864,7 +26864,7 @@ Explore the metadata for this lesson
 <span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a>    population</span>
 <span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<p>The country boundaries come from <em>spData</em>. Subset them to Africa:</p>
+<p>The country boundaries come from <em>spData</em>. Let’s subset them to Africa:</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>africa <span class="ot">&lt;-</span></span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  world <span class="sc">%&gt;%</span></span>
@@ -26874,7 +26874,7 @@ Explore the metadata for this lesson
 <section id="the-projection-is-a-design-decision" class="level2">
 <h2 class="anchored" data-anchor-id="the-projection-is-a-design-decision">The projection is a design decision</h2>
 <p>We previously chose a CRS so that a calculation would return the correct value (see <strong><em>3.4 The coordinate reference system: Why it matters and how to use it</em></strong>). The CRS also determines the shape of the features drawn on a map.</p>
-<p><code>coord_sf()</code> sets the CRS used to draw a <em>ggplot2</em> map without changing the data. Draw Africa in three coordinate reference systems:</p>
+<p><code>coord_sf()</code> sets the CRS used to draw a <em>ggplot2</em> map without changing the data. Let’s draw Africa in three coordinate reference systems and compare them:</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>plain <span class="ot">&lt;-</span></span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(africa) <span class="sc">+</span></span>
@@ -26937,8 +26937,8 @@ Note
 <div class="now_you">
 <p><i class="fa-solid fa-user-circle fa-2x" aria-label="user-circle"></i> <span style="padding-left: 0.5em;">Check your understanding</span></p>
 <p>A map compares the area of two national parks at different latitudes. Which projection should the map use?</p>
-<div id="radio_HUPCVNDTZI" class="webex-radiogroup">
-<label><input type="radio" autocomplete="off" name="radio_HUPCVNDTZI" value="answer"> <span>An equal-area projection</span></label><label><input type="radio" autocomplete="off" name="radio_HUPCVNDTZI" value> <span>Web Mercator, so it matches the basemap</span></label><label><input type="radio" autocomplete="off" name="radio_HUPCVNDTZI" value> <span>EPSG 4326, because it is unprojected</span></label><label><input type="radio" autocomplete="off" name="radio_HUPCVNDTZI" value> <span>Whichever projection the source file arrived in</span></label>
+<div id="radio_ZYEJTOJEZM" class="webex-radiogroup">
+<label><input type="radio" autocomplete="off" name="radio_ZYEJTOJEZM" value="answer"> <span>An equal-area projection</span></label><label><input type="radio" autocomplete="off" name="radio_ZYEJTOJEZM" value> <span>Web Mercator, so it matches the basemap</span></label><label><input type="radio" autocomplete="off" name="radio_ZYEJTOJEZM" value> <span>EPSG 4326, because it is unprojected</span></label><label><input type="radio" autocomplete="off" name="radio_ZYEJTOJEZM" value> <span>Whichever projection the source file arrived in</span></label>
 </div>
 <p>True or false: <code>coord_sf(crs = 3857)</code> transforms the data in the object it was given.</p>
 <p><select class="webex-select"><option value="blank"></option><option value>TRUE</option><option value="answer">FALSE</option></select></p>
@@ -26946,7 +26946,7 @@ Note
 </section>
 <section id="saying-where-in-the-world-this-is" class="level2">
 <h2 class="anchored" data-anchor-id="saying-where-in-the-world-this-is">Saying where in the world this is</h2>
-<p>A map of the buffalo tracks shows a shape a reader cannot place. Kruger National Park is on the border of South Africa and Mozambique, and nothing on a map of the study area alone says so.</p>
+<p>Our map of the buffalo tracks shows a shape that a reader cannot place. Kruger National Park is on the border of South Africa and Mozambique, and nothing on a map of our study area alone says so.</p>
 <p>A <strong>locator map</strong> is a small second map, drawn at a wider extent, with the study area marked on it.</p>
 <p>The marker is the study area’s bounding box. <code>st_bbox()</code> returns the coordinates of the smallest rectangle containing every feature, and <code>st_as_sfc()</code> constructs the polygon they describe (see <strong><em>5.1 Focus on points: Occurrence records and sampling</em></strong>).</p>
 <div class="cell">
@@ -26964,7 +26964,7 @@ Bounding box:  xmin: 31.64416 ymin: -25.16421 xmax: 31.98769 ymax: -24.05847
 Geodetic CRS:  WGS 84</code></pre>
 </div>
 </div>
-<p>The locator map is an ordinary <em>ggplot2</em> map. Build it with <code>theme_void()</code>, which removes the axes, graticule, and background so that it does not compete with the main map:</p>
+<p>The locator map is an ordinary <em>ggplot2</em> map. Let’s build it with <code>theme_void()</code>, which removes the axes, graticule, and background so that it does not compete with the main map:</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>locator <span class="ot">&lt;-</span></span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>() <span class="sc">+</span></span>
@@ -26990,7 +26990,7 @@ Geodetic CRS:  WGS 84</code></pre>
 </div>
 </div>
 </div>
-<p>Build the main map. The study area is tall and narrow, so the default longitude labels overlap. Use <code>scale_x_continuous()</code> with <code>breaks =</code> to choose the labeled values:</p>
+<p>Now let’s build the main map. Our study area is tall and narrow, so the default longitude labels overlap. We’ll use <code>scale_x_continuous()</code> with <code>breaks =</code> to choose the labeled values:</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>tracks <span class="ot">&lt;-</span></span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>() <span class="sc">+</span></span>
@@ -27079,7 +27079,7 @@ Geodetic CRS:  WGS 84</code></pre>
 </section>
 <section id="orientation-and-scale" class="level2">
 <h2 class="anchored" data-anchor-id="orientation-and-scale">Orientation and scale</h2>
-<p>A locator map says where the study area is. It does not say which way the map is turned, or how far it is across. <strong><em>4.5 Cartography with ggplot2 and tmap</em></strong> introduced <code>tm_compass()</code> for the first and <code>tm_scalebar()</code> for the second. Add both to a map of the park:</p>
+<p>A locator map says where the study area is. It does not say which way the map is turned, or how far it is across. <strong><em>4.5 Cartography with ggplot2 and tmap</em></strong> introduced <code>tm_compass()</code> for the first and <code>tm_scalebar()</code> for the second. Let’s add both to a map of the park:</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tm_shape</span>(parks) <span class="sc">+</span></span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_polygons</span>(</span>
@@ -27117,7 +27117,7 @@ Note
 </section>
 <section id="labeling-the-features" class="level2">
 <h2 class="anchored" data-anchor-id="labeling-the-features">Labeling the features</h2>
-<p>Direct labels can make a map easier to read than a legend when only a few polygons are shown. A label needs a position inside the polygon it names (see <strong><em>5.1 Focus on points: Occurrence records and sampling</em></strong>). One point on the surface of each park polygon:</p>
+<p>Direct labels can make our map easier to read than a legend when we are showing only a few polygons. A label needs a position inside the polygon it names (see <strong><em>5.1 Focus on points: Occurrence records and sampling</em></strong>). Let’s take one point on the surface of each park polygon:</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>parks <span class="sc">%&gt;%</span></span>
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">st_point_on_surface</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
@@ -27134,7 +27134,7 @@ Projected CRS: WGS 84 / UTM zone 18N
 4  ParkPly_84           Rock Creek &amp; Potomac Parkway POINT (321829.8 4309210)</code></pre>
 </div>
 </div>
-<p><code>geom_sf_text()</code> draws the text of a field at the position of each feature. The positions are derived inside the map, so no intermediate object is left behind. Draw the park polygons and their labels:</p>
+<p><code>geom_sf_text()</code> draws the text of a field at the position of each feature. The positions are derived inside the map, so no intermediate object is left behind. Let’s draw the park polygons and their labels:</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>() <span class="sc">+</span></span>
 <span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_sf</span>(</span>
@@ -27173,8 +27173,8 @@ Projected CRS: WGS 84 / UTM zone 18N
 </section>
 <section id="two-variables-on-one-map" class="level2">
 <h2 class="anchored" data-anchor-id="two-variables-on-one-map">Two variables on one map</h2>
-<p>A choropleth encodes a variable in the fill of an area. When the question asks whether two variables occur in the same places, we can display them in the same panel.</p>
-<p>A map can become difficult to read when one layer encodes several variables. Draw income in the fill of the tracts and population in the size of a point layer:</p>
+<p>A choropleth encodes a variable in the fill of an area. When our question asks whether two variables occur in the same places, we can display them in the same panel.</p>
+<p>A map can become difficult to read when one layer encodes several variables. Notice what happens when we draw income in the fill of the tracts and population in the size of a point layer:</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>tract_points <span class="ot">&lt;-</span></span>
 <span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>  census <span class="sc">%&gt;%</span></span>
@@ -27214,8 +27214,8 @@ Projected CRS: WGS 84 / UTM zone 18N
 <div class="now_you">
 <p><i class="fa-solid fa-user-circle fa-2x" aria-label="user-circle"></i> <span style="padding-left: 0.5em;">Check your understanding</span></p>
 <p>Why does <code>scale_size_area()</code> suit a population better than the default size scale?</p>
-<div id="radio_YDULIYIOBB" class="webex-radiogroup">
-<label><input type="radio" autocomplete="off" name="radio_YDULIYIOBB" value="answer"> <span>It draws a value of zero at zero size, so the areas of the circles are proportional to the values</span></label><label><input type="radio" autocomplete="off" name="radio_YDULIYIOBB" value> <span>It maps the value to the area of the symbol, where the default maps it to the radius</span></label><label><input type="radio" autocomplete="off" name="radio_YDULIYIOBB" value> <span>It guarantees that no two symbols overlap</span></label><label><input type="radio" autocomplete="off" name="radio_YDULIYIOBB" value> <span>It is required whenever size is mapped to a numeric field</span></label>
+<div id="radio_ILITPMGDTU" class="webex-radiogroup">
+<label><input type="radio" autocomplete="off" name="radio_ILITPMGDTU" value="answer"> <span>It draws a value of zero at zero size, so the areas of the circles are proportional to the values</span></label><label><input type="radio" autocomplete="off" name="radio_ILITPMGDTU" value> <span>It maps the value to the area of the symbol, where the default maps it to the radius</span></label><label><input type="radio" autocomplete="off" name="radio_ILITPMGDTU" value> <span>It guarantees that no two symbols overlap</span></label><label><input type="radio" autocomplete="off" name="radio_ILITPMGDTU" value> <span>It is required whenever size is mapped to a numeric field</span></label>
 </div>
 <p>True or false: A map showing two variables is easier to read than two maps showing one each.</p>
 <p><select class="webex-select"><option value="blank"></option><option value>TRUE</option><option value="answer">FALSE</option></select></p>
@@ -27262,20 +27262,20 @@ Note
 <ol type="1">
 <li>A map compares the size of protected areas at latitudes from the equator to 60 degrees north. Which projection best supports that comparison?</li>
 </ol>
-<div id="radio_SREHHEMSOI" class="webex-radiogroup">
-<label><input type="radio" autocomplete="off" name="radio_SREHHEMSOI" value="answer"> <span>An equal-area projection</span></label><label><input type="radio" autocomplete="off" name="radio_SREHHEMSOI" value> <span>Web Mercator</span></label><label><input type="radio" autocomplete="off" name="radio_SREHHEMSOI" value> <span>EPSG 4326</span></label><label><input type="radio" autocomplete="off" name="radio_SREHHEMSOI" value> <span>A single UTM zone</span></label>
+<div id="radio_ZKNOSHBTTR" class="webex-radiogroup">
+<label><input type="radio" autocomplete="off" name="radio_ZKNOSHBTTR" value="answer"> <span>An equal-area projection</span></label><label><input type="radio" autocomplete="off" name="radio_ZKNOSHBTTR" value> <span>Web Mercator</span></label><label><input type="radio" autocomplete="off" name="radio_ZKNOSHBTTR" value> <span>EPSG 4326</span></label><label><input type="radio" autocomplete="off" name="radio_ZKNOSHBTTR" value> <span>A single UTM zone</span></label>
 </div>
 <ol start="2" type="1">
 <li>Which function returns a geometry that can be drawn as the marker on a locator map?</li>
 </ol>
-<div id="radio_VWVGIDSKPN" class="webex-radiogroup">
-<label><input type="radio" autocomplete="off" name="radio_VWVGIDSKPN" value="answer"> <span>st_as_sfc() applied to the result of st_bbox()</span></label><label><input type="radio" autocomplete="off" name="radio_VWVGIDSKPN" value> <span>st_bbox() on its own</span></label><label><input type="radio" autocomplete="off" name="radio_VWVGIDSKPN" value> <span>st_bbox() applied to the result of st_as_sfc()</span></label><label><input type="radio" autocomplete="off" name="radio_VWVGIDSKPN" value> <span>st_union() applied to the study area</span></label>
+<div id="radio_BKNBPEFPNY" class="webex-radiogroup">
+<label><input type="radio" autocomplete="off" name="radio_BKNBPEFPNY" value="answer"> <span>st_as_sfc() applied to the result of st_bbox()</span></label><label><input type="radio" autocomplete="off" name="radio_BKNBPEFPNY" value> <span>st_bbox() on its own</span></label><label><input type="radio" autocomplete="off" name="radio_BKNBPEFPNY" value> <span>st_bbox() applied to the result of st_as_sfc()</span></label><label><input type="radio" autocomplete="off" name="radio_BKNBPEFPNY" value> <span>st_union() applied to the study area</span></label>
 </div>
 <ol start="3" type="1">
 <li>A park is represented by four polygons. Two labels fall outside the polygons they name. Which function placed them?</li>
 </ol>
-<div id="radio_LGXKKHRQVC" class="webex-radiogroup">
-<label><input type="radio" autocomplete="off" name="radio_LGXKKHRQVC" value="answer"> <span>st_centroid(), whose result can fall outside a long or curved polygon</span></label><label><input type="radio" autocomplete="off" name="radio_LGXKKHRQVC" value> <span>st_point_on_surface(), which places labels on the boundary</span></label><label><input type="radio" autocomplete="off" name="radio_LGXKKHRQVC" value> <span>geom_sf_text(), which offsets labels by default</span></label><label><input type="radio" autocomplete="off" name="radio_LGXKKHRQVC" value> <span>st_bbox(), which returns the corner of the extent</span></label>
+<div id="radio_KYFYQXCSXU" class="webex-radiogroup">
+<label><input type="radio" autocomplete="off" name="radio_KYFYQXCSXU" value="answer"> <span>st_centroid(), whose result can fall outside a long or curved polygon</span></label><label><input type="radio" autocomplete="off" name="radio_KYFYQXCSXU" value> <span>st_point_on_surface(), which places labels on the boundary</span></label><label><input type="radio" autocomplete="off" name="radio_KYFYQXCSXU" value> <span>geom_sf_text(), which offsets labels by default</span></label><label><input type="radio" autocomplete="off" name="radio_KYFYQXCSXU" value> <span>st_bbox(), which returns the corner of the extent</span></label>
 </div>
 <ol start="4" type="1">
 <li>Parsons problem: Reorder the lines to draw the polygons representing Rock Creek Park with a label on each one. Place the line whose function can return a point outside its polygon in the trash.</li>
