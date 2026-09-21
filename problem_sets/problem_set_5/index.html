@@ -2278,7 +2278,7 @@ font-size: 2.5em;
 Functions that you may use in this assignment
 </button>
 <div class="panel">
-<p><strong>Important!</strong> Primitive functions and functions in the <em>base</em> package are loaded by default when you start an R session. Functions in <em>dplyr</em>, <em>readr</em>, <em>tibble</em>, and <em>tidyr</em> are loaded with <code>library(tidyverse)</code>. Although the <em>magrittr</em> package is not part of the core tidyverse, attaching the tidyverse makes <code>%&gt;%</code> available. The function <code>set_units()</code> attaches units to a value, so we also attach the <em>units</em> package.</p>
+<p><strong>Important!</strong> Primitive functions and functions in the <em>base</em> package are loaded by default when you start an R session. Functions in <em>dplyr</em>, <em>readr</em>, <em>tibble</em>, and <em>tidyr</em> are loaded with <code>library(tidyverse)</code>. Although the <em>magrittr</em> package is not part of the core tidyverse, attaching the tidyverse makes <code>%&gt;%</code> available. The <em>units</em> package is <strong>not</strong> attached in this assignment, so call <code>set_units()</code> as <code>units::set_units()</code>.</p>
 <p>In answering the questions for this assignment, you may <strong>only</strong> use the following R functions in your submitted R script (but you may use additional functions to explore the data):</p>
 <ul>
 <li><code>.Primitive, ()</code></li>
@@ -2291,6 +2291,7 @@ Functions that you may use in this assignment
 <li><code>.Primitive, /</code></li>
 <li><code>.Primitive, !</code></li>
 <li><code>.Primitive, $</code></li>
+<li><code>.Primitive, ::</code></li>
 <li><code>.Primitive, &amp;</code></li>
 <li><code>.Primitive, |</code></li>
 <li><code>.Primitive, ~</code></li>
@@ -2299,6 +2300,7 @@ Functions that you may use in this assignment
 <li><code>.Primitive, cumsum</code></li>
 <li><code>.Primitive, is.na</code></li>
 <li><code>.Primitive, sum</code></li>
+<li><code>base::%in%</code></li>
 <li><code>base::difftime</code></li>
 <li><code>base::lengths</code></li>
 <li><code>base::library</code></li>
@@ -2313,6 +2315,7 @@ Functions that you may use in this assignment
 <li><code>dplyr::if_else</code></li>
 <li><code>dplyr::lag</code></li>
 <li><code>dplyr::mutate</code></li>
+<li><code>dplyr::n_distinct</code></li>
 <li><code>dplyr::n</code></li>
 <li><code>dplyr::pull</code></li>
 <li><code>dplyr::select</code></li>
@@ -2360,11 +2363,11 @@ Click this button to learn more!
 <li><code>patch_label</code> (character): The name of the patch.</li>
 <li><code>geometry</code> (polygon): The boundary of the patch.</li>
 </ul>
-<p><strong><code>nests.csv</code></strong> is a tabular dataset of the nests found during the 2026 field season. The coordinates were recorded with a handheld GPS unit set to EPSG 4326. The file contains 240 records and the following variables:</p>
+<p><strong><code>nests.csv</code></strong> is a tabular dataset of the nests found during the 2026 field season. The coordinates were recorded with a handheld GPS unit set to EPSG 4326. The file contains 232 records and the following variables:</p>
 <ul>
 <li><code>nest_id</code> (character): A code that identifies the nest.</li>
-<li><code>patch_id</code> (character): The patch in which the nest was found. <em>Note: Two of the patches in this file are not mapped in <code>patches.geojson</code>.</em></li>
-<li><code>species_code</code> (character): The four-letter code of the species that built the nest. The code <code>UNKN</code> marks a nest that was not identified to species, <code>ARNE</code> marks an artificial nest placed by the field team, and a small number of records have no code at all.</li>
+<li><code>patch_id</code> (character): The patch in which the nest was found.</li>
+<li><code>species_code</code> (character): The four-letter code of the species that built the nest. The code <code>UNKN</code> marks a nest that was not identified to species, <code>ARNE</code> marks an artificial nest, placed at the position of a nest that the team had already found, and a small number of records have no code at all.</li>
 <li><code>common_name</code> (character): The common name of the species that built the nest.</li>
 <li><code>discovery_date</code> (date): The date the nest was found. Some nests have no recorded date.</li>
 <li><code>discovery_stage</code> (character): The stage of the nesting cycle when the nest was found. Some nests have no recorded stage.</li>
@@ -2397,7 +2400,7 @@ Click this button to learn more!
 <div class="now_you">
 <p>2. <span class="score">[0.50]</span> Prepare your session:</p>
 <ul>
-<li><span class="subscore">[0.20]</span> Attach <em>sf</em>, <em>tmap</em>, <em>units</em>, and the <em>tidyverse</em> metapackage to your current R session.</li>
+<li><span class="subscore">[0.20]</span> Attach <em>sf</em>, <em>tmap</em>, and the <em>tidyverse</em> metapackage to your current R session.</li>
 <li><span class="subscore">[0.20]</span> Set the <em>tmap</em> mode so that all <em>tmap</em> code will generate interactive maps.</li>
 <li><span class="subscore">[0.10]</span> Load <code>source_script_module_3.R</code>.</li>
 </ul>
@@ -2429,16 +2432,15 @@ Click this button to learn more!
 <section id="the-nest-records" class="level2">
 <h2 class="anchored" data-anchor-id="the-nest-records">The nest records</h2>
 <div class="now_you">
-<p>4. <span class="score">[1.0]</span> Tara needs to know which species were recorded in which patch, and how many nests each species accounts for.</p>
+<p>4. <span class="score">[1.0]</span> Tara wants to know which identified bird species were recorded across several patches. She also needs to know how many nest sites her records represent: she placed an artificial nest at the position of many of the real nests, so one site can carry more than one record.</p>
 <ul>
-<li><span class="subscore">[0.30]</span> Return a tibble data frame of the distinct combinations of <code>patch_id</code> and <code>species_code</code> in <code>nests</code>, with the geometry excluded from the comparison.</li>
-<li><span class="subscore">[0.35]</span> Return one feature for each value of <code>common_name</code>, with a field named <code>nests</code> giving the number of nests of that species, and globally assign the result to the name <code>by_species</code>.</li>
-<li><span class="subscore">[0.35]</span> Subset <code>by_species</code> to the species recorded more than once, then return one row for each position they occupy.</li>
+<li><span class="subscore">[0.60]</span> Return a tibble data frame with one row for each combination of <code>species_code</code> and <code>common_name</code> and a field named <code>patches</code> giving the number of distinct patches in which the species was recorded. Exclude artificial nests, unidentified nests, records coded as <code>OTHER</code>, and records without a species code. Retain only species recorded in more than two patches.</li>
+<li><span class="subscore">[0.40]</span> Return a tibble data frame with one row for each <code>patch_id</code>, a field named <code>records</code> giving the number of nest records, and a field named <code>sites</code> giving the number of distinct positions.</li>
 </ul>
 <p><em>Hints:</em></p>
 <ul>
-<li><em>A simple features object compares its geometry along with its fields unless you remove the geometry first. See <strong>5.1 Focus on points: Occurrence records and sampling</strong>.</em></li>
-<li><em>Summarizing a point object gathers the points of each group into one feature. See <strong>5.1 Focus on points: Occurrence records and sampling</strong> and <strong>2.3 Grouped operations and summarizing</strong>.</em></li>
+<li><em>A simple features object carries its geometry into every operation until you remove it. See <strong>5.1 Focus on points: Occurrence records and sampling</strong>, <strong>2.3 Grouped operations and summarizing</strong>, and <strong>2.1 Introduction to subsetting and extraction</strong>.</em></li>
+<li><em>Summarizing unions each group’s points, so two records at one position become one. Casting that geometry back to POINT returns one row for each surviving position, and repeats the summarized fields onto every one of them. See <strong>5.1 Focus on points: Occurrence records and sampling</strong>.</em></li>
 </ul>
 </div>
 </section>
@@ -2453,7 +2455,7 @@ Click this button to learn more!
 <p><em>Hints:</em></p>
 <ul>
 <li><em>A line is defined by its vertices and by the order in which they are connected. See <strong>5.2 Focus on lines: Paths through a landscape</strong>.</em></li>
-<li><em><code>st_length()</code> returns a length with units attached. See <strong>3.6 Geometric operations with sf</strong>.</em></li>
+<li><em><code>st_length()</code> returns a length in the distance units of the CRS, with those units attached. See <strong>3.6 Geometric operations with sf</strong>.</em></li>
 </ul>
 </div>
 </section>
