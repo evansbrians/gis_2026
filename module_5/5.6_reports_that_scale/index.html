@@ -26904,46 +26904,79 @@ Note
 </section>
 <section id="writing-a-style-sheet" class="level2">
 <h2 class="anchored" data-anchor-id="writing-a-style-sheet">Writing a style sheet</h2>
-<p>An inline <code>style</code> attribute applies to one span. A <strong>style sheet</strong> collects declarations under a name, in a file, so that the same appearance can be applied wherever we need it.</p>
-<p>A style sheet is a list of <strong>rules</strong>. Each rule is a <strong>selector</strong>, which says what the rule applies to, followed by its declarations in braces. A selector that begins with a period defines a <strong>class</strong>:</p>
+<p>An inline <code>style</code> attribute applies to a single span. A <strong>style sheet</strong> is a separate file that collects declarations under names of our own, so that the same appearance can be applied wherever we need it.</p>
+<p>A style sheet is a plain text file, saved with the extension <code>.css</code>, and it contains a list of <strong>rules</strong>. Each rule has two parts, a selector and a declaration block:</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="sourceCode css code-with-copy"><code class="sourceCode css"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">.species</span> {</span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="kw">font-style</span><span class="ch">:</span> <span class="dv">italic</span><span class="op">;</span></span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>Let’s collect our rules in a file called <code>styles.css</code>, saved beside the report:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7"><pre class="sourceCode css code-with-copy"><code class="sourceCode css"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">.species</span> {</span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  <span class="kw">font-style</span><span class="ch">:</span> <span class="dv">italic</span><span class="op">;</span></span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="fu">.count</span> {</span>
-<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>  <span class="kw">font-weight</span><span class="ch">:</span> <span class="dv">700</span><span class="op">;</span></span>
-<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>  <span class="kw">color</span><span class="ch">:</span> <span class="cn">#2f5d2f</span><span class="op">;</span></span>
-<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>Please name the file in the YAML header:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb8"><pre class="sourceCode yaml code-with-copy"><code class="sourceCode yaml"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">format</span><span class="kw">:</span></span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">html</span><span class="kw">:</span></span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">theme</span><span class="kw">:</span><span class="at"> cosmo</span></span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">css</span><span class="kw">:</span><span class="at"> styles.css</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<ul>
+<li><code>.species</code> is the <strong>selector</strong>, which states what the rule applies to. A selector that begins with a period defines a <strong>class</strong>: a name that we choose, and that we then apply ourselves. The name follows the period with no space between them.</li>
+<li>The braces <code>{</code> and <code>}</code> enclose the <strong>declaration block</strong>, which holds the appearance that the rule applies.</li>
+<li><code>font-style: italic;</code> is a <strong>declaration</strong>. A declaration is a property, a colon, a value, and a semicolon. The property is the aspect of the appearance being set, and the value is what it is set to.</li>
+</ul>
+<p>A declaration block contains as many declarations as the rule requires, each closed with its own semicolon:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7"><pre class="sourceCode css code-with-copy"><code class="sourceCode css"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">.count</span> {</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  <span class="kw">font-weight</span><span class="ch">:</span> <span class="dv">700</span><span class="op">;</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  <span class="kw">color</span><span class="ch">:</span> <span class="cn">#2f5d2f</span><span class="op">;</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>CSS ignores line breaks and indentation, so the rule above could be written on a single line. We write one declaration per line, indented inside the braces, for the same reason that we break a pipe across lines: a rule that is read by a person is a rule that can be corrected by a person.</p>
+<p>Text between <code>/*</code> and <code>*/</code> is a <strong>comment</strong>, which CSS ignores. A style sheet takes a comment at its top for the same reason a script does:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb8"><pre class="sourceCode css code-with-copy"><code class="sourceCode css"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co">/* Styles for the nest report */</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Please create the style sheet:</p>
+<ol type="1">
+<li>In RStudio, select <em>File</em> &gt; <em>New File</em> &gt; <em>Text File</em>.</li>
+<li>Type the rules below into the new file.</li>
+<li>Select <em>File</em> &gt; <em>Save As</em>, and save the file as <code>styles.css</code> in the <code>reports</code> folder, alongside <code>nest_report.qmd</code>.</li>
+</ol>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb9"><pre class="sourceCode css code-with-copy"><code class="sourceCode css"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co">/* Styles for the nest report */</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="fu">.species</span> {</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>  <span class="kw">font-style</span><span class="ch">:</span> <span class="dv">italic</span><span class="op">;</span></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a><span class="fu">.count</span> {</span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>  <span class="kw">font-weight</span><span class="ch">:</span> <span class="dv">700</span><span class="op">;</span></span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>  <span class="kw">color</span><span class="ch">:</span> <span class="cn">#2f5d2f</span><span class="op">;</span></span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Please then name the file in the YAML header:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb10"><pre class="sourceCode yaml code-with-copy"><code class="sourceCode yaml"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">format</span><span class="kw">:</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">html</span><span class="kw">:</span></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">theme</span><span class="kw">:</span><span class="at"> cosmo</span></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">css</span><span class="kw">:</span><span class="at"> styles.css</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>The path is relative to the document, so <code>styles.css</code> is the file of that name in the same folder as <code>nest_report.qmd</code>. A style sheet kept elsewhere is named by its path from the document, such as <code>css: ../src/styles.css</code>.</p>
 <p><code>theme</code> sets the document’s typography and colors from a named Bootstrap theme, and <code>css</code> adds our rules to it. Where they disagree, ours is what the reader sees.</p>
+<div class="mysecret">
+<p><i class="fa-solid fa-screwdriver-wrench fa-2x" aria-label="screwdriver-wrench"></i> <span style="font-size: 1.25em; padding-left: 0.5em;">A style sheet reports no errors!</span></p>
+<p>R stops and tells us when a call is malformed. CSS does not. A rule with a missing semicolon, a missing brace, or a misspelled property is ignored, the document renders without complaint, and the text appears in the style it had before.</p>
+<p>When a class does nothing, the fault is almost always one of these, and I check them in this order:</p>
+<ul>
+<li>The style sheet is not named in the YAML header, or is named with the wrong path.</li>
+<li>The class name in the span does not match the selector in the rule, including its capitalization.</li>
+<li>A semicolon or a brace is missing from the rule above the one that failed.</li>
+<li>The property is misspelled, as <code>font-weight</code> written <code>font-wieght</code>.</li>
+</ul>
+</div>
 </section>
 <section id="applying-a-class" class="level2">
 <h2 class="anchored" data-anchor-id="applying-a-class">Applying a class</h2>
 <p>With the style sheet in place, a span calls a class by its name, with the period and without the braces of the rule that defined it:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb9"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>The <span class="co">[</span><span class="ot">Northern cardinal</span><span class="co">]</span>{.species} accounts for the largest identified share.</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb11"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>The <span class="co">[</span><span class="ot">Northern cardinal</span><span class="co">]</span>{.species} accounts for the largest identified share.</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>A class is written once and applied wherever it belongs, which is what an inline <code>style</code> attribute cannot do.</p>
-<p>The same attribute in braces will style a block of prose, written as a fenced div. Let’s add a rule for a note from the field:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb10"><pre class="sourceCode css code-with-copy"><code class="sourceCode css"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">.field-note</span> {</span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>  <span class="kw">background-color</span><span class="ch">:</span> <span class="cn">#f4f7f4</span><span class="op">;</span></span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>  <span class="kw">border-left</span><span class="ch">:</span> <span class="dv">4</span><span class="dt">px</span> <span class="dv">solid</span> <span class="cn">#2f5d2f</span><span class="op">;</span></span>
-<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>  <span class="kw">padding</span><span class="ch">:</span> <span class="dv">0.75</span><span class="dt">em</span> <span class="dv">1</span><span class="dt">em</span><span class="op">;</span></span>
-<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>  <span class="kw">margin</span><span class="ch">:</span> <span class="dv">1.2</span><span class="dt">em</span> <span class="dv">0</span><span class="op">;</span></span>
-<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>  <span class="kw">border-radius</span><span class="ch">:</span> <span class="dv">4</span><span class="dt">px</span><span class="op">;</span></span>
-<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>… and apply it to a paragraph:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb11"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>::: {.field-note}</span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>Heights were measured from the ground to the nest rim with a graduated</span>
-<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>pole. Where a nest was found after the vegetation had grown, the height</span>
-<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>was left blank rather than estimated.</span>
-<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>:::</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>The same attribute in braces will style a block of prose, written as a fenced div. Please add a rule for a note from the field to <code>styles.css</code>, below the rules already there:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb12"><pre class="sourceCode css code-with-copy"><code class="sourceCode css"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">.field-note</span> {</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>  <span class="kw">background-color</span><span class="ch">:</span> <span class="cn">#f4f7f4</span><span class="op">;</span></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>  <span class="kw">border-left</span><span class="ch">:</span> <span class="dv">4</span><span class="dt">px</span> <span class="dv">solid</span> <span class="cn">#2f5d2f</span><span class="op">;</span></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>  <span class="kw">padding</span><span class="ch">:</span> <span class="dv">0.75</span><span class="dt">em</span> <span class="dv">1</span><span class="dt">em</span><span class="op">;</span></span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>  <span class="kw">margin</span><span class="ch">:</span> <span class="dv">1.2</span><span class="dt">em</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>  <span class="kw">border-radius</span><span class="ch">:</span> <span class="dv">4</span><span class="dt">px</span><span class="op">;</span></span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Each declaration sets one aspect of the panel: its background color, the green bar down its left side, the space between its text and its edges, the space above and below it, and the rounding of its corners.</p>
+<p>The div applies the class to a paragraph the same way a span applies one to a phrase:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb13"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>::: {.field-note}</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>Heights were measured from the ground to the nest rim with a graduated</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>pole. Where a nest was found after the vegetation had grown, the height</span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>was left blank rather than estimated.</span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>:::</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p><code>.species</code> and <code>.count</code> mark up words inside a sentence, and <code>.field-note</code> draws a panel around a paragraph. These are rules in the same style sheet, and none of them required a new package.</p>
 <div class="mysecret">
 <p><i class="fa-solid fa-user-secret fa-2x" aria-label="user-secret"></i> <span style="font-size: 1.25em; padding-left: 0.5em;">Name the class for the thing, not for the look!</span></p>
@@ -26956,8 +26989,8 @@ Note
 <p><em>Hint: Inline code goes inside the span’s square brackets, and <code>nrow()</code> counts the rows of a simple features object.</em></p>
 <p><span class="answer_link" data-answer="a-5-6-span">Click here to see my answer</span></p>
 <div id="a-5-6-span" class="answer_body">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb12"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>We monitored <span class="co">[</span><span class="ot">`r nrow(nests)`</span><span class="co">]</span>{.count} nests across</span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="co">[</span><span class="ot">`r nrow(patches)`</span><span class="co">]</span>{.count} habitat patches during the 2026 season.</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb14"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>We monitored <span class="co">[</span><span class="ot">`r nrow(nests)`</span><span class="co">]</span>{.count} nests across</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="co">[</span><span class="ot">`r nrow(patches)`</span><span class="co">]</span>{.count} habitat patches during the 2026 season.</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>The span wraps the inline code rather than its result, so the number is computed at render and styled on the way out. If the data change, the sentence changes with them and stays marked up.</p>
 </div>
 </div>
@@ -26966,20 +26999,20 @@ Note
 <h2 class="anchored" data-anchor-id="adding-links">Adding links</h2>
 <p><strong><em>4.6</em></strong> introduced the Markdown link, written as text in square brackets and a destination in parentheses. A report asks more of it than that.</p>
 <p>A link to a <strong>page</strong> takes an attribute like anything else, and <code>target=&quot;_blank&quot;</code> opens it in a new tab so the reader does not lose their place in our report:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb13"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>The surrounding roads come from</span>
-<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="co">[</span><span class="ot">Open Data DC</span><span class="co">](https://opendata.dc.gov/)</span>{target=&quot;_blank&quot;}.</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb15"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>The surrounding roads come from</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="co">[</span><span class="ot">Open Data DC</span><span class="co">](https://opendata.dc.gov/)</span>{target=&quot;_blank&quot;}.</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>A link to a <strong>section of this report</strong> needs the section to have an identifier. We write the identifier in braces after the heading, then refer to it with <code>@</code>:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb14"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">## Where the nests are {#sec-map}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb15"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>The map in @sec-map and the table below are built from the same records.</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb16"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">## Where the nests are {#sec-map}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb17"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>The map in @sec-map and the table below are built from the same records.</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>An identifier beginning with <code>sec-</code> is what makes a heading cross-referenceable, and <code>number-sections: true</code> in the header is what lets Quarto write <em>Section 2</em> rather than a bare link.</p>
 <p>A link to a <strong>person</strong> uses <code>mailto:</code>, which opens the reader’s mail client:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb16"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>Questions about the field methods go to <span class="co">[</span><span class="ot">the crew</span><span class="co">](mailto:nests@example.org)</span>.</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb18"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>Questions about the field methods go to <span class="co">[</span><span class="ot">the crew</span><span class="co">](mailto:nests@example.org)</span>.</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </section>
 <section id="adding-external-images" class="level2">
 <h2 class="anchored" data-anchor-id="adding-external-images">Adding external images</h2>
 <p>A map is generated by a code chunk. A photograph, a logo, or a diagram drawn elsewhere is not, and we add it to the prose as Markdown instead.</p>
 <p>The text in square brackets is the caption, the location of the image is in parentheses, and the braces take the same kind of attributes we have been applying to spans. Let’s add a photograph of an indigo bunting, a species in the nest records:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb17"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="al">![An indigo bunting, *Passerina cyanea*.](https://images.rawpixel.com/image_social_portrait/czNmcy1wcml2YXRlL3Jhd3BpeGVsX2ltYWdlcy93ZWJzaXRlX2NvbnRlbnQvbHIvZmwyMTY1MTI5NTAwMC1pbWFnZS1rdHdyMDM0My5qcGc.jpg)</span>{width=60% fig-align=&quot;center&quot;}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb19"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="al">![An indigo bunting, *Passerina cyanea*.](https://images.rawpixel.com/image_social_portrait/czNmcy1wcml2YXRlL3Jhd3BpeGVsX2ltYWdlcy93ZWJzaXRlX2NvbnRlbnQvbHIvZmwyMTY1MTI5NTAwMC1pbWFnZS1rdHdyMDM0My5qcGc.jpg)</span>{width=60% fig-align=&quot;center&quot;}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>The location in parentheses is a URL here, and it is a file path when the image is our own. <code>width=60%</code> sizes the image against the width of the page rather than in pixels, so its proportion is retained on a phone. <code>fig-align=&quot;center&quot;</code> positions it.</p>
 <p>An image with a caption is a figure, so it can be numbered and cross-referenced: provide <code>#fig-</code> in the braces and refer to it with <code>@fig-</code>.</p>
 <div class="callout callout-style-default callout-warning callout-titled">
@@ -27002,17 +27035,17 @@ Warning
 <p>A map shows a pattern. A reader who wants to check it, or to quote it, needs the values behind it.</p>
 <p><code>knitr::kable()</code> turns a data frame into a formatted table. The chunk label decides the cross-reference, and <code>tbl-cap</code> gives the caption. Let’s put the species counts under the map:</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: tbl-species</span></span>
-<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="co">#| tbl-cap: &quot;Nests by species, for species recorded more than twice.&quot;</span></span>
-<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>nests <span class="sc">%&gt;%</span></span>
-<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">st_drop_geometry</span>() <span class="sc">%&gt;%</span></span>
-<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(common_name, <span class="at">name =</span> <span class="st">&quot;nests&quot;</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(nests <span class="sc">&gt;</span> <span class="dv">2</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(nests)) <span class="sc">%&gt;%</span></span>
-<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a>  knitr<span class="sc">::</span><span class="fu">kable</span>(</span>
-<span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">col.names =</span> <span class="fu">c</span>(<span class="st">&quot;Species&quot;</span>, <span class="st">&quot;Nests&quot;</span>)</span>
-<span id="cb18-11"><a href="#cb18-11" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: tbl-species</span></span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a><span class="co">#| tbl-cap: &quot;Nests by species, for species recorded more than twice.&quot;</span></span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>nests <span class="sc">%&gt;%</span></span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">st_drop_geometry</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(common_name, <span class="at">name =</span> <span class="st">&quot;nests&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(nests <span class="sc">&gt;</span> <span class="dv">2</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb20-8"><a href="#cb20-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(nests)) <span class="sc">%&gt;%</span></span>
+<span id="cb20-9"><a href="#cb20-9" aria-hidden="true" tabindex="-1"></a>  knitr<span class="sc">::</span><span class="fu">kable</span>(</span>
+<span id="cb20-10"><a href="#cb20-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">col.names =</span> <span class="fu">c</span>(<span class="st">&quot;Species&quot;</span>, <span class="st">&quot;Nests&quot;</span>)</span>
+<span id="cb20-11"><a href="#cb20-11" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>A label beginning with <code>tbl-</code> makes the table cross-referenceable, exactly as <code>fig-</code> does for a figure, and <code>@tbl-species</code> in the prose becomes a numbered link to it.</p>
 <p><code>col.names =</code> is a small thing, and it is the one I forget most often. A reader who sees <code>common_name</code> is reading our object names rather than our results.</p>
@@ -27021,29 +27054,29 @@ Warning
 <h2 class="anchored" data-anchor-id="adding-citations">Adding citations</h2>
 <p>A map is an argument, and its sources belong in the report the way any other source does.</p>
 <p>Let’s write a file called <code>references.bib</code> beside the report, with an entry for each source:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb19"><pre class="sourceCode bibtex code-with-copy"><code class="sourceCode bibtex"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="va">@misc</span>{<span class="ot">opendatadc</span>,</span>
-<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">title</span> = {Open Data {DC}},</span>
-<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">author</span> = {{Government of the District of Columbia}},</span>
-<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>  <span class="dt">year</span> = {2024},</span>
-<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>  <span class="dt">url</span> = {https://opendata.dc.gov/}</span>
-<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb21"><pre class="sourceCode bibtex code-with-copy"><code class="sourceCode bibtex"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="va">@misc</span>{<span class="ot">opendatadc</span>,</span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">title</span> = {Open Data {DC}},</span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">author</span> = {{Government of the District of Columbia}},</span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>  <span class="dt">year</span> = {2024},</span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>  <span class="dt">url</span> = {https://opendata.dc.gov/}</span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Please name it in the header, and ask for the citations to link to the list:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb20"><pre class="sourceCode yaml code-with-copy"><code class="sourceCode yaml"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="fu">bibliography</span><span class="kw">:</span><span class="at"> references.bib</span></span>
-<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a><span class="fu">link-citations</span><span class="kw">:</span><span class="at"> </span><span class="ch">true</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb22"><pre class="sourceCode yaml code-with-copy"><code class="sourceCode yaml"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="fu">bibliography</span><span class="kw">:</span><span class="at"> references.bib</span></span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a><span class="fu">link-citations</span><span class="kw">:</span><span class="at"> </span><span class="ch">true</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Then we cite it in the prose with its key in square brackets, and place the reference list where we want it:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb21"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>Nest placement is one of the strongest predictors of nest survival</span>
-<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="co">[</span><span class="ot">@martin1993</span><span class="co">]</span>, and the patch boundaries come from <span class="co">[</span><span class="ot">@opendatadc</span><span class="co">]</span>.</span>
-<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a><span class="fu">## References</span></span>
-<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a>::: {#refs}</span>
-<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a>:::</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb23"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>Nest placement is one of the strongest predictors of nest survival</span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a><span class="co">[</span><span class="ot">@martin1993</span><span class="co">]</span>, and the patch boundaries come from <span class="co">[</span><span class="ot">@opendatadc</span><span class="co">]</span>.</span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a><span class="fu">## References</span></span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a>::: {#refs}</span>
+<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a>:::</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Quarto collects the works we cited, formats the list, and links each citation to its entry. A source we never cite does not appear, so the list and the report cannot disagree.</p>
 <div class="now_you">
 <p><i class="fa-solid fa-user-circle fa-2x" aria-label="user-circle"></i> <span style="padding-left: 0.5em;">Check your understanding</span></p>
 <p>Which of these makes a heading cross-referenceable as <em>Section 2</em>?</p>
-<div id="radio_HCDPQTPXNV" class="webex-radiogroup">
-<label><input type="radio" autocomplete="off" name="radio_HCDPQTPXNV" value="answer"> <span>An identifier beginning with sec- in braces after the heading, with number-sections in the header</span></label><label><input type="radio" autocomplete="off" name="radio_HCDPQTPXNV" value> <span>An identifier beginning with sec- in braces after the heading, on its own</span></label><label><input type="radio" autocomplete="off" name="radio_HCDPQTPXNV" value> <span>A link written as <a href="#sec-map">Section 2</a></span></label><label><input type="radio" autocomplete="off" name="radio_HCDPQTPXNV" value> <span>toc: true in the header</span></label>
+<div id="radio_QODDBMWAZI" class="webex-radiogroup">
+<label><input type="radio" autocomplete="off" name="radio_QODDBMWAZI" value="answer"> <span>An identifier beginning with sec- in braces after the heading, with number-sections in the header</span></label><label><input type="radio" autocomplete="off" name="radio_QODDBMWAZI" value> <span>An identifier beginning with sec- in braces after the heading, on its own</span></label><label><input type="radio" autocomplete="off" name="radio_QODDBMWAZI" value> <span>A link written as <a href="#sec-map">Section 2</a></span></label><label><input type="radio" autocomplete="off" name="radio_QODDBMWAZI" value> <span>toc: true in the header</span></label>
 </div>
 <p>True or false: A class used in a bracketed span has to be defined somewhere before it does anything.</p>
 <p><select class="webex-select"><option value="blank"></option><option value="answer">TRUE</option><option value>FALSE</option></select></p>
@@ -27071,20 +27104,20 @@ Warning
 <ol type="1">
 <li>A report is going to a reviewer who may want to check how a number was calculated. Which header option suits it?</li>
 </ol>
-<div id="radio_DNIRFZKWCT" class="webex-radiogroup">
-<label><input type="radio" autocomplete="off" name="radio_DNIRFZKWCT" value="answer"> <span>code-fold: true, which includes the code behind a link</span></label><label><input type="radio" autocomplete="off" name="radio_DNIRFZKWCT" value> <span>echo: false, which removes the code from the document</span></label><label><input type="radio" autocomplete="off" name="radio_DNIRFZKWCT" value> <span>include: false, which runs the code and shows nothing</span></label><label><input type="radio" autocomplete="off" name="radio_DNIRFZKWCT" value> <span>eval: false, which shows the code without running it</span></label>
+<div id="radio_DAYPPCFFNC" class="webex-radiogroup">
+<label><input type="radio" autocomplete="off" name="radio_DAYPPCFFNC" value="answer"> <span>code-fold: true, which includes the code behind a link</span></label><label><input type="radio" autocomplete="off" name="radio_DAYPPCFFNC" value> <span>echo: false, which removes the code from the document</span></label><label><input type="radio" autocomplete="off" name="radio_DAYPPCFFNC" value> <span>include: false, which runs the code and shows nothing</span></label><label><input type="radio" autocomplete="off" name="radio_DAYPPCFFNC" value> <span>eval: false, which shows the code without running it</span></label>
 </div>
 <ol start="2" type="1">
 <li>A style sheet defines <code>.species</code>, and the report writes <code>[Northern cardinal]{.species}</code>. What is required for the words to be styled?</li>
 </ol>
-<div id="radio_TIFBEIDGNI" class="webex-radiogroup">
-<label><input type="radio" autocomplete="off" name="radio_TIFBEIDGNI" value="answer"> <span>css: styles.css in the YAML header</span></label><label><input type="radio" autocomplete="off" name="radio_TIFBEIDGNI" value> <span>theme: cosmo in the YAML header</span></label><label><input type="radio" autocomplete="off" name="radio_TIFBEIDGNI" value> <span>Nothing further, because the class is defined in the file</span></label><label><input type="radio" autocomplete="off" name="radio_TIFBEIDGNI" value> <span>An HTML chunk that loads the style sheet</span></label>
+<div id="radio_MZIJVWWQFB" class="webex-radiogroup">
+<label><input type="radio" autocomplete="off" name="radio_MZIJVWWQFB" value="answer"> <span>css: styles.css in the YAML header</span></label><label><input type="radio" autocomplete="off" name="radio_MZIJVWWQFB" value> <span>theme: cosmo in the YAML header</span></label><label><input type="radio" autocomplete="off" name="radio_MZIJVWWQFB" value> <span>Nothing further, because the class is defined in the file</span></label><label><input type="radio" autocomplete="off" name="radio_MZIJVWWQFB" value> <span>An HTML chunk that loads the style sheet</span></label>
 </div>
 <ol start="3" type="1">
 <li>A report is emailed as a single HTML file and its photograph arrives broken, though it displayed correctly on the machine that rendered it. What was missing?</li>
 </ol>
-<div id="radio_WLXCTPRLTH" class="webex-radiogroup">
-<label><input type="radio" autocomplete="off" name="radio_WLXCTPRLTH" value="answer"> <span>embed-resources: true, so the image is written into the file</span></label><label><input type="radio" autocomplete="off" name="radio_WLXCTPRLTH" value> <span>fig-align, so the image has a position</span></label><label><input type="radio" autocomplete="off" name="radio_WLXCTPRLTH" value> <span>A caption, so the image is treated as a figure</span></label><label><input type="radio" autocomplete="off" name="radio_WLXCTPRLTH" value> <span>A bibliography entry for the photograph</span></label>
+<div id="radio_WMTGRMSRRR" class="webex-radiogroup">
+<label><input type="radio" autocomplete="off" name="radio_WMTGRMSRRR" value="answer"> <span>embed-resources: true, so the image is written into the file</span></label><label><input type="radio" autocomplete="off" name="radio_WMTGRMSRRR" value> <span>fig-align, so the image has a position</span></label><label><input type="radio" autocomplete="off" name="radio_WMTGRMSRRR" value> <span>A caption, so the image is treated as a figure</span></label><label><input type="radio" autocomplete="off" name="radio_WMTGRMSRRR" value> <span>A bibliography entry for the photograph</span></label>
 </div>
 <ol start="4" type="1">
 <li>True or false: A class used in a bracketed span should be named for the appearance it produces, so that its purpose is obvious in the prose.</li>
