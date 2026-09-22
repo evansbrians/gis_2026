@@ -26866,7 +26866,7 @@ margin: 1em 0;
 <li>Repair a broken polygon, clip a layer, and move a value between two sets of polygons</li>
 <li>Classify spatial data, and how a class boundary changes what a map says</li>
 <li>Give a map the context, labels, and projection a reader needs</li>
-<li>Build one report per site from one document</li>
+<li>Make a report more engaging and informative</li>
 </ul>
 <section id="module-overview" class="level2">
 <h2 class="anchored" data-anchor-id="module-overview">Module overview</h2>
@@ -26875,8 +26875,8 @@ margin: 1em 0;
 <li><strong>5.2 Focus on lines: Paths through a landscape</strong>: We will build movement tracks from ordered GPS records, measure them, and split them where the collar did not record the path.</li>
 <li><strong>5.3 Focus on polygons: Boundaries, attributes, and areas</strong>: We will repair invalid polygons, distinguish subsetting from clipping, and examine what happens to a field when its polygon changes.</li>
 <li><strong>5.4 Categorizing spatial data</strong>: We will classify spatial data with <code>if_else()</code> and <code>case_when()</code>, derive classes from location, and document the rule used to draw a class boundary.</li>
-<li><strong>5.5 Cartography II: Projection, context, and labels</strong> (optional): We will choose a projection, add a locator map, label features, and decide when two variables belong on the same map.</li>
-<li><strong>5.6 Communicating spatial results: Reports that scale</strong> (optional): We will use Quarto parameters to generate separate reports from the same document.</li>
+<li><strong>5.5 Cartography II: Projection, context, and labels</strong> (optional): We will choose a projection, place the study area in a region the reader knows, label features, and assemble a publication-quality map.</li>
+<li><strong>5.6 Communicating spatial data II: Compelling reports</strong> (optional): We will build on a report from <strong><em>4.6</em></strong>, with callouts, styled text, links, images, tables, and citations.</li>
 </ul>
 <p><strong>Problem Set</strong>: Searching for nests</p>
 </section>
@@ -26963,6 +26963,7 @@ Glossary of terms
 <li><strong>Assignment operator</strong>: A function used to assign an object to a name.</li>
 <li><strong>Atomic vector</strong>: A one-dimensional, homogeneous data object (a set of values of the same class).</li>
 <li><strong>Attributes</strong>: Information about the values of an object that is not contained in the values themselves.</li>
+<li><strong>Basemap</strong>: A layer of map tiles drawn beneath the data layers to supply context, such as streets, water, and neighboring places.</li>
 <li><strong>Body</strong>: The set of instructions inside the function (determines what happens when you run a function).</li>
 <li><strong>Burst</strong>: A run of consecutive records from a tracking device with no gap longer than a stated threshold inside it.</li>
 <li><strong>Centroid</strong>: The geographic center of a shapefile.</li>
@@ -27050,6 +27051,7 @@ Glossary of terms
 <li><strong>Negated selection</strong>: The use of the negative symbol (<code>-</code>) or, more recently, the <em>not</em> operator (<code>!</code>) to select all columns <em>except</em> the supplied column or columns.</li>
 <li><strong>Nested function</strong>: A function that is run inside of another function.</li>
 <li><strong>Non-spatial join</strong>: A join between two tables that matches rows on the values of a shared key rather than on the locations of their geometries.</li>
+<li><strong>North arrow</strong>: A map element that states which direction on the map is north.</li>
 <li><strong>Northing</strong>: The Y coordinate of a projected coordinate reference system, measured in linear units from the system’s origin.</li>
 <li><strong>Object</strong>: A collection of one or more values or functions.</li>
 <li><strong>Observation</strong>: The full set of values measured on the same observational unit across attributes.</li>
@@ -27059,7 +27061,6 @@ Glossary of terms
 <li><strong>Order</strong>: The position of values (or child objects) within a data object.</li>
 <li><strong>Package</strong>: A set of pre-written functions that can be downloaded (<em>note: There are also data packages!</em>)</li>
 <li><strong>Package environment</strong>: A collection of variable names associated with objects in a package.</li>
-<li><strong>Parameter</strong>: A value declared in the YAML header of a Quarto document that its code can read and that a render can override.</li>
 <li><strong>Parent</strong>: An object or environment that contains references to other objects.</li>
 <li><strong>Placeholder symbol</strong>: In the context of piping, the symbol that defines the location in the right-hand-side function where the piped data will be inserted (a period, <code>.</code>, for the <em>magrittr</em> pipe).</li>
 <li><strong>Point</strong>: A zero-dimensional geometry containing a single point.</li>
@@ -27078,6 +27079,7 @@ Glossary of terms
 <li><strong>Recursive object</strong>: An object made up of references to other, nested objects (e.g., a list).</li>
 <li><strong>Reference tree</strong>: A visualization of the storage locations and names of parent and child objects.</li>
 <li><strong>Relative file path</strong>: The path to a file on your hard drive relative to the current working directory.</li>
+<li><strong>Scale bar</strong>: A map element that states a ground distance at the scale the map is drawn.</li>
 <li><strong>Scales</strong>: Maps from data to aesthetic space.</li>
 <li><strong>Script</strong>: A text file that contains a set of commands to read, manipulate, and analyze data.</li>
 <li><strong>Session</strong>: The time spent and operations conducted since opening R.</li>
@@ -27928,171 +27930,171 @@ Functions introduced through the end of this module
 </tr>
 <tr class="even">
 <td style="text-align: center;">ggplot2</td>
+<td style="text-align: center;">scale_fill_manual</td>
+<td style="text-align: left;">5.5_cartography_ii</td>
+<td style="text-align: left;">Set the fill colors of a plot by hand, one color per value</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">ggplot2</td>
 <td style="text-align: center;">scale_fill_viridis_c</td>
 <td style="text-align: left;">4.5_cartography</td>
 <td style="text-align: left;">Add a continuous virdis color scale to a plot</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: center;">ggplot2</td>
 <td style="text-align: center;">scale_size_area</td>
 <td style="text-align: left;">5.5_cartography_ii</td>
 <td style="text-align: left;">Map a value to the area of a symbol rather than to its radius, with a value of zero drawn at zero size.</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: center;">ggplot2</td>
 <td style="text-align: center;">scale_size_continuous</td>
 <td style="text-align: left;">4.2_nonspatial_joins</td>
 <td style="text-align: left;">Set the scale that maps a continuous variable to the size of a geometry</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: center;">ggplot2</td>
 <td style="text-align: center;">scale_x_continuous</td>
 <td style="text-align: left;">2.5_intro_to_data_vis</td>
 <td style="text-align: left;">Set the scale of the x axis</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: center;">ggplot2</td>
 <td style="text-align: center;">scale_y_continuous</td>
 <td style="text-align: left;">2.5_intro_to_data_vis</td>
 <td style="text-align: left;">Set the scale of the y axis</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: center;">ggplot2</td>
 <td style="text-align: center;">theme</td>
 <td style="text-align: left;">2.5_intro_to_data_vis</td>
 <td style="text-align: left;">Define the theme elements of a plot</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: center;">ggplot2</td>
 <td style="text-align: center;">theme_bw</td>
 <td style="text-align: left;">2.5_intro_to_data_vis</td>
 <td style="text-align: left;">Generate a pre-packaged light background theme for a plot</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: center;">ggplot2</td>
 <td style="text-align: center;">theme_set</td>
 <td style="text-align: left;">3.3_constructing_and_converting_shapefiles</td>
 <td style="text-align: left;">Set the ggplot theme for an entire session</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: center;">ggplot2</td>
 <td style="text-align: center;">theme_void</td>
 <td style="text-align: left;">3.3_constructing_and_converting_shapefiles</td>
 <td style="text-align: left;">A ggplot theme that contains no axes or panel background</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: center;">gis_functions.R</td>
 <td style="text-align: center;">clean_names</td>
 <td style="text-align: left;">3.2_introduction_to_shapefiles</td>
 <td style="text-align: left;">Standardize a shapefile&#39;s or data frame&#39;s column names to snake_case (course-authored helper in src/r/gis_functions.R).</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: center;">gis_functions.R</td>
 <td style="text-align: center;">count_vertices</td>
 <td style="text-align: left;">3.2_introduction_to_shapefiles</td>
 <td style="text-align: left;">Count the vertices in a simple features object.</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: center;">gis_functions.R</td>
 <td style="text-align: center;">lonlat_to_utm</td>
 <td style="text-align: left;">3.4_crs</td>
 <td style="text-align: left;">Determine the EPSG code of the UTM zone that contains a given longitude/latitude coordinate (course-authored helper in src/r/gis_functions.R, adapted from Lovelace, Nowosad, and Muenchow&#39;s *Geocomputation with R*).</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: center;">knitr</td>
 <td style="text-align: center;">kable</td>
-<td style="text-align: left;">5.6_reports_that_scale</td>
+<td style="text-align: left;">5.6_compelling_reports</td>
 <td style="text-align: left;">Return a data frame as a table formatted for the document being rendered.</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: center;">lobstr</td>
 <td style="text-align: center;">ref</td>
 <td style="text-align: left;">1.5_assignments</td>
 <td style="text-align: left;">View the structure of an object in your computer&#39;s memory</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: center;">lubridate</td>
 <td style="text-align: center;">year</td>
 <td style="text-align: left;">2.1_subsetting_and_extraction</td>
 <td style="text-align: left;">Extract the year from a properly formatted date value</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: center;">magrittr</td>
 <td style="text-align: center;">%&gt;%</td>
 <td style="text-align: left;">1.5_assignments</td>
 <td style="text-align: left;">The pipe operator passes the output of the LHS argument to the function on the right</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: center;">patchwork</td>
 <td style="text-align: center;">inset_element</td>
 <td style="text-align: left;">5.5_cartography_ii</td>
 <td style="text-align: left;">Place one plot inside another, at edges given as proportions of the enclosing plot.</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: center;">purrr</td>
 <td style="text-align: center;">imap</td>
 <td style="text-align: left;">4.4_iteration</td>
 <td style="text-align: left;">Iterate across a vector with each element&#39;s name available, and return a list</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: center;">purrr</td>
 <td style="text-align: center;">iwalk</td>
 <td style="text-align: left;">4.4_iteration</td>
 <td style="text-align: left;">Iterate across a vector with each element&#39;s name available, calling a function for its side effect and returning the input</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: center;">purrr</td>
 <td style="text-align: center;">map</td>
 <td style="text-align: left;">4.4_iteration</td>
 <td style="text-align: left;">Iterate across a vector and return a list</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: center;">purrr</td>
 <td style="text-align: center;">map_chr</td>
 <td style="text-align: left;">4.4_iteration</td>
 <td style="text-align: left;">Iterate across a vector and return a character vector</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: center;">purrr</td>
 <td style="text-align: center;">map_dbl</td>
 <td style="text-align: left;">4.4_iteration</td>
 <td style="text-align: left;">Iterate across a vector and return a double numeric vector</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: center;">purrr</td>
 <td style="text-align: center;">map_int</td>
 <td style="text-align: left;">4.4_iteration</td>
 <td style="text-align: left;">Iterate across a vector and return an integer vector</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: center;">purrr</td>
 <td style="text-align: center;">pluck</td>
 <td style="text-align: left;">0.5_indexing</td>
 <td style="text-align: left;">Extract a list item from a list</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: center;">purrr</td>
 <td style="text-align: center;">pmap</td>
 <td style="text-align: left;">4.4_iteration</td>
 <td style="text-align: left;">Iterate across the rows of a data frame, supplying one argument per column, and return a list</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: center;">purrr</td>
 <td style="text-align: center;">pmap_dbl</td>
 <td style="text-align: left;">4.4_iteration</td>
 <td style="text-align: left;">Iterate over the rows of a data frame, calling a function with one argument per column, and return a double vector.</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: center;">purrr</td>
 <td style="text-align: center;">walk</td>
 <td style="text-align: left;">4.4_iteration</td>
 <td style="text-align: left;">Iterate across a vector, calling a function for its side effect, and return the input unchanged</td>
-</tr>
-<tr class="odd">
-<td style="text-align: center;">quarto</td>
-<td style="text-align: center;">quarto_render</td>
-<td style="text-align: left;">5.6_reports_that_scale</td>
-<td style="text-align: left;">Render a Quarto document from R, optionally overriding the parameters declared in its header.</td>
 </tr>
 <tr class="even">
 <td style="text-align: center;">readr</td>
@@ -28461,166 +28463,178 @@ Functions introduced through the end of this module
 <td style="text-align: left;">Concatenate strings, with or without (default) a separator</td>
 </tr>
 <tr class="odd">
-<td style="text-align: center;">stringr</td>
-<td style="text-align: center;">str_to_lower</td>
-<td style="text-align: left;">5.6_reports_that_scale</td>
-<td style="text-align: left;">Convert a character vector to lower case.</td>
-</tr>
-<tr class="even">
 <td style="text-align: center;">tibble</td>
 <td style="text-align: center;">as_tibble</td>
 <td style="text-align: left;">0.4_objects</td>
 <td style="text-align: left;">Convert a data frame (and some other non-tibble objects!) to a tibble data frame</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: center;">tibble</td>
 <td style="text-align: center;">tibble</td>
 <td style="text-align: left;">0.4_objects</td>
 <td style="text-align: left;">Column-wise creation of a tibble data frame</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: center;">tibble</td>
 <td style="text-align: center;">tribble</td>
 <td style="text-align: left;">1.3_objects</td>
 <td style="text-align: left;">Row-wise creation of a tibble data frame</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: center;">tidyr</td>
 <td style="text-align: center;">drop_na</td>
 <td style="text-align: left;">2.1_subsetting_and_extraction</td>
 <td style="text-align: left;">Remove rows that contain NA values</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: center;">tidyr</td>
 <td style="text-align: center;">pivot_longer</td>
 <td style="text-align: left;">2.4_reshaping_data_frames</td>
 <td style="text-align: left;">Convert a data frame from wide to long format</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: center;">tidyr</td>
 <td style="text-align: center;">pivot_wider</td>
 <td style="text-align: left;">2.4_reshaping_data_frames</td>
 <td style="text-align: left;">Convert a data frame from long to wide format</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: center;">tidyr</td>
 <td style="text-align: center;">replace_na</td>
 <td style="text-align: left;">2.2_mutation</td>
 <td style="text-align: left;">Replace an NA value in a vector with a different value</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: center;">tidyr</td>
 <td style="text-align: center;">separate</td>
 <td style="text-align: left;">2.4_reshaping_data_frames</td>
 <td style="text-align: left;">Separate a single column into multiple columns by a delimiter</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: center;">tidyr</td>
 <td style="text-align: center;">separate_wider_delim</td>
 <td style="text-align: left;">2.4_reshaping_data_frames</td>
 <td style="text-align: left;">Split a single column into multiple columns at a delimiter (the current replacement for separate())</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: center;">tidyr</td>
 <td style="text-align: center;">unite</td>
 <td style="text-align: left;">2.4_reshaping_data_frames</td>
 <td style="text-align: left;">Combine columns in a data frame to create a single column</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: center;">tidyselect</td>
 <td style="text-align: center;">everything</td>
 <td style="text-align: left;">3.2_introduction_to_shapefiles</td>
 <td style="text-align: left;">Used in combination with select, this selects all but the specified columns.</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: center;">tidyverse</td>
 <td style="text-align: center;">tidyverse_packages</td>
 <td style="text-align: left;">1.3_objects</td>
 <td style="text-align: left;">Generate a character vector of package names in the tidyverse metapackage</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: center;">tmap</td>
 <td style="text-align: center;">tm_basemap</td>
 <td style="text-align: left;">3.5_introduction_to_tmap</td>
 <td style="text-align: left;">Add a basemap layer to an interactive tmap</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: center;">tmap</td>
 <td style="text-align: center;">tm_borders</td>
 <td style="text-align: left;">3.6_geometric_operations</td>
 <td style="text-align: left;">Add a layer to a tmap that represents the borders of a polygon shapefile</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: center;">tmap</td>
 <td style="text-align: center;">tm_compass</td>
 <td style="text-align: left;">4.5_cartography</td>
 <td style="text-align: left;">Add a compass, or north arrow, to a map</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: center;">tmap</td>
 <td style="text-align: center;">tm_credits</td>
 <td style="text-align: left;">4.5_cartography</td>
 <td style="text-align: left;">Add a credits or source note to a map</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: center;">tmap</td>
 <td style="text-align: center;">tm_dots</td>
 <td style="text-align: left;">3.5_introduction_to_tmap</td>
 <td style="text-align: left;">Add a points layer to a tmap</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: center;">tmap</td>
 <td style="text-align: center;">tm_facets_wrap</td>
 <td style="text-align: left;">4.5_cartography</td>
 <td style="text-align: left;">Draw one map panel per value of a grouping variable, wrapped into a grid</td>
 </tr>
+<tr class="odd">
+<td style="text-align: center;">tmap</td>
+<td style="text-align: center;">tm_graticules</td>
+<td style="text-align: left;">5.5_cartography_ii</td>
+<td style="text-align: left;">Add a graticule, with its coordinate labels, to a map</td>
+</tr>
 <tr class="even">
+<td style="text-align: center;">tmap</td>
+<td style="text-align: center;">tm_layout</td>
+<td style="text-align: left;">5.5_cartography_ii</td>
+<td style="text-align: left;">Define the layout of a tmap</td>
+</tr>
+<tr class="odd">
 <td style="text-align: center;">tmap</td>
 <td style="text-align: center;">tm_legend</td>
 <td style="text-align: left;">3.5_introduction_to_tmap</td>
 <td style="text-align: left;">Configure a layer&#39;s legend (title, position, frame, orientation) in tmap v4.</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: center;">tmap</td>
 <td style="text-align: center;">tm_lines</td>
 <td style="text-align: left;">5.2_focus_on_lines</td>
 <td style="text-align: left;">Draw the line geometry of a simple features object.</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: center;">tmap</td>
 <td style="text-align: center;">tm_polygons</td>
 <td style="text-align: left;">3.5_introduction_to_tmap</td>
 <td style="text-align: left;">Add a polygon layer to a tmap</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: center;">tmap</td>
 <td style="text-align: center;">tm_scale</td>
 <td style="text-align: left;">3.6_geometric_operations</td>
 <td style="text-align: left;">Define the default (auto-selected) visual-variable scale for a tmap v4 layer.</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: center;">tmap</td>
 <td style="text-align: center;">tm_scale_continuous</td>
 <td style="text-align: left;">3.5_introduction_to_tmap</td>
 <td style="text-align: left;">Define a continuous visual-variable scale for a tmap v4 layer.</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: center;">tmap</td>
 <td style="text-align: center;">tm_scale_intervals</td>
 <td style="text-align: left;">4.5_cartography</td>
 <td style="text-align: left;">Set a scale that divides a continuous variable into classes, with style = naming the classification method</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: center;">tmap</td>
 <td style="text-align: center;">tm_scalebar</td>
 <td style="text-align: left;">4.5_cartography</td>
 <td style="text-align: left;">Add a scale bar to a map</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: center;">tmap</td>
 <td style="text-align: center;">tm_shape</td>
 <td style="text-align: left;">3.5_introduction_to_tmap</td>
 <td style="text-align: left;">Define the shape that is the source of a tmap layer</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">tmap</td>
+<td style="text-align: center;">tm_text</td>
+<td style="text-align: left;">5.5_cartography_ii</td>
+<td style="text-align: left;">Add a layer of text labels to a map, drawn from the field named in quotes</td>
 </tr>
 <tr class="even">
 <td style="text-align: center;">tmap</td>
