@@ -26952,6 +26952,7 @@ Note
 <span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>  color: #2f5d2f;</span>
 <span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>}</span>
 <span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>```</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>In the <code>.count</code> rule, <code>font-weight: 700;</code> makes the text bold. CSS accepts numeric font weights from thin to heavy, and 700 is the usual bold weight. The value <code>#2f5d2f</code> is a hexadecimal color code, another way to specify a color instead of using a name such as <code>darkgreen</code>.</p>
 <p>We can apply these rules anywhere in the document, regardless of where we place the chunk. I keep the CSS chunk near the top, below the setup chunk, because that is where I will look for it later.</p>
 <div class="callout callout-style-default callout-note callout-titled">
 <div class="callout-header d-flex align-content-center">
@@ -26992,7 +26993,15 @@ Note
 <span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>  <span class="kw">margin</span><span class="ch">:</span> <span class="dv">1.2</span><span class="dt">em</span> <span class="dv">0</span><span class="op">;</span></span>
 <span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>  <span class="kw">border-radius</span><span class="ch">:</span> <span class="dv">4</span><span class="dt">px</span><span class="op">;</span></span>
 <span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>We use each declaration to change one part of the panel: the background color, the green bar along the left side, the space between the text and the edges, the space above and below the panel, or the rounding of the corners.</p>
+<p>We use each declaration to change one part of the panel:</p>
+<ul>
+<li><code>background-color</code> sets the color inside the panel.</li>
+<li><code>border-left</code> combines the width, line style, and color of its left border. Here, it creates a four-pixel solid green line.</li>
+<li><code>padding</code> adds space inside the panel, between its text and edges.</li>
+<li><code>margin</code> adds space outside the panel, between it and the surrounding paragraphs.</li>
+<li><code>border-radius</code> rounds the corners.</li>
+</ul>
+<p>A pixel (<code>px</code>) is a fixed CSS unit. An <code>em</code> is relative to the current font size, so the padding and margin grow if the text grows.</p>
 <p>We apply the class to the div in the same way that we applied a class to the span:</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb10"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>::: {.field-note}</span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>Heights were measured from the ground to the nest rim with a graduated</span>
@@ -27121,8 +27130,8 @@ Warning
 <div class="now_you">
 <p><i class="fa-solid fa-user-circle fa-2x" aria-label="user-circle"></i> <span style="padding-left: 0.5em;">Check your understanding</span></p>
 <p>Which of these makes a heading cross-referenceable as <em>Section 2</em>?</p>
-<div id="radio_VMPQMSYHJD" class="webex-radiogroup">
-<label><input type="radio" autocomplete="off" name="radio_VMPQMSYHJD" value="answer"> <span>An identifier beginning with sec- in braces after the heading, with number-sections in the header</span></label><label><input type="radio" autocomplete="off" name="radio_VMPQMSYHJD" value> <span>An identifier beginning with sec- in braces after the heading, on its own</span></label><label><input type="radio" autocomplete="off" name="radio_VMPQMSYHJD" value> <span>A link written as <a href="#sec-map">Section 2</a></span></label><label><input type="radio" autocomplete="off" name="radio_VMPQMSYHJD" value> <span>toc: true in the header</span></label>
+<div id="radio_GEDDYFCPEY" class="webex-radiogroup">
+<label><input type="radio" autocomplete="off" name="radio_GEDDYFCPEY" value="answer"> <span>An identifier beginning with sec- in braces after the heading, with number-sections in the header</span></label><label><input type="radio" autocomplete="off" name="radio_GEDDYFCPEY" value> <span>An identifier beginning with sec- in braces after the heading, on its own</span></label><label><input type="radio" autocomplete="off" name="radio_GEDDYFCPEY" value> <span>A link written as <a href="#sec-map">Section 2</a></span></label><label><input type="radio" autocomplete="off" name="radio_GEDDYFCPEY" value> <span>toc: true in the header</span></label>
 </div>
 <p>True or false: To change the appearance of text with a class in a bracketed span, we must also define that class in CSS.</p>
 <p><select class="webex-select"><option value="blank"></option><option value="answer">TRUE</option><option value>FALSE</option></select></p>
@@ -27150,20 +27159,20 @@ Warning
 <ol type="1">
 <li>You are sending a report to a reviewer who may want to check how you calculated a number. Which header option should you use?</li>
 </ol>
-<div id="radio_XICXPQLSKF" class="webex-radiogroup">
-<label><input type="radio" autocomplete="off" name="radio_XICXPQLSKF" value="answer"> <span>code-fold: true, which includes the code behind a link</span></label><label><input type="radio" autocomplete="off" name="radio_XICXPQLSKF" value> <span>echo: false, which removes the code from the document</span></label><label><input type="radio" autocomplete="off" name="radio_XICXPQLSKF" value> <span>include: false, which runs the code and shows nothing</span></label><label><input type="radio" autocomplete="off" name="radio_XICXPQLSKF" value> <span>eval: false, which shows the code without running it</span></label>
+<div id="radio_JYAMTRCADA" class="webex-radiogroup">
+<label><input type="radio" autocomplete="off" name="radio_JYAMTRCADA" value="answer"> <span>code-fold: true, which includes the code behind a link</span></label><label><input type="radio" autocomplete="off" name="radio_JYAMTRCADA" value> <span>echo: false, which removes the code from the document</span></label><label><input type="radio" autocomplete="off" name="radio_JYAMTRCADA" value> <span>include: false, which runs the code and shows nothing</span></label><label><input type="radio" autocomplete="off" name="radio_JYAMTRCADA" value> <span>eval: false, which shows the code without running it</span></label>
 </div>
 <ol start="2" type="1">
 <li>You define a rule for <code>.scientific-name</code> in a chunk and write <code>[Cardinalis cardinalis]{.scientific-name}</code>, and the words render unstyled. What is the most likely cause?</li>
 </ol>
-<div id="radio_CJLEXRJJDR" class="webex-radiogroup">
-<label><input type="radio" autocomplete="off" name="radio_CJLEXRJJDR" value="answer"> <span>The chunk is opened with {r} rather than {css}</span></label><label><input type="radio" autocomplete="off" name="radio_CJLEXRJJDR" value> <span>theme: cosmo is missing from the YAML header</span></label><label><input type="radio" autocomplete="off" name="radio_CJLEXRJJDR" value> <span>The rule was written below the span rather than above it</span></label><label><input type="radio" autocomplete="off" name="radio_CJLEXRJJDR" value> <span>The span requires a style attribute as well as a class</span></label>
+<div id="radio_ULSYKFGSKK" class="webex-radiogroup">
+<label><input type="radio" autocomplete="off" name="radio_ULSYKFGSKK" value="answer"> <span>The chunk is opened with {r} rather than {css}</span></label><label><input type="radio" autocomplete="off" name="radio_ULSYKFGSKK" value> <span>theme: cosmo is missing from the YAML header</span></label><label><input type="radio" autocomplete="off" name="radio_ULSYKFGSKK" value> <span>The rule was written below the span rather than above it</span></label><label><input type="radio" autocomplete="off" name="radio_ULSYKFGSKK" value> <span>The span requires a style attribute as well as a class</span></label>
 </div>
 <ol start="3" type="1">
 <li>You email a report as a single HTML file, and its photograph is broken when the reader opens it, though it displayed correctly on the machine that rendered it. What was missing?</li>
 </ol>
-<div id="radio_FQLCOCGBJR" class="webex-radiogroup">
-<label><input type="radio" autocomplete="off" name="radio_FQLCOCGBJR" value="answer"> <span>embed-resources: true, so the image is written into the file</span></label><label><input type="radio" autocomplete="off" name="radio_FQLCOCGBJR" value> <span>fig-align, so the image has a position</span></label><label><input type="radio" autocomplete="off" name="radio_FQLCOCGBJR" value> <span>A caption, so the image is treated as a figure</span></label><label><input type="radio" autocomplete="off" name="radio_FQLCOCGBJR" value> <span>A bibliography entry for the photograph</span></label>
+<div id="radio_DZZTNKGXSG" class="webex-radiogroup">
+<label><input type="radio" autocomplete="off" name="radio_DZZTNKGXSG" value="answer"> <span>embed-resources: true, so the image is written into the file</span></label><label><input type="radio" autocomplete="off" name="radio_DZZTNKGXSG" value> <span>fig-align, so the image has a position</span></label><label><input type="radio" autocomplete="off" name="radio_DZZTNKGXSG" value> <span>A caption, so the image is treated as a figure</span></label><label><input type="radio" autocomplete="off" name="radio_DZZTNKGXSG" value> <span>A bibliography entry for the photograph</span></label>
 </div>
 <ol start="4" type="1">
 <li>True or false: We should name a class for the appearance it produces, rather than for the meaning of the text to which we apply it.</li>

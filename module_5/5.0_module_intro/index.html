@@ -26863,8 +26863,8 @@ margin: 1em 0;
 <ul>
 <li>Clean an occurrence dataset, and how to generate points for a sampling design</li>
 <li>Build a movement path from records, measure it, and keep it honest</li>
-<li>Repair a broken polygon, clip a layer, and move a value between two sets of polygons</li>
-<li>Classify spatial data, and how a class boundary changes what a map says</li>
+<li>Repair a broken polygon, clip a layer, examine its fields after the cut, and simplify boundaries for a map</li>
+<li>Classify spatial data, and examine the effect of a class boundary on the map</li>
 <li>Give a map the context, labels, and projection a reader needs</li>
 <li>Make a report more engaging and informative</li>
 </ul>
@@ -26873,9 +26873,9 @@ margin: 1em 0;
 <ul>
 <li><strong>5.1 Focus on points: Occurrence records and sampling</strong>: We will clean point records, examine what <code>summarize()</code> returns for a group of points, and generate points for a survey design.</li>
 <li><strong>5.2 Focus on lines: Paths through a landscape</strong>: We will build movement tracks from ordered GPS records, measure them, and split them where the collar did not record the path.</li>
-<li><strong>5.3 Focus on polygons: Boundaries, attributes, and areas</strong>: We will repair invalid polygons, distinguish subsetting from clipping, and examine what happens to a field when its polygon changes.</li>
+<li><strong>5.3 Focus on polygons: Boundaries, attributes, and areas</strong>: We will repair invalid polygons, distinguish subsetting from clipping, examine what happens to a field when its polygon changes, and simplify boundaries for a map.</li>
 <li><strong>5.4 Categorizing spatial data</strong>: We will classify spatial data with <code>if_else()</code> and <code>case_when()</code>, derive classes from location, and document the rule used to draw a class boundary.</li>
-<li><strong>5.5 Cartography II: Projection, context, and labels</strong> (optional): We will choose a projection, place the study area in a region the reader knows, label features, and assemble a publication-quality map.</li>
+<li><strong>5.5 Cartography II: Projection, context, and labels</strong> (optional): We will choose a projection, place Tara’s study area in the county and the country around it, label the patches, and assemble a publication-quality map.</li>
 <li><strong>5.6 Communicating spatial data II: Compelling reports</strong> (optional): We will build on a report from <strong><em>4.6</em></strong>, with callouts, styled text, links, images, tables, and citations.</li>
 </ul>
 <p><strong>Problem Set</strong>: Searching for nests</p>
@@ -26887,17 +26887,15 @@ margin: 1em 0;
 <li>Place any <code>*.geojson</code> files in <code>data/raw/shapefiles</code>. You may overwrite your existing files.</li>
 <li>Place <code>kruger_buffalo.csv</code> in <code>data/raw</code>.</li>
 </ul>
-<p>Every lesson that reads a spatial file also loads <code>source_script_module_3.R</code> from <code>scripts</code>, which supplies <code>clean_names()</code>, <code>lonlat_to_utm()</code>, and <code>count_vertices()</code>.</p>
+<p>Lessons 5.1 through 5.5 load <code>source_script_module_3.R</code> from <code>scripts</code>, which supplies <code>clean_names()</code>, <code>lonlat_to_utm()</code>, and <code>count_vertices()</code>.</p>
 <p>Run the following to install the packages this module adds:</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">install.packages</span>(</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">c</span>(</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;patchwork&quot;</span>,</span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;quarto&quot;</span>,</span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;rmapshaper&quot;</span>,</span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;spData&quot;</span></span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;rmapshaper&quot;</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
 <section id="about-this-weeks-data" class="level2">
@@ -26912,7 +26910,6 @@ Explore the data used in this module
 <p><strong><code>inat_2022_may.geojson</code></strong>: This is a point shapefile (EPSG 4326) of iNaturalist observations recorded in the District of Columbia during May 2022. The data were obtained from <a href="https://www.inaturalist.org/" target="_blank">iNaturalist</a>.</p>
 <p><strong><code>kruger_buffalo.csv</code></strong>: This is a tabular dataset of GPS collar records for six African buffalo (<em>Syncerus caffer</em>) in Kruger National Park, South Africa, recorded between February 2005 and December 2006 at intervals of about an hour. Each row is one position fix. The data were collected by Cross and colleagues, published in the <a href="https://doi.org/10.5441/001/1.j900f88t" target="_blank">Movebank Data Repository</a> under a CC0 licence, and distributed in the <em>ctmm</em> package.</p>
 <p><strong><code>rock_creek_park.geojson</code></strong>: This is a multipolygon shapefile (EPSG 32618; UTM Zone 18N) that represents Washington, DC’s Rock Creek Park, a National Park that bisects the city. The data were obtained from <a href="https://opendata.dc.gov/" target="_blank">Open Data DC</a>.</p>
-<p><strong><em>5.5 Cartography II: Projection, context, and labels</em></strong> also uses the <code>world</code> dataset from the <em>spData</em> package, which is installed rather than downloaded.</p>
 </div>
 </section>
 <section id="readings-and-resources" class="level2">
@@ -27051,7 +27048,6 @@ Glossary of terms
 <li><strong>Negated selection</strong>: The use of the negative symbol (<code>-</code>) or, more recently, the <em>not</em> operator (<code>!</code>) to select all columns <em>except</em> the supplied column or columns.</li>
 <li><strong>Nested function</strong>: A function that is run inside of another function.</li>
 <li><strong>Non-spatial join</strong>: A join between two tables that matches rows on the values of a shared key rather than on the locations of their geometries.</li>
-<li><strong>North arrow</strong>: A map element that states which direction on the map is north.</li>
 <li><strong>Northing</strong>: The Y coordinate of a projected coordinate reference system, measured in linear units from the system’s origin.</li>
 <li><strong>Object</strong>: A collection of one or more values or functions.</li>
 <li><strong>Observation</strong>: The full set of values measured on the same observational unit across attributes.</li>
@@ -27888,693 +27884,705 @@ Functions introduced through the end of this module
 </tr>
 <tr class="odd">
 <td style="text-align: center;">ggplot2</td>
+<td style="text-align: center;">geom_text</td>
+<td style="text-align: left;">5.5_cartography_ii</td>
+<td style="text-align: left;">Draw text at positions given by x and y columns</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">ggplot2</td>
 <td style="text-align: center;">ggplot</td>
 <td style="text-align: left;">2.5_intro_to_data_vis</td>
 <td style="text-align: left;">Set the data and, potentially, the aesthetics of a plot</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: center;">ggplot2</td>
 <td style="text-align: center;">ggsave</td>
 <td style="text-align: left;">2.5_intro_to_data_vis</td>
 <td style="text-align: left;">Save a ggplot to your computer</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: center;">ggplot2</td>
 <td style="text-align: center;">labs</td>
 <td style="text-align: left;">2.5_intro_to_data_vis</td>
 <td style="text-align: left;">Add or modify the labels of a plot</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: center;">ggplot2</td>
 <td style="text-align: center;">scale_color_brewer</td>
 <td style="text-align: left;">2.5_intro_to_data_vis</td>
 <td style="text-align: left;">Apply a named RColorBrewer palette to a color aesthetic</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: center;">ggplot2</td>
 <td style="text-align: center;">scale_color_manual</td>
 <td style="text-align: left;">2.5_intro_to_data_vis</td>
 <td style="text-align: left;">Manually define the colors of a geometry</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: center;">ggplot2</td>
 <td style="text-align: center;">scale_color_viridis_c</td>
 <td style="text-align: left;">4.2_nonspatial_joins</td>
 <td style="text-align: left;">Set a continuous color scale to a viridis palette, which is designed to remain readable for a reader with a color vision deficiency</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: center;">ggplot2</td>
 <td style="text-align: center;">scale_fill_brewer</td>
 <td style="text-align: left;">2.5_intro_to_data_vis</td>
 <td style="text-align: left;">Fill a geometry with colors from a RColorBrewer palette</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: center;">ggplot2</td>
 <td style="text-align: center;">scale_fill_manual</td>
 <td style="text-align: left;">5.5_cartography_ii</td>
 <td style="text-align: left;">Set the fill colors of a plot by hand, one color per value</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: center;">ggplot2</td>
 <td style="text-align: center;">scale_fill_viridis_c</td>
 <td style="text-align: left;">4.5_cartography</td>
 <td style="text-align: left;">Add a continuous virdis color scale to a plot</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: center;">ggplot2</td>
 <td style="text-align: center;">scale_size_area</td>
 <td style="text-align: left;">5.5_cartography_ii</td>
 <td style="text-align: left;">Map a value to the area of a symbol rather than to its radius, with a value of zero drawn at zero size.</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: center;">ggplot2</td>
 <td style="text-align: center;">scale_size_continuous</td>
 <td style="text-align: left;">4.2_nonspatial_joins</td>
 <td style="text-align: left;">Set the scale that maps a continuous variable to the size of a geometry</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: center;">ggplot2</td>
 <td style="text-align: center;">scale_x_continuous</td>
 <td style="text-align: left;">2.5_intro_to_data_vis</td>
 <td style="text-align: left;">Set the scale of the x axis</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: center;">ggplot2</td>
 <td style="text-align: center;">scale_y_continuous</td>
 <td style="text-align: left;">2.5_intro_to_data_vis</td>
 <td style="text-align: left;">Set the scale of the y axis</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: center;">ggplot2</td>
 <td style="text-align: center;">theme</td>
 <td style="text-align: left;">2.5_intro_to_data_vis</td>
 <td style="text-align: left;">Define the theme elements of a plot</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: center;">ggplot2</td>
 <td style="text-align: center;">theme_bw</td>
 <td style="text-align: left;">2.5_intro_to_data_vis</td>
 <td style="text-align: left;">Generate a pre-packaged light background theme for a plot</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: center;">ggplot2</td>
 <td style="text-align: center;">theme_set</td>
 <td style="text-align: left;">3.3_constructing_and_converting_shapefiles</td>
 <td style="text-align: left;">Set the ggplot theme for an entire session</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: center;">ggplot2</td>
 <td style="text-align: center;">theme_void</td>
 <td style="text-align: left;">3.3_constructing_and_converting_shapefiles</td>
 <td style="text-align: left;">A ggplot theme that contains no axes or panel background</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: center;">gis_functions.R</td>
 <td style="text-align: center;">clean_names</td>
 <td style="text-align: left;">3.2_introduction_to_shapefiles</td>
 <td style="text-align: left;">Standardize a shapefile&#39;s or data frame&#39;s column names to snake_case (course-authored helper in src/r/gis_functions.R).</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: center;">gis_functions.R</td>
 <td style="text-align: center;">count_vertices</td>
 <td style="text-align: left;">3.2_introduction_to_shapefiles</td>
 <td style="text-align: left;">Count the vertices in a simple features object.</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: center;">gis_functions.R</td>
 <td style="text-align: center;">lonlat_to_utm</td>
 <td style="text-align: left;">3.4_crs</td>
 <td style="text-align: left;">Determine the EPSG code of the UTM zone that contains a given longitude/latitude coordinate (course-authored helper in src/r/gis_functions.R, adapted from Lovelace, Nowosad, and Muenchow&#39;s *Geocomputation with R*).</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: center;">knitr</td>
 <td style="text-align: center;">kable</td>
 <td style="text-align: left;">5.6_compelling_reports</td>
 <td style="text-align: left;">Return a data frame as a table formatted for the document being rendered.</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: center;">lobstr</td>
 <td style="text-align: center;">ref</td>
 <td style="text-align: left;">1.5_assignments</td>
 <td style="text-align: left;">View the structure of an object in your computer&#39;s memory</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: center;">lubridate</td>
 <td style="text-align: center;">year</td>
 <td style="text-align: left;">2.1_subsetting_and_extraction</td>
 <td style="text-align: left;">Extract the year from a properly formatted date value</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: center;">magrittr</td>
 <td style="text-align: center;">%&gt;%</td>
 <td style="text-align: left;">1.5_assignments</td>
 <td style="text-align: left;">The pipe operator passes the output of the LHS argument to the function on the right</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: center;">patchwork</td>
 <td style="text-align: center;">inset_element</td>
 <td style="text-align: left;">5.5_cartography_ii</td>
 <td style="text-align: left;">Place one plot inside another, at edges given as proportions of the enclosing plot.</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: center;">purrr</td>
 <td style="text-align: center;">imap</td>
 <td style="text-align: left;">4.4_iteration</td>
 <td style="text-align: left;">Iterate across a vector with each element&#39;s name available, and return a list</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: center;">purrr</td>
 <td style="text-align: center;">iwalk</td>
 <td style="text-align: left;">4.4_iteration</td>
 <td style="text-align: left;">Iterate across a vector with each element&#39;s name available, calling a function for its side effect and returning the input</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: center;">purrr</td>
 <td style="text-align: center;">map</td>
 <td style="text-align: left;">4.4_iteration</td>
 <td style="text-align: left;">Iterate across a vector and return a list</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: center;">purrr</td>
 <td style="text-align: center;">map_chr</td>
 <td style="text-align: left;">4.4_iteration</td>
 <td style="text-align: left;">Iterate across a vector and return a character vector</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: center;">purrr</td>
 <td style="text-align: center;">map_dbl</td>
 <td style="text-align: left;">4.4_iteration</td>
 <td style="text-align: left;">Iterate across a vector and return a double numeric vector</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: center;">purrr</td>
 <td style="text-align: center;">map_int</td>
 <td style="text-align: left;">4.4_iteration</td>
 <td style="text-align: left;">Iterate across a vector and return an integer vector</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: center;">purrr</td>
 <td style="text-align: center;">pluck</td>
 <td style="text-align: left;">0.5_indexing</td>
 <td style="text-align: left;">Extract a list item from a list</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: center;">purrr</td>
 <td style="text-align: center;">pmap</td>
 <td style="text-align: left;">4.4_iteration</td>
 <td style="text-align: left;">Iterate across the rows of a data frame, supplying one argument per column, and return a list</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: center;">purrr</td>
 <td style="text-align: center;">pmap_dbl</td>
 <td style="text-align: left;">4.4_iteration</td>
 <td style="text-align: left;">Iterate over the rows of a data frame, calling a function with one argument per column, and return a double vector.</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: center;">purrr</td>
 <td style="text-align: center;">walk</td>
 <td style="text-align: left;">4.4_iteration</td>
 <td style="text-align: left;">Iterate across a vector, calling a function for its side effect, and return the input unchanged</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: center;">readr</td>
 <td style="text-align: center;">read_csv</td>
 <td style="text-align: left;">0.4_objects</td>
 <td style="text-align: left;">Read a tabular csv file into R as a tibble data frame</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: center;">readr</td>
 <td style="text-align: center;">read_lines</td>
 <td style="text-align: left;">0.4_objects</td>
 <td style="text-align: left;">Read an atomic vector into R</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: center;">readr</td>
 <td style="text-align: center;">read_rds</td>
 <td style="text-align: left;">0.4_objects</td>
 <td style="text-align: left;">Read an RDS file into R</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: center;">readr</td>
 <td style="text-align: center;">write_csv</td>
 <td style="text-align: left;">0.4_objects</td>
 <td style="text-align: left;">Write a data frame to your hard drive as a csv file</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: center;">readr</td>
 <td style="text-align: center;">write_lines</td>
 <td style="text-align: left;">0.4_objects</td>
 <td style="text-align: left;">Write an atomic vector to your hard drive as a txt file</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: center;">readr</td>
 <td style="text-align: center;">write_rds</td>
 <td style="text-align: left;">0.4_objects</td>
 <td style="text-align: left;">Write a data object to your hard drive as an RDS file</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: center;">readxl</td>
 <td style="text-align: center;">excel_sheets</td>
 <td style="text-align: left;">1.4_importing_exploring_exporting</td>
 <td style="text-align: left;">Return the names of worksheets in an Excel file</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: center;">readxl</td>
 <td style="text-align: center;">read_excel</td>
 <td style="text-align: left;">1.4_importing_exploring_exporting</td>
 <td style="text-align: left;">Read an Excel worksheet into R</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: center;">rlang</td>
 <td style="text-align: center;">set_names</td>
 <td style="text-align: left;">1.5_assignments</td>
 <td style="text-align: left;">Assign names to values in a vector or items in a list</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: center;">rmapshaper</td>
 <td style="text-align: center;">ms_simplify</td>
 <td style="text-align: left;">5.3_focus_on_polygons</td>
 <td style="text-align: left;">Reduce the number of nodes in a polygon by a set proportion</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: center;">scales</td>
 <td style="text-align: center;">label_dollar</td>
 <td style="text-align: left;">4.5_cartography</td>
 <td style="text-align: left;">Format axis or legend labels as currency</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: center;">sf</td>
 <td style="text-align: center;">sf_use_s2</td>
 <td style="text-align: left;">5.3_focus_on_polygons</td>
 <td style="text-align: left;">Report or set whether geographic coordinates are handled by the s2 engine rather than by GEOS.</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: center;">sf</td>
 <td style="text-align: center;">st_agr</td>
 <td style="text-align: left;">5.3_focus_on_polygons</td>
 <td style="text-align: left;">Report or set the attribute-geometry relationship of each field: constant, aggregate, or identity.</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: center;">sf</td>
 <td style="text-align: center;">st_area</td>
 <td style="text-align: left;">3.6_geometric_operations</td>
 <td style="text-align: left;">Calculate the area of a polygon shapefile</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: center;">sf</td>
 <td style="text-align: center;">st_as_sf</td>
 <td style="text-align: left;">3.2_introduction_to_shapefiles</td>
 <td style="text-align: left;">Convert a data frame to an sf object</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: center;">sf</td>
 <td style="text-align: center;">st_as_sfc</td>
 <td style="text-align: left;">5.1_focus_on_points</td>
 <td style="text-align: left;">Convert an object, such as a bounding box, into a simple features geometry list column.</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: center;">sf</td>
 <td style="text-align: center;">st_bbox</td>
 <td style="text-align: left;">5.1_focus_on_points</td>
 <td style="text-align: left;">Get the bounding box of a shapefile or create a bounding box from scratch</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: center;">sf</td>
 <td style="text-align: center;">st_buffer</td>
 <td style="text-align: left;">3.6_geometric_operations</td>
 <td style="text-align: left;">Create a buffer (shapefile) that extends the boundary of a target shapefile by a given distance</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: center;">sf</td>
 <td style="text-align: center;">st_cast</td>
 <td style="text-align: left;">3.3_constructing_and_converting_shapefiles</td>
 <td style="text-align: left;">Convert a geometry from one type to another</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: center;">sf</td>
 <td style="text-align: center;">st_centroid</td>
 <td style="text-align: left;">3.6_geometric_operations</td>
 <td style="text-align: left;">Calculate the geographic center of a set of features</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: center;">sf</td>
 <td style="text-align: center;">st_combine</td>
 <td style="text-align: left;">3.3_constructing_and_converting_shapefiles</td>
 <td style="text-align: left;">Combine multiple geometries into a single geometry</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: center;">sf</td>
 <td style="text-align: center;">st_contains</td>
 <td style="text-align: left;">4.1_spatial_filtering</td>
 <td style="text-align: left;">A spatial predicate that tests whether the first geometry completely contains the second</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: center;">sf</td>
 <td style="text-align: center;">st_convex_hull</td>
 <td style="text-align: left;">3.6_geometric_operations</td>
 <td style="text-align: left;">Generate a minimum convex polygon for a set of points (the smallest shape that will enclose each point in which no angle is greater than 180 degrees)</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: center;">sf</td>
 <td style="text-align: center;">st_coordinates</td>
 <td style="text-align: left;">3.3_constructing_and_converting_shapefiles</td>
 <td style="text-align: left;">Extract coordinates from an sf object as a matrix</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: center;">sf</td>
 <td style="text-align: center;">st_crs</td>
 <td style="text-align: left;">3.2_introduction_to_shapefiles</td>
 <td style="text-align: left;">Get the CRS of a shapefile</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: center;">sf</td>
 <td style="text-align: center;">st_disjoint</td>
 <td style="text-align: left;">4.1_spatial_filtering</td>
 <td style="text-align: left;">A spatial predicate that tests whether two geometries share no space</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: center;">sf</td>
 <td style="text-align: center;">st_distance</td>
 <td style="text-align: left;">3.6_geometric_operations</td>
 <td style="text-align: left;">Calculate the pairwise distance between features in a shapefile (or between different shapefiles)</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: center;">sf</td>
 <td style="text-align: center;">st_drop_geometry</td>
 <td style="text-align: left;">4.3_spatial_joins</td>
 <td style="text-align: left;">Remove the geometry column from an sf file and (thus) convert to a data frame</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: center;">sf</td>
 <td style="text-align: center;">st_equals</td>
 <td style="text-align: left;">4.1_spatial_filtering</td>
 <td style="text-align: left;">A spatial predicate that tests whether two geometries are identical</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: center;">sf</td>
 <td style="text-align: center;">st_filter</td>
 <td style="text-align: left;">4.1_spatial_filtering</td>
 <td style="text-align: left;">Conduct a filtering join (i.e., subset geometries) of a target table relative to the geometry of a source table</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: center;">sf</td>
 <td style="text-align: center;">st_geometry</td>
 <td style="text-align: left;">3.2_introduction_to_shapefiles</td>
 <td style="text-align: left;">Print or extract just the geometry column (and CRS) of an sf object.</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: center;">sf</td>
 <td style="text-align: center;">st_geometry_type</td>
 <td style="text-align: left;">4.4_iteration</td>
 <td style="text-align: left;">Return the type of geometry present in an sf object</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: center;">sf</td>
 <td style="text-align: center;">st_interpolate_aw</td>
 <td style="text-align: left;">5.3_focus_on_polygons</td>
 <td style="text-align: left;">Estimate the values of a field for a new set of polygons by areal interpolation.</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: center;">sf</td>
 <td style="text-align: center;">st_intersection</td>
 <td style="text-align: left;">5.3_focus_on_polygons</td>
 <td style="text-align: left;">A type of mutating *or* filtering spatial join in which you maintain only portions of a target shapefile that overlap with a source shapefile</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: center;">sf</td>
 <td style="text-align: center;">st_intersects</td>
 <td style="text-align: left;">4.1_spatial_filtering</td>
 <td style="text-align: left;">A spatial predicate that tests whether two geometries share any space</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: center;">sf</td>
 <td style="text-align: center;">st_is_valid</td>
 <td style="text-align: left;">5.3_focus_on_polygons</td>
 <td style="text-align: left;">A logical test to determine if a feature in a polygon shapefile is valid</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: center;">sf</td>
 <td style="text-align: center;">st_is_within_distance</td>
 <td style="text-align: left;">4.1_spatial_filtering</td>
 <td style="text-align: left;">A spatial predicate that tests whether two geometries are within a supplied distance of one another</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: center;">sf</td>
 <td style="text-align: center;">st_join</td>
 <td style="text-align: left;">4.3_spatial_joins</td>
 <td style="text-align: left;">Conduct a mutating join of a target table relative to the geometry of a source table</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: center;">sf</td>
 <td style="text-align: center;">st_length</td>
 <td style="text-align: left;">5.2_focus_on_lines</td>
 <td style="text-align: left;">Return the length of each line feature, in the units of the object&#39;s coordinate reference system.</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: center;">sf</td>
 <td style="text-align: center;">st_linestring</td>
 <td style="text-align: left;">3.3_constructing_and_converting_shapefiles</td>
 <td style="text-align: left;">Convert a matrix to a linestring geometry object</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: center;">sf</td>
 <td style="text-align: center;">st_make_valid</td>
 <td style="text-align: left;">5.3_focus_on_polygons</td>
 <td style="text-align: left;">Fix invalid features in a polygon shapefile</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: center;">sf</td>
 <td style="text-align: center;">st_nearest_feature</td>
 <td style="text-align: left;">4.3_spatial_joins</td>
 <td style="text-align: left;">Match each feature of one object to the single nearest feature of another object</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: center;">sf</td>
 <td style="text-align: center;">st_overlaps</td>
 <td style="text-align: left;">4.1_spatial_filtering</td>
 <td style="text-align: left;">A spatial predicate that tests whether two geometries of the same dimension share some but not all of their interiors</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: center;">sf</td>
 <td style="text-align: center;">st_point</td>
 <td style="text-align: left;">3.3_constructing_and_converting_shapefiles</td>
 <td style="text-align: left;">Convert a vector of coordinates to a single point</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: center;">sf</td>
 <td style="text-align: center;">st_point_on_surface</td>
 <td style="text-align: left;">3.6_geometric_operations</td>
 <td style="text-align: left;">Generate a point that is guaranteed to fall within each feature of a polygon object.</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: center;">sf</td>
 <td style="text-align: center;">st_polygon</td>
 <td style="text-align: left;">3.3_constructing_and_converting_shapefiles</td>
 <td style="text-align: left;">Convert a list to a polygon geometry object</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: center;">sf</td>
 <td style="text-align: center;">st_read</td>
 <td style="text-align: left;">3.2_introduction_to_shapefiles</td>
 <td style="text-align: left;">Read in a simple features or other GIS shapefile</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: center;">sf</td>
 <td style="text-align: center;">st_sample</td>
 <td style="text-align: left;">5.1_focus_on_points</td>
 <td style="text-align: left;">Return points drawn from within a geometry, under a random, regular, or hexagonal sampling design.</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: center;">sf</td>
 <td style="text-align: center;">st_sf</td>
 <td style="text-align: left;">3.3_constructing_and_converting_shapefiles</td>
 <td style="text-align: left;">Convert a simple features column object to an sf object</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: center;">sf</td>
 <td style="text-align: center;">st_sfc</td>
 <td style="text-align: left;">3.3_constructing_and_converting_shapefiles</td>
 <td style="text-align: left;">Store a geometry in a simple features column object</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: center;">sf</td>
 <td style="text-align: center;">st_simplify</td>
 <td style="text-align: left;">5.3_focus_on_polygons</td>
 <td style="text-align: left;">Reduce the resolution (level of detail) of a shapefile by removing nodes that are within a given distance of each other.</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: center;">sf</td>
 <td style="text-align: center;">st_touches</td>
 <td style="text-align: left;">4.1_spatial_filtering</td>
 <td style="text-align: left;">A spatial predicate that tests whether two geometries share boundary points but no interior points</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: center;">sf</td>
 <td style="text-align: center;">st_transform</td>
 <td style="text-align: left;">3.2_introduction_to_shapefiles</td>
 <td style="text-align: left;">Transform the CRS of a shapefile to a different CRS</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: center;">sf</td>
 <td style="text-align: center;">st_union</td>
 <td style="text-align: left;">3.3_constructing_and_converting_shapefiles</td>
 <td style="text-align: left;">Dissolve boundaries between polygons</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: center;">sf</td>
 <td style="text-align: center;">st_within</td>
 <td style="text-align: left;">4.1_spatial_filtering</td>
 <td style="text-align: left;">A spatial predicate that tests whether the first geometry is completely inside the second</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: center;">sf</td>
 <td style="text-align: center;">st_write</td>
 <td style="text-align: left;">4.4_iteration</td>
 <td style="text-align: left;">Write a simple features object to a spatial vector file</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: center;">stats</td>
 <td style="text-align: center;">median</td>
 <td style="text-align: left;">1.4_importing_exploring_exporting</td>
 <td style="text-align: left;">Calculate the median value of a numeric vector and return as a one-value double numeric or integer vector</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: center;">stats</td>
 <td style="text-align: center;">quantile</td>
 <td style="text-align: left;">4.5_cartography</td>
 <td style="text-align: left;">Return the quantiles of a numeric vector</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: center;">stats</td>
 <td style="text-align: center;">sd</td>
 <td style="text-align: left;">1.4_importing_exploring_exporting</td>
 <td style="text-align: left;">Calculate the standard deviation of a numeric vector and return as a one-value double numeric vector</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: center;">stats</td>
 <td style="text-align: center;">var</td>
 <td style="text-align: left;">1.4_importing_exploring_exporting</td>
 <td style="text-align: left;">Calculate the variance of a numeric vector and return as a one-value double numeric vector</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: center;">stringr</td>
 <td style="text-align: center;">str_c</td>
 <td style="text-align: left;">0.2_environment_and_functions</td>
 <td style="text-align: left;">Concatenate strings, with or without (default) a separator</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: center;">tibble</td>
 <td style="text-align: center;">as_tibble</td>
 <td style="text-align: left;">0.4_objects</td>
 <td style="text-align: left;">Convert a data frame (and some other non-tibble objects!) to a tibble data frame</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: center;">tibble</td>
 <td style="text-align: center;">tibble</td>
 <td style="text-align: left;">0.4_objects</td>
 <td style="text-align: left;">Column-wise creation of a tibble data frame</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: center;">tibble</td>
 <td style="text-align: center;">tribble</td>
 <td style="text-align: left;">1.3_objects</td>
 <td style="text-align: left;">Row-wise creation of a tibble data frame</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: center;">tidyr</td>
 <td style="text-align: center;">drop_na</td>
 <td style="text-align: left;">2.1_subsetting_and_extraction</td>
 <td style="text-align: left;">Remove rows that contain NA values</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: center;">tidyr</td>
 <td style="text-align: center;">pivot_longer</td>
 <td style="text-align: left;">2.4_reshaping_data_frames</td>
 <td style="text-align: left;">Convert a data frame from wide to long format</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: center;">tidyr</td>
 <td style="text-align: center;">pivot_wider</td>
 <td style="text-align: left;">2.4_reshaping_data_frames</td>
 <td style="text-align: left;">Convert a data frame from long to wide format</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: center;">tidyr</td>
 <td style="text-align: center;">replace_na</td>
 <td style="text-align: left;">2.2_mutation</td>
 <td style="text-align: left;">Replace an NA value in a vector with a different value</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: center;">tidyr</td>
 <td style="text-align: center;">separate</td>
 <td style="text-align: left;">2.4_reshaping_data_frames</td>
 <td style="text-align: left;">Separate a single column into multiple columns by a delimiter</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: center;">tidyr</td>
 <td style="text-align: center;">separate_wider_delim</td>
 <td style="text-align: left;">2.4_reshaping_data_frames</td>
 <td style="text-align: left;">Split a single column into multiple columns at a delimiter (the current replacement for separate())</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: center;">tidyr</td>
 <td style="text-align: center;">unite</td>
 <td style="text-align: left;">2.4_reshaping_data_frames</td>
 <td style="text-align: left;">Combine columns in a data frame to create a single column</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: center;">tidyselect</td>
 <td style="text-align: center;">everything</td>
 <td style="text-align: left;">3.2_introduction_to_shapefiles</td>
 <td style="text-align: left;">Used in combination with select, this selects all but the specified columns.</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: center;">tidyverse</td>
 <td style="text-align: center;">tidyverse_packages</td>
 <td style="text-align: left;">1.3_objects</td>
 <td style="text-align: left;">Generate a character vector of package names in the tidyverse metapackage</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: center;">tmap</td>
 <td style="text-align: center;">tm_basemap</td>
 <td style="text-align: left;">3.5_introduction_to_tmap</td>
 <td style="text-align: left;">Add a basemap layer to an interactive tmap</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: center;">tmap</td>
 <td style="text-align: center;">tm_borders</td>
 <td style="text-align: left;">3.6_geometric_operations</td>
 <td style="text-align: left;">Add a layer to a tmap that represents the borders of a polygon shapefile</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: center;">tmap</td>
 <td style="text-align: center;">tm_compass</td>
 <td style="text-align: left;">4.5_cartography</td>
 <td style="text-align: left;">Add a compass, or north arrow, to a map</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: center;">tmap</td>
 <td style="text-align: center;">tm_credits</td>
 <td style="text-align: left;">4.5_cartography</td>
 <td style="text-align: left;">Add a credits or source note to a map</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: center;">tmap</td>
 <td style="text-align: center;">tm_dots</td>
 <td style="text-align: left;">3.5_introduction_to_tmap</td>
 <td style="text-align: left;">Add a points layer to a tmap</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: center;">tmap</td>
 <td style="text-align: center;">tm_facets_wrap</td>
 <td style="text-align: left;">4.5_cartography</td>
 <td style="text-align: left;">Draw one map panel per value of a grouping variable, wrapped into a grid</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: center;">tmap</td>
 <td style="text-align: center;">tm_graticules</td>
 <td style="text-align: left;">5.5_cartography_ii</td>
 <td style="text-align: left;">Add a graticule, with its coordinate labels, to a map</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">tmap</td>
+<td style="text-align: center;">tm_inset</td>
+<td style="text-align: left;">5.5_cartography_ii</td>
+<td style="text-align: left;">Place a second map, or a ggplot, inside a tmap</td>
 </tr>
 <tr class="even">
 <td style="text-align: center;">tmap</td>
@@ -28599,6 +28607,18 @@ Functions introduced through the end of this module
 <td style="text-align: center;">tm_polygons</td>
 <td style="text-align: left;">3.5_introduction_to_tmap</td>
 <td style="text-align: left;">Add a polygon layer to a tmap</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">tmap</td>
+<td style="text-align: center;">tm_pos_in</td>
+<td style="text-align: left;">5.5_cartography_ii</td>
+<td style="text-align: left;">Position a tmap v4 legend or component inside the map frame.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">tmap</td>
+<td style="text-align: center;">tm_pos_out</td>
+<td style="text-align: left;">5.5_cartography_ii</td>
+<td style="text-align: left;">Position a tmap v4 legend or component outside the map frame.</td>
 </tr>
 <tr class="even">
 <td style="text-align: center;">tmap</td>
