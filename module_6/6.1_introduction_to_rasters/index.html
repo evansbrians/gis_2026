@@ -26820,7 +26820,7 @@ Please click on the button below to explore the metadata for this lesson!
 <section id="reading-raster-data" class="level2">
 <h2 class="anchored" data-anchor-id="reading-raster-data">Reading raster data</h2>
 <p>A raster represents an area by assigning values to a regular grid. The grid describes the locations, while the layers describe what was measured or classified at those locations.</p>
-<p><code>terra::rast()</code> reads a raster file. Let’s create a code section called “<code>read and pre-process data</code>” and read the campus elevation model:</p>
+<p><code>terra::rast()</code> reads a raster file. Let’s create a code section called “<code>read and pre-process data</code>” and read the elevation model for the Smithsonian Conservation Biology Institute:</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>dem <span class="ot">&lt;-</span></span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  terra<span class="sc">::</span><span class="fu">rast</span>(<span class="st">&quot;data/raw/gis_scbi/scbi_dem.tif&quot;</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
@@ -26849,11 +26849,25 @@ max value   : 391.727142</code></pre>
 <li><strong>coord. ref.</strong> identifies the CRS of those coordinates. <em>terra</em> prints it differently than <em>sf</em>, but both describe the same property.</li>
 </ul>
 <p>The elevation grid has 745 rows and 778 columns, so it contains 579,610 cells. Each cell represents values at a location, and its position can be calculated from the grid’s extent, resolution, row, and column. The raster therefore does not need a geometry column or a stored coordinate pair for every cell.</p>
-<p>The file’s single layer is named <code>Layer_1</code> on disk, and <em>tidyterra</em>’s <code>rename()</code> takes a layer by position, so we will rename it as we read it:</p>
+<p>Notice that the file’s single layer is named <code>Layer_1</code> on disk. We can use the <em>tidyterra</em> function <code>rename()</code> change the name of a layer by position. Let’s rename the layer as we read it:</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>dem <span class="ot">&lt;-</span></span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  terra<span class="sc">::</span><span class="fu">rast</span>(<span class="st">&quot;data/raw/gis_scbi/scbi_dem.tif&quot;</span>) <span class="sc">%&gt;%</span></span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">elevation =</span> <span class="dv">1</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>Highlight and run <code>dem</code> to print the metadata of the raster:</p>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>class       : SpatRaster
+size        : 745, 778, 1  (nrow, ncol, nlyr)
+resolution  : 3.08642e-05, 3.08642e-05  (x, y)
+extent      : -78.17401, -78.15, 38.87901, 38.90201  (xmin, xmax, ymin, ymax)
+coord. ref. : lon/lat NAD83 (EPSG:4269)
+source      : scbi_dem.tif
+name        :  elevation
+min value   : 224.474091
+max value   : 391.727142</code></pre>
+</div>
 </div>
 <div class="now_you">
 <p><i class="fa-solid fa-user-circle fa-2x" aria-label="user-circle"></i> <span style="font-size: 1.25em; padding-left: 0.5em;">Now you!</span></p>
@@ -26864,10 +26878,10 @@ max value   : 391.727142</code></pre>
 <p><span class="answer_link" data-answer="a-6-1-read">Click here to see my answer</span></p>
 <div id="a-6-1-read" class="answer_body">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Washington, D.C. land cover, four layers:</span></span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>dc <span class="ot">&lt;-</span></span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  terra<span class="sc">::</span><span class="fu">rast</span>(<span class="st">&quot;data/raw/rasters/dc_stack.tif&quot;</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Washington, D.C. land cover, four layers:</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>dc <span class="ot">&lt;-</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>  terra<span class="sc">::</span><span class="fu">rast</span>(<span class="st">&quot;data/raw/rasters/dc_stack.tif&quot;</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </div>
 </div>
@@ -26884,16 +26898,16 @@ max value   : 391.727142</code></pre>
 <div class="now_you">
 <p><i class="fa-solid fa-user-circle fa-2x" aria-label="user-circle"></i> <span style="padding-left: 0.5em;">Check your understanding</span></p>
 <p>A <code>SpatRaster</code> reports <code>dimensions : 500, 400, 3</code>. The first two layers have no missing values, and the third has 100,000 missing values. How many cells does the grid contain?</p>
-<div id="radio_JXUXHIGIPP" class="webex-radiogroup">
-<label><input type="radio" autocomplete="off" name="radio_JXUXHIGIPP" value="answer"> <span>200,000</span></label><label><input type="radio" autocomplete="off" name="radio_JXUXHIGIPP" value> <span>600,000</span></label><label><input type="radio" autocomplete="off" name="radio_JXUXHIGIPP" value> <span>1,200</span></label><label><input type="radio" autocomplete="off" name="radio_JXUXHIGIPP" value> <span>500</span></label>
+<div id="radio_UBJLOFADWD" class="webex-radiogroup">
+<label><input type="radio" autocomplete="off" name="radio_UBJLOFADWD" value="answer"> <span>200,000</span></label><label><input type="radio" autocomplete="off" name="radio_UBJLOFADWD" value> <span>600,000</span></label><label><input type="radio" autocomplete="off" name="radio_UBJLOFADWD" value> <span>1,200</span></label><label><input type="radio" autocomplete="off" name="radio_UBJLOFADWD" value> <span>500</span></label>
 </div>
 <p>How many nonmissing values does the raster contain?</p>
-<div id="radio_FRNXORDBMY" class="webex-radiogroup">
-<label><input type="radio" autocomplete="off" name="radio_FRNXORDBMY" value="answer"> <span>500,000</span></label><label><input type="radio" autocomplete="off" name="radio_FRNXORDBMY" value> <span>600,000</span></label><label><input type="radio" autocomplete="off" name="radio_FRNXORDBMY" value> <span>300,000</span></label><label><input type="radio" autocomplete="off" name="radio_FRNXORDBMY" value> <span>100,000</span></label>
+<div id="radio_JUXFVUYBHV" class="webex-radiogroup">
+<label><input type="radio" autocomplete="off" name="radio_JUXFVUYBHV" value="answer"> <span>500,000</span></label><label><input type="radio" autocomplete="off" name="radio_JUXFVUYBHV" value> <span>600,000</span></label><label><input type="radio" autocomplete="off" name="radio_JUXFVUYBHV" value> <span>300,000</span></label><label><input type="radio" autocomplete="off" name="radio_JUXFVUYBHV" value> <span>100,000</span></label>
 </div>
 <p>Which information allows R to calculate the location of a cell?</p>
-<div id="radio_KIAOQQTNCQ" class="webex-radiogroup">
-<label><input type="radio" autocomplete="off" name="radio_KIAOQQTNCQ" value="answer"> <span>The extent, resolution, row, and column</span></label><label><input type="radio" autocomplete="off" name="radio_KIAOQQTNCQ" value> <span>The minimum and maximum values</span></label><label><input type="radio" autocomplete="off" name="radio_KIAOQQTNCQ" value> <span>The source and layer name</span></label><label><input type="radio" autocomplete="off" name="radio_KIAOQQTNCQ" value> <span>A coordinate pair stored with every value</span></label>
+<div id="radio_PJCTLUNGSH" class="webex-radiogroup">
+<label><input type="radio" autocomplete="off" name="radio_PJCTLUNGSH" value="answer"> <span>The extent, resolution, row, and column</span></label><label><input type="radio" autocomplete="off" name="radio_PJCTLUNGSH" value> <span>The minimum and maximum values</span></label><label><input type="radio" autocomplete="off" name="radio_PJCTLUNGSH" value> <span>The source and layer name</span></label><label><input type="radio" autocomplete="off" name="radio_PJCTLUNGSH" value> <span>A coordinate pair stored with every value</span></label>
 </div>
 </div>
 </section>
@@ -26902,19 +26916,19 @@ max value   : 391.727142</code></pre>
 <h2 class="anchored" data-anchor-id="visualizing-raster-data">Visualizing raster data</h2>
 <p><code>geom_spatraster()</code> is <em>tidyterra</em>’s layer for a <code>SpatRaster</code>, and <code>scale_fill_hypso_c()</code> supplies the continuous hypsometric tints used on a topographic map. Let’s look at the elevation model:</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>() <span class="sc">+</span></span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Add geometries:</span></span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_spatraster</span>(<span class="at">data =</span> dem) <span class="sc">+</span></span>
-<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Define scale elements:</span></span>
-<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_hypso_c</span>() <span class="sc">+</span></span>
-<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Modify the theme:</span></span>
-<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>() <span class="sc">+</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Add geometries:</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_spatraster</span>(<span class="at">data =</span> dem) <span class="sc">+</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Define scale elements:</span></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_hypso_c</span>() <span class="sc">+</span></span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Modify the theme:</span></span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -26935,7 +26949,7 @@ max value   : 391.727142</code></pre>
 <h2 class="anchored" data-anchor-id="values-on-disk-and-in-memory">Values on disk and in memory</h2>
 <p><code>rast()</code> read the file’s header, including its grid, layer names, value ranges, and source. It did not load all 579,610 elevation values into memory. A <code>SpatRaster</code> may reference cell values in files on disk or retain them in memory. <code>inMemory()</code> reports whether the values are currently held in memory:</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>terra<span class="sc">::</span><span class="fu">inMemory</span>(dem)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>terra<span class="sc">::</span><span class="fu">inMemory</span>(dem)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] FALSE</code></pre>
 </div>
@@ -26946,15 +26960,15 @@ max value   : 391.727142</code></pre>
 <h2 class="anchored" data-anchor-id="summarizing-raster-values">Summarizing raster values</h2>
 <p>Printing a <code>SpatRaster</code> reports its structure and metadata rather than printing every cell value. <code>global()</code> accesses those values and <span class="term">summarizes</span> an entire layer. Its second argument names the summary or summaries to calculate:</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>dem <span class="sc">%&gt;%</span></span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>  terra<span class="sc">::</span><span class="fu">global</span>(</span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">c</span>(</span>
-<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;mean&quot;</span>,</span>
-<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;sd&quot;</span>,</span>
-<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;min&quot;</span>,</span>
-<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;max&quot;</span></span>
-<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>    )</span>
-<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>dem <span class="sc">%&gt;%</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>  terra<span class="sc">::</span><span class="fu">global</span>(</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">c</span>(</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;mean&quot;</span>,</span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;sd&quot;</span>,</span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;min&quot;</span>,</span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;max&quot;</span></span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>              mean       sd      min      max
 elevation 310.1131 36.20399 224.4741 391.7271</code></pre>
@@ -26966,8 +26980,8 @@ elevation 310.1131 36.20399 224.4741 391.7271</code></pre>
 <p>You call <code>global()</code> on a file-backed raster. After returning the summary, must the raster’s values remain in memory?</p>
 <p><select class="webex-select"><option value="blank"></option><option value>TRUE</option><option value="answer">FALSE</option></select></p>
 <p>Which result provides the clearest evidence that the values remain file-backed?</p>
-<div id="radio_HIXGJBGMNQ" class="webex-radiogroup">
-<label><input type="radio" autocomplete="off" name="radio_HIXGJBGMNQ" value="answer"> <span>The source is a filename and inMemory() returns FALSE</span></label><label><input type="radio" autocomplete="off" name="radio_HIXGJBGMNQ" value> <span>The raster has a CRS</span></label><label><input type="radio" autocomplete="off" name="radio_HIXGJBGMNQ" value> <span>global() returns a data frame</span></label><label><input type="radio" autocomplete="off" name="radio_HIXGJBGMNQ" value> <span>The raster has multiple layers</span></label>
+<div id="radio_HBCWMWIYYR" class="webex-radiogroup">
+<label><input type="radio" autocomplete="off" name="radio_HBCWMWIYYR" value="answer"> <span>The source is a filename and inMemory() returns FALSE</span></label><label><input type="radio" autocomplete="off" name="radio_HBCWMWIYYR" value> <span>The raster has a CRS</span></label><label><input type="radio" autocomplete="off" name="radio_HBCWMWIYYR" value> <span>global() returns a data frame</span></label><label><input type="radio" autocomplete="off" name="radio_HBCWMWIYYR" value> <span>The raster has multiple layers</span></label>
 </div>
 </div>
 <div class="now_you">
@@ -26976,11 +26990,11 @@ elevation 310.1131 36.20399 224.4741 391.7271</code></pre>
 <p><span class="answer_link" data-answer="a-6-1-global">Click here to see my answer</span></p>
 <div id="a-6-1-global" class="answer_body">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>dc <span class="sc">%&gt;%</span></span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>  terra<span class="sc">::</span><span class="fu">global</span>(</span>
-<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;mean&quot;</span>,</span>
-<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">na.rm =</span> <span class="cn">TRUE</span></span>
-<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>dc <span class="sc">%&gt;%</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>  terra<span class="sc">::</span><span class="fu">global</span>(</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;mean&quot;</span>,</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">na.rm =</span> <span class="cn">TRUE</span></span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>           mean
 canopy 17.35207
@@ -26998,9 +27012,9 @@ land    1.00000</code></pre>
 <p>The <code>resolution</code> of the elevation model is <code>3.08642e-05</code>. That is not a length. The file is in a geographic CRS, so a cell is <code>3.08642e-05</code> <strong>degrees</strong> on a side, and a degree of longitude is a different distance at the equator than it is at 39°N, where this campus sits.</p>
 <p>We use <code>cellSize()</code> to turn that into an area on the ground:</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>dem <span class="sc">%&gt;%</span></span>
-<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>  terra<span class="sc">::</span><span class="fu">cellSize</span>(<span class="at">unit =</span> <span class="st">&quot;m&quot;</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>  terra<span class="sc">::</span><span class="fu">global</span>(<span class="st">&quot;mean&quot;</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>dem <span class="sc">%&gt;%</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>  terra<span class="sc">::</span><span class="fu">cellSize</span>(<span class="at">unit =</span> <span class="st">&quot;m&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>  terra<span class="sc">::</span><span class="fu">global</span>(<span class="st">&quot;mean&quot;</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>         mean
 area 9.174949</code></pre>
@@ -27011,8 +27025,8 @@ area 9.174949</code></pre>
 <div class="now_you">
 <p><i class="fa-solid fa-user-circle fa-2x" aria-label="user-circle"></i> <span style="padding-left: 0.5em;">Check your understanding</span></p>
 <p>A raster prints <code>resolution : 0.0002777778, 0.0002777778</code> and <code>coord. ref. : lon/lat WGS 84</code>. What is the size of a cell?</p>
-<div id="radio_OQJUCJFQIE" class="webex-radiogroup">
-<label><input type="radio" autocomplete="off" name="radio_OQJUCJFQIE" value="answer"> <span>About 0.0003 degrees on a side, which is a different distance in each direction</span></label><label><input type="radio" autocomplete="off" name="radio_OQJUCJFQIE" value> <span>About 0.0003 meters on a side</span></label><label><input type="radio" autocomplete="off" name="radio_OQJUCJFQIE" value> <span>About 28 meters on a side, everywhere on Earth</span></label><label><input type="radio" autocomplete="off" name="radio_OQJUCJFQIE" value> <span>It cannot be worked out without the extent</span></label>
+<div id="radio_CSBPTHERMA" class="webex-radiogroup">
+<label><input type="radio" autocomplete="off" name="radio_CSBPTHERMA" value="answer"> <span>About 0.0003 degrees on a side, which is a different distance in each direction</span></label><label><input type="radio" autocomplete="off" name="radio_CSBPTHERMA" value> <span>About 0.0003 meters on a side</span></label><label><input type="radio" autocomplete="off" name="radio_CSBPTHERMA" value> <span>About 28 meters on a side, everywhere on Earth</span></label><label><input type="radio" autocomplete="off" name="radio_CSBPTHERMA" value> <span>It cannot be worked out without the extent</span></label>
 </div>
 <p>True or false: <code>cellSize()</code> returns the same value for every cell of a raster in a geographic CRS.</p>
 <p><select class="webex-select"><option value="blank"></option><option value>TRUE</option><option value="answer">FALSE</option></select></p>
@@ -27023,7 +27037,7 @@ area 9.174949</code></pre>
 <h2 class="anchored" data-anchor-id="multi-layer-rasters">Multi-layer rasters</h2>
 <p>A <code>SpatRaster</code> can hold several <strong>raster layers</strong> on the same grid. The <code>dc</code> file already holds canopy cover, impervious surface, land cover and a layer marking land cells:</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>dc</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>dc</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>class       : SpatRaster
 size        : 716, 621, 4  (nrow, ncol, nlyr)
@@ -27038,14 +27052,14 @@ max values  : 93.999992, 100,   95,    1</code></pre>
 </div>
 <p>Once rasters share a grid, <code>c()</code> stacks their layers in a single <code>SpatRaster</code>. To make that operation visible, we can separate two layers of <code>dc</code> and stack them again:</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>dc_surfaces <span class="ot">&lt;-</span></span>
-<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">c</span>(</span>
-<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>    dc <span class="sc">%&gt;%</span></span>
-<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>      <span class="fu">select</span>(canopy),</span>
-<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>    dc <span class="sc">%&gt;%</span></span>
-<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>      <span class="fu">select</span>(imp)</span>
-<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
-<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">impervious =</span> imp)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>dc_surfaces <span class="ot">&lt;-</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">c</span>(</span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>    dc <span class="sc">%&gt;%</span></span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>      <span class="fu">select</span>(canopy),</span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>    dc <span class="sc">%&gt;%</span></span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>      <span class="fu">select</span>(imp)</span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">impervious =</span> imp)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <div class="cell">
 <div class="cell-output cell-output-stdout">
@@ -27063,8 +27077,8 @@ max values  : 93.999992,        100</code></pre>
 <p>The layers match <strong>by position</strong>, so <code>c()</code> accepts only rasters that share a grid. <strong><em>6.3 Changing the grid: Resolution, extent and projection</em></strong> explains how to make grids agree when they come from different files.</p>
 <p>With the layers aligned, we can use the verbs on layers as we use them on columns. <code>select()</code> keeps layers:</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>dc_surfaces <span class="sc">%&gt;%</span></span>
-<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(canopy)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>dc_surfaces <span class="sc">%&gt;%</span></span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(canopy)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>class       : SpatRaster
 size        : 716, 621, 1  (nrow, ncol, nlyr)
@@ -27079,17 +27093,17 @@ max value   : 93.999992</code></pre>
 </div>
 <p>And <code>mutate()</code> calculates a new layer, cell against cell. A common terrain measure is height above the lowest point on the grid:</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Lowest campus elevation:</span></span>
-<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>low_point <span class="ot">&lt;-</span></span>
-<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>  dem <span class="sc">%&gt;%</span></span>
-<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>  terra<span class="sc">::</span><span class="fu">global</span>(<span class="st">&quot;min&quot;</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pull</span>(min)</span>
-<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a>dem <span class="sc">%&gt;%</span></span>
-<span id="cb21-9"><a href="#cb21-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
-<span id="cb21-10"><a href="#cb21-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">relative_elevation =</span> elevation <span class="sc">-</span> low_point</span>
-<span id="cb21-11"><a href="#cb21-11" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Lowest campus elevation:</span></span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>low_point <span class="ot">&lt;-</span></span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>  dem <span class="sc">%&gt;%</span></span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a>  terra<span class="sc">::</span><span class="fu">global</span>(<span class="st">&quot;min&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pull</span>(min)</span>
+<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a>dem <span class="sc">%&gt;%</span></span>
+<span id="cb22-9"><a href="#cb22-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb22-10"><a href="#cb22-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">relative_elevation =</span> elevation <span class="sc">-</span> low_point</span>
+<span id="cb22-11"><a href="#cb22-11" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>class       : SpatRaster
 size        : 745, 778, 2  (nrow, ncol, nlyr)
@@ -27110,20 +27124,20 @@ max values  : 391.727142,         167.253052</code></pre>
 <p><span class="answer_link" data-answer="a-6-1-sheltered">Click here to see my answer</span></p>
 <div id="a-6-1-sheltered" class="answer_body">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>dc <span class="sc">%&gt;%</span></span>
-<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Drop cells over 10% impervious:</span></span>
-<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(imp <span class="sc">&lt;</span> <span class="dv">10</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Keep the canopy layer:</span></span>
-<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-9"><a href="#cb23-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(canopy) <span class="sc">%&gt;%</span></span>
-<span id="cb23-10"><a href="#cb23-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-11"><a href="#cb23-11" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Count remaining cells:</span></span>
-<span id="cb23-12"><a href="#cb23-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-13"><a href="#cb23-13" aria-hidden="true" tabindex="-1"></a>  terra<span class="sc">::</span><span class="fu">not.na</span>() <span class="sc">%&gt;%</span></span>
-<span id="cb23-14"><a href="#cb23-14" aria-hidden="true" tabindex="-1"></a>  terra<span class="sc">::</span><span class="fu">global</span>(<span class="st">&quot;sum&quot;</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>dc <span class="sc">%&gt;%</span></span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Drop cells over 10% impervious:</span></span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(imp <span class="sc">&lt;</span> <span class="dv">10</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Keep the canopy layer:</span></span>
+<span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-9"><a href="#cb24-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(canopy) <span class="sc">%&gt;%</span></span>
+<span id="cb24-10"><a href="#cb24-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-11"><a href="#cb24-11" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Count remaining cells:</span></span>
+<span id="cb24-12"><a href="#cb24-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-13"><a href="#cb24-13" aria-hidden="true" tabindex="-1"></a>  terra<span class="sc">::</span><span class="fu">not.na</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb24-14"><a href="#cb24-14" aria-hidden="true" tabindex="-1"></a>  terra<span class="sc">::</span><span class="fu">global</span>(<span class="st">&quot;sum&quot;</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>         sum
 canopy 42376</code></pre>
@@ -27137,8 +27151,8 @@ canopy 42376</code></pre>
 <h2 class="anchored" data-anchor-id="filtering-raster-values">Filtering raster values</h2>
 <p><code>filter()</code> acts on cell values, but it cannot remove scattered cells without changing the regular grid. A row of a data frame can be dropped because nothing else depends on where it sat. A raster cell has a fixed position relative to every other cell, so cells cannot be removed from the middle of the grid. Instead, the cells that fail a condition remain in place and their values become <code>NA</code>:</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>dem <span class="sc">%&gt;%</span></span>
-<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(elevation <span class="sc">&gt;</span> <span class="dv">350</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>dem <span class="sc">%&gt;%</span></span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(elevation <span class="sc">&gt;</span> <span class="dv">350</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>class       : SpatRaster
 size        : 745, 778, 1  (nrow, ncol, nlyr)
@@ -27153,19 +27167,19 @@ max value   : 391.727142</code></pre>
 </div>
 <p>Notice that the dimensions, extent, and number of cells are unchanged. <code>ncell()</code> returns the number of cells in the grid, including cells that hold <code>NA</code>:</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>dem <span class="sc">%&gt;%</span></span>
-<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(elevation <span class="sc">&gt;</span> <span class="dv">350</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>  terra<span class="sc">::</span><span class="fu">ncell</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>dem <span class="sc">%&gt;%</span></span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(elevation <span class="sc">&gt;</span> <span class="dv">350</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>  terra<span class="sc">::</span><span class="fu">ncell</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 579610</code></pre>
 </div>
 </div>
 <p>The number of cells did not change, so count the empty cells instead:</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>dem <span class="sc">%&gt;%</span></span>
-<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(elevation <span class="sc">&gt;</span> <span class="dv">350</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">is.na</span>() <span class="sc">%&gt;%</span></span>
-<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a>  terra<span class="sc">::</span><span class="fu">global</span>(<span class="st">&quot;sum&quot;</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>dem <span class="sc">%&gt;%</span></span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(elevation <span class="sc">&gt;</span> <span class="dv">350</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">is.na</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a>  terra<span class="sc">::</span><span class="fu">global</span>(<span class="st">&quot;sum&quot;</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>             sum
 elevation 486530</code></pre>
@@ -27173,10 +27187,10 @@ elevation 486530</code></pre>
 </div>
 <p><code>not.na()</code> returns <code>TRUE</code> for each cell that still has a value, so summing the result counts the cells above 350 meters:</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>dem <span class="sc">%&gt;%</span></span>
-<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(elevation <span class="sc">&gt;</span> <span class="dv">350</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a>  terra<span class="sc">::</span><span class="fu">not.na</span>() <span class="sc">%&gt;%</span></span>
-<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a>  terra<span class="sc">::</span><span class="fu">global</span>(<span class="st">&quot;sum&quot;</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>dem <span class="sc">%&gt;%</span></span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(elevation <span class="sc">&gt;</span> <span class="dv">350</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a>  terra<span class="sc">::</span><span class="fu">not.na</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a>  terra<span class="sc">::</span><span class="fu">global</span>(<span class="st">&quot;sum&quot;</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>            sum
 elevation 93080</code></pre>
@@ -27194,16 +27208,16 @@ elevation 93080</code></pre>
 <p><span class="answer_link" data-answer="a-6-1-high-area">Click here to see my answer</span></p>
 <div id="a-6-1-high-area" class="answer_body">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a>dem <span class="sc">%&gt;%</span></span>
-<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(elevation <span class="sc">&gt;</span> <span class="dv">350</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a>  terra<span class="sc">::</span><span class="fu">cellSize</span>(</span>
-<span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">mask =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb33-5"><a href="#cb33-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">unit =</span> <span class="st">&quot;ha&quot;</span></span>
-<span id="cb33-6"><a href="#cb33-6" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
-<span id="cb33-7"><a href="#cb33-7" aria-hidden="true" tabindex="-1"></a>  terra<span class="sc">::</span><span class="fu">global</span>(</span>
-<span id="cb33-8"><a href="#cb33-8" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;sum&quot;</span>,</span>
-<span id="cb33-9"><a href="#cb33-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">na.rm =</span> <span class="cn">TRUE</span></span>
-<span id="cb33-10"><a href="#cb33-10" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a>dem <span class="sc">%&gt;%</span></span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(elevation <span class="sc">&gt;</span> <span class="dv">350</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a>  terra<span class="sc">::</span><span class="fu">cellSize</span>(</span>
+<span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">mask =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb34-5"><a href="#cb34-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">unit =</span> <span class="st">&quot;ha&quot;</span></span>
+<span id="cb34-6"><a href="#cb34-6" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb34-7"><a href="#cb34-7" aria-hidden="true" tabindex="-1"></a>  terra<span class="sc">::</span><span class="fu">global</span>(</span>
+<span id="cb34-8"><a href="#cb34-8" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;sum&quot;</span>,</span>
+<span id="cb34-9"><a href="#cb34-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">na.rm =</span> <span class="cn">TRUE</span></span>
+<span id="cb34-10"><a href="#cb34-10" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>          sum
 area 85.39717</code></pre>
@@ -27254,8 +27268,8 @@ Note
 <ol type="1">
 <li>A script that ran yesterday now fills the computer’s memory. The rasters have not changed. What should be checked first?</li>
 </ol>
-<div id="radio_DWUHJWGZMA" class="webex-radiogroup">
-<label><input type="radio" autocomplete="off" name="radio_DWUHJWGZMA" value="answer"> <span>Whether the values are now held in memory, which inMemory() reports</span></label><label><input type="radio" autocomplete="off" name="radio_DWUHJWGZMA" value> <span>Whether the files moved</span></label><label><input type="radio" autocomplete="off" name="radio_DWUHJWGZMA" value> <span>Whether the CRS changed</span></label><label><input type="radio" autocomplete="off" name="radio_DWUHJWGZMA" value> <span>Whether the resolution is in degrees</span></label>
+<div id="radio_NUDTTEBRLF" class="webex-radiogroup">
+<label><input type="radio" autocomplete="off" name="radio_NUDTTEBRLF" value="answer"> <span>Whether the values are now held in memory, which inMemory() reports</span></label><label><input type="radio" autocomplete="off" name="radio_NUDTTEBRLF" value> <span>Whether the files moved</span></label><label><input type="radio" autocomplete="off" name="radio_NUDTTEBRLF" value> <span>Whether the CRS changed</span></label><label><input type="radio" autocomplete="off" name="radio_NUDTTEBRLF" value> <span>Whether the resolution is in degrees</span></label>
 </div>
 <ol start="2" type="1">
 <li>Parsons problem: Reorder the lines below to count the cells above 350 meters. Leave the line that counts every cell in the raster rather than the cells that still have a value in the trash.</li>
@@ -27285,26 +27299,26 @@ window.parsonsProblems = window.parsonsProblems || []; window.parsonsProblems.pu
 <ol start="3" type="1">
 <li><code>filter()</code> is called on a raster of 1,000 cells, and 400 of them satisfy the condition. Which pair of results is correct?</li>
 </ol>
-<div id="radio_IJLYFNAHDU" class="webex-radiogroup">
-<label><input type="radio" autocomplete="off" name="radio_IJLYFNAHDU" value="answer"> <span>ncell() returns 1,000 and the sum of not.na() returns 400</span></label><label><input type="radio" autocomplete="off" name="radio_IJLYFNAHDU" value> <span>ncell() returns 400 and the sum of not.na() returns 400</span></label><label><input type="radio" autocomplete="off" name="radio_IJLYFNAHDU" value> <span>ncell() returns 1,000 and the sum of not.na() returns 600</span></label><label><input type="radio" autocomplete="off" name="radio_IJLYFNAHDU" value> <span>ncell() returns 400 and the sum of not.na() returns 1,000</span></label>
+<div id="radio_EUWBVZEOXL" class="webex-radiogroup">
+<label><input type="radio" autocomplete="off" name="radio_EUWBVZEOXL" value="answer"> <span>ncell() returns 1,000 and the sum of not.na() returns 400</span></label><label><input type="radio" autocomplete="off" name="radio_EUWBVZEOXL" value> <span>ncell() returns 400 and the sum of not.na() returns 400</span></label><label><input type="radio" autocomplete="off" name="radio_EUWBVZEOXL" value> <span>ncell() returns 1,000 and the sum of not.na() returns 600</span></label><label><input type="radio" autocomplete="off" name="radio_EUWBVZEOXL" value> <span>ncell() returns 400 and the sum of not.na() returns 1,000</span></label>
 </div>
 <ol start="4" type="1">
 <li>You need the mean elevation of cells above 350 meters. Which statement answers the question?</li>
 </ol>
-<div id="radio_RKWPBGHYSF" class="webex-radiogroup">
-<label><input type="radio" autocomplete="off" name="radio_RKWPBGHYSF" value="answer"> <span>dem %&gt;% filter(elevation &gt; 350) %&gt;% terra::global(“mean”, na.rm = TRUE)</span></label><label><input type="radio" autocomplete="off" name="radio_RKWPBGHYSF" value> <span>dem %&gt;% filter(elevation &gt; 350) %&gt;% terra::ncell()</span></label><label><input type="radio" autocomplete="off" name="radio_RKWPBGHYSF" value> <span>dem %&gt;% terra::global(“mean”) %&gt;% filter(elevation &gt; 350)</span></label><label><input type="radio" autocomplete="off" name="radio_RKWPBGHYSF" value> <span>dem %&gt;% select(elevation) %&gt;% terra::global(“mean”)</span></label>
+<div id="radio_WULQJAGEFX" class="webex-radiogroup">
+<label><input type="radio" autocomplete="off" name="radio_WULQJAGEFX" value="answer"> <span>dem %&gt;% filter(elevation &gt; 350) %&gt;% terra::global(“mean”, na.rm = TRUE)</span></label><label><input type="radio" autocomplete="off" name="radio_WULQJAGEFX" value> <span>dem %&gt;% filter(elevation &gt; 350) %&gt;% terra::ncell()</span></label><label><input type="radio" autocomplete="off" name="radio_WULQJAGEFX" value> <span>dem %&gt;% terra::global(“mean”) %&gt;% filter(elevation &gt; 350)</span></label><label><input type="radio" autocomplete="off" name="radio_WULQJAGEFX" value> <span>dem %&gt;% select(elevation) %&gt;% terra::global(“mean”)</span></label>
 </div>
 <ol start="5" type="1">
 <li><code>geom_spatraster()</code> draws a raster of 2,000,000 cells and prints a message about resampling. A colleague worries that the original raster was changed. Which explanation is correct?</li>
 </ol>
-<div id="radio_USTKYZBGDR" class="webex-radiogroup">
-<label><input type="radio" autocomplete="off" name="radio_USTKYZBGDR" value="answer"> <span>Only the display was coarsened. The raster retains its original grid and values</span></label><label><input type="radio" autocomplete="off" name="radio_USTKYZBGDR" value> <span>The raster was permanently reduced to about 500,000 cells</span></label><label><input type="radio" autocomplete="off" name="radio_USTKYZBGDR" value> <span>The first 500,000 cells replaced the original raster</span></label><label><input type="radio" autocomplete="off" name="radio_USTKYZBGDR" value> <span>The raster values were averaged and saved to the source file</span></label>
+<div id="radio_NSXBUYDGTN" class="webex-radiogroup">
+<label><input type="radio" autocomplete="off" name="radio_NSXBUYDGTN" value="answer"> <span>Only the display was coarsened. The raster retains its original grid and values</span></label><label><input type="radio" autocomplete="off" name="radio_NSXBUYDGTN" value> <span>The raster was permanently reduced to about 500,000 cells</span></label><label><input type="radio" autocomplete="off" name="radio_NSXBUYDGTN" value> <span>The first 500,000 cells replaced the original raster</span></label><label><input type="radio" autocomplete="off" name="radio_NSXBUYDGTN" value> <span>The raster values were averaged and saved to the source file</span></label>
 </div>
 <ol start="6" type="1">
 <li>A <code>SpatRaster</code> contains 200,000 cells and three layers. You use <code>mutate()</code> to calculate a fourth layer from the first two. What changes?</li>
 </ol>
-<div id="radio_NOCLAGKYZE" class="webex-radiogroup">
-<label><input type="radio" autocomplete="off" name="radio_NOCLAGKYZE" value="answer"> <span>The raster has the same 200,000 cells and can hold 800,000 values</span></label><label><input type="radio" autocomplete="off" name="radio_NOCLAGKYZE" value> <span>The raster has 800,000 cells and four values</span></label><label><input type="radio" autocomplete="off" name="radio_NOCLAGKYZE" value> <span>The raster has the same 200,000 cells and still holds 600,000 values</span></label><label><input type="radio" autocomplete="off" name="radio_NOCLAGKYZE" value> <span>The raster gains another grid with 200,000 cells</span></label>
+<div id="radio_BUAMAOCTAU" class="webex-radiogroup">
+<label><input type="radio" autocomplete="off" name="radio_BUAMAOCTAU" value="answer"> <span>The raster has the same 200,000 cells and can hold 800,000 values</span></label><label><input type="radio" autocomplete="off" name="radio_BUAMAOCTAU" value> <span>The raster has 800,000 cells and four values</span></label><label><input type="radio" autocomplete="off" name="radio_BUAMAOCTAU" value> <span>The raster has the same 200,000 cells and still holds 600,000 values</span></label><label><input type="radio" autocomplete="off" name="radio_BUAMAOCTAU" value> <span>The raster gains another grid with 200,000 cells</span></label>
 </div>
 </div>
 </section>
