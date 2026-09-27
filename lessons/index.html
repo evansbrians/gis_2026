@@ -1835,8 +1835,8 @@ const PARTS = [
       "getting-started"
      ],
      [
-      "About this week's data",
-      "about-this-weeks-data"
+      "Data for Module 6",
+      "data-for-module-6"
      ],
      [
       "Readings and resources",
@@ -1855,16 +1855,16 @@ const PARTS = [
     "search": "c cat cellSize filter geom_spatraster ggplot global inMemory is.na library mutate ncell not.na pull rast rename scale_fill_hypso_c select source theme_bw",
     "sections": [
      [
-      "Read a raster",
-      "read-a-raster"
+      "Reading raster data",
+      "reading-raster-data"
      ],
      [
       "The raster data model",
       "the-raster-data-model"
      ],
      [
-      "Draw a raster",
-      "draw-a-raster"
+      "Visualizing raster data",
+      "visualizing-raster-data"
      ],
      [
       "Values on disk and in memory",
@@ -1875,16 +1875,16 @@ const PARTS = [
       "summarizing-raster-values"
      ],
      [
-      "A resolution is not always a distance",
-      "a-resolution-is-not-always-a-distance"
+      "Raster resolution and cell area",
+      "raster-resolution-and-cell-area"
      ],
      [
-      "A second measurement is a second layer",
-      "a-second-measurement-is-a-second-layer"
+      "Multi-layer rasters",
+      "multi-layer-rasters"
      ],
      [
-      "Filtering values",
-      "filtering-values"
+      "Filtering raster values",
+      "filtering-raster-values"
      ],
      [
       "Putting it all together",
@@ -1903,16 +1903,16 @@ const PARTS = [
     "search": "arrange as.data.frame as.matrix c cat cats classify clean_names coltab cut desc distinct filter freq geom_spatraster ggplot global head is.factor is.na join_by labs left_join levels library matrix mutate pluck rast read_csv row_number scale_fill_brewer scale_fill_coltab select source sum tibble",
     "sections": [
      [
-      "How a categorical raster is structured",
-      "how-a-categorical-raster-is-structured"
+      "Categorical raster structure",
+      "categorical-raster-structure"
      ],
      [
-      "Drawing the classes",
-      "drawing-the-classes"
+      "Visualizing categorical rasters",
+      "visualizing-categorical-rasters"
      ],
      [
-      "Building classes from a quantity",
-      "building-classes-from-a-quantity"
+      "Classifying continuous values",
+      "classifying-continuous-values"
      ],
      [
       "Merging classes",
@@ -1935,20 +1935,20 @@ const PARTS = [
     "search": "aes aggregate arrange as.polygons bind_rows c cat cats cellSize coltab crop desc dim disagg ext filter freq geom_sf ggplot global head is.factor is.na labs levels library mutate names ncell project rast res resample scale_color_manual scale_linewidth_manual select source st_as_sf theme_void",
     "sections": [
      [
-      "When two rasters do not share a grid",
-      "when-two-rasters-do-not-share-a-grid"
+      "Diagnosing grid mismatches",
+      "diagnosing-grid-mismatches"
      ],
      [
       "Projecting a raster",
       "projecting-a-raster"
      ],
      [
-      "Coarser and finer",
-      "coarser-and-finer"
+      "Aggregating and disaggregating rasters",
+      "aggregating-and-disaggregating-rasters"
      ],
      [
-      "Onto another raster's grid",
-      "onto-another-rasters-grid"
+      "Resampling to a target grid",
+      "resampling-to-a-target-grid"
      ],
      [
       "Putting it all together",
@@ -1967,24 +1967,56 @@ const PARTS = [
     "search": "aggregate arrange as.polygons c cat class clean_names count crop desc extract freq geom_sf geom_spatraster ggplot global head is.na library mask median mutate n names pull rast rasterize scale_fill_hypso_c scale_fill_whitebox_c select source st_area st_as_sf st_crs st_drop_geometry st_read st_transform summarize vect",
     "sections": [
      [
-      "Two packages, two classes",
-      "two-packages-two-classes"
+      "Converting between sf and SpatVector objects",
+      "converting-between-sf-and-spatvector-objects"
      ],
      [
-      "Cutting a raster down to a vector",
-      "cutting-a-raster-down-to-a-vector"
+      "Cropping and masking with vector boundaries",
+      "cropping-and-masking-with-vector-boundaries"
      ],
      [
-      "Reading raster values at vector locations",
-      "reading-raster-values-at-vector-locations"
+      "Extracting raster values at vector locations",
+      "extracting-raster-values-at-vector-locations"
      ],
      [
-      "Turning a vector into a raster",
-      "turning-a-vector-into-a-raster"
+      "Rasterizing vector features",
+      "rasterizing-vector-features"
      ],
      [
-      "Turning a raster into a vector",
-      "turning-a-raster-into-a-vector"
+      "Converting raster classes to polygons",
+      "converting-raster-classes-to-polygons"
+     ],
+     [
+      "Putting it all together",
+      "putting-it-all-together"
+     ]
+    ]
+   },
+   {
+    "id": "6.5",
+    "title": "An introduction to Shiny",
+    "slug": "module_6/6.5_shiny/",
+    "kind": "Tutorial (optional)",
+    "blurb": "Build a small app that lets a reader change an elevation threshold and see the result.",
+    "mins": 25,
+    "meta": "Tutorial (optional) · 25 min",
+    "search": "cat cellSize checkboxInput filter fluidPage function geom_spatraster ggplot global if_else install.packages library mainPanel mask plotOutput project pull rast reactive rename renderPlot renderText round scale_fill_hypso_c shinyApp sidebarLayout sidebarPanel sliderInput source textOutput theme_void titlePanel",
+    "sections": [
+     [
+      "Shiny user interfaces and servers",
+      "shiny-user-interfaces-and-servers"
+     ],
+     [
+      "Building a raster application",
+      "building-a-raster-application"
+     ],
+     [
+      "Reactive expressions",
+      "reactive-expressions"
+     ],
+     [
+      "Running and deploying a Shiny application",
+      "running-and-deploying-a-shiny-application"
      ],
      [
       "Putting it all together",
