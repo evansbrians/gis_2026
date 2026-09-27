@@ -1802,6 +1802,197 @@ const PARTS = [
     ]
    }
   ]
+ },
+ {
+  "n": 6,
+  "kicker": "Module 6",
+  "title": "Raster data with terra",
+  "introTitle": "Module introduction",
+  "introBlurb": "What Module 6 covers, this week's data, and the required readings.",
+  "intro": "From features to surfaces. Elevation, temperature, canopy cover and land cover are measured across a landscape, and a raster stores them on a grid of cells. Read and draw rasters with terra and tidyterra, build and merge classes, put rasters from different sources onto a shared grid, and combine rasters with the vector data of the previous modules.",
+  "problemSet": {
+   "id": "PS6",
+   "dir": "problem_set_6",
+   "blurb": "Practice with the raster toolkit: classifying impervious surface, aligning two grids, and summarizing raster values for each park."
+  },
+  "chapters": [
+   {
+    "id": "6.0",
+    "title": "Module introduction",
+    "slug": "module_6/6.0_module_intro/",
+    "kind": "Overview",
+    "blurb": "What Module 6 covers, this week's data, and the required readings.",
+    "mins": 10,
+    "meta": "Overview · 10 min",
+    "search": "c cat install.packages source",
+    "sections": [
+     [
+      "Module overview",
+      "module-overview"
+     ],
+     [
+      "Getting started",
+      "getting-started"
+     ],
+     [
+      "About this week's data",
+      "about-this-weeks-data"
+     ],
+     [
+      "Readings and resources",
+      "readings-and-resources"
+     ]
+    ]
+   },
+   {
+    "id": "6.1",
+    "title": "Introduction to rasters with terra and stars",
+    "slug": "module_6/6.1_introduction_to_rasters/",
+    "kind": "Tutorial",
+    "blurb": "Build the raster mental model, read and draw a SpatRaster, work with its layers, and filter values without changing the grid.",
+    "mins": 35,
+    "meta": "Tutorial · 35 min",
+    "search": "c cat cellSize filter geom_spatraster ggplot global inMemory is.na library mutate ncell not.na pull rast rename scale_fill_hypso_c select source theme_bw",
+    "sections": [
+     [
+      "Read a raster",
+      "read-a-raster"
+     ],
+     [
+      "The raster data model",
+      "the-raster-data-model"
+     ],
+     [
+      "Draw a raster",
+      "draw-a-raster"
+     ],
+     [
+      "Values on disk and in memory",
+      "values-on-disk-and-in-memory"
+     ],
+     [
+      "Summarizing raster values",
+      "summarizing-raster-values"
+     ],
+     [
+      "A resolution is not always a distance",
+      "a-resolution-is-not-always-a-distance"
+     ],
+     [
+      "A second measurement is a second layer",
+      "a-second-measurement-is-a-second-layer"
+     ],
+     [
+      "Filtering values",
+      "filtering-values"
+     ],
+     [
+      "Putting it all together",
+      "putting-it-all-together"
+     ]
+    ]
+   },
+   {
+    "id": "6.2",
+    "title": "Categorical rasters",
+    "slug": "module_6/6.2_categorical_rasters/",
+    "kind": "Tutorial",
+    "blurb": "Read the labels and colors carried by a categorical raster, build classes from a quantity, and merge existing classes by changing their codes rather than only their names.",
+    "mins": 40,
+    "meta": "Tutorial · 40 min",
+    "search": "arrange as.data.frame as.matrix c cat cats classify clean_names coltab cut desc distinct filter freq geom_spatraster ggplot global head is.factor is.na join_by labs left_join levels library matrix mutate pluck rast read_csv row_number scale_fill_brewer scale_fill_coltab select source sum tibble",
+    "sections": [
+     [
+      "How a categorical raster is structured",
+      "how-a-categorical-raster-is-structured"
+     ],
+     [
+      "Drawing the classes",
+      "drawing-the-classes"
+     ],
+     [
+      "Building classes from a quantity",
+      "building-classes-from-a-quantity"
+     ],
+     [
+      "Merging classes",
+      "merging-classes"
+     ],
+     [
+      "Putting it all together",
+      "putting-it-all-together"
+     ]
+    ]
+   },
+   {
+    "id": "6.3",
+    "title": "Changing the grid: Resolution, extent and projection",
+    "slug": "module_6/6.3_changing_the_grid/",
+    "kind": "Tutorial",
+    "blurb": "Identify the differences between two raster grids, then use project(), aggregate(), disagg() or resample() to put them onto a useful shared grid.",
+    "mins": 45,
+    "meta": "Tutorial · 45 min",
+    "search": "aes aggregate arrange as.polygons bind_rows c cat cats cellSize coltab crop desc dim disagg ext filter freq geom_sf ggplot global head is.factor is.na labs levels library mutate names ncell project rast res resample scale_color_manual scale_linewidth_manual select source st_as_sf theme_void",
+    "sections": [
+     [
+      "When two rasters do not share a grid",
+      "when-two-rasters-do-not-share-a-grid"
+     ],
+     [
+      "Projecting a raster",
+      "projecting-a-raster"
+     ],
+     [
+      "Coarser and finer",
+      "coarser-and-finer"
+     ],
+     [
+      "Onto another raster's grid",
+      "onto-another-rasters-grid"
+     ],
+     [
+      "Putting it all together",
+      "putting-it-all-together"
+     ]
+    ]
+   },
+   {
+    "id": "6.4",
+    "title": "Rasters and vectors together",
+    "slug": "module_6/6.4_rasters_and_vectors/",
+    "kind": "Tutorial",
+    "blurb": "Crop and mask a raster with a vector, extract raster values at vector locations, and move between raster and vector representations.",
+    "mins": 35,
+    "meta": "Tutorial · 35 min",
+    "search": "aggregate arrange as.polygons c cat class clean_names count crop desc extract freq geom_sf geom_spatraster ggplot global head is.na library mask median mutate n names pull rast rasterize scale_fill_hypso_c scale_fill_whitebox_c select source st_area st_as_sf st_crs st_drop_geometry st_read st_transform summarize vect",
+    "sections": [
+     [
+      "Two packages, two classes",
+      "two-packages-two-classes"
+     ],
+     [
+      "Cutting a raster down to a vector",
+      "cutting-a-raster-down-to-a-vector"
+     ],
+     [
+      "Reading raster values at vector locations",
+      "reading-raster-values-at-vector-locations"
+     ],
+     [
+      "Turning a vector into a raster",
+      "turning-a-vector-into-a-raster"
+     ],
+     [
+      "Turning a raster into a vector",
+      "turning-a-raster-into-a-vector"
+     ],
+     [
+      "Putting it all together",
+      "putting-it-all-together"
+     ]
+    ]
+   }
+  ]
  }
 ];
 
