@@ -13,65 +13,60 @@ module_refs <- find_module_references(6)
 ```
 <hr>
 
+<div>
 ![](../../src/images/hex_complex.png){.intro_image fig-alt="Course logo"}
 
-Modules 3 to 5 worked with features: things somebody decided were worth recording separately, each with a geometry and a row of its own. Elevation, temperature, canopy cover and land cover are not like that. They have a value everywhere, and the data model that records them is a grid.
+Modules 3 through 5 focused on vector data: separate [features]{.term term="Feature"}, each with a [geometry]{.term} and [fields]{.term term="Field"} of its own. Many ecological measurements describe a continuous surface instead. Elevation, temperature, canopy cover and land cover are recorded across a landscape, and [rasters]{.term term="Raster"} store those measurements on a grid.
 
-This module is about that model and the package that handles it. *terra* is the current package for raster data in R, and *tidyterra* supplies the *dplyr* verbs and the *ggplot2* geoms that let a raster be handled with the vocabulary the rest of this course has been building. Most of the work happens on one landscape: the Smithsonian Conservation Biology Institute campus, where this course is taught.
+In this module, we will use *terra* to read, modify and combine rasters. The *tidyterra* [package]{.term} extends familiar *dplyr* verbs and *ggplot2* layers to raster [objects]{.term term="Object"}. In this module you will learn:
 
-In this module you will learn:
-
-* What a raster is, how a `SpatRaster` records one, and what a *stars* data cube adds
-* How to calculate with a raster, and how to pull values out of one at the places you care about
+* What a raster is and how a `SpatRaster` represents its grid and [values]{.term term="Value"}
 * How to build classes out of a quantity, and how to work with a raster whose values are already classes
-* How to move between rasters and the vector data of the previous modules, in both directions
-* How to read a landscape out of an elevation model
-* How to build a finished raster map, and how to hand one to a reader who can pan and zoom it themselves
+* How to put rasters from different sources onto a shared grid
+* How to combine rasters with the vector data of the previous modules
+* How to write a raster to a file without changing its values
+* Optionally, how to let a reader explore a raster through a small Shiny app
+
+</div>
 
 ## Module overview
 
-* **6.1 Introduction to rasters with terra and stars**: What a `SpatRaster` is, how to read and draw one, how to put two rasters onto one grid, the *dplyr* verbs *tidyterra* supplies, the *stars* cube for data with a third axis, and writing a raster to a file.
-* **6.2 Modifying rasters and extracting useful information**: Map algebra, the four kinds of raster calculation, and reading raster values at points and summarizing them within polygons.
-* **6.3 Raster classification**: Building classes out of a quantity with `classify()`, the table of labels a categorical raster carries, and merging classes without changing cells by accident.
-* **6.4 Vectorizing rasters and rasterizing vectors**: Cropping and masking with a polygon, turning a vector into a raster, and turning a raster back into points, lines or polygons.
-* **6.5 Terrain models**: Slope, aspect and the other terrain variables, hillshading, and rendering a landscape in three dimensions with *rayshader*.
-* **6.6 Advanced tmap**: Building a finished raster map: layered rasters and vectors, legends, insets and layouts.
-* **6.7 Introduction to leaflet** (optional): The shortest path from a raster to a map a reader can pan and zoom.
+* **6.1 Introduction to rasters with terra**: Build the raster mental model, read and draw a `SpatRaster`, work with its layers, and filter values without changing the grid.
+* **6.2 Categorical rasters**: Read the labels and colors carried by a categorical raster, build classes from a quantity, and merge existing classes by changing their codes rather than only their names.
+* **6.3 Changing the grid: Resolution, extent and projection**: Identify the differences between two raster grids, then use `project()`, `aggregate()`, `disagg()` or `resample()` to put them onto a useful shared grid.
+* **6.4 Rasters and vectors together**: Crop and mask a raster with a vector, extract raster values at vector locations, and move between raster and vector representations.
+* **6.5 An introduction to Shiny** (optional): Build a small app that lets a reader change an elevation threshold and see the result.
 
-**Problem Set**: A mountain holiday for Tara
+**Problem set**: The parks of Washington, D.C.
 
 ## Getting started
 
-Download `module_6_files.zip` and:
+Download [module_6_data.zip](module_6_data.zip){download} and:
 
 * Place the folder `gis_scbi` inside `data/raw`. *Note: Please place the folder itself in that location, not the files within it, and do not change its name.*
 * Place any `*.tif` files that are not inside that folder in `data/raw/rasters`.
 
 Every lesson also loads `source_script_module_3.R` from `scripts`, which supplies `clean_names()` and `lonlat_to_utm()`.
 
-Run the following to install the packages this module adds:
+Run the following to [install]{.term} or update the packages from this module:
 
 ```{r}
 #| eval: false
 
 install.packages(
   c(
-    "ggnewscale",
-    "leaflet",
-    "rayshader",
-    "stars",
+    "shiny",
     "terra",
     "tidyterra"
   )
 )
 ```
 
-***Important!***: *terra* will attempt to hold raster values in your computer's memory, and will write them to a temporary file on your hard drive when it cannot. Clear enough space on your disk to work comfortably. When *terra* is unable to store a file, the message you receive names memory rather than disk space, which sends most people looking in the wrong place.
+***Important!*** Large raster operations may write intermediate results to temporary files. Keep enough free disk space for those files as well as the output you intend to save. If an operation fails while processing a large raster, check available disk space as well as [memory]{.term}.
 
-## About this week's data
+## Data for Module 6
 
 <button class="accordion">Please click on the button below to explore the data that we will use in this module!</button>
-
 ::: panel
 
 ```{r}
@@ -85,7 +80,7 @@ cat(dataset_markdown(.module = 6))
 
 ## Readings and resources
 
-### **Required readings:**
+### Optional readings
 
 Lovelace, Nowosad & Muenchow, *Geocomputation with R*:
 
@@ -93,19 +88,15 @@ Lovelace, Nowosad & Muenchow, *Geocomputation with R*:
 -   [4.3: Spatial operations on raster data](https://r.geocompx.org/spatial-operations#spatial-ras){target="_blank"}
 -   [6: Raster-vector interactions](https://r.geocompx.org/raster-vector){target="_blank"}
 
-### **Further reading:**
-
 Hernangómez, D. (2023). Using the tidyverse with terra objects: the tidyterra package. *Journal of Open Source Software*, 8(91), 5751. [https://doi.org/10.21105/joss.05751](https://doi.org/10.21105/joss.05751){target="_blank"}
-
-Lovelace, Nowosad & Muenchow, *Geocomputation with R*:
 
 -   [5.3: Geometry operations on raster data](https://r.geocompx.org/geometry-operations#geo-ras){target="_blank"}
 -   [7.8: Reprojecting raster geometries](https://r.geocompx.org/reproj-geo-data#reproj-ras){target="_blank"}
 
-### **Documentation and cheatsheets**:
+### Documentation and cheatsheets
 
+-   [terra](https://rspatial.github.io/terra/){target="_blank"}
 -   [tidyterra](https://dieghernan.github.io/tidyterra/){target="_blank"}
--   [rayshader](https://www.rayshader.com/){target="_blank"}
 -   [Spatial manipulation with sf](https://github.com/rstudio/cheatsheets/blob/main/sf.pdf){target="_blank"}
 
 {{< include /src/includes/_reference_section_intro.qmd >}}

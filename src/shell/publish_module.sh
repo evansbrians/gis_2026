@@ -66,13 +66,41 @@ for lesson in "${LESSONS[@]+"${LESSONS[@]}"}"; do
   fi
 done
 
+# render_module() renders each lesson inside purrr::possibly(), so a lesson
+# that will not render stops only itself -- and Rscript still exits 0. Left
+# alone, that made a failed render look like a successful publish: the stale
+# index.html got synced, matched what was already on gh-pages, and the script
+# reported "No changes -- nothing to publish". So the render's own verdict is
+# captured here and carried to the end.
+
+RENDER_FAILED=0
+
+run_render() {
+  local call="$1"
+  set +e
+  Rscript -e "source('src/r/render_module.R'); rendered <- $call; if (length(attr(rendered, 'failed'))) quit(save = 'no', status = 1)"
+  local status=$?
+  set -e
+  if [[ $status -ne 0 ]]; then
+    RENDER_FAILED=1
+  fi
+}
+
 if [[ ${#LESSONS[@]} -eq 0 ]]; then
   echo "==> Rendering $MODULE via render_module() ..."
-  Rscript -e "source('src/r/render_module.R'); render_module('$MODULE')"
+  run_render "render_module('$MODULE')"
 else
   echo "==> Rendering ${#LESSONS[@]} lesson(s) in $MODULE via render_module() ..."
   R_LESSONS="c($(printf "'%s'," "${LESSONS[@]}" | sed 's/,$//'))"
-  Rscript -e "source('src/r/render_module.R'); render_module('$MODULE', .lessons = $R_LESSONS)"
+  run_render "render_module('$MODULE', .lessons = $R_LESSONS)"
+fi
+
+if [[ $RENDER_FAILED -eq 1 ]]; then
+  echo "" >&2
+  echo "!!  A lesson did not render -- its error is in the output above." >&2
+  echo "!!  What sits in that lesson's folder is its last good render, so" >&2
+  echo "!!  publishing now cannot put the new version on the site." >&2
+  echo "" >&2
 fi
 
 # render_module() creates one directory per lesson directly under
@@ -115,6 +143,11 @@ for dir in "${LESSON_DIRS[@]}"; do
 done
 
 if git diff --cached --quiet; then
+  if [[ $RENDER_FAILED -eq 1 ]]; then
+    echo "==> Nothing to publish: the render failed, so the rendered files are" >&2
+    echo "    unchanged. Fix the error above and run this again." >&2
+    exit 1
+  fi
   echo "==> No changes — nothing to publish."
   exit 0
 fi
@@ -128,3 +161,9 @@ fi
 git push origin gh-pages
 
 echo "==> Done. Every other module and lesson on gh-pages is untouched."
+
+if [[ $RENDER_FAILED -eq 1 ]]; then
+  echo "==> But a lesson did not render, and its old version is still what is" >&2
+  echo "    on the site. Fix the error above and run this again." >&2
+  exit 1
+fi

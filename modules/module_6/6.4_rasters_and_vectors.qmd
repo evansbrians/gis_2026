@@ -6,7 +6,6 @@ format: live-html
 ```{r}
 #| include: false
 
-library(terra)
 library(tidyterra)
 library(sf)
 library(tidyverse)
@@ -23,18 +22,20 @@ lesson_refs <- find_lesson_references()
 <div>
 ![](../../src/images/hex_complex.png){.intro_image fig-alt="Course logo"}
 
-Few questions are answered by a raster alone. The elevation of the campus is a raster, the campus boundary is a polygon, the observations recorded on it are points, and the question is what the elevation was where each observation was made.
+Ecological workflows routinely combine field observations and management boundaries with environmental rasters. We may need to attach elevation or land cover to survey locations, summarize canopy cover within management units, restrict a raster to a study boundary, or convert observations to counts across a regular grid.
 
-This lesson is about the operations that cross between the two data models: cutting a raster down to a vector, reading raster values at vector locations, turning a vector into a raster, and turning a raster back into a vector. Each of them has to reconcile a grid with a set of features, and each of them handles a disagreement about the coordinate reference system in its own way, which is where most of the trouble comes from.
+Each question crosses between raster and vector data in a different direction. That direction determines the operation, the form of the result, and the assumptions made at cell and feature boundaries. The coordinate reference systems must also agree before the locations can be compared.
+
+In this lesson, we will crop and mask rasters with vector boundaries, extract raster values at vector locations, rasterize vector features, and convert raster classes to polygons. We will track the grid, values, and vector features through each operation so that the resulting object matches the ecological question.
 
 In completing this lesson, you will learn how to:
 
-* Convert between *sf* and *terra* objects with `vect()` and `st_as_sf()`
-* Cut a raster down to a vector with `crop()` and `mask()`, and say what each of them does
+* Convert between *sf* and *terra* [objects]{.term term="Object"} with `vect()` and `st_as_sf()`
+* Cut a raster down to a vector with `crop()` and `mask()` and say what each of them does
 * Read raster values at vector locations with `extract()`, for points and for polygons
-* Turn a vector into a raster with `rasterize()`, and choose what a cell should hold
+* Turn a vector into a raster with `rasterize()`, and choose the value assigned to each [cell]{.term}
 * Turn a raster into a vector with `as.polygons()`
-* Predict what each of these does when the CRS of the raster and the vector disagree
+* Predict what each of these does when the CRS of the raster and the vector do not match
 
 **Important!** Before starting this tutorial, be sure that you have completed all preliminary and previous lessons!
 
@@ -66,18 +67,18 @@ lesson_metadata(
 
 ## Set up your session
 
-Please complete the following to ensure that you are working in a clean session:
+Please complete the following to ensure that you are working in a clean [session]{.term}:
 
-1. Please ensure that your **Global Environment** is empty.
-2. In the *History* tab of your **workspace pane**, ensure that your **session history** is empty.
+1. Please ensure that your **[Global Environment]{.term}** is empty.
+2. In the *History* [tab]{.term} of your **[workspace pane]{.term}**, ensure that your **[session history]{.term}** is empty.
 
 Now that we are working in a clean session:
 
-1. Create a script file.
+1. Create a [script]{.term} file.
 2. Save your script file as `scripts/rasters_and_vectors.R`.
-3. Add metadata as a comment on the top of the file.
-4. Following your metadata, create a new **code section** and call it "`setup`".
-5. Following your section header, attach *terra*, *tidyterra*, *sf*, and the packages that comprise the **core tidyverse**, then load the module 3 source script.
+3. Add [metadata]{.term} as a comment on the top of the file.
+4. Following your metadata, create a new **[code section]{.term}** and call it "`setup`".
+5. Following your section header, attach *tidyterra*, *sf*, and the [packages]{.term term="Package"} that comprise the **core tidyverse**, then load the module 3 [source script]{.term}.
 
 At this point, your script should look something like:
 
@@ -88,7 +89,6 @@ At this point, your script should look something like:
 
 # setup --------------------------------------------------------
 
-library(terra)
 library(tidyterra)
 library(sf)
 library(tidyverse)
@@ -104,26 +104,35 @@ source("scripts/source_script_module_3.R")
 source("scripts/source_script_module_3.R")
 ```
 
-Create a code section called "`read and pre-process data`". We will read the elevation and land cover rasters for the campus, and three vector files that cover the same ground:
+Create a code section called "`read and pre-process data`". Read the elevation and land-cover rasters for the campus, along with three vector files that cover the same area:
 
 ```{r}
 dem <-
-  rast("data/raw/gis_scbi/scbi_dem.tif")
+  terra::rast("data/raw/gis_scbi/scbi_dem.tif")
+
+names(dem) <- "elevation"
 
 lc <-
-  rast("data/raw/gis_scbi/scbi_lc.tif")
+  terra::rast("data/raw/gis_scbi/scbi_lc.tif")
+
+names(lc) <- "land_cover"
+
+raster_crs <-
+  st_crs(dem)
 
 campus <-
   st_read(
     "data/raw/gis_scbi/smsc_campus_scbi.geojson",
     quiet = TRUE
-  )
+  ) %>%
+  st_transform(crs = raster_crs)
 
 observations <-
   st_read(
     "data/raw/gis_scbi/inat_scbi.geojson",
     quiet = TRUE
-  )
+  ) %>%
+  st_transform(crs = raster_crs)
 
 roads <-
   st_read(
@@ -131,40 +140,19 @@ roads <-
     quiet = TRUE
   ) %>%
   clean_names() %>%
-  select(name)
+  select(name) %>%
+  st_transform(crs = raster_crs)
 ```
 
-The rasters and the vectors are not in the same CRS. `crs()` is *terra*'s accessor for it, and `describe = TRUE` returns a data frame of the CRS's name, authority and code rather than the full definition:
+The source vectors use a different CRS from the rasters. As described in ***6.3 Changing the grid: Resolution, extent and projection***, we identify the raster's CRS and transform each vector as we read it. Transforming the vectors changes their coordinates without resampling the raster values.
 
-```{r}
-crs(dem, describe = TRUE)$code
+## Converting between sf and SpatVector objects
 
-st_crs(campus)$epsg
-```
-
-***6.3 Changing the grid: Resolution, extent and projection*** gave the rule that settles this: transform the vector, because a vector transforms exactly and a raster does not. We do it once, in pre-processing, for all three:
-
-```{r}
-raster_crs <-
-  st_crs(dem)
-
-campus <-
-  st_transform(campus, raster_crs)
-
-observations <-
-  st_transform(observations, raster_crs)
-
-roads <-
-  st_transform(roads, raster_crs)
-```
-
-## Two packages, two classes
-
-*sf* stores a vector as an `sf` object and *terra* stores one as a `SpatVector`. The *terra* functions in this lesson take a `SpatVector`, and `vect()` converts:
+*sf* represents vector data as `sf` objects, and *terra* represents them as `SpatVector` objects. The *terra* [functions]{.term term="Function"} in this lesson use a `SpatVector`. `vect()` converts our `sf` campus boundary to that class:
 
 ```{r}
 campus_v <-
-  vect(campus)
+  terra::vect(campus)
 ```
 
 ```{r}
@@ -173,7 +161,7 @@ campus_v <-
 campus_v
 ```
 
-`st_as_sf()` converts the other way, which is how a *terra* result rejoins the *sf* workflow we have used since module 3.
+`st_as_sf()` converts a `SpatVector` to an `sf` object and returns it to the workflow that we have used since module 3:
 
 ```{r}
 campus_v %>%
@@ -182,25 +170,25 @@ campus_v %>%
 ```
 
 ::: mysecret
-{{< fa screwdriver-wrench size=2x >}} [The conversion is cheap, and it is not free]{style="font-size: 1.25em; padding-left: 0.5em;"}
+{{< fa screwdriver-wrench size=2x >}} [Optional: What conversion preserves]{style="font-size: 1.25em; padding-left: 0.5em;"}
 
-A `SpatVector` holds the same geometries and fields as the `sf` object it came from, so `vect()` and `st_as_sf()` round-trip without loss for everything this course does with them.
+A `SpatVector` preserves the [geometries]{.term term="Geometry"} and [fields]{.term term="Field"} that we use in this course, so `vect()` and `st_as_sf()` can move these objects between the two workflows.
 
-What does not survive is anything the *sf* class carries that *terra* has no place for, and the attribute-geometry relationship of ***5.3 Focus on polygons: Areas, and what happens when we cut them*** is the example that matters. `st_agr()` is an attribute of an `sf` object. Convert to a `SpatVector` and back, and the declaration is gone.
+What is lost is any `sf` attribute that a `SpatVector` cannot store. The attribute-geometry relationship from ***5.3 Focus on polygons: Boundaries, attributes, and areas*** is the example that matters here. `st_agr()` is an attribute of an `sf` object. Convert to a `SpatVector` and back, and the declaration is gone.
 
-Recent versions of *terra* accept an `sf` object directly in many places and call `vect()` themselves. Writing the conversion out is still worth doing, because it is the line you will look at when a function reports a class it did not expect.
+Recent versions of *terra* accept an `sf` object directly in many places and perform the conversion internally. I prefer to write the conversion out, because it is the line we can inspect when a function returns an error about the class of its input.
 :::
 
-## Cutting a raster down to a vector
+## Cropping and masking with vector boundaries
 
-Two operations reduce a raster to the area a vector covers, and they do different things.
+`crop()` and `mask()` use a vector boundary for different purposes. `crop()` changes the rectangular extent of the grid, and `mask()` changes the values outside the vector.
 
-`crop()` cuts the raster to the **bounding box** of the vector, which returns a smaller rectangle:
+`crop()` cuts the raster to the **[bounding box]{.term}** of the vector, which returns a smaller rectangle:
 
 ```{r}
 campus_dem <-
   dem %>%
-  crop(campus_v)
+  terra::crop(campus_v)
 ```
 
 ```{r}
@@ -209,106 +197,130 @@ campus_dem <-
 campus_dem
 ```
 
-From 579,610 cells to 42,456, and the result is still a full rectangle with a value in every cell.
+`crop()` works in whole cells, so the result is the cell-aligned rectangle nearest the bounding box rather than the bounding box itself. The default, `snap = "near"`, rounds each edge to the nearest cell boundary, which can place an edge up to half a cell inside or outside the vector. Use `snap = "out"` wherever the vector has to be covered completely, such as before totaling area or biomass inside it.
 
-`mask()` sets every cell **outside** the vector to `NA`, and leaves the grid alone:
+The cropped grid is a smaller rectangle. It retains values both inside and outside the campus boundary.
+
+`mask()` sets every cell **outside** the vector to `NA`, and leaves the [grid]{.term} alone:
 
 ```{r}
 campus_only <-
   campus_dem %>%
-  mask(campus_v)
+  terra::mask(campus_v)
 
 campus_only %>%
   is.na() %>%
-  global("sum")
+  terra::global("sum")
 ```
 
-Same 42,456 cells, of which 22,785 now hold `NA`: the parts of the rectangle that the campus boundary does not cover.
+The cells outside the campus boundary are now `NA`, while the extent and dimensions remain unchanged.
 
 ```{r}
-#| fig-alt: "Two panels of the same rectangle of elevation around the SCBI campus. The left panel is filled edge to edge. The right panel shows the same surface with everything outside the campus boundary blank, leaving an irregular shape."
+#| fig-alt: "The rectangle of elevation around the SCBI campus with everything outside the campus boundary blank, leaving an irregular shape. The boundary itself is drawn over it as a red outline."
 
 ggplot() +
+
+  # Add geometries:
+
   geom_spatraster(data = campus_only) +
   geom_sf(
     data = campus,
     fill = NA,
     color = "red"
   ) +
+
+  # Define scale elements:
+
   scale_fill_hypso_c()
 ```
 
-Most questions want both, and `crop()` takes an argument that does them together:
+When an analysis needs only the cells inside a vector, `crop()` takes an argument that performs both operations:
 
 ```{r}
 dem %>%
-  crop(campus_v, mask = TRUE)
+  terra::crop(campus_v, mask = TRUE)
 ```
 
-The order matters for speed rather than for the answer. `crop()` first means `mask()` has a small raster to work on.
+Running `crop()` first makes the subsequent mask faster because `mask()` processes a smaller raster. The combined call returns the same result.
+
+::: now_you
+{{< fa user-circle size=2x >}} [Check your understanding]{style="padding-left: 0.5em;"}
+
+You need a smaller raster that retains the full rectangular grid around a watershed. Which operation should you use?
+
+`r longmcq(c(answer = "crop()", "mask()", "extract()", "rasterize()"))`
+
+You need the cells outside the watershed to be `NA`. Which argument performs both steps in the same call?
+
+`r longmcq(c(answer = "crop(mask = TRUE)", "crop(snap = TRUE)", "mask(crop = TRUE)", "extract(exact = TRUE)"))`
+:::
 
 ::: mysecret
-{{< fa user-secret size=2x >}} [Three functions, three answers to the same CRS mismatch!]{style="font-size: 1.25em; padding-left: 0.5em;"}
+{{< fa user-secret size=2x >}} [Optional: How these functions respond to a CRS mismatch]{style="font-size: 1.25em; padding-left: 0.5em;"}
 
-We transformed the vectors in pre-processing. Here is what happens when nobody does.
+We transformed the vectors during pre-processing. The following examples show why that step matters.
 
-Give `crop()` a vector in a different CRS and it stops:
+`crop()` compares [extents]{.term term="Extent"} rather than [coordinate reference systems]{.term term="Coordinate reference system"}. The extents of a raster in degrees and a vector in meters do not overlap, so it stops:
 
 ```{r}
 #| error: true
 
 dem %>%
-  crop(
-    vect(
-      st_transform(campus, 32617)
-    )
+  terra::crop(
+    campus %>%
+      st_transform(crs = 32617) %>%
+      terra::vect()
   )
 ```
 
-Give `mask()` the same thing and it warns, runs, and returns a raster in which **every** cell is `NA`. The vector's coordinates are in meters, the raster's are in degrees, and nothing on the grid falls inside a polygon sitting at a distance of seven hundred thousand:
+Give `mask()` the same mismatched vector and it warns, runs, and returns a raster in which **every** cell is `NA`. The vector's [coordinates]{.term} are in meters and the raster's are in degrees, so their coordinates occupy completely different numerical ranges:
 
 ```{r}
 dem %>%
-  mask(
-    vect(
-      st_transform(campus, 32617)
-    )
+  terra::mask(
+    campus %>%
+      st_transform(crs = 32617) %>%
+      terra::vect()
   ) %>%
   is.na() %>%
-  global("sum")
+  terra::global("sum")
 ```
 
-579,610 missing cells out of 579,610, with a warning rather than an error.
+Every cell is missing, and the call returned a warning.
 
-Give `extract()` the same thing and it transforms the vector for you, warns that it has done so, and returns the right answer.
+`extract()` may attempt an internal transformation and warn that it has done so. That is not a substitute for pre-processing because the attempted transformation can still fail.
 
-Three functions in one package, three behaviors. **A CRS mismatch is checked at every boundary and handled differently at each one**, so transform in pre-processing rather than relying on any function to notice. Which function does which is worth less than the habit.
+`crop()` stopped because the two extents have no cells in common, not because it compared the [projections]{.term term="Projection"}. Two coordinate reference systems whose coordinates are close, such as NAD83 and WGS 84 in the same UTM zone, have overlapping extents, and `crop()` returns the wrong cells without a warning.
+
+**Transform in pre-processing.** A CRS mismatch produces an error, a warning, a silent transformation, or a wrong answer, and which of those you receive depends on the function.
 :::
 
-## Reading raster values at vector locations
+## Extracting raster values at vector locations
 
-`extract()` returns the raster values at the locations of a vector, which is how a raster answers a question asked about features.
+`extract()` returns raster values at vector locations. We can then attach those values to the vector features or summarize them within polygon boundaries.
 
-For points, it returns one row per point:
+For points, it returns a row for each point:
 
 ```{r}
 elevations <-
   dem %>%
   terra::extract(
-    vect(observations)
+    terra::vect(observations)
   )
 
 elevations %>%
   head()
 ```
 
-`ID` is the row number of the point in the vector, and `Layer_1` is the name of the raster layer. The result is a plain data frame rather than a spatial object, which is what makes it joinable:
+`ID` is the row number of the point in the vector, and the second column takes the name of the [raster layer]{.term}. This is why we named the layers when we read them. The result is a plain [data frame]{.term}, so we can add its values to the original features:
 
 ```{r}
 observations_with_elevation <-
   observations %>%
   mutate(
-    elevation = elevations$Layer_1
+    elevation =
+      elevations %>%
+      pull(elevation)
   )
 
 observations_with_elevation %>%
@@ -316,25 +328,25 @@ observations_with_elevation %>%
   head(4)
 ```
 
-Binding the column on by position is safe here because `extract()` returns the rows in the order it was given them, one per point, with no matching involved.
+Binding the column on by position is safe here because `extract()` returns a row for each point in the original order, with no matching involved.
 
-A categorical raster returns the labels rather than the codes:
+For a [categorical raster]{.term}, `extract()` returns the labels rather than the codes:
 
 ```{r}
 land_cover <-
   lc %>%
   terra::extract(
-    vect(observations)
+    terra::vect(observations)
   )
 
 land_cover %>%
-  count(category) %>%
+  count(land_cover) %>%
   arrange(desc(n))
 ```
 
-Most of the campus observations were recorded on impervious surfaces, which is what a dataset of what people photographed near the buildings and the roads looks like.
+Most of the campus observations were recorded on impervious surfaces, which is consistent with people photographing organisms near campus buildings and roads.
 
-For polygons, `extract()` returns every cell the polygon covers, which is rarely what a question wants. `fun = ` summarizes them instead:
+For polygons, `extract()` returns the values of the cells associated with each polygon, which is rarely the final answer a question requires. `fun = ` [summarizes]{.term term="Summarize"} them instead:
 
 ```{r}
 dem %>%
@@ -345,11 +357,25 @@ dem %>%
   )
 ```
 
-The mean elevation of the campus, in one row.
+The result reports the mean campus elevation. By default, a cell contributes to the mean when the polygon includes its center, and every included cell receives equal weight.
+
+That approximation is reasonable when a polygon covers many small cells. It can matter when the polygons are not much larger than the cells, such as small watersheds against a 463-meter climate grid. `exact = TRUE` calculates the fraction of each cell covered by the polygon and uses those fractions in the summary:
+
+```{r}
+dem %>%
+  terra::extract(
+    campus_v,
+    fun = mean,
+    na.rm = TRUE,
+    exact = TRUE
+  )
+```
+
+The two means are close here because the campus polygon covers thousands of small cells. The difference can be much larger when boundary cells account for a substantial part of a polygon.
 
 ::: {.callout-note}
 
-`terra::extract()` is written with its package prefix throughout this lesson because *tidyr* exports a function of the same name, and *tidyverse* is attached after *terra*. Without the prefix, the call reaches `tidyr::extract()`, which has no method for a `SpatRaster` and returns `no applicable method for 'extract' applied to an object of class "SpatRaster"`.
+Because *terra* is not attached, we've used the `terra::` prefix for every *terra* function in this module. The prefix is especially important for `extract()`, because the attached *tidyr* package exports a different function with that name. A bare `extract()` calls *tidyr* and returns `no applicable method for 'extract' applied to an object of class "SpatRaster"`.
 
 :::
 
@@ -358,7 +384,7 @@ The mean elevation of the campus, in one row.
 
 Return the median elevation of the observations in each land cover class.
 
-*Hint: Both `extract()` calls above return one row per observation, in the order of the observations.*
+*Hint: Both `extract()` calls above return a row for each observation, in the order of the observations.*
 
 [Click here to see my answer]{.answer_link data-answer="a-6-4-extract"}
 
@@ -368,8 +394,12 @@ Return the median elevation of the observations in each land cover class.
 observations %>%
   st_drop_geometry() %>%
   mutate(
-    elevation = elevations$Layer_1,
-    land_cover = land_cover$category
+    elevation =
+      elevations %>%
+      pull(elevation),
+    land_cover =
+      land_cover %>%
+      pull(land_cover)
   ) %>%
   summarize(
     observations = n(),
@@ -381,72 +411,80 @@ observations %>%
 
 Dropping the geometry first makes this a summary of the records rather than of their positions, for the reason ***5.2 Focus on lines: Paths through a landscape*** gave.
 
-The two columns are added together in one `mutate()` because both come from calls that returned one row per observation in the same order. Where that is not guaranteed, the safe form is a join on a key rather than a bind on position.
-
-You will learn alternative solutions to this problem in a future lesson.
+The two columns are added in the same `mutate()` because both calls returned a row for each observation in the same order. Where that is not guaranteed, the safe form is a join on a [key]{.term} rather than a bind on position.
 
 :::
 :::
 
-## Turning a vector into a raster
+## Rasterizing vector features
 
-`rasterize()` writes a vector onto a grid. It takes the vector, a raster whose grid the result will use, and an argument saying what each cell should hold.
+`rasterize()` writes vector features onto an existing raster grid. Its first argument supplies the vector features, its second supplies the template grid, and `field = ` or `fun = ` determines the values assigned to the cells.
 
 `field = ` writes a constant or a field of the vector:
 
 ```{r}
 road_cells <-
   roads %>%
-  vect() %>%
-  rasterize(
+  terra::vect() %>%
+  terra::rasterize(
     dem,
     field = 1
   )
 
 road_cells %>%
-  freq()
+  terra::freq()
 ```
 
-4,955 cells of the 579,610 have a road passing through them, and the rest are `NA` because `rasterize()` leaves a cell no feature reached empty.
+Cells crossed by a road have the value 1. The remaining cells are `NA` because no road falls within them.
 
 `fun = ` summarizes the features that fall in a cell, which is how a set of points becomes a count:
 
 ```{r}
 observation_counts <-
   observations %>%
-  vect() %>%
-  rasterize(
-    aggregate(dem, fact = 20),
+  terra::vect() %>%
+  terra::rasterize(
+    dem %>%
+      terra::aggregate(fact = 20),
     fun = "length",
     background = 0
   )
 
 observation_counts %>%
-  global(c("max", "sum"))
+  terra::global(c("max", "sum"))
 ```
 
-The 320 observations are spread over a coarsened grid, and the busiest cell holds 81 of them. `background = 0` is what makes the empty cells zero rather than `NA`, which matters because a count of zero is a fact and a missing value is not.
+The sum confirms that every observation was counted, and the maximum identifies the cell with the greatest number of records. `background = 0` assigns zero to cells with no observations. Here, zero means that no observations were recorded, while `NA` would indicate a missing value.
 
 ```{r}
-#| fig-alt: "A coarse grid over the campus area shaded by the number of iNaturalist observations in each cell. One cell at the campus buildings is far darker than the rest, and most cells hold none."
+#| fig-alt: "A coarse grid over the campus area shaded by the number of iNaturalist observations in each cell. The cell at the campus buildings is far darker than the rest, and most cells contain no observations."
 
 ggplot() +
+
+  # Add geometries:
+
   geom_spatraster(data = observation_counts) +
+
+  # Define scale elements:
+
   scale_fill_whitebox_c(palette = "deep")
 ```
 
-## Turning a raster into a vector
+## Converting raster classes to polygons
 
-`as.polygons()` goes the other way, returning one polygon per class:
+`as.polygons()` converts raster cells to polygon features. We will first limit the land-cover raster to the campus boundary:
 
 ```{r}
 lc_campus <-
   lc %>%
-  crop(campus_v)
+  terra::crop(
+    campus_v,
+    mask = TRUE
+  )
 
 lc_polygons <-
   lc_campus %>%
-  as.polygons()
+  terra::as.polygons()
 ```
 
 ```{r}
@@ -455,7 +493,7 @@ lc_polygons <-
 lc_polygons
 ```
 
-One feature per class rather than one per cell, because `as.polygons()` dissolves the cells of each class into a single multipolygon by default. The result is a `SpatVector`, and `st_as_sf()` returns it to the workflow we know:
+By default, `as.polygons()` [dissolves]{.term term="Dissolve or Dissolving"} cells with the same class into a multipolygon. The result therefore includes a feature for each land-cover class represented on campus. It is a `SpatVector`, and `st_as_sf()` returns it to our *sf* workflow:
 
 ```{r}
 lc_polygons %>%
@@ -471,17 +509,17 @@ lc_polygons %>%
 ::: mysecret
 {{< fa user-secret size=2x >}} [Vectorize because the question needs features, not because vectors are familiar!]{style="font-size: 1.25em; padding-left: 0.5em;"}
 
-A raster of a million cells becomes a vector of a million tiny squares unless the classes dissolve into a few large shapes, and the boundaries of those shapes are the edges of cells rather than the edges of anything on the ground. A forest patch vectorized from a 30-meter raster has a staircase for a boundary, and its perimeter is longer than the real one by an amount that depends only on the cell size.
+A raster of 1,000,000 cells becomes a vector of 1,000,000 tiny squares unless the classes dissolve into a few large shapes. The resulting boundaries follow cell edges rather than independently measured boundaries on the ground. A forest patch vectorized from a 30-meter raster has a stair-step boundary, and its measured perimeter depends on the cell size and the orientation of the grid.
 
-Vectorize when the question is about features: how many patches, how large is each, which ones touch. Stay in the raster when the question is about the surface, because everything in ***6.5 Map algebra*** is faster and more honest on the grid it was measured on.
+Vectorize when the question is about features: how many patches, how large is each, which ones touch. Stay in the raster when the question is about the surface, because the operations in ***7.1 Map algebra*** are more direct on the grid where the values were measured.
 :::
 
 ::: now_you
 {{< fa user-circle size=2x >}} [Check your understanding]{style="padding-left: 0.5em;"}
 
-`extract()` is called on a raster with a `SpatVector` of 50 points. How many rows does the result hold?
+`extract()` is called on a raster with a `SpatVector` of 50 points. How many rows does the result contain?
 
-`r longmcq(c(answer = "50", "One per raster cell the points fall in, which may be fewer than 50", "One, holding the mean", "50 plus one for the header"))`
+`r longmcq(c(answer = "50", "A row for each raster cell containing a point, which may be fewer than 50", "A row containing the mean", "51, including a header row"))`
 
 True or false: `crop()` returns a raster in which the cells outside the vector are `NA`.
 
@@ -490,9 +528,9 @@ True or false: `crop()` returns a raster in which the cells outside the vector a
 
 ## Putting it all together
 
-The operations that cross between a raster and a vector each answer a different question. My own model for that looks like this (click to expand):
+Each operation that crosses between a raster and a vector is used for a different question. My own model for that looks like this (click to expand):
 
-![](../../src/images/decision_trees/rasters_and_vectors.svg){.zoomable data-title="Decision tree: Crossing between rasters and vectors" data-pdf-key="rasters_and_vectors" fig-alt="To cross between a raster and a vector, first st_transform() the vector into the CRS of the raster and then vect() it, because crop() stops on a mismatch, mask() warns and returns a raster of all NA, and extract() transforms silently. Then ask what the question needs. For a raster trimmed to the vector, crop() cuts the raster to the bounding box of the vector, so the grid gets smaller, and mask = TRUE also sets the cells outside the vector to NA. For a raster with the outside blanked, mask() sets the cells outside the vector to NA and leaves the grid where it was, so the extent does not change. For raster values at vector locations, terra::extract() returns one row per point, in the order of the points, and every covered cell for a polygon unless fun summarizes them. For a vector written onto a grid, rasterize() takes field for what a cell holds, fun to summarize the features that fall in one, and background for the rest. For features from a raster, as.polygons() dissolves the cells of each class into one multipolygon, whose boundaries are cell edges rather than real ones, and st_as_sf() returns it to the sf workflow."}
+![](../../src/images/decision_trees/rasters_and_vectors.svg){.zoomable data-title="Decision tree: Crossing between rasters and vectors" data-pdf-key="rasters_and_vectors" fig-alt="To cross between a raster and a vector, first st_transform() the vector into the CRS of the raster and then vect() it, because crop() stops on a mismatch, mask() warns and returns a raster of all NA, and extract() may attempt an internal transformation. Then ask what the question requires. For a raster trimmed to the vector, crop() reduces the raster to the bounding box of the vector, so the grid gets smaller, and mask = TRUE also sets the cells outside the vector to NA. For a raster with the outside set to missing, mask() sets the cells outside the vector to NA and does not change the extent. For raster values at vector locations, terra::extract() returns a row for each point in the original order, and every associated cell for a polygon unless fun summarizes them. For a vector converted to a raster, rasterize() uses field or fun to determine the cell values and background for cells with no features. For features from a raster, as.polygons() dissolves the cells of each class into a multipolygon, whose boundaries follow cell edges rather than independently measured boundaries, and st_as_sf() returns the result to the sf workflow."}
 
 {{< include ../../src/includes/decision_tree_pdfs/rasters_and_vectors.qmd >}}
 
@@ -505,31 +543,31 @@ This tree is a visualization of *my* mental model for these functions. It is tot
 ## Take-home points
 
 * `vect()` converts an `sf` object to a `SpatVector` and `st_as_sf()` converts it back.
-* A CRS mismatch is handled differently by each function. `crop()` returns an error, `mask()` warns and returns a raster of all `NA`, and `extract()` transforms the vector and warns. Transform the vector in pre-processing rather than relying on any of them.
+* A CRS mismatch is handled differently by each function. `crop()` returns an error, `mask()` warns and returns a raster of all `NA`, and `extract()` may attempt an internal transformation. [Transform]{.term term="Transform or Transform (geometry)"} the vector in pre-processing rather than relying on any of them.
 * `crop()` cuts a raster to the bounding box of a vector. `mask()` sets the cells outside the vector to `NA` and leaves the grid alone. `crop(mask = TRUE)` does both.
-* `extract()` returns one row per point, in the order of the points, as a plain data frame. For a polygon it returns every covered cell unless `fun = ` summarizes them.
-* `terra::extract()` needs its prefix, because *tidyr* exports `extract()` and is attached later.
-* `rasterize()` writes a vector onto a grid. `field = ` sets what a cell holds, `fun = ` summarizes the features that fall in one, and `background = ` sets the cells that hold none.
-* `as.polygons()` dissolves the cells of each class into one multipolygon. The boundaries it returns are cell edges rather than the edges of anything real.
+* `extract()` returns a row for each point, in the order of the points, as a plain data frame. For a polygon it returns every covered cell unless `fun = ` summarizes them.
+* `terra::extract()` needs its prefix because the attached *tidyr* package also exports a function named `extract()`.
+* `rasterize()` converts vector features to raster values on a template grid. `field = ` supplies the values, `fun = ` summarizes multiple features within each cell, and `background = ` sets the value for cells with no features.
+* `as.polygons()` dissolves the cells of each class into a multipolygon. The resulting boundaries follow cell edges rather than independently measured boundaries on the ground.
 
 ## Exercises
 
 ::: now_you
 {{< fa user-circle size=2x >}} [Test your knowledge!]{style="font-size: 1.25em; padding-left: 0.5em;"}
 
-1. You need the mean canopy cover inside each of forty watershed polygons. Which statement returns it?
+1. You need the mean canopy cover inside each watershed polygon. Which statement returns it?
 
-`r longmcq(c(answer = "terra::extract(canopy, vect(watersheds), fun = mean, na.rm = TRUE)", "terra::extract(canopy, vect(watersheds))", "mask(canopy, vect(watersheds))", "rasterize(vect(watersheds), canopy, fun = mean)"))`
+`r longmcq(c(answer = "terra::extract(canopy, terra::vect(watersheds), fun = mean, na.rm = TRUE)", "terra::extract(canopy, terra::vect(watersheds))", "terra::mask(canopy, terra::vect(watersheds))", "terra::rasterize(terra::vect(watersheds), canopy, fun = mean)"))`
 
 2. A colleague masks a raster with a polygon and every cell of the result is `NA`. What is the first thing to check?
 
-`r longmcq(c(answer = "Whether the polygon and the raster are in the same CRS", "Whether the raster held any values to begin with", "Whether the polygon is valid", "Whether mask() was given the arguments in the wrong order"))`
+`r longmcq(c(answer = "Whether the polygon and the raster are in the same CRS", "Whether the raster contained any non-missing values", "Whether the polygon is valid", "Whether mask() was given the arguments in the wrong order"))`
 
 3. Why does `rasterize()` need a raster as its second argument?
 
-`r longmcq(c(answer = "It supplies the grid the result is written onto", "It supplies the values the cells will hold", "It is masked by the vector before the result is returned", "It sets the CRS the vector is transformed into"))`
+`r longmcq(c(answer = "It supplies the grid used by the result", "It supplies the values assigned to the cells", "It is masked by the vector before the result is returned", "It sets the CRS the vector is transformed into"))`
 
-4. Parsons problem: Reorder the lines below to return the mean elevation inside the campus boundary, as a single number. One line returns every cell the boundary covers instead of one summary of them. Leave it in the trash.
+4. Parsons problem: Reorder the lines below to return the mean elevation inside the campus boundary as a single number. The distractor returns every cell covered by the boundary instead of summarizing them. Leave it in the trash.
 
 <div class="parsons-problem">
 <div id="p-6-4-01-trash" class="sortable-code"></div>
@@ -544,7 +582,7 @@ This tree is a visualization of *my* mental model for these functions. It is tot
 window.parsonsProblems = window.parsonsProblems || []; window.parsonsProblems.push({ id: "p-6-4-01", maxDistractors: 1, code: "campus_elevation <-\n  dem %>%\n  terra::extract(campus_v) %>% #distractor\n  terra::extract(\n    campus_v,\n    fun = mean,\n    na.rm = TRUE\n  )" });
 </script>
 
-5. True or false: `as.polygons()` returns one polygon for every cell of the raster.
+5. True or false: `as.polygons()` returns a polygon for every cell of the raster.
 
 `r torf(FALSE)`
 :::

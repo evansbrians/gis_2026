@@ -186,5 +186,16 @@ render_module <-
       )
     }
 
-    invisible(rendered[!is.na(rendered)])
+    out <- rendered[!is.na(rendered)]
+
+    # The failures ride along on the return value so that a caller --
+    # publish_module.sh in particular -- can tell a render that failed from
+    # one that had nothing new to write. Without this, a lesson that will
+    # not render is reported by the publish script as "No changes --
+    # nothing to publish", because the stale index.html it syncs is
+    # identical to the one already on gh-pages.
+
+    attr(out, "failed") <- as.character(failed)
+
+    invisible(out)
   }
