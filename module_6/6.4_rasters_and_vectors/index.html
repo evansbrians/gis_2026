@@ -26968,12 +26968,12 @@ max value   : 305.442566</code></pre>
 <div class="now_you">
 <p><i class="fa-solid fa-user-circle fa-2x" aria-label="user-circle"></i> <span style="padding-left: 0.5em;">Check your understanding</span></p>
 <p>You need a smaller raster that retains the full rectangular grid around a watershed. Which operation should you use?</p>
-<div id="radio_UFFUABQVBQ" class="webex-radiogroup">
-<label><input type="radio" autocomplete="off" name="radio_UFFUABQVBQ" value="answer"> <span>crop()</span></label><label><input type="radio" autocomplete="off" name="radio_UFFUABQVBQ" value> <span>mask()</span></label><label><input type="radio" autocomplete="off" name="radio_UFFUABQVBQ" value> <span>extract()</span></label><label><input type="radio" autocomplete="off" name="radio_UFFUABQVBQ" value> <span>rasterize()</span></label>
+<div id="radio_WYUWVFVCDI" class="webex-radiogroup">
+<label><input type="radio" autocomplete="off" name="radio_WYUWVFVCDI" value="answer"> <span>crop()</span></label><label><input type="radio" autocomplete="off" name="radio_WYUWVFVCDI" value> <span>mask()</span></label><label><input type="radio" autocomplete="off" name="radio_WYUWVFVCDI" value> <span>extract()</span></label><label><input type="radio" autocomplete="off" name="radio_WYUWVFVCDI" value> <span>rasterize()</span></label>
 </div>
 <p>You need the cells outside the watershed to be <code>NA</code>. Which argument performs both steps in the same call?</p>
-<div id="radio_PQXNSMZRJN" class="webex-radiogroup">
-<label><input type="radio" autocomplete="off" name="radio_PQXNSMZRJN" value="answer"> <span>crop(mask = TRUE)</span></label><label><input type="radio" autocomplete="off" name="radio_PQXNSMZRJN" value> <span>crop(snap = TRUE)</span></label><label><input type="radio" autocomplete="off" name="radio_PQXNSMZRJN" value> <span>mask(crop = TRUE)</span></label><label><input type="radio" autocomplete="off" name="radio_PQXNSMZRJN" value> <span>extract(exact = TRUE)</span></label>
+<div id="radio_QCTUHANCZW" class="webex-radiogroup">
+<label><input type="radio" autocomplete="off" name="radio_QCTUHANCZW" value="answer"> <span>crop(mask = TRUE)</span></label><label><input type="radio" autocomplete="off" name="radio_QCTUHANCZW" value> <span>crop(snap = TRUE)</span></label><label><input type="radio" autocomplete="off" name="radio_QCTUHANCZW" value> <span>mask(crop = TRUE)</span></label><label><input type="radio" autocomplete="off" name="radio_QCTUHANCZW" value> <span>extract(exact = TRUE)</span></label>
 </div>
 </div>
 <div class="mysecret">
@@ -27122,7 +27122,7 @@ Note
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p><em>terra</em> is not attached, so we use the <code>terra::</code> prefix for every <em>terra</em> function in this module. The prefix is especially important for <code>extract()</code>, because the attached <em>tidyr</em> package exports a different function with that name. A bare <code>extract()</code> calls <em>tidyr</em> and returns <code>no applicable method for &#39;extract&#39; applied to an object of class &quot;SpatRaster&quot;</code>.</p>
+<p>Because <em>terra</em> is not attached, we’ve used the <code>terra::</code> prefix for every <em>terra</em> function in this module. The prefix is especially important for <code>extract()</code>, because the attached <em>tidyr</em> package exports a different function with that name. A bare <code>extract()</code> calls <em>tidyr</em> and returns <code>no applicable method for &#39;extract&#39; applied to an object of class &quot;SpatRaster&quot;</code>.</p>
 </div>
 </div>
 <div class="now_you">
@@ -27282,8 +27282,8 @@ values      :            Roads
 <div class="now_you">
 <p><i class="fa-solid fa-user-circle fa-2x" aria-label="user-circle"></i> <span style="padding-left: 0.5em;">Check your understanding</span></p>
 <p><code>extract()</code> is called on a raster with a <code>SpatVector</code> of 50 points. How many rows does the result contain?</p>
-<div id="radio_BLZIZVLVYF" class="webex-radiogroup">
-<label><input type="radio" autocomplete="off" name="radio_BLZIZVLVYF" value="answer"> <span>50</span></label><label><input type="radio" autocomplete="off" name="radio_BLZIZVLVYF" value> <span>A row for each raster cell containing a point, which may be fewer than 50</span></label><label><input type="radio" autocomplete="off" name="radio_BLZIZVLVYF" value> <span>A row containing the mean</span></label><label><input type="radio" autocomplete="off" name="radio_BLZIZVLVYF" value> <span>51, including a header row</span></label>
+<div id="radio_PWTMZOZHOS" class="webex-radiogroup">
+<label><input type="radio" autocomplete="off" name="radio_PWTMZOZHOS" value="answer"> <span>50</span></label><label><input type="radio" autocomplete="off" name="radio_PWTMZOZHOS" value> <span>A row for each raster cell containing a point, which may be fewer than 50</span></label><label><input type="radio" autocomplete="off" name="radio_PWTMZOZHOS" value> <span>A row containing the mean</span></label><label><input type="radio" autocomplete="off" name="radio_PWTMZOZHOS" value> <span>51, including a header row</span></label>
 </div>
 <p>True or false: <code>crop()</code> returns a raster in which the cells outside the vector are <code>NA</code>.</p>
 <p><select class="webex-select"><option value="blank"></option><option value>TRUE</option><option value="answer">FALSE</option></select></p>
@@ -27330,20 +27330,20 @@ Note
 <ol type="1">
 <li>You need the mean canopy cover inside each watershed polygon. Which statement returns it?</li>
 </ol>
-<div id="radio_XRRSEPSQEY" class="webex-radiogroup">
-<label><input type="radio" autocomplete="off" name="radio_XRRSEPSQEY" value="answer"> <span>terra::extract(canopy, terra::vect(watersheds), fun = mean, na.rm = TRUE)</span></label><label><input type="radio" autocomplete="off" name="radio_XRRSEPSQEY" value> <span>terra::extract(canopy, terra::vect(watersheds))</span></label><label><input type="radio" autocomplete="off" name="radio_XRRSEPSQEY" value> <span>terra::mask(canopy, terra::vect(watersheds))</span></label><label><input type="radio" autocomplete="off" name="radio_XRRSEPSQEY" value> <span>terra::rasterize(terra::vect(watersheds), canopy, fun = mean)</span></label>
+<div id="radio_LNLWFRQIQE" class="webex-radiogroup">
+<label><input type="radio" autocomplete="off" name="radio_LNLWFRQIQE" value="answer"> <span>terra::extract(canopy, terra::vect(watersheds), fun = mean, na.rm = TRUE)</span></label><label><input type="radio" autocomplete="off" name="radio_LNLWFRQIQE" value> <span>terra::extract(canopy, terra::vect(watersheds))</span></label><label><input type="radio" autocomplete="off" name="radio_LNLWFRQIQE" value> <span>terra::mask(canopy, terra::vect(watersheds))</span></label><label><input type="radio" autocomplete="off" name="radio_LNLWFRQIQE" value> <span>terra::rasterize(terra::vect(watersheds), canopy, fun = mean)</span></label>
 </div>
 <ol start="2" type="1">
 <li>A colleague masks a raster with a polygon and every cell of the result is <code>NA</code>. What is the first thing to check?</li>
 </ol>
-<div id="radio_AGMOJJUWQF" class="webex-radiogroup">
-<label><input type="radio" autocomplete="off" name="radio_AGMOJJUWQF" value="answer"> <span>Whether the polygon and the raster are in the same CRS</span></label><label><input type="radio" autocomplete="off" name="radio_AGMOJJUWQF" value> <span>Whether the raster contained any non-missing values</span></label><label><input type="radio" autocomplete="off" name="radio_AGMOJJUWQF" value> <span>Whether the polygon is valid</span></label><label><input type="radio" autocomplete="off" name="radio_AGMOJJUWQF" value> <span>Whether mask() was given the arguments in the wrong order</span></label>
+<div id="radio_VNUPURDXYD" class="webex-radiogroup">
+<label><input type="radio" autocomplete="off" name="radio_VNUPURDXYD" value="answer"> <span>Whether the polygon and the raster are in the same CRS</span></label><label><input type="radio" autocomplete="off" name="radio_VNUPURDXYD" value> <span>Whether the raster contained any non-missing values</span></label><label><input type="radio" autocomplete="off" name="radio_VNUPURDXYD" value> <span>Whether the polygon is valid</span></label><label><input type="radio" autocomplete="off" name="radio_VNUPURDXYD" value> <span>Whether mask() was given the arguments in the wrong order</span></label>
 </div>
 <ol start="3" type="1">
 <li>Why does <code>rasterize()</code> need a raster as its second argument?</li>
 </ol>
-<div id="radio_EJBQGWTQOK" class="webex-radiogroup">
-<label><input type="radio" autocomplete="off" name="radio_EJBQGWTQOK" value="answer"> <span>It supplies the grid used by the result</span></label><label><input type="radio" autocomplete="off" name="radio_EJBQGWTQOK" value> <span>It supplies the values assigned to the cells</span></label><label><input type="radio" autocomplete="off" name="radio_EJBQGWTQOK" value> <span>It is masked by the vector before the result is returned</span></label><label><input type="radio" autocomplete="off" name="radio_EJBQGWTQOK" value> <span>It sets the CRS the vector is transformed into</span></label>
+<div id="radio_CALEQMABWB" class="webex-radiogroup">
+<label><input type="radio" autocomplete="off" name="radio_CALEQMABWB" value="answer"> <span>It supplies the grid used by the result</span></label><label><input type="radio" autocomplete="off" name="radio_CALEQMABWB" value> <span>It supplies the values assigned to the cells</span></label><label><input type="radio" autocomplete="off" name="radio_CALEQMABWB" value> <span>It is masked by the vector before the result is returned</span></label><label><input type="radio" autocomplete="off" name="radio_CALEQMABWB" value> <span>It sets the CRS the vector is transformed into</span></label>
 </div>
 <ol start="4" type="1">
 <li>Parsons problem: Reorder the lines below to return the mean elevation inside the campus boundary as a single number. The distractor returns every cell covered by the boundary instead of summarizing them. Leave it in the trash.</li>
