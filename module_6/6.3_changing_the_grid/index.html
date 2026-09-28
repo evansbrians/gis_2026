@@ -26723,7 +26723,10 @@ margin: 1em 0;
   <li><a href="#projecting-a-categorical-raster" id="toc-projecting-a-categorical-raster" class="nav-link" data-scroll-target="#projecting-a-categorical-raster">Projecting a categorical raster</a></li>
   </ul></li>
   <li><a href="#aggregating-and-disaggregating-rasters" id="toc-aggregating-and-disaggregating-rasters" class="nav-link" data-scroll-target="#aggregating-and-disaggregating-rasters">Aggregating and disaggregating rasters</a></li>
-  <li><a href="#resampling-to-a-target-grid" id="toc-resampling-to-a-target-grid" class="nav-link" data-scroll-target="#resampling-to-a-target-grid">Resampling to a target grid</a></li>
+  <li><a href="#resampling-to-a-target-grid" id="toc-resampling-to-a-target-grid" class="nav-link" data-scroll-target="#resampling-to-a-target-grid">Resampling to a target grid</a>
+  <ul>
+  <li><a href="#moving-fine-cells-onto-a-coarse-grid" id="toc-moving-fine-cells-onto-a-coarse-grid" class="nav-link" data-scroll-target="#moving-fine-cells-onto-a-coarse-grid">Moving fine cells onto a coarse grid</a></li>
+  </ul></li>
   <li><a href="#putting-it-all-together" id="toc-putting-it-all-together" class="nav-link" data-scroll-target="#putting-it-all-together">Putting it all together</a></li>
   <li><a href="#take-home-points" id="toc-take-home-points" class="nav-link" data-scroll-target="#take-home-points">Take-home points</a></li>
   <li><a href="#exercises" id="toc-exercises" class="nav-link" data-scroll-target="#exercises">Exercises</a></li>
@@ -27014,16 +27017,16 @@ max value   : 391.623749</code></pre>
 <div class="now_you">
 <p><i class="fa-solid fa-user-circle fa-2x" aria-label="user-circle"></i> <span style="padding-left: 0.5em;">Check your understanding</span></p>
 <p>Which method should be used to project a categorical land-cover raster?</p>
-<div id="radio_CGQMVANXVF" class="webex-radiogroup">
-<label><input type="radio" autocomplete="off" name="radio_CGQMVANXVF" value="answer"> <span>near</span></label><label><input type="radio" autocomplete="off" name="radio_CGQMVANXVF" value> <span>bilinear</span></label><label><input type="radio" autocomplete="off" name="radio_CGQMVANXVF" value> <span>mean</span></label><label><input type="radio" autocomplete="off" name="radio_CGQMVANXVF" value> <span>sum</span></label>
+<div id="radio_HYVJEBDIIK" class="webex-radiogroup">
+<label><input type="radio" autocomplete="off" name="radio_HYVJEBDIIK" value="answer"> <span>near</span></label><label><input type="radio" autocomplete="off" name="radio_HYVJEBDIIK" value> <span>bilinear</span></label><label><input type="radio" autocomplete="off" name="radio_HYVJEBDIIK" value> <span>mean</span></label><label><input type="radio" autocomplete="off" name="radio_HYVJEBDIIK" value> <span>sum</span></label>
 </div>
 <p>Why would <code>bilinear</code> be inappropriate?</p>
-<div id="radio_YKIRKCCNDK" class="webex-radiogroup">
-<label><input type="radio" autocomplete="off" name="radio_YKIRKCCNDK" value="answer"> <span>It interpolates between class codes</span></label><label><input type="radio" autocomplete="off" name="radio_YKIRKCCNDK" value> <span>It changes the coordinate reference system</span></label><label><input type="radio" autocomplete="off" name="radio_YKIRKCCNDK" value> <span>It preserves the existing resolution</span></label><label><input type="radio" autocomplete="off" name="radio_YKIRKCCNDK" value> <span>It produces cells that are too small</span></label>
+<div id="radio_DGIXUSKLRO" class="webex-radiogroup">
+<label><input type="radio" autocomplete="off" name="radio_DGIXUSKLRO" value="answer"> <span>It interpolates between class codes</span></label><label><input type="radio" autocomplete="off" name="radio_DGIXUSKLRO" value> <span>It changes the coordinate reference system</span></label><label><input type="radio" autocomplete="off" name="radio_DGIXUSKLRO" value> <span>It preserves the existing resolution</span></label><label><input type="radio" autocomplete="off" name="radio_DGIXUSKLRO" value> <span>It produces cells that are too small</span></label>
 </div>
 <p>A projected land-cover raster contains decimal values and <code>terra::is.factor()</code> returns <code>FALSE</code>. What is the appropriate repair?</p>
-<div id="radio_OTVMOBBPGE" class="webex-radiogroup">
-<label><input type="radio" autocomplete="off" name="radio_OTVMOBBPGE" value="answer"> <span>Project the original raster again with near or mode</span></label><label><input type="radio" autocomplete="off" name="radio_OTVMOBBPGE" value> <span>Round the values and attach the original labels</span></label><label><input type="radio" autocomplete="off" name="radio_OTVMOBBPGE" value> <span>Convert the result to a factor with as.factor()</span></label><label><input type="radio" autocomplete="off" name="radio_OTVMOBBPGE" value> <span>Assign the original color table to the result</span></label>
+<div id="radio_NCMIRTBATU" class="webex-radiogroup">
+<label><input type="radio" autocomplete="off" name="radio_NCMIRTBATU" value="answer"> <span>Project the original raster again with near or mode</span></label><label><input type="radio" autocomplete="off" name="radio_NCMIRTBATU" value> <span>Round the values and attach the original labels</span></label><label><input type="radio" autocomplete="off" name="radio_NCMIRTBATU" value> <span>Convert the result to a factor with as.factor()</span></label><label><input type="radio" autocomplete="off" name="radio_NCMIRTBATU" value> <span>Assign the original color table to the result</span></label>
 </div>
 </div>
 </section>
@@ -27097,8 +27100,8 @@ Layer_1 152</code></pre>
 <div class="now_you">
 <p><i class="fa-solid fa-user-circle fa-2x" aria-label="user-circle"></i> <span style="padding-left: 0.5em;">Check your understanding</span></p>
 <p>A raster of 30-meter cells is aggregated with <code>fact = 3</code>. What is the resolution of the result?</p>
-<div id="radio_QUBLZEJXPN" class="webex-radiogroup">
-<label><input type="radio" autocomplete="off" name="radio_QUBLZEJXPN" value="answer"> <span>90 meters</span></label><label><input type="radio" autocomplete="off" name="radio_QUBLZEJXPN" value> <span>10 meters</span></label><label><input type="radio" autocomplete="off" name="radio_QUBLZEJXPN" value> <span>30 meters</span></label><label><input type="radio" autocomplete="off" name="radio_QUBLZEJXPN" value> <span>It depends on the function supplied to fun =</span></label>
+<div id="radio_GDHSKQXYKH" class="webex-radiogroup">
+<label><input type="radio" autocomplete="off" name="radio_GDHSKQXYKH" value="answer"> <span>90 meters</span></label><label><input type="radio" autocomplete="off" name="radio_GDHSKQXYKH" value> <span>10 meters</span></label><label><input type="radio" autocomplete="off" name="radio_GDHSKQXYKH" value> <span>30 meters</span></label><label><input type="radio" autocomplete="off" name="radio_GDHSKQXYKH" value> <span>It depends on the function supplied to fun =</span></label>
 </div>
 <p>True or false: <code>disagg()</code> recovers the values that <code>aggregate()</code> combined.</p>
 <p><select class="webex-select"><option value="blank"></option><option value>TRUE</option><option value="answer">FALSE</option></select></p>
@@ -27171,11 +27174,56 @@ max values  : 391.727142, 99.973045</code></pre>
 </div>
 </div>
 <p><code>c()</code> combines rasters that share a grid as a <strong>multi-layer raster</strong>. Unlike the joins in <strong><em>4.2 Non-spatial joins</em></strong>, no <span class="term">key</span> matches the data. The layers correspond by their position on the grid, which is why the grids must be identical first.</p>
+<section id="moving-fine-cells-onto-a-coarse-grid" class="level3">
+<h3 class="anchored" data-anchor-id="moving-fine-cells-onto-a-coarse-grid">Moving fine cells onto a coarse grid</h3>
+<p>Above, we moved the coarse canopy raster onto the fine elevation grid. The reverse raises a different problem. Each canopy cell is about nine elevation cells wide and nine tall, so it covers more than 80 elevation cells. <code>&quot;bilinear&quot;</code> calculates a target cell’s value from the few source cells nearest its center, and most of the elevation cells inside it never contribute. <code>method = &quot;mean&quot;</code> averages every source cell that falls within the target cell:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb49"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a>dem_on_canopy <span class="ot">&lt;-</span></span>
+<span id="cb49-2"><a href="#cb49-2" aria-hidden="true" tabindex="-1"></a>  dem <span class="sc">%&gt;%</span></span>
+<span id="cb49-3"><a href="#cb49-3" aria-hidden="true" tabindex="-1"></a>  terra<span class="sc">::</span><span class="fu">resample</span>(</span>
+<span id="cb49-4"><a href="#cb49-4" aria-hidden="true" tabindex="-1"></a>    canopy,</span>
+<span id="cb49-5"><a href="#cb49-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">method =</span> <span class="st">&quot;mean&quot;</span></span>
+<span id="cb49-6"><a href="#cb49-6" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>class       : SpatRaster
+size        : 79, 82, 1  (nrow, ncol, nlyr)
+resolution  : 0.0002899097, 0.0002899097  (x, y)
+extent      : -78.1739, -78.15013, 38.879, 38.9019  (xmin, xmax, ymin, ymax)
+coord. ref. : lon/lat NAD83 (EPSG:4269)
+source(s)   : memory
+varname     : scbi_canopy_cover
+name        :    Layer_1
+min value   : 225.427094
+max value   : 390.518463</code></pre>
+</div>
+</div>
+<p>The result has the grid of <code>canopy</code>, with 79 rows and 82 columns. To see how much the method matters here, let’s resample with bilinear interpolation onto the same grid and compare the two:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb51"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a>dem_bilinear <span class="ot">&lt;-</span></span>
+<span id="cb51-2"><a href="#cb51-2" aria-hidden="true" tabindex="-1"></a>  dem <span class="sc">%&gt;%</span></span>
+<span id="cb51-3"><a href="#cb51-3" aria-hidden="true" tabindex="-1"></a>  terra<span class="sc">::</span><span class="fu">resample</span>(</span>
+<span id="cb51-4"><a href="#cb51-4" aria-hidden="true" tabindex="-1"></a>    canopy,</span>
+<span id="cb51-5"><a href="#cb51-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">method =</span> <span class="st">&quot;bilinear&quot;</span></span>
+<span id="cb51-6"><a href="#cb51-6" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb51-7"><a href="#cb51-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb51-8"><a href="#cb51-8" aria-hidden="true" tabindex="-1"></a><span class="fu">abs</span>(dem_on_canopy <span class="sc">-</span> dem_bilinear) <span class="sc">%&gt;%</span></span>
+<span id="cb51-9"><a href="#cb51-9" aria-hidden="true" tabindex="-1"></a>  terra<span class="sc">::</span><span class="fu">global</span>(</span>
+<span id="cb51-10"><a href="#cb51-10" aria-hidden="true" tabindex="-1"></a>    <span class="fu">c</span>(<span class="st">&quot;mean&quot;</span>, <span class="st">&quot;max&quot;</span>),</span>
+<span id="cb51-11"><a href="#cb51-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">na.rm =</span> <span class="cn">TRUE</span></span>
+<span id="cb51-12"><a href="#cb51-12" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>             mean      max
+Layer_1 0.1469623 1.179871</code></pre>
+</div>
+</div>
+<p>The two methods differ by about 0.15 meters on average and never by more than about 1.2 meters. Elevation changes gradually across the campus, so the cells near the center of a target cell are close to its average. The choice matters more for a quantity that changes abruptly over a few meters, such as impervious surface. Whenever the target grid is coarser, use <code>&quot;mean&quot;</code> for a quantity so that every source cell contributes.</p>
 <div class="mysecret">
 <p><i class="fa-solid fa-user-secret fa-2x" aria-label="user-secret"></i> <span style="font-size: 1.25em; padding-left: 0.5em;">Choose the target grid for the question</span></p>
 <p>Either raster can supply the target grid, and that decision affects the spatial detail represented by the result.</p>
 <p>Moving a coarse raster onto a fine grid, as we did above, does not add information. Each fine cell takes a value interpolated from nearby coarse cells, so the result has smaller cells without finer source information. State that change in the methods.</p>
-<p>Moving a fine raster onto a coarse grid with <code>&quot;bilinear&quot;</code> does not summarize every source cell covered by the larger target cell. Where the coarse grid is the target, use <code>method = &quot;mean&quot;</code> for a quantity and <code>method = &quot;modal&quot;</code> for a class. I prefer to <code>aggregate()</code> first and then <code>resample()</code> when the ratio of the resolutions is a whole number and I want to inspect the intermediate raster.</p>
+<p>Where the coarse grid is the target, <code>method = &quot;modal&quot;</code> is the counterpart of <code>&quot;mean&quot;</code> for a class. I prefer to <code>aggregate()</code> first and then <code>resample()</code> when the ratio of the resolutions is a whole number and I want to inspect the intermediate raster.</p>
 <p>For classes, use <code>method = &quot;near&quot;</code> when you need the nearest class and <code>method = &quot;modal&quot;</code> when a larger cell should represent the most common contributing class.</p>
 <p>The spelling differs between the two functions. <code>project()</code> uses <code>method = &quot;mode&quot;</code>, while <code>resample()</code> uses <code>method = &quot;modal&quot;</code>. Yes, that is annoying enough to be worth writing down.</p>
 </div>
@@ -27186,24 +27234,24 @@ max values  : 391.727142, 99.973045</code></pre>
 <p><span class="answer_link" data-answer="a-6-3-resample">Click here to see my answer</span></p>
 <div id="a-6-3-resample" class="answer_body">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb49"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a>lc_on_dem <span class="ot">&lt;-</span></span>
-<span id="cb49-2"><a href="#cb49-2" aria-hidden="true" tabindex="-1"></a>  lc <span class="sc">%&gt;%</span></span>
-<span id="cb49-3"><a href="#cb49-3" aria-hidden="true" tabindex="-1"></a>  terra<span class="sc">::</span><span class="fu">resample</span>(</span>
-<span id="cb49-4"><a href="#cb49-4" aria-hidden="true" tabindex="-1"></a>    dem,</span>
-<span id="cb49-5"><a href="#cb49-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">method =</span> <span class="st">&quot;near&quot;</span></span>
-<span id="cb49-6"><a href="#cb49-6" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb49-7"><a href="#cb49-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb49-8"><a href="#cb49-8" aria-hidden="true" tabindex="-1"></a>terra<span class="sc">::</span><span class="fu">is.factor</span>(lc_on_dem)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb53"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb53-1"><a href="#cb53-1" aria-hidden="true" tabindex="-1"></a>lc_on_dem <span class="ot">&lt;-</span></span>
+<span id="cb53-2"><a href="#cb53-2" aria-hidden="true" tabindex="-1"></a>  lc <span class="sc">%&gt;%</span></span>
+<span id="cb53-3"><a href="#cb53-3" aria-hidden="true" tabindex="-1"></a>  terra<span class="sc">::</span><span class="fu">resample</span>(</span>
+<span id="cb53-4"><a href="#cb53-4" aria-hidden="true" tabindex="-1"></a>    dem,</span>
+<span id="cb53-5"><a href="#cb53-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">method =</span> <span class="st">&quot;near&quot;</span></span>
+<span id="cb53-6"><a href="#cb53-6" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb53-7"><a href="#cb53-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb53-8"><a href="#cb53-8" aria-hidden="true" tabindex="-1"></a>terra<span class="sc">::</span><span class="fu">is.factor</span>(lc_on_dem)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] TRUE</code></pre>
 </div>
 </div>
 <p><code>TRUE</code>. <code>freq()</code> reports the retained classes and their counts on the new grid:</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb51"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a>lc_on_dem <span class="sc">%&gt;%</span></span>
-<span id="cb51-2"><a href="#cb51-2" aria-hidden="true" tabindex="-1"></a>  terra<span class="sc">::</span><span class="fu">freq</span>() <span class="sc">%&gt;%</span></span>
-<span id="cb51-3"><a href="#cb51-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(count)) <span class="sc">%&gt;%</span></span>
-<span id="cb51-4"><a href="#cb51-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">head</span>(<span class="dv">4</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb55"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb55-1"><a href="#cb55-1" aria-hidden="true" tabindex="-1"></a>lc_on_dem <span class="sc">%&gt;%</span></span>
+<span id="cb55-2"><a href="#cb55-2" aria-hidden="true" tabindex="-1"></a>  terra<span class="sc">::</span><span class="fu">freq</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb55-3"><a href="#cb55-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(count)) <span class="sc">%&gt;%</span></span>
+<span id="cb55-4"><a href="#cb55-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">head</span>(<span class="dv">4</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>  layer                         value  count
 1     1                        Forest 288876
@@ -27216,6 +27264,7 @@ max values  : 391.727142, 99.973045</code></pre>
 <p>This is also a case of moving a fine raster onto a coarser grid: the land cover file has cells of about a meter and the elevation raster has cells of about three, so each target cell receives only the nearest class. That is appropriate when we need the class associated with a <span class="term">point</span>. For a map of the dominant class on the coarser grid, use <code>method = &quot;modal&quot;</code>. To estimate the area of each class, summarize the original land cover raster rather than relying on a resampled copy.</p>
 </div>
 </div>
+</section>
 </section>
 <section id="putting-it-all-together" class="level2">
 <h2 class="anchored" data-anchor-id="putting-it-all-together">Putting it all together</h2>
@@ -27259,20 +27308,20 @@ Note
 <ol type="1">
 <li>Two rasters share a CRS and a resolution, and an operation between them still returns <code>extents do not match</code>. What is the fix?</li>
 </ol>
-<div id="radio_RUWIPCRCGV" class="webex-radiogroup">
-<label><input type="radio" autocomplete="off" name="radio_RUWIPCRCGV" value="answer"> <span>resample() a raster onto the grid of the other</span></label><label><input type="radio" autocomplete="off" name="radio_RUWIPCRCGV" value> <span>project() a raster into the CRS of the other</span></label><label><input type="radio" autocomplete="off" name="radio_RUWIPCRCGV" value> <span>aggregate() a raster by the ratio of their resolutions</span></label><label><input type="radio" autocomplete="off" name="radio_RUWIPCRCGV" value> <span>c() them, which aligns the grids</span></label>
+<div id="radio_RZHMNPVIOE" class="webex-radiogroup">
+<label><input type="radio" autocomplete="off" name="radio_RZHMNPVIOE" value="answer"> <span>resample() a raster onto the grid of the other</span></label><label><input type="radio" autocomplete="off" name="radio_RZHMNPVIOE" value> <span>project() a raster into the CRS of the other</span></label><label><input type="radio" autocomplete="off" name="radio_RZHMNPVIOE" value> <span>aggregate() a raster by the ratio of their resolutions</span></label><label><input type="radio" autocomplete="off" name="radio_RZHMNPVIOE" value> <span>c() them, which aligns the grids</span></label>
 </div>
 <ol start="2" type="1">
 <li>A land cover raster is projected with <code>method = &quot;bilinear&quot;</code>. What is wrong with the result?</li>
 </ol>
-<div id="radio_KIEHGVRDAK" class="webex-radiogroup">
-<label><input type="radio" autocomplete="off" name="radio_KIEHGVRDAK" value="answer"> <span>The categories are dropped and the result contains interpolated values that are not class codes</span></label><label><input type="radio" autocomplete="off" name="radio_KIEHGVRDAK" value> <span>The call returns an error naming the categorical layer</span></label><label><input type="radio" autocomplete="off" name="radio_KIEHGVRDAK" value> <span>The classes are kept but the cells are misaligned</span></label><label><input type="radio" autocomplete="off" name="radio_KIEHGVRDAK" value> <span>Nothing, because bilinear is the default for every raster</span></label>
+<div id="radio_RZDYEYIXVL" class="webex-radiogroup">
+<label><input type="radio" autocomplete="off" name="radio_RZDYEYIXVL" value="answer"> <span>The categories are dropped and the result contains interpolated values that are not class codes</span></label><label><input type="radio" autocomplete="off" name="radio_RZDYEYIXVL" value> <span>The call returns an error naming the categorical layer</span></label><label><input type="radio" autocomplete="off" name="radio_RZDYEYIXVL" value> <span>The classes are kept but the cells are misaligned</span></label><label><input type="radio" autocomplete="off" name="radio_RZDYEYIXVL" value> <span>Nothing, because bilinear is the default for every raster</span></label>
 </div>
 <ol start="3" type="1">
 <li>Why does <code>project()</code> change the number of cells in a raster?</li>
 </ol>
-<div id="radio_WXTCBACUWB" class="webex-radiogroup">
-<label><input type="radio" autocomplete="off" name="radio_WXTCBACUWB" value="answer"> <span>It builds a new axis-aligned grid in the target CRS rather than moving the old cells</span></label><label><input type="radio" autocomplete="off" name="radio_WXTCBACUWB" value> <span>It always aggregates by a factor of two</span></label><label><input type="radio" autocomplete="off" name="radio_WXTCBACUWB" value> <span>It drops the cells that fall outside the target CRS</span></label><label><input type="radio" autocomplete="off" name="radio_WXTCBACUWB" value> <span>It adds a row and a column of padding</span></label>
+<div id="radio_DXZRMWDTPJ" class="webex-radiogroup">
+<label><input type="radio" autocomplete="off" name="radio_DXZRMWDTPJ" value="answer"> <span>It builds a new axis-aligned grid in the target CRS rather than moving the old cells</span></label><label><input type="radio" autocomplete="off" name="radio_DXZRMWDTPJ" value> <span>It always aggregates by a factor of two</span></label><label><input type="radio" autocomplete="off" name="radio_DXZRMWDTPJ" value> <span>It drops the cells that fall outside the target CRS</span></label><label><input type="radio" autocomplete="off" name="radio_DXZRMWDTPJ" value> <span>It adds a row and a column of padding</span></label>
 </div>
 <ol start="4" type="1">
 <li>Parsons problem: Reorder the lines below to return a two-layer raster of elevation and canopy cover on the elevation grid, in UTM zone 17N. Canopy cover is a percentage. The distractor supplies the resampling method for a class rather than a quantity. Leave it in the trash.</li>
@@ -27357,165 +27406,170 @@ Functions
 </tr>
 <tr class="even">
 <td style="text-align: center;">.Primitive</td>
+<td style="text-align: center;">-</td>
+<td style="text-align: left;">Infix arithmetic operator (subtract) or prefix negative symbol operator</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">.Primitive</td>
 <td style="text-align: center;">/</td>
 <td style="text-align: left;">Infix arithmetic operator (divide)</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: center;">.Primitive</td>
 <td style="text-align: center;">:</td>
 <td style="text-align: left;">Infix operator that generates a regular sequence of adjacent values</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: center;">.Primitive</td>
 <td style="text-align: center;">::</td>
 <td style="text-align: left;">Infix operator that can be used to access a package environment without attaching the whole package environment to your current session</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: center;">.Primitive</td>
 <td style="text-align: center;">&lt;-</td>
 <td style="text-align: left;">Infix operator that assigns an object on the right-hand-side (RHS) to a name on the left-hand-side (LHS) -- this should be used for global assignments!</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: center;">.Primitive</td>
 <td style="text-align: center;">=</td>
 <td style="text-align: left;">Infix operator that assigns an object on the right-hand-side (RHS) to a name on the left-hand-side (LHS) -- this should not be used for global assignments!</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: center;">.Primitive</td>
 <td style="text-align: center;">[[...]]</td>
 <td style="text-align: left;">Extraction operator used to index a single value from a data object (LHS) based on the position or values specified inside the brackets</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: center;">.Primitive</td>
 <td style="text-align: center;">c</td>
 <td style="text-align: left;">Combine values to form an atomic vector</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: center;">.Primitive</td>
 <td style="text-align: center;">is.na</td>
 <td style="text-align: left;">A logical test of whether a value in a vector is [NA]</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: center;">base</td>
 <td style="text-align: center;">%in%</td>
 <td style="text-align: left;">Infix relational operator that tests whether the values on the left-hand-side (LHS) are found within the vector on the right-hand-side (RHS)</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: center;">base</td>
 <td style="text-align: center;">dim</td>
 <td style="text-align: left;">Return the dimensions (number of rows and columns, or array dimensions) of a data object.</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: center;">base</td>
 <td style="text-align: center;">head</td>
 <td style="text-align: left;">Return the first 6 rows of a data frame (by default)</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: center;">base</td>
 <td style="text-align: center;">is.factor</td>
 <td style="text-align: left;">Report whether an object, or a raster layer, holds categories rather than numbers.</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: center;">base</td>
 <td style="text-align: center;">levels</td>
 <td style="text-align: left;">Generate a character vector of factor levels in a factor variable</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: center;">base</td>
 <td style="text-align: center;">library</td>
 <td style="text-align: left;">Attach the package environment for a given package to the current R session</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: center;">base</td>
 <td style="text-align: center;">names</td>
 <td style="text-align: left;">Get or set the names attribute of an object.</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: center;">base</td>
 <td style="text-align: center;">source</td>
 <td style="text-align: left;">Execute a source script (in its entirety)</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: center;">dplyr</td>
 <td style="text-align: center;">arrange</td>
 <td style="text-align: left;">Sort the rows of a data frame by the values in a variable or variables</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: center;">dplyr</td>
 <td style="text-align: center;">desc</td>
 <td style="text-align: left;">When used with `arrange()`, this sorts the rows of a data frame by the values of a variable in descending order</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: center;">dplyr</td>
 <td style="text-align: center;">filter</td>
 <td style="text-align: left;">Subset a data frame by logical condition</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: center;">magrittr</td>
 <td style="text-align: center;">%&gt;%</td>
 <td style="text-align: left;">The pipe operator passes the output of the LHS argument to the function on the right</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: center;">terra</td>
 <td style="text-align: center;">aggregate</td>
 <td style="text-align: left;">Combine adjacent raster cells into larger cells by applying a summary function.</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: center;">terra</td>
 <td style="text-align: center;">cats</td>
 <td style="text-align: left;">Return the table that maps each stored value of a categorical raster to its label.</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: center;">terra</td>
 <td style="text-align: center;">cellSize</td>
 <td style="text-align: left;">Return the area of each cell of a raster, in a unit named by its unit = argument.</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: center;">terra</td>
 <td style="text-align: center;">coltab</td>
 <td style="text-align: left;">Return or set the table of colors stored for each value of a categorical raster.</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: center;">terra</td>
 <td style="text-align: center;">disagg</td>
 <td style="text-align: left;">Split each cell of a raster into a block of smaller cells.</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: center;">terra</td>
 <td style="text-align: center;">ext</td>
 <td style="text-align: left;">Return or set the extent of a terra object.</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: center;">terra</td>
 <td style="text-align: center;">freq</td>
 <td style="text-align: left;">Count the cells of a raster holding each value.</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: center;">terra</td>
 <td style="text-align: center;">global</td>
 <td style="text-align: left;">Calculate a summary statistic across each cell in a raster</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: center;">terra</td>
 <td style="text-align: center;">ncell</td>
 <td style="text-align: left;">Return the number of cells of a raster.</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: center;">terra</td>
 <td style="text-align: center;">project</td>
 <td style="text-align: left;">Transform the CRS of a raster</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: center;">terra</td>
 <td style="text-align: center;">rast</td>
 <td style="text-align: left;">Read in a raster object, create a raster object from scratch, or convert a list of raster objects to a raster stack</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: center;">terra</td>
 <td style="text-align: center;">res</td>
 <td style="text-align: left;">Return or assign the resolution (cell size) of a raster.</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: center;">terra</td>
 <td style="text-align: center;">resample</td>
 <td style="text-align: left;">Resample the cells of a raster to fit the same resolution and extent of another</td>
