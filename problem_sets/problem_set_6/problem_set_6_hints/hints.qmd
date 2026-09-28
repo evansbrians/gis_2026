@@ -1,0 +1,131 @@
+---
+title: "Problem set 6 hints"
+format: live-html
+---
+
+```{r}
+#| label: setup
+#| include: false
+
+library(sf)
+library(tidyterra)
+library(tidyverse)
+
+hint_outputs <-
+  read_rds("problem_sets/problem_set_6/problem_set_6_hints/hint_outputs.rds")
+```
+
+![](../../../src/images/hex_complex.png){.intro_image fig-alt="Course logo"}
+
+## Question 3: Reading and preprocessing the data
+
+- Through *tidyterra*, the verbs you use to keep and rename fields also work on raster layers. Keeping a layer and giving it a new name can happen in a single step. (See [6.1 Introduction to rasters with terra / Multi-layer rasters](https://evansbrians.github.io/gis_2026/module_6/6.1_introduction_to_rasters/#multi-layer-rasters){target="_blank"} and [6.2 Categorical rasters / Merging classes](https://evansbrians.github.io/gis_2026/module_6/6.2_categorical_rasters/#merging-classes){target="_blank"}.)
+- A layer whose name you do not know yet can be renamed by its position, as we renamed the campus elevation model after reading it. (See [6.1 Introduction to rasters with terra / Reading raster data](https://evansbrians.github.io/gis_2026/module_6/6.1_introduction_to_rasters/#reading-raster-data){target="_blank"}.)
+- Read the park boundaries once with their metadata printed, then suppress it. (See [3.2 Introduction to spatial vector data / Read spatial vector files](https://evansbrians.github.io/gis_2026/module_3/3.2_introduction_to_shapefiles/#read-spatial-vector-files){target="_blank"}.)
+- The CRS of a raster can be retrieved the same way as the CRS of a simple features object, so `dc` can supply the CRS that the parks are transformed to. (See [3.4 The coordinate reference system / Transform data to another CRS](https://evansbrians.github.io/gis_2026/module_3/3.4_crs/#transform-data-to-another-crs){target="_blank"} and [6.4 Rasters and vectors together / Set up your session](https://evansbrians.github.io/gis_2026/module_6/6.4_rasters_and_vectors/#set-up-your-session){target="_blank"}.)
+
+**Reading `dc_stack.tif`**
+
+Your resultant object should look like:
+
+```{r}
+#| label: dc
+#| echo: false
+
+terra::rast(
+  "problem_sets/problem_set_6/problem_set_6_lifelines/dc.tif"
+)
+```
+
+**Reading `dem_dc_10m.tif`**
+
+Your resultant object should look like:
+
+```{r}
+#| label: dem
+#| echo: false
+
+terra::rast(
+  "problem_sets/problem_set_6/problem_set_6_lifelines/dem.tif"
+)
+```
+
+**Reading `dc_parks_and_recreation.geojson`**
+
+Your resultant object should look like:
+
+```{r}
+#| label: parks
+#| echo: false
+
+hint_outputs$parks
+```
+
+## Question 4: Classifying impervious surface
+
+- Each row of the classification matrix holds the lower boundary, the upper boundary, and the new code of one class. Write the four rows from the table in the question. (See [6.2 Categorical rasters / Classifying continuous values](https://evansbrians.github.io/gis_2026/module_6/6.2_categorical_rasters/#classifying-continuous-values){target="_blank"}.)
+- By default, an interval excludes its lower boundary, so a cell with 0% impervious surface would fall outside every class. Review how to include the lowest value in the first class. (See [6.2 Categorical rasters / Class interval boundaries](https://evansbrians.github.io/gis_2026/module_6/6.2_categorical_rasters/#class-interval-boundaries){target="_blank"}.)
+- Classify only the impervious-surface layer. Subset it from `dc` before classifying.
+- A category table can only be attached to a raster that has already been assigned a name, which is why this part is a separate statement. The name of the category table's second column becomes the category name. (See [6.2 Categorical rasters / Classifying continuous values](https://evansbrians.github.io/gis_2026/module_6/6.2_categorical_rasters/#classifying-continuous-values){target="_blank"}.)
+- Check your result in the console. Each class should be reported by its label rather than by its code, and the number of cells in each class should match those below.
+
+**Building `urban_intensity`**
+
+Your resultant object should look like:
+
+```{r}
+#| label: urban_intensity
+#| echo: false
+
+terra::rast(
+  "problem_sets/problem_set_6/problem_set_6_lifelines/urban_intensity.tif"
+)
+```
+
+The count of cells in each class should be:
+
+```{r}
+#| label: urban_intensity_freq
+#| echo: false
+
+terra::rast(
+  "problem_sets/problem_set_6/problem_set_6_lifelines/urban_intensity.tif"
+) %>%
+  terra::freq()
+```
+
+## Question 5: Aligning the grids
+
+- `dem` and `dc` share a CRS but not a grid: the elevation cells are about 9 meters and the `dc` cells are 30 meters. Compare them first. (See [6.3 Changing the grid / Diagnosing grid mismatches](https://evansbrians.github.io/gis_2026/module_6/6.3_changing_the_grid/#diagnosing-grid-mismatches){target="_blank"}.)
+- When the CRSs match, the raster that supplies the values comes first and the raster that supplies the grid comes second. (See [6.3 Changing the grid / Resampling to a target grid](https://evansbrians.github.io/gis_2026/module_6/6.3_changing_the_grid/#resampling-to-a-target-grid){target="_blank"}.)
+- Moving fine cells onto a coarse grid with the default method does not summarize every source cell that falls within a target cell. Review the method used for a quantity on a coarser target grid. (See [6.3 Changing the grid / Moving fine cells onto a coarse grid](https://evansbrians.github.io/gis_2026/module_6/6.3_changing_the_grid/#moving-fine-cells-onto-a-coarse-grid){target="_blank"}.)
+- Only `dc_environment` should be added to your global environment. Each layer can be built with its own piped statement at the point where you combine them. (See [6.1 Introduction to rasters with terra / Multi-layer rasters](https://evansbrians.github.io/gis_2026/module_6/6.1_introduction_to_rasters/#multi-layer-rasters){target="_blank"}.)
+
+**Building `dc_environment`**
+
+Your resultant object should look like:
+
+```{r}
+#| label: dc_environment
+#| echo: false
+
+terra::rast(
+  "problem_sets/problem_set_6/problem_set_6_lifelines/dc_environment.tif"
+)
+```
+
+## Question 6: Raster values for each park
+
+- Raster values are extracted at the locations of *terra*'s vector class rather than a simple features object, so convert the parks first. (See [6.4 Rasters and vectors together / Converting between sf and SpatVector objects](https://evansbrians.github.io/gis_2026/module_6/6.4_rasters_and_vectors/#converting-between-sf-and-spatvector-objects){target="_blank"}.)
+- Supplying a summary function while extracting returns one row for each polygon rather than one row for each cell. (See [6.4 Rasters and vectors together / Extracting raster values at vector locations](https://evansbrians.github.io/gis_2026/module_6/6.4_rasters_and_vectors/#extracting-raster-values-at-vector-locations){target="_blank"}.)
+- The `ID` field of the result is the row number of each park. Add a row-number field to the parks, remove their geometry, and join on the two fields. (See [2.2 Introduction to mutation / Add or modify a column](https://evansbrians.github.io/gis_2026/module_2/2.2_mutation/#add-or-modify-a-column){target="_blank"}, [4.3 Spatial joins / Features that match nothing](https://evansbrians.github.io/gis_2026/module_4/4.3_spatial_joins/#features-that-match-nothing){target="_blank"}, and [4.2 Non-spatial joins / Mutating joins](https://evansbrians.github.io/gis_2026/module_4/4.2_nonspatial_joins/#mutating-joins){target="_blank"}.)
+- The extracted values are a plain data frame, and the question asks for a tibble. Keep only the requested fields, in the requested order, as the last step.
+
+Your resultant object should look like:
+
+```{r}
+#| label: output_6
+#| echo: false
+
+hint_outputs$output_6
+```
