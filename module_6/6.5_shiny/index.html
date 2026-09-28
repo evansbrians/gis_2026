@@ -26764,7 +26764,6 @@ margin: 1em 0;
 <li>Explain what makes an expression reactive, and where the data should be read</li>
 <li>Run an app, and describe what deployment requires</li>
 </ul>
-<p><em>Note: This lesson is optional for Module 6. It provides the foundation for </em><strong>8.2 Advanced Shiny: Inputs from data, maps, events, and downloads</strong><em>. This lesson is the shortest path from a <code>SpatRaster</code> to an app that lets a reader control the result.</em></p>
 <p><strong>Important!</strong> Before starting this tutorial, be sure that you have completed all preliminary and previous lessons!</p>
 </div>
 <section id="data-for-this-lesson" class="level2">
@@ -26937,8 +26936,8 @@ Note
 <div class="now_you">
 <p><i class="fa-solid fa-user-circle fa-2x" aria-label="user-circle"></i> <span style="padding-left: 0.5em;">Check your understanding</span></p>
 <p>An app’s server reads <code>input$year</code> inside a <code>reactive()</code>. When does that expression re-evaluate?</p>
-<div id="radio_FQILWEMHVV" class="webex-radiogroup">
-<label><input type="radio" autocomplete="off" name="radio_FQILWEMHVV" value="answer"> <span>After input$year changes, when an output next requests its value</span></label><label><input type="radio" autocomplete="off" name="radio_FQILWEMHVV" value> <span>Every time any input changes</span></label><label><input type="radio" autocomplete="off" name="radio_FQILWEMHVV" value> <span>Once, when the app starts</span></label><label><input type="radio" autocomplete="off" name="radio_FQILWEMHVV" value> <span>Every second, until the app is closed</span></label>
+<div id="radio_DFKTMSJEUR" class="webex-radiogroup">
+<label><input type="radio" autocomplete="off" name="radio_DFKTMSJEUR" value="answer"> <span>After input$year changes, when an output next requests its value</span></label><label><input type="radio" autocomplete="off" name="radio_DFKTMSJEUR" value> <span>Every time any input changes</span></label><label><input type="radio" autocomplete="off" name="radio_DFKTMSJEUR" value> <span>Once, when the app starts</span></label><label><input type="radio" autocomplete="off" name="radio_DFKTMSJEUR" value> <span>Every second, until the app is closed</span></label>
 </div>
 <p>True or false: A <code>SpatRaster</code> read at the top of an app file is re-read each time an input changes.</p>
 <p><select class="webex-select"><option value="blank"></option><option value>TRUE</option><option value="answer">FALSE</option></select></p>
@@ -27038,20 +27037,20 @@ Note
 <ol type="1">
 <li>An app runs, the controls appear, and the plot panel is blank. What is the first thing to check?</li>
 </ol>
-<div id="radio_SEZMJPITPY" class="webex-radiogroup">
-<label><input type="radio" autocomplete="off" name="radio_SEZMJPITPY" value="answer"> <span>That the name in plotOutput() matches the name assigned in output$</span></label><label><input type="radio" autocomplete="off" name="radio_SEZMJPITPY" value> <span>That the raster was read inside the server</span></label><label><input type="radio" autocomplete="off" name="radio_SEZMJPITPY" value> <span>That shinyApp() was called before the server was defined</span></label><label><input type="radio" autocomplete="off" name="radio_SEZMJPITPY" value> <span>That the slider&#39;s min and max cover the data</span></label>
+<div id="radio_COKTDYCCVG" class="webex-radiogroup">
+<label><input type="radio" autocomplete="off" name="radio_COKTDYCCVG" value="answer"> <span>That the name in plotOutput() matches the name assigned in output$</span></label><label><input type="radio" autocomplete="off" name="radio_COKTDYCCVG" value> <span>That the raster was read inside the server</span></label><label><input type="radio" autocomplete="off" name="radio_COKTDYCCVG" value> <span>That shinyApp() was called before the server was defined</span></label><label><input type="radio" autocomplete="off" name="radio_COKTDYCCVG" value> <span>That the slider&#39;s min and max cover the data</span></label>
 </div>
 <ol start="2" type="1">
 <li>Why is <code>reactive()</code> preferable to repeating a calculation in two <code>render*()</code> blocks?</li>
 </ol>
-<div id="radio_NHMSTDBGQS" class="webex-radiogroup">
-<label><input type="radio" autocomplete="off" name="radio_NHMSTDBGQS" value="answer"> <span>Its result is cached and reused by both render blocks until a dependency changes</span></label><label><input type="radio" autocomplete="off" name="radio_NHMSTDBGQS" value> <span>It runs the calculation before the app starts</span></label><label><input type="radio" autocomplete="off" name="radio_NHMSTDBGQS" value> <span>It is the only way for the server to read an input</span></label><label><input type="radio" autocomplete="off" name="radio_NHMSTDBGQS" value> <span>It prevents the outputs from redrawing</span></label>
+<div id="radio_FGPQGCJAJC" class="webex-radiogroup">
+<label><input type="radio" autocomplete="off" name="radio_FGPQGCJAJC" value="answer"> <span>Its result is cached and reused by both render blocks until a dependency changes</span></label><label><input type="radio" autocomplete="off" name="radio_FGPQGCJAJC" value> <span>It runs the calculation before the app starts</span></label><label><input type="radio" autocomplete="off" name="radio_FGPQGCJAJC" value> <span>It is the only way for the server to read an input</span></label><label><input type="radio" autocomplete="off" name="radio_FGPQGCJAJC" value> <span>It prevents the outputs from redrawing</span></label>
 </div>
 <ol start="3" type="1">
 <li>An app projects a large raster inside <code>renderPlot()</code> and responds too slowly to use. What is the fix?</li>
 </ol>
-<div id="radio_BFCGRJCSVY" class="webex-radiogroup">
-<label><input type="radio" autocomplete="off" name="radio_BFCGRJCSVY" value="answer"> <span>Project it once at the top of the file, outside both halves</span></label><label><input type="radio" autocomplete="off" name="radio_BFCGRJCSVY" value> <span>Move the projection into a reactive() so that it is cached</span></label><label><input type="radio" autocomplete="off" name="radio_BFCGRJCSVY" value> <span>Reduce the size of the plot</span></label><label><input type="radio" autocomplete="off" name="radio_BFCGRJCSVY" value> <span>Use renderImage() instead of renderPlot()</span></label>
+<div id="radio_ZUTSENRNBR" class="webex-radiogroup">
+<label><input type="radio" autocomplete="off" name="radio_ZUTSENRNBR" value="answer"> <span>Project it once at the top of the file, outside both halves</span></label><label><input type="radio" autocomplete="off" name="radio_ZUTSENRNBR" value> <span>Move the projection into a reactive() so that it is cached</span></label><label><input type="radio" autocomplete="off" name="radio_ZUTSENRNBR" value> <span>Reduce the size of the plot</span></label><label><input type="radio" autocomplete="off" name="radio_ZUTSENRNBR" value> <span>Use renderImage() instead of renderPlot()</span></label>
 </div>
 <ol start="4" type="1">
 <li>Parsons problem: Reorder the lines below to make a server that draws the ground above a chosen elevation. The distractor reads the raster in a place that would re-read it on every change. Leave it in the trash.</li>
