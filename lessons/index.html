@@ -2053,6 +2053,217 @@ const PARTS = [
     ]
    }
   ]
+ },
+ {
+  "n": 7,
+  "kicker": "Module 7",
+  "title": "Raster analysis and spatial patterns",
+  "introTitle": "Module introduction",
+  "introBlurb": "What Module 7 covers, this week's data, and the required readings.",
+  "intro": "Calculating with rasters. Work across cells, neighborhoods, classes and whole layers with map algebra, derive terrain from elevation, combine and sample rasters, build distance surfaces and patches, and turn point records into a kernel density surface.",
+  "problemSet": {
+   "id": "PS7",
+   "dir": "problem_set_7",
+   "blurb": "Practice with the raster analysis toolkit: map algebra, terrain, distance surfaces, and density, in a mountain holiday for Tara."
+  },
+  "chapters": [
+   {
+    "id": "7.0",
+    "title": "Module introduction",
+    "slug": "module_7/7.0_module_intro/",
+    "kind": "Overview",
+    "blurb": "What Module 7 covers, this week's data, and the required readings.",
+    "mins": 10,
+    "meta": "Overview · 10 min",
+    "search": "c cat install.packages source",
+    "sections": [
+     [
+      "Module overview",
+      "module-overview"
+     ],
+     [
+      "Getting started",
+      "getting-started"
+     ],
+     [
+      "About this week's data",
+      "about-this-weeks-data"
+     ],
+     [
+      "Readings and resources",
+      "readings-and-resources"
+     ]
+    ]
+   },
+   {
+    "id": "7.1",
+    "title": "Map algebra",
+    "slug": "module_7/7.1_map_algebra/",
+    "kind": "Tutorial",
+    "blurb": "Distinguish calculations that use one cell, a neighborhood, a class or a whole layer, then choose the operation that matches the question.",
+    "mins": 30,
+    "meta": "Tutorial · 30 min",
+    "search": "arrange c cat cats crop desc filter focal freq function geom_spatraster ggplot global ifel is.na join_by left_join library max min names pluck pull rast rename resample scale_fill_whitebox_c select source st_crs st_read st_transform vect zonal",
+    "sections": [
+     [
+      "Local operations",
+      "local-operations"
+     ],
+     [
+      "Focal operations",
+      "focal-operations"
+     ],
+     [
+      "Zonal and global summaries",
+      "zonal-and-global-summaries"
+     ],
+     [
+      "Putting it all together",
+      "putting-it-all-together"
+     ]
+    ]
+   },
+   {
+    "id": "7.2",
+    "title": "Terrain analysis and visualization",
+    "slug": "module_7/7.2_terrain/",
+    "kind": "Tutorial",
+    "blurb": "Calculate slope, aspect, and other terrain variables, build a hillshade, and render an elevation surface with rayshader.",
+    "mins": 25,
+    "meta": "Tutorial · 25 min",
+    "search": "add_shadow aggregate c cat cos dim geom_spatraster ggplot global ifel install.packages library names new_scale_fill plot_3d plot_map project rast ray_shade render_snapshot res scale_fill_gradient scale_fill_hypso_c scale_fill_whitebox_c shade source sphere_shade terrain theme_void zonal",
+    "sections": [
+     [
+      "Slope and aspect",
+      "slope-and-aspect"
+     ],
+     [
+      "Hillshade",
+      "hillshade"
+     ],
+     [
+      "Rayshader",
+      "rayshader"
+     ],
+     [
+      "Putting it all together",
+      "putting-it-all-together"
+     ]
+    ]
+   },
+   {
+    "id": "7.3",
+    "title": "Raster operations",
+    "slug": "module_7/7.3_more_raster_tools/",
+    "kind": "Tutorial",
+    "blurb": "Combine raster tiles with merge() and mosaic(), draw samples with spatSample(), calculate distance surfaces, and identify forest patches.",
+    "mins": 45,
+    "meta": "Tutorial · 45 min",
+    "search": "aes arrange as.numeric as.polygons as_tibble bind_rows c cat cbind cellSize clean_names count crop desc dim distance ext extract facet_wrap filter freq geom_sf geom_spatraster ggplot global ifel library mask max mean median merge mosaic mutate n nrow patches project pull rast rasterize read_csv scale_fill_hypso_c scale_fill_viridis_c scale_fill_whitebox_c select set.seed set_units slice_head slice_max source spatSample st_area st_as_sf st_drop_geometry st_filter st_read st_transform sum summarize theme_void vect zonal",
+    "sections": [
+     [
+      "Combining raster tiles",
+      "combining-raster-tiles"
+     ],
+     [
+      "Sampling raster cells",
+      "sampling-raster-cells"
+     ],
+     [
+      "Calculating distance surfaces",
+      "calculating-distance-surfaces"
+     ],
+     [
+      "Identifying patches",
+      "identifying-patches"
+     ],
+     [
+      "Putting it all together",
+      "putting-it-all-together"
+     ]
+    ]
+   },
+   {
+    "id": "7.4",
+    "title": "Kernel density estimation",
+    "slug": "module_7/7.4_kernel_density/",
+    "kind": "Tutorial",
+    "blurb": "Count point records on a raster grid, smooth those counts with a Gaussian kernel, compare bandwidths, and examine how observer effort affects the resulting surface.",
+    "mins": 35,
+    "meta": "Tutorial · 35 min",
+    "search": "as_tibble c cat clean_names count dim facet_wrap focal focalMat geom_spatraster ggplot global library n_distinct names rast rasterize scale_fill_whitebox_c select slice_head source st_buffer st_drop_geometry st_filter st_point st_read st_sfc st_transform sum theme_void vect where.max xyFromCell",
+    "sections": [
+     [
+      "Density surfaces",
+      "density-surfaces"
+     ],
+     [
+      "Gaussian kernels",
+      "gaussian-kernels"
+     ],
+     [
+      "Calculating the density surface",
+      "calculating-the-density-surface"
+     ],
+     [
+      "Selecting a bandwidth",
+      "selecting-a-bandwidth"
+     ],
+     [
+      "Interpreting the density surface",
+      "interpreting-the-density-surface"
+     ],
+     [
+      "Putting it all together",
+      "putting-it-all-together"
+     ]
+    ]
+   },
+   {
+    "id": "7.5",
+    "title": "Communicating spatial data with Leaflet",
+    "slug": "module_7/7.5_leaflet/",
+    "kind": "Tutorial (optional)",
+    "blurb": "Build a web map of Tara's nest study with leaflet that combines the nests and habitat patches with land cover, elevation, hillshade, and slope, organize its layers into groups that a reader can turn on and off, and save it as a standalone HTML file.",
+    "mins": 55,
+    "meta": "Tutorial (optional) · 55 min",
+    "search": "addCircleMarkers addLayersControl addLegend addPolygons addProviderTiles addRasterImage addScaleBar addTiles arrange as.data.frame as.matrix as.numeric c case_when cat cats class classify clean_names colorFactor colorNumeric crop distinct extract factor filter freq hideGroup if_else install.packages is.na join_by layersControlOptions leaflet left_join levels library mutate pluck pull rast read_csv rename replace_na round saveWidget select set_units shade slice_head source st_area st_as_sf st_buffer st_drop_geometry st_read st_transform str_c terrain tm_polygons tm_shape tmap_leaflet unique values vect",
+    "sections": [
+     [
+      "Building a web map",
+      "building-a-web-map"
+     ],
+     [
+      "Styling features with data",
+      "styling-features-with-data"
+     ],
+     [
+      "Labels and popups",
+      "labels-and-popups"
+     ],
+     [
+      "Rasters on a web map",
+      "rasters-on-a-web-map"
+     ],
+     [
+      "Terrain on a web map",
+      "terrain-on-a-web-map"
+     ],
+     [
+      "Organizing layers",
+      "organizing-layers"
+     ],
+     [
+      "Sharing a web map",
+      "sharing-a-web-map"
+     ],
+     [
+      "Putting it all together",
+      "putting-it-all-together"
+     ]
+    ]
+   }
+  ]
  }
 ];
 
