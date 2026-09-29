@@ -26909,8 +26909,8 @@ max value   :  81.614056</code></pre>
 <div class="now_you">
 <p><i class="fa-solid fa-user-circle fa-2x" aria-label="user-circle"></i> <span style="padding-left: 0.5em;">Check your understanding</span></p>
 <p>Which of these is a local operation?</p>
-<div id="radio_LGUYXITWMC" class="webex-radiogroup">
-<label><input type="radio" autocomplete="off" name="radio_LGUYXITWMC" value="answer"> <span>Subtracting one raster layer from another</span></label><label><input type="radio" autocomplete="off" name="radio_LGUYXITWMC" value> <span>Calculating the mean of every 3 by 3 neighborhood</span></label><label><input type="radio" autocomplete="off" name="radio_LGUYXITWMC" value> <span>Calculating the mean elevation of each land cover class</span></label><label><input type="radio" autocomplete="off" name="radio_LGUYXITWMC" value> <span>Calculating the mean of a whole layer</span></label>
+<div id="radio_DOTJOMCQYF" class="webex-radiogroup">
+<label><input type="radio" autocomplete="off" name="radio_DOTJOMCQYF" value="answer"> <span>Subtracting one raster layer from another</span></label><label><input type="radio" autocomplete="off" name="radio_DOTJOMCQYF" value> <span>Calculating the mean of every 3 by 3 neighborhood</span></label><label><input type="radio" autocomplete="off" name="radio_DOTJOMCQYF" value> <span>Calculating the mean elevation of each land cover class</span></label><label><input type="radio" autocomplete="off" name="radio_DOTJOMCQYF" value> <span>Calculating the mean of a whole layer</span></label>
 </div>
 <p>True or false: <code>classify()</code> keeps a value that falls outside every interval unless <code>others =</code> says otherwise.</p>
 <p><select class="webex-select"><option value="blank"></option><option value="answer">TRUE</option><option value>FALSE</option></select></p>
@@ -27208,20 +27208,20 @@ Note
 <ol type="1">
 <li>A raster of 10-meter cells is smoothed with a window meant to cover about 100 meters. What should <code>w</code> be?</li>
 </ol>
-<div id="radio_NPSBFYPETJ" class="webex-radiogroup">
-<label><input type="radio" autocomplete="off" name="radio_NPSBFYPETJ" value="answer"> <span>11</span></label><label><input type="radio" autocomplete="off" name="radio_NPSBFYPETJ" value> <span>10</span></label><label><input type="radio" autocomplete="off" name="radio_NPSBFYPETJ" value> <span>100</span></label><label><input type="radio" autocomplete="off" name="radio_NPSBFYPETJ" value> <span>1000</span></label>
+<div id="radio_UVELSZGRVA" class="webex-radiogroup">
+<label><input type="radio" autocomplete="off" name="radio_UVELSZGRVA" value="answer"> <span>11</span></label><label><input type="radio" autocomplete="off" name="radio_UVELSZGRVA" value> <span>10</span></label><label><input type="radio" autocomplete="off" name="radio_UVELSZGRVA" value> <span>100</span></label><label><input type="radio" autocomplete="off" name="radio_UVELSZGRVA" value> <span>1000</span></label>
 </div>
 <ol start="2" type="1">
 <li>Two layers are added and the result has more missing cells than either input. What happened?</li>
 </ol>
-<div id="radio_GTDEPINHOW" class="webex-radiogroup">
-<label><input type="radio" autocomplete="off" name="radio_GTDEPINHOW" value="answer"> <span>The inputs are missing in different places, and a local operation returns NA wherever either is NA</span></label><label><input type="radio" autocomplete="off" name="radio_GTDEPINHOW" value> <span>The addition overflowed in the cells that are now missing</span></label><label><input type="radio" autocomplete="off" name="radio_GTDEPINHOW" value> <span>The grids do not match and the extra cells were padded</span></label><label><input type="radio" autocomplete="off" name="radio_GTDEPINHOW" value> <span>global() was called without na.rm = TRUE</span></label>
+<div id="radio_MKYNFJCFQZ" class="webex-radiogroup">
+<label><input type="radio" autocomplete="off" name="radio_MKYNFJCFQZ" value="answer"> <span>The inputs are missing in different places, and a local operation returns NA wherever either is NA</span></label><label><input type="radio" autocomplete="off" name="radio_MKYNFJCFQZ" value> <span>The addition overflowed in the cells that are now missing</span></label><label><input type="radio" autocomplete="off" name="radio_MKYNFJCFQZ" value> <span>The grids do not match and the extra cells were padded</span></label><label><input type="radio" autocomplete="off" name="radio_MKYNFJCFQZ" value> <span>global() was called without na.rm = TRUE</span></label>
 </div>
 <ol start="3" type="1">
 <li>A raster is summarized in two ways: once with <code>global()</code> and once with <code>zonal()</code> against a raster of one single class. What is the difference between the results?</li>
 </ol>
-<div id="radio_ARDEXVEFRR" class="webex-radiogroup">
-<label><input type="radio" autocomplete="off" name="radio_ARDEXVEFRR" value="answer"> <span>None in the number, but zonal() returns a table with a column naming the class</span></label><label><input type="radio" autocomplete="off" name="radio_ARDEXVEFRR" value> <span>global() ignores NA and zonal() does not</span></label><label><input type="radio" autocomplete="off" name="radio_ARDEXVEFRR" value> <span>zonal() returns a raster and global() returns a number</span></label><label><input type="radio" autocomplete="off" name="radio_ARDEXVEFRR" value> <span>global() cannot take na.rm = TRUE</span></label>
+<div id="radio_LDGQNBOQDT" class="webex-radiogroup">
+<label><input type="radio" autocomplete="off" name="radio_LDGQNBOQDT" value="answer"> <span>None in the number, but zonal() returns a table with a column naming the class</span></label><label><input type="radio" autocomplete="off" name="radio_LDGQNBOQDT" value> <span>global() ignores NA and zonal() does not</span></label><label><input type="radio" autocomplete="off" name="radio_LDGQNBOQDT" value> <span>zonal() returns a raster and global() returns a number</span></label><label><input type="radio" autocomplete="off" name="radio_LDGQNBOQDT" value> <span>global() cannot take na.rm = TRUE</span></label>
 </div>
 <ol start="4" type="1">
 <li>Parsons problem: Reorder the lines below to return the proportion of a 15-cell neighborhood classified as forest, from a land-cover raster whose forest class has the code <code>41</code>.</li>
