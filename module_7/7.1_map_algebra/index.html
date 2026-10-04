@@ -26901,17 +26901,18 @@ max values  : 391.727142,         81.614056</code></pre>
 <p>An operation between rasters returns <code>NA</code> wherever <em>any</em> input is <code>NA</code>, in the same way that <code>NA + 1</code> returns <code>NA</code> for a <span class="term">vector</span>. The inputs may contain missing <span class="term" data-term="Value">values</span> in different locations, so check the coverage of the result.</p>
 <div class="mysecret">
 <p><i class="fa-solid fa-screwdriver-wrench fa-2x" aria-label="screwdriver-wrench"></i> <span style="font-size: 1.25em; padding-left: 0.5em;">Count the values of the result, not of the inputs</span></p>
-<p>Use <code>global()</code> with <code>!is.na()</code> to count the cells represented in a result:</p>
+<p>Use <code>global()</code> with <code>&quot;notNA&quot;</code> to count the cells represented in a result:</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>terra<span class="sc">::</span><span class="fu">global</span>(<span class="sc">!</span><span class="fu">is.na</span>(result), <span class="st">&quot;sum&quot;</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>result <span class="sc">%&gt;%</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>  terra<span class="sc">::</span><span class="fu">global</span>(<span class="st">&quot;notNA&quot;</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>When <code>NA</code> represents zero rather than an unknown value, replace it with <code>ifel(is.na(x), 0, x)</code> before the calculation.</p>
 </div>
 <div class="now_you">
 <p><i class="fa-solid fa-user-circle fa-2x" aria-label="user-circle"></i> <span style="padding-left: 0.5em;">Check your understanding</span></p>
 <p>Which of these is a local operation?</p>
-<div id="radio_TLIZUGYYZR" class="webex-radiogroup">
-<label><input type="radio" autocomplete="off" name="radio_TLIZUGYYZR" value="answer"> <span>Subtracting one raster layer from another</span></label><label><input type="radio" autocomplete="off" name="radio_TLIZUGYYZR" value> <span>Calculating the mean of every 3 by 3 neighborhood</span></label><label><input type="radio" autocomplete="off" name="radio_TLIZUGYYZR" value> <span>Calculating the mean elevation of each land cover class</span></label><label><input type="radio" autocomplete="off" name="radio_TLIZUGYYZR" value> <span>Calculating the mean of a whole layer</span></label>
+<div id="radio_CQYRUOHHJQ" class="webex-radiogroup">
+<label><input type="radio" autocomplete="off" name="radio_CQYRUOHHJQ" value="answer"> <span>Subtracting one raster layer from another</span></label><label><input type="radio" autocomplete="off" name="radio_CQYRUOHHJQ" value> <span>Calculating the mean of every 3 by 3 neighborhood</span></label><label><input type="radio" autocomplete="off" name="radio_CQYRUOHHJQ" value> <span>Calculating the mean elevation of each land cover class</span></label><label><input type="radio" autocomplete="off" name="radio_CQYRUOHHJQ" value> <span>Calculating the mean of a whole layer</span></label>
 </div>
 <p>True or false: <code>classify()</code> keeps a value that falls outside every interval unless <code>others =</code> says otherwise.</p>
 <p><select class="webex-select"><option value="blank"></option><option value="answer">TRUE</option><option value>FALSE</option></select></p>
@@ -26922,16 +26923,12 @@ max values  : 391.727142,         81.614056</code></pre>
 <p>A <strong>focal operation</strong> calculates each output cell from a neighborhood of cells around the same position. The neighborhood is a window that moves across the grid, and the value returned is a summary of whatever the window covers.</p>
 <p><code>focal()</code> takes the raster, a window, and the function that <span class="term" data-term="Summarize">summarizes</span> it:</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>impervious_3 <span class="ot">&lt;-</span></span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>  impervious <span class="sc">%&gt;%</span></span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>  terra<span class="sc">::</span><span class="fu">focal</span>(</span>
-<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">w =</span> <span class="dv">3</span>,</span>
-<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">fun =</span> <span class="st">&quot;mean&quot;</span>,</span>
-<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">na.rm =</span> <span class="cn">TRUE</span></span>
-<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
-<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">w_3 =</span> focal_mean)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</div>
-<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>impervious <span class="sc">%&gt;%</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>  terra<span class="sc">::</span><span class="fu">focal</span>(</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">w =</span> <span class="dv">3</span>,</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">fun =</span> <span class="st">&quot;mean&quot;</span>,</span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">na.rm =</span> <span class="cn">TRUE</span></span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>class       : SpatRaster
 size        : 553, 773, 1  (nrow, ncol, nlyr)
@@ -26940,42 +26937,39 @@ extent      : -78.16916, -78.16163, 38.88434, 38.88973  (xmin, xmax, ymin, ymax)
 coord. ref. : lon/lat NAD83 (EPSG:4269)
 source(s)   : memory
 varname     : scbi_lc
-name        : w_3
-min value   :   0
-max value   :   1</code></pre>
+name        : focal_mean
+min value   :          0
+max value   :          1</code></pre>
 </div>
 </div>
 <p><code>w = 3</code> is a window of three cells by three cells, centered on the cell being calculated. The mean of a layer of zeroes and ones is the proportion of ones, so this raster contains the <strong>proportion of a neighborhood that is impervious</strong>, which is a more useful description of a place than whether a square meter of it happens to be paved.</p>
-<p>The window size is the question. Compare what the layer looks like at three sizes:</p>
+<p>The window size is the question, and we want to see the answer at more than one size. Rather than write that calculation out three times, we give <code>map()</code> the widths and let it run the calculation for each of them (see <strong><em>4.4 Iteration with purrr</em></strong>). The names we supply are carried onto the results, and <code>rast()</code> gathers the list into one raster of three layers:</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>impervious_15 <span class="ot">&lt;-</span></span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>  impervious <span class="sc">%&gt;%</span></span>
-<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>  terra<span class="sc">::</span><span class="fu">focal</span>(</span>
-<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">w =</span> <span class="dv">15</span>,</span>
-<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">fun =</span> <span class="st">&quot;mean&quot;</span>,</span>
-<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">na.rm =</span> <span class="cn">TRUE</span></span>
-<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
-<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">w_15 =</span> focal_mean)</span>
-<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>impervious_51 <span class="ot">&lt;-</span></span>
-<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a>  impervious <span class="sc">%&gt;%</span></span>
-<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a>  terra<span class="sc">::</span><span class="fu">focal</span>(</span>
-<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">w =</span> <span class="dv">51</span>,</span>
-<span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">fun =</span> <span class="st">&quot;mean&quot;</span>,</span>
-<span id="cb12-15"><a href="#cb12-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">na.rm =</span> <span class="cn">TRUE</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>windows <span class="ot">&lt;-</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">list</span>(</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">w_3 =</span> <span class="dv">3</span>,</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">w_15 =</span> <span class="dv">15</span>,</span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">w_51 =</span> <span class="dv">51</span></span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">map</span>(</span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>    \(width) {</span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>      impervious <span class="sc">%&gt;%</span></span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>        terra<span class="sc">::</span><span class="fu">focal</span>(</span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a>          <span class="at">w =</span> width,</span>
+<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a>          <span class="at">fun =</span> <span class="st">&quot;mean&quot;</span>,</span>
+<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a>          <span class="at">na.rm =</span> <span class="cn">TRUE</span></span>
+<span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a>        )</span>
+<span id="cb12-15"><a href="#cb12-15" aria-hidden="true" tabindex="-1"></a>    }</span>
 <span id="cb12-16"><a href="#cb12-16" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
-<span id="cb12-17"><a href="#cb12-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">w_51 =</span> focal_mean)</span>
-<span id="cb12-18"><a href="#cb12-18" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-19"><a href="#cb12-19" aria-hidden="true" tabindex="-1"></a>windows <span class="ot">&lt;-</span></span>
-<span id="cb12-20"><a href="#cb12-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">c</span>(</span>
-<span id="cb12-21"><a href="#cb12-21" aria-hidden="true" tabindex="-1"></a>    impervious,</span>
-<span id="cb12-22"><a href="#cb12-22" aria-hidden="true" tabindex="-1"></a>    impervious_3,</span>
-<span id="cb12-23"><a href="#cb12-23" aria-hidden="true" tabindex="-1"></a>    impervious_15,</span>
-<span id="cb12-24"><a href="#cb12-24" aria-hidden="true" tabindex="-1"></a>    impervious_51</span>
-<span id="cb12-25"><a href="#cb12-25" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb12-26"><a href="#cb12-26" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-27"><a href="#cb12-27" aria-hidden="true" tabindex="-1"></a>windows <span class="sc">%&gt;%</span></span>
-<span id="cb12-28"><a href="#cb12-28" aria-hidden="true" tabindex="-1"></a>  terra<span class="sc">::</span><span class="fu">global</span>(<span class="fu">c</span>(<span class="st">&quot;mean&quot;</span>, <span class="st">&quot;sd&quot;</span>), <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb12-17"><a href="#cb12-17" aria-hidden="true" tabindex="-1"></a>  terra<span class="sc">::</span><span class="fu">rast</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>Let’s compare the three windows with the unsmoothed layer:</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">c</span>(impervious, windows) <span class="sc">%&gt;%</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>  terra<span class="sc">::</span><span class="fu">global</span>(</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">c</span>(<span class="st">&quot;mean&quot;</span>, <span class="st">&quot;sd&quot;</span>),</span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">na.rm =</span> <span class="cn">TRUE</span></span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>                mean        sd
 impervious 0.2264398 0.4185275
@@ -26986,15 +26980,19 @@ w_51       0.2265848 0.2580276</code></pre>
 </div>
 <p>The mean changes little across the layers, while the standard deviation decreases as the window grows. A wider window reduces local variation, and a window wider than the pattern of interest can remove that pattern.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>() <span class="sc">+</span></span>
-<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Add the raster layer:</span></span>
-<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_spatraster</span>(<span class="at">data =</span> impervious_51) <span class="sc">+</span></span>
-<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Define the scale:</span></span>
-<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_whitebox_c</span>(<span class="at">palette =</span> <span class="st">&quot;deep&quot;</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>() <span class="sc">+</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Add the raster layer:</span></span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_spatraster</span>(</span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">data =</span></span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>      windows <span class="sc">%&gt;%</span></span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>      <span class="fu">select</span>(w_51)</span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Define the scale:</span></span>
+<span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-13"><a href="#cb15-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_whitebox_c</span>(<span class="at">palette =</span> <span class="st">&quot;deep&quot;</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -27005,15 +27003,15 @@ w_51       0.2265848 0.2580276</code></pre>
 </div>
 <p><code>fun =</code> accepts a function of your own as well as a name, which is how a focal operation answers a question that has no standard name:</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>dem <span class="sc">%&gt;%</span></span>
-<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>  terra<span class="sc">::</span><span class="fu">focal</span>(</span>
-<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">w =</span> <span class="dv">3</span>,</span>
-<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">fun =</span> <span class="cf">function</span>(x) <span class="fu">max</span>(x) <span class="sc">-</span> <span class="fu">min</span>(x)</span>
-<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
-<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>  terra<span class="sc">::</span><span class="fu">global</span>(</span>
-<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">c</span>(<span class="st">&quot;mean&quot;</span>, <span class="st">&quot;max&quot;</span>),</span>
-<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">na.rm =</span> <span class="cn">TRUE</span></span>
-<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>dem <span class="sc">%&gt;%</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>  terra<span class="sc">::</span><span class="fu">focal</span>(</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">w =</span> <span class="dv">3</span>,</span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">fun =</span> <span class="cf">function</span>(x) <span class="fu">max</span>(x) <span class="sc">-</span> <span class="fu">min</span>(x)</span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>  terra<span class="sc">::</span><span class="fu">global</span>(</span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">c</span>(<span class="st">&quot;mean&quot;</span>, <span class="st">&quot;max&quot;</span>),</span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">na.rm =</span> <span class="cn">TRUE</span></span>
+<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>              mean      max
 elevation 1.564417 11.45682</code></pre>
@@ -27036,22 +27034,24 @@ elevation 1.564417 11.45682</code></pre>
 <p>A <strong>zonal operation</strong> summarizes a raster within the classes of another raster. The rasters must share a grid (see <strong><em>6.3 Changing the grid: Resolution, extent and projection</em></strong>).</p>
 <p><code>resample()</code> puts the land cover onto the elevation grid, keeping its classes:</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>lc_on_dem <span class="ot">&lt;-</span></span>
-<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>  lc <span class="sc">%&gt;%</span></span>
-<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>  terra<span class="sc">::</span><span class="fu">resample</span>(</span>
-<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>    dem,</span>
-<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">method =</span> <span class="st">&quot;near&quot;</span></span>
-<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>lc_on_dem <span class="ot">&lt;-</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>  lc <span class="sc">%&gt;%</span></span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>  terra<span class="sc">::</span><span class="fu">resample</span>(</span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>    dem,</span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">method =</span> <span class="st">&quot;near&quot;</span></span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p><code>zonal()</code> then takes the raster to summarize, the raster containing the zones, and the statistic:</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>dem <span class="sc">%&gt;%</span></span>
-<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>  terra<span class="sc">::</span><span class="fu">zonal</span>(</span>
-<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>    lc_on_dem,</span>
-<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">fun =</span> <span class="st">&quot;mean&quot;</span>,</span>
-<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">na.rm =</span> <span class="cn">TRUE</span></span>
-<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
-<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(elevation))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>dem <span class="sc">%&gt;%</span></span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>  terra<span class="sc">::</span><span class="fu">zonal</span>(</span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>    lc_on_dem,</span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">fun =</span> <span class="st">&quot;mean&quot;</span>,</span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">na.rm =</span> <span class="cn">TRUE</span></span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(</span>
+<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a>    <span class="fu">desc</span>(elevation)</span>
+<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>                            category elevation
 1                Transitional Barren  340.4717
@@ -27078,16 +27078,16 @@ elevation 1.564417 11.45682</code></pre>
 <p>The barren and pasture classes have the highest mean elevations. The riverine classes have the lowest because the wetlands occur in the creek valley. This zonal summary describes how mean elevation differs among land-cover classes.</p>
 <p>A <strong>global operation</strong> summarizes a whole layer, and returns a table rather than a raster: one row per layer, and one column per statistic asked for.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>dem <span class="sc">%&gt;%</span></span>
-<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>  terra<span class="sc">::</span><span class="fu">global</span>(</span>
-<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">c</span>(</span>
-<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;mean&quot;</span>,</span>
-<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;sd&quot;</span>,</span>
-<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;min&quot;</span>,</span>
-<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;max&quot;</span></span>
-<span id="cb20-8"><a href="#cb20-8" aria-hidden="true" tabindex="-1"></a>    ),</span>
-<span id="cb20-9"><a href="#cb20-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">na.rm =</span> <span class="cn">TRUE</span></span>
-<span id="cb20-10"><a href="#cb20-10" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>dem <span class="sc">%&gt;%</span></span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>  terra<span class="sc">::</span><span class="fu">global</span>(</span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">c</span>(</span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;mean&quot;</span>,</span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;sd&quot;</span>,</span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;min&quot;</span>,</span>
+<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;max&quot;</span></span>
+<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a>    ),</span>
+<span id="cb21-9"><a href="#cb21-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">na.rm =</span> <span class="cn">TRUE</span></span>
+<span id="cb21-10"><a href="#cb21-10" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>              mean       sd      min      max
 elevation 310.1131 36.20399 224.4741 391.7271</code></pre>
@@ -27101,29 +27101,31 @@ elevation 310.1131 36.20399 224.4741 391.7271</code></pre>
 <p><span class="answer_link" data-answer="a-7-1-zonal">Click here to see my answer</span></p>
 <div id="a-7-1-zonal" class="answer_body">
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>cell_counts <span class="ot">&lt;-</span></span>
-<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>  dem <span class="sc">%&gt;%</span></span>
-<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>  terra<span class="sc">::</span><span class="fu">zonal</span>(</span>
-<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>    lc_on_dem,</span>
-<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">fun =</span> <span class="st">&quot;notNA&quot;</span></span>
-<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
-<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">cells =</span> elevation)</span>
-<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-9"><a href="#cb22-9" aria-hidden="true" tabindex="-1"></a>mean_elevation <span class="ot">&lt;-</span></span>
-<span id="cb22-10"><a href="#cb22-10" aria-hidden="true" tabindex="-1"></a>  dem <span class="sc">%&gt;%</span></span>
-<span id="cb22-11"><a href="#cb22-11" aria-hidden="true" tabindex="-1"></a>  terra<span class="sc">::</span><span class="fu">zonal</span>(</span>
-<span id="cb22-12"><a href="#cb22-12" aria-hidden="true" tabindex="-1"></a>    lc_on_dem,</span>
-<span id="cb22-13"><a href="#cb22-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">fun =</span> <span class="st">&quot;mean&quot;</span>,</span>
-<span id="cb22-14"><a href="#cb22-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">na.rm =</span> <span class="cn">TRUE</span></span>
-<span id="cb22-15"><a href="#cb22-15" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
-<span id="cb22-16"><a href="#cb22-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">mean_elevation =</span> elevation)</span>
-<span id="cb22-17"><a href="#cb22-17" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-18"><a href="#cb22-18" aria-hidden="true" tabindex="-1"></a>cell_counts <span class="sc">%&gt;%</span></span>
-<span id="cb22-19"><a href="#cb22-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(</span>
-<span id="cb22-20"><a href="#cb22-20" aria-hidden="true" tabindex="-1"></a>    mean_elevation,</span>
-<span id="cb22-21"><a href="#cb22-21" aria-hidden="true" tabindex="-1"></a>    <span class="fu">join_by</span>(category)</span>
-<span id="cb22-22"><a href="#cb22-22" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
-<span id="cb22-23"><a href="#cb22-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(cells))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>cell_counts <span class="ot">&lt;-</span></span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>  dem <span class="sc">%&gt;%</span></span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>  terra<span class="sc">::</span><span class="fu">zonal</span>(</span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>    lc_on_dem,</span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">fun =</span> <span class="st">&quot;notNA&quot;</span></span>
+<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">cells =</span> elevation)</span>
+<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-9"><a href="#cb23-9" aria-hidden="true" tabindex="-1"></a>mean_elevation <span class="ot">&lt;-</span></span>
+<span id="cb23-10"><a href="#cb23-10" aria-hidden="true" tabindex="-1"></a>  dem <span class="sc">%&gt;%</span></span>
+<span id="cb23-11"><a href="#cb23-11" aria-hidden="true" tabindex="-1"></a>  terra<span class="sc">::</span><span class="fu">zonal</span>(</span>
+<span id="cb23-12"><a href="#cb23-12" aria-hidden="true" tabindex="-1"></a>    lc_on_dem,</span>
+<span id="cb23-13"><a href="#cb23-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">fun =</span> <span class="st">&quot;mean&quot;</span>,</span>
+<span id="cb23-14"><a href="#cb23-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">na.rm =</span> <span class="cn">TRUE</span></span>
+<span id="cb23-15"><a href="#cb23-15" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb23-16"><a href="#cb23-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">mean_elevation =</span> elevation)</span>
+<span id="cb23-17"><a href="#cb23-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-18"><a href="#cb23-18" aria-hidden="true" tabindex="-1"></a>cell_counts <span class="sc">%&gt;%</span></span>
+<span id="cb23-19"><a href="#cb23-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(</span>
+<span id="cb23-20"><a href="#cb23-20" aria-hidden="true" tabindex="-1"></a>    mean_elevation,</span>
+<span id="cb23-21"><a href="#cb23-21" aria-hidden="true" tabindex="-1"></a>    <span class="fu">join_by</span>(category)</span>
+<span id="cb23-22"><a href="#cb23-22" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb23-23"><a href="#cb23-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(</span>
+<span id="cb23-24"><a href="#cb23-24" aria-hidden="true" tabindex="-1"></a>    <span class="fu">desc</span>(cells)</span>
+<span id="cb23-25"><a href="#cb23-25" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>                            category  cells mean_elevation
 1                             Forest 288876       308.7397
@@ -27150,15 +27152,18 @@ elevation 310.1131 36.20399 224.4741 391.7271</code></pre>
 <p><code>fun = &quot;notNA&quot;</code> counts the cells that contain a value. Cells that contain <code>NA</code> are excluded from the count.</p>
 <p>The two calls are joined on <code>category</code> rather than bound by position. Both return one row per class of the zone raster, in the same <span class="term">order</span>, so a bind would work here. The join keeps the calculation correct if either <span class="term">object</span> is <span class="term" data-term="Filter">filtered</span>, reordered, or built from a different zone raster.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Or, using freq() for the counts:</span></span>
-<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>lc_on_dem <span class="sc">%&gt;%</span></span>
-<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>  terra<span class="sc">::</span><span class="fu">freq</span>() <span class="sc">%&gt;%</span></span>
-<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(</span>
-<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">category =</span> value,</span>
-<span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">cells =</span> count</span>
-<span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
-<span id="cb24-9"><a href="#cb24-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(mean_elevation, <span class="fu">join_by</span>(category))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Or, using freq() for the counts:</span></span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>lc_on_dem <span class="sc">%&gt;%</span></span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a>  terra<span class="sc">::</span><span class="fu">freq</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(</span>
+<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">category =</span> value,</span>
+<span id="cb25-7"><a href="#cb25-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">cells =</span> count</span>
+<span id="cb25-8"><a href="#cb25-8" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb25-9"><a href="#cb25-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(</span>
+<span id="cb25-10"><a href="#cb25-10" aria-hidden="true" tabindex="-1"></a>    mean_elevation,</span>
+<span id="cb25-11"><a href="#cb25-11" aria-hidden="true" tabindex="-1"></a>    <span class="fu">join_by</span>(category)</span>
+<span id="cb25-12"><a href="#cb25-12" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </div>
 </div>
@@ -27204,20 +27209,20 @@ Note
 <ol type="1">
 <li>A raster of 10-meter cells is smoothed with a window meant to cover about 100 meters. What should <code>w</code> be?</li>
 </ol>
-<div id="radio_BBNGASZYIN" class="webex-radiogroup">
-<label><input type="radio" autocomplete="off" name="radio_BBNGASZYIN" value="answer"> <span>11</span></label><label><input type="radio" autocomplete="off" name="radio_BBNGASZYIN" value> <span>10</span></label><label><input type="radio" autocomplete="off" name="radio_BBNGASZYIN" value> <span>100</span></label><label><input type="radio" autocomplete="off" name="radio_BBNGASZYIN" value> <span>1000</span></label>
+<div id="radio_VNGSRODZHX" class="webex-radiogroup">
+<label><input type="radio" autocomplete="off" name="radio_VNGSRODZHX" value="answer"> <span>11</span></label><label><input type="radio" autocomplete="off" name="radio_VNGSRODZHX" value> <span>10</span></label><label><input type="radio" autocomplete="off" name="radio_VNGSRODZHX" value> <span>100</span></label><label><input type="radio" autocomplete="off" name="radio_VNGSRODZHX" value> <span>1000</span></label>
 </div>
 <ol start="2" type="1">
 <li>Two layers are added and the result has more missing cells than either input. What happened?</li>
 </ol>
-<div id="radio_ENDXWIRYHV" class="webex-radiogroup">
-<label><input type="radio" autocomplete="off" name="radio_ENDXWIRYHV" value="answer"> <span>The inputs are missing in different places, and a local operation returns NA wherever either is NA</span></label><label><input type="radio" autocomplete="off" name="radio_ENDXWIRYHV" value> <span>The addition overflowed in the cells that are now missing</span></label><label><input type="radio" autocomplete="off" name="radio_ENDXWIRYHV" value> <span>The grids do not match and the extra cells were padded</span></label><label><input type="radio" autocomplete="off" name="radio_ENDXWIRYHV" value> <span>global() was called without na.rm = TRUE</span></label>
+<div id="radio_DTXGYFVREZ" class="webex-radiogroup">
+<label><input type="radio" autocomplete="off" name="radio_DTXGYFVREZ" value="answer"> <span>The inputs are missing in different places, and a local operation returns NA wherever either is NA</span></label><label><input type="radio" autocomplete="off" name="radio_DTXGYFVREZ" value> <span>The addition overflowed in the cells that are now missing</span></label><label><input type="radio" autocomplete="off" name="radio_DTXGYFVREZ" value> <span>The grids do not match and the extra cells were padded</span></label><label><input type="radio" autocomplete="off" name="radio_DTXGYFVREZ" value> <span>global() was called without na.rm = TRUE</span></label>
 </div>
 <ol start="3" type="1">
 <li>A raster is summarized in two ways: once with <code>global()</code> and once with <code>zonal()</code> against a raster of one single class. What is the difference between the results?</li>
 </ol>
-<div id="radio_BWLYPPZJTT" class="webex-radiogroup">
-<label><input type="radio" autocomplete="off" name="radio_BWLYPPZJTT" value="answer"> <span>None in the number, but zonal() returns a table with a column naming the class</span></label><label><input type="radio" autocomplete="off" name="radio_BWLYPPZJTT" value> <span>global() ignores NA and zonal() does not</span></label><label><input type="radio" autocomplete="off" name="radio_BWLYPPZJTT" value> <span>zonal() returns a raster and global() returns a number</span></label><label><input type="radio" autocomplete="off" name="radio_BWLYPPZJTT" value> <span>global() cannot take na.rm = TRUE</span></label>
+<div id="radio_TMNJSQITJW" class="webex-radiogroup">
+<label><input type="radio" autocomplete="off" name="radio_TMNJSQITJW" value="answer"> <span>None in the number, but zonal() returns a table with a column naming the class</span></label><label><input type="radio" autocomplete="off" name="radio_TMNJSQITJW" value> <span>global() ignores NA and zonal() does not</span></label><label><input type="radio" autocomplete="off" name="radio_TMNJSQITJW" value> <span>zonal() returns a raster and global() returns a number</span></label><label><input type="radio" autocomplete="off" name="radio_TMNJSQITJW" value> <span>global() cannot take na.rm = TRUE</span></label>
 </div>
 <ol start="4" type="1">
 <li>Parsons problem: Reorder the lines below to return the proportion of a 15-cell neighborhood classified as forest, from a land-cover raster whose forest class has the code <code>41</code>.</li>
@@ -27288,63 +27293,63 @@ Functions
 <tbody>
 <tr class="odd">
 <td style="text-align: center;">.Primitive</td>
-<td style="text-align: center;">!</td>
-<td style="text-align: left;">Prefix logical operator (not)</td>
-</tr>
-<tr class="even">
-<td style="text-align: center;">.Primitive</td>
 <td style="text-align: center;">+</td>
 <td style="text-align: left;">Infix arithmetic operator (addition)</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: center;">.Primitive</td>
 <td style="text-align: center;">-</td>
 <td style="text-align: left;">Infix arithmetic operator (subtract) or prefix negative symbol operator</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: center;">.Primitive</td>
 <td style="text-align: center;">/</td>
 <td style="text-align: left;">Infix arithmetic operator (divide)</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: center;">.Primitive</td>
 <td style="text-align: center;">::</td>
 <td style="text-align: left;">Infix operator that can be used to access a package environment without attaching the whole package environment to your current session</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: center;">.Primitive</td>
 <td style="text-align: center;">&lt;-</td>
 <td style="text-align: left;">Infix operator that assigns an object on the right-hand-side (RHS) to a name on the left-hand-side (LHS) -- this should be used for global assignments!</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: center;">.Primitive</td>
 <td style="text-align: center;">=</td>
 <td style="text-align: left;">Infix operator that assigns an object on the right-hand-side (RHS) to a name on the left-hand-side (LHS) -- this should not be used for global assignments!</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: center;">.Primitive</td>
 <td style="text-align: center;">c</td>
 <td style="text-align: left;">Combine values to form an atomic vector</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: center;">.Primitive</td>
 <td style="text-align: center;">function</td>
 <td style="text-align: left;">The primitive used to define a custom function.</td>
 </tr>
-<tr class="even">
-<td style="text-align: center;">.Primitive</td>
-<td style="text-align: center;">is.na</td>
-<td style="text-align: left;">A logical test of whether a value in a vector is [NA]</td>
-</tr>
 <tr class="odd">
+<td style="text-align: center;">.Primitive</td>
+<td style="text-align: center;">list</td>
+<td style="text-align: left;">Combine multiple objects of any type into a single, recursive, data object</td>
+</tr>
+<tr class="even">
 <td style="text-align: center;">.Primitive</td>
 <td style="text-align: center;">max</td>
 <td style="text-align: left;">Return the highest value in a numeric vector (integer or double) as a one-value numeric or integer vector (depending on input)</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: center;">.Primitive</td>
 <td style="text-align: center;">min</td>
 <td style="text-align: left;">Return the lowest value in a numeric vector (integer or double) as a one-value numeric or integer vector (depending on input)</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">.Primitive</td>
+<td style="text-align: center;">{...}</td>
+<td style="text-align: left;">Operator that passes the last operation in `{...}` to the global environment</td>
 </tr>
 <tr class="odd">
 <td style="text-align: center;">base</td>
@@ -27418,80 +27423,85 @@ Functions
 </tr>
 <tr class="odd">
 <td style="text-align: center;">purrr</td>
+<td style="text-align: center;">map</td>
+<td style="text-align: left;">Iterate across a vector and return a list</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">purrr</td>
 <td style="text-align: center;">pluck</td>
 <td style="text-align: left;">Extract a list item from a list</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: center;">sf</td>
 <td style="text-align: center;">st_crs</td>
 <td style="text-align: left;">Get the CRS of a shapefile</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: center;">sf</td>
 <td style="text-align: center;">st_read</td>
 <td style="text-align: left;">Read in a simple features or other GIS shapefile</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: center;">sf</td>
 <td style="text-align: center;">st_transform</td>
 <td style="text-align: left;">Transform the CRS of a shapefile to a different CRS</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: center;">terra</td>
 <td style="text-align: center;">cats</td>
 <td style="text-align: left;">Return the table that maps each stored value of a categorical raster to its label.</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: center;">terra</td>
 <td style="text-align: center;">crop</td>
 <td style="text-align: left;">Subset a raster to a new spatial extent (e.g., a bounding box)</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: center;">terra</td>
 <td style="text-align: center;">focal</td>
 <td style="text-align: left;">Return a raster in which each cell is a summary of a window of cells around it.</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: center;">terra</td>
 <td style="text-align: center;">freq</td>
 <td style="text-align: left;">Count the cells of a raster holding each value.</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: center;">terra</td>
 <td style="text-align: center;">global</td>
 <td style="text-align: left;">Calculate a summary statistic across each cell in a raster</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: center;">terra</td>
 <td style="text-align: center;">ifel</td>
 <td style="text-align: left;">Return a raster holding one value where a condition is TRUE and another where it is FALSE.</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: center;">terra</td>
 <td style="text-align: center;">rast</td>
 <td style="text-align: left;">Read in a raster object, create a raster object from scratch, or convert a list of raster objects to a raster stack</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: center;">terra</td>
 <td style="text-align: center;">resample</td>
 <td style="text-align: left;">Resample the cells of a raster to fit the same resolution and extent of another</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: center;">terra</td>
 <td style="text-align: center;">vect</td>
 <td style="text-align: left;">Convert an sf object to a SpatVector (or create a SpatVector from scratch)</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: center;">terra</td>
 <td style="text-align: center;">zonal</td>
 <td style="text-align: left;">Summarize one raster within the classes of another raster on the same grid.</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: center;">tidyterra</td>
 <td style="text-align: center;">geom_spatraster</td>
 <td style="text-align: left;">Draw a SpatRaster in a ggplot, mapping its first layer to fill unless another is named.</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: center;">tidyterra</td>
 <td style="text-align: center;">scale_fill_whitebox_c</td>
 <td style="text-align: left;">A continuous fill scale using one of the palettes of the WhiteboxTools software.</td>
