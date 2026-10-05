@@ -2,9 +2,8 @@
 
 # 1 -----------------------------------------------------------------------
 
-# Please start by saving your R file with the naming convention
-# `final_exam_[your last name]_[your first name].R`. Please use snake case
-# when answering this question!
+# Please start by saving your R script as
+# `final_exam_[your last name]_[your first name].R`, using snake case.
 
 # Note: You will submit this script file as your exam.
 
@@ -32,16 +31,15 @@
 
 
 
-# `dem`: Read `data/raw/final_exam_data/dem_dc_10m.tif`, rename its
-# layer `elevation`, project it to the CRS of `lc`, and place it on the grid
-# of `lc`. Each output cell should contain the mean elevation of the source
-# cells that contribute to it:
+# `dem`: Prepare `data/raw/final_exam_data/dem_dc_10m.tif` as a layer named
+# `elevation` with the CRS and grid of `lc`. Calculate the mean elevation of
+# the source cells that contribute to each output cell:
 
 
 
 # 4 -----------------------------------------------------------------------
 
-# Use iteration to read and preprocess all four files. Each resultant object
+# Use iteration to read and preprocess all four files. Each resulting object
 # should retain the geometry and a single field named `name`, derived from
 # `NAME`, and should use EPSG 32618. Suppress the printing of each file's
 # metadata.
@@ -54,14 +52,14 @@
 # 5 -----------------------------------------------------------------------
 
 # Read and preprocess `Urban_Forestry_Street_Trees.csv`, then globally assign
-# the result to `trees`. In doing so:
+# the result to `trees`. The finished object should:
 #
-# * Begin with the four fields `GENUS_NAME`, `DBH`, `X`, and `Y`, renamed
+# * Use the four fields `GENUS_NAME`, `DBH`, `X`, and `Y`, renamed
 #   `genus`, `dbh`, `longitude`, and `latitude`
-# * Exclude records with a missing value and records whose genus is recorded
-#   as "No" or "Other"
-# * Include only trees with a diameter greater than 30 centimeters. Remove
-#   `dbh` after making this determination
+# * Exclude records with a missing value or a genus recorded as "No" or
+#   "Other"
+# * Include only trees with a diameter greater than 30 centimeters, without
+#   retaining `dbh`
 # * Classify Quercus as "oak", Acer as "maple", and every other genus as
 #   "other"
 # * Be a simple features POINT object in EPSG 32618 that contains only trees
@@ -73,7 +71,7 @@
 
 # A tibble data frame with one row for each ward, fields giving the numbers
 # of oaks and maples, and a field named `total` giving the number of trees
-# across every class. Do not include the count of the "other" class as a
+# across all classes. Do not include the count of the "other" class as a
 # separate field, and sort the result by ward:
 
 
@@ -120,8 +118,8 @@
 # 10 ----------------------------------------------------------------------
 
 # Merge the classes of `lc` into "water" (11), "developed" (21 through 24),
-# "forest" (41 through 43), and "other" (all remaining classes). Use the
-# integer codes 1 through 4, respectively, attach a category table whose
+# "forest" (41 through 43), and "other" (all remaining classes). Code the
+# merged classes 1 through 4, respectively. Attach a category table whose
 # label field is named `general_class`, and globally assign the raster to
 # `general_lc`:
 
@@ -133,8 +131,8 @@
 
 
 # `forest_distance`: A globally assigned raster giving the distance in meters
-# to the nearest forest cell. Name its layer `distance_m`, and crop and mask
-# the raster to `wards`:
+# to the nearest forest cell. Name its layer `distance_m`, and retain values
+# only within `wards`:
 
 
 
@@ -149,8 +147,8 @@
 
 
 # Set the seed to 2026 and use a random sample of 1,000 non-NA cells from
-# `forest_distance` to return the median distance to forest of a random
-# location within the wards:
+# `forest_distance` to estimate the median distance to forest across the
+# wards:
 
 
 
@@ -179,7 +177,7 @@
 
 
 # Generate a raster in which the value of each cell is the proportion of
-# forest cells within its centered 7 x 7 window. Name its layer
+# forest cells within its centered 7 × 7 window. Name its layer
 # `forest_cover` and globally assign the raster to `forest_cover`:
 
 
@@ -219,10 +217,10 @@
 #
 # The result should:
 #
-# * Contain only points within 1 kilometer of a listed station and retain
+# * Contain only points within 1 km of a listed station and retain
 #   the station name
-# * Include fields giving the numbers of oaks and maples within 30 meters of
-#   each point
+# * Include fields giving the numbers of oaks and maples from
+#   `trees_no_forests` within 30 meters of each point
 # * Include a field named `class` that combines "oak" or "no oak" with
 #   "maple" or "no maple", separated by a comma and a space
 # * Include the two points with the most trees for each combination of
@@ -245,7 +243,7 @@
 
 # extra credit 2 ----------------------------------------------------------
 
-# Generate a raster of 100 x 100 m cells covering `wards` in which each cell
+# Generate a raster of 100 × 100 m cells covering `wards` in which each cell
 # contains the number of oaks in `trees`, including zeros where no oaks
 # occur, and globally assign it to `oak_counts`:
 
@@ -262,6 +260,4 @@
 
 
 # Return the name of the ward that contains its peak:
-
-
 
