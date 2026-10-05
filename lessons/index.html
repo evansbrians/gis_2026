@@ -1517,7 +1517,7 @@ const PARTS = [
     "blurb": "We will clean point records, examine what summarize() returns for a group of points, and generate points for a survey design.",
     "mins": 40,
     "meta": "Tutorial · 40 min",
-    "search": "c cat clean_names diag distinct filter group_by length library n nrow set.seed source st_as_sfc st_bbox st_cast st_centroid st_drop_geometry st_geometry_type st_point_on_surface st_read st_sample st_transform st_union st_within summarize table tm_borders tm_dots tm_polygons tm_shape tm_view tmap_mode",
+    "search": "c cat clean_names diag distinct filter group_by length library n nrow opt_tm_dots set.seed source st_as_sfc st_bbox st_cast st_centroid st_drop_geometry st_geometry_type st_point_on_surface st_read st_sample st_transform st_union st_within summarize table tm_borders tm_dots tm_polygons tm_shape tm_view tmap_mode",
     "sections": [
      [
       "Records that repeat",
@@ -2103,7 +2103,7 @@ const PARTS = [
     "blurb": "Distinguish calculations that use one cell, a neighborhood, a class or a whole layer, then choose the operation that matches the question.",
     "mins": 30,
     "meta": "Tutorial · 30 min",
-    "search": "arrange c cat cats crop desc filter focal freq function geom_spatraster ggplot global ifel is.na join_by left_join library max min names pluck pull rast rename resample scale_fill_whitebox_c select source st_crs st_read st_transform vect zonal",
+    "search": "arrange c cat cats crop desc filter focal freq function geom_spatraster ggplot global ifel join_by left_join library list map max min mutate pluck pull rast rename resample scale_fill_whitebox_c select source st_crs st_read st_transform vect zonal",
     "sections": [
      [
       "Local operations",
@@ -2129,9 +2129,9 @@ const PARTS = [
     "slug": "module_7/7.2_terrain/",
     "kind": "Tutorial",
     "blurb": "Calculate slope, aspect, and other terrain variables, build a hillshade, and render an elevation surface with rayshader.",
-    "mins": 25,
-    "meta": "Tutorial · 25 min",
-    "search": "add_shadow aggregate c cat cos dim geom_spatraster ggplot global ifel install.packages library names new_scale_fill plot_3d plot_map project rast ray_shade render_snapshot res scale_fill_gradient scale_fill_hypso_c scale_fill_whitebox_c shade source sphere_shade terrain theme_void zonal",
+    "mins": 30,
+    "meta": "Tutorial · 30 min",
+    "search": "add_shadow aggregate c cat cos crop dim ext geom_spatraster ggplot global ifel install.packages library new_scale_fill plot_3d plot_map project rast ray_shade rename render_snapshot res scale_fill_gradient scale_fill_hypso_c scale_fill_whitebox_c shade source sphere_shade terrain theme_void zonal",
     "sections": [
      [
       "Slope and aspect",
@@ -2159,7 +2159,7 @@ const PARTS = [
     "blurb": "Combine raster tiles with merge() and mosaic(), draw samples with spatSample(), calculate distance surfaces, and identify forest patches.",
     "mins": 45,
     "meta": "Tutorial · 45 min",
-    "search": "aes arrange as.numeric as.polygons as_tibble bind_rows c cat cbind cellSize clean_names count crop desc dim distance ext extract facet_wrap filter freq geom_sf geom_spatraster ggplot global ifel library mask max mean median merge mosaic mutate n nrow patches project pull rast rasterize read_csv scale_fill_hypso_c scale_fill_viridis_c scale_fill_whitebox_c select set.seed set_units slice_head slice_max source spatSample st_area st_as_sf st_drop_geometry st_filter st_read st_transform sum summarize theme_void vect zonal",
+    "search": "aes arrange as.numeric as.polygons as_tibble bind_rows c cat cbind cellSize clean_names count crop desc dim distance ext extract facet_wrap filter freq geom_sf geom_spatraster ggplot global ifel library mask max mean median merge mosaic mutate n nrow patches project pull rast rasterize read_csv scale_fill_hypso_c scale_fill_viridis_c select set.seed set_units slice_head slice_max source spatSample st_area st_as_sf st_drop_geometry st_filter st_read st_transform sum summarize theme_void tm_legend tm_raster tm_scale_continuous tm_shape tmap_mode vect zonal",
     "sections": [
      [
       "Combining raster tiles",
@@ -2191,7 +2191,7 @@ const PARTS = [
     "blurb": "Count point records on a raster grid, smooth those counts with a Gaussian kernel, compare bandwidths, and examine how observer effort affects the resulting surface.",
     "mins": 35,
     "meta": "Tutorial · 35 min",
-    "search": "as_tibble c cat clean_names count dim facet_wrap focal focalMat geom_spatraster ggplot global library n_distinct names rast rasterize scale_fill_whitebox_c select slice_head source st_buffer st_drop_geometry st_filter st_point st_read st_sfc st_transform sum theme_void vect where.max xyFromCell",
+    "search": "as.numeric as_tibble c cat dim facet_wrap filter focal focalMat geom_spatraster ggplot global library mask max mutate n rast rasterize read_csv rename scale_fill_whitebox_c source st_as_sf st_buffer st_distance st_drop_geometry st_filter st_nearest_feature st_point st_read st_sfc st_transform sum summarize theme_void tm_legend tm_raster tm_scale_continuous tm_shape tmap_mode vect where.max xyFromCell",
     "sections": [
      [
       "Density surfaces",
@@ -2227,7 +2227,7 @@ const PARTS = [
     "blurb": "Build a web map of Tara's nest study with leaflet that combines the nests and habitat patches with land cover, elevation, hillshade, and slope, organize its layers into groups that a reader can turn on and off, and save it as a standalone HTML file.",
     "mins": 55,
     "meta": "Tutorial (optional) · 55 min",
-    "search": "addCircleMarkers addLayersControl addLegend addPolygons addProviderTiles addRasterImage addScaleBar addTiles arrange as.data.frame as.matrix as.numeric c case_when cat cats class classify clean_names colorFactor colorNumeric crop distinct extract factor filter freq hideGroup if_else install.packages is.na join_by layersControlOptions leaflet left_join levels library mutate pluck pull rast read_csv rename replace_na round saveWidget select set_units shade slice_head source st_area st_as_sf st_buffer st_drop_geometry st_read st_transform str_c terrain tm_polygons tm_shape tmap_leaflet unique values vect",
+    "search": "addCircleMarkers addLayersControl addLegend addPolygons addProviderTiles addRasterImage addScaleBar addTiles arrange as.data.frame as.matrix as.numeric c case_when cat cats class classify clean_names colorFactor colorNumeric crop distinct extract factor filter freq hideGroup if_else install.packages is.na join_by layersControlOptions leaflet left_join levels library mutate pluck pull rast read_csv rename replace_na round saveWidget select set_units shade slice_head source st_area st_as_sf st_buffer st_crs st_drop_geometry st_read st_transform str_c terrain tm_polygons tm_shape tmap_leaflet unique values vect",
     "sections": [
      [
       "Building a web map",
@@ -2260,6 +2260,38 @@ const PARTS = [
      [
       "Putting it all together",
       "putting-it-all-together"
+     ]
+    ]
+   },
+   {
+    "id": "PS7",
+    "title": "A mountain holiday for Joe",
+    "slug": "problem_sets/problem_set_7/",
+    "kind": "Problem set",
+    "blurb": "Practice with the raster analysis toolkit: map algebra, terrain, distance surfaces, and density, in a mountain holiday for Tara.",
+    "mins": 0,
+    "meta": "Problem set · due 12 Oct",
+    "search": "cat library source",
+    "sections": [
+     [
+      "Grading",
+      "grading"
+     ],
+     [
+      "About the data",
+      "about-the-data"
+     ],
+     [
+      "Preprocessing",
+      "preprocessing"
+     ],
+     [
+      "Helping out ol' Joe",
+      "helping-out-ol-joe"
+     ],
+     [
+      "Extra credit",
+      "extra-credit"
      ]
     ]
    }
