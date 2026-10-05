@@ -1994,21 +1994,13 @@ const PARTS = [
     "slug": "module_6/6.5_shiny/",
     "kind": "Tutorial (optional)",
     "blurb": "Build a small app that lets a reader change an elevation threshold and see the result.",
-    "mins": 20,
-    "meta": "Tutorial (optional) · 20 min",
+    "mins": 30,
+    "meta": "Tutorial (optional) · 30 min",
     "search": "cat cellSize checkboxInput filter fluidPage function geom_spatraster ggplot global if_else install.packages library mainPanel mask plotOutput project pull rast reactive rename renderPlot renderText round scale_fill_hypso_c shinyApp sidebarLayout sidebarPanel sliderInput source textOutput theme_void titlePanel",
     "sections": [
      [
       "Shiny user interfaces and servers",
       "shiny-user-interfaces-and-servers"
-     ],
-     [
-      "Building a raster application",
-      "building-a-raster-application"
-     ],
-     [
-      "Reactive expressions",
-      "reactive-expressions"
      ],
      [
       "Running and deploying a Shiny application",
@@ -2296,6 +2288,90 @@ const PARTS = [
     ]
    }
   ]
+ },
+ {
+  "n": 99,
+  "kicker": "Final exam",
+  "title": "Final exam",
+  "intro": "A comprehensive assessment that draws on every module of the course. Download the data and script file from the exam page before you begin.",
+  "chapters": [
+   {
+    "id": "FE",
+    "title": "Your weird new boss counts caterpillars",
+    "slug": "problem_sets/final_exam/",
+    "kind": "Final exam",
+    "blurb": "Provide GIS support for a street tree study in the District of Columbia, from reading and preprocessing the data to an interactive map of sampling locations near Metro stations.",
+    "mins": 0,
+    "meta": "Final exam · due 19 Oct",
+    "search": "filter inner_join join_by library select source",
+    "sections": [
+     [
+      "Memo 1",
+      "memo-1"
+     ],
+     [
+      "Memo 2",
+      "memo-2"
+     ],
+     [
+      "Memo 3",
+      "memo-3"
+     ],
+     [
+      "Memo 4",
+      "memo-4"
+     ],
+     [
+      "Memo 5",
+      "memo-5"
+     ],
+     [
+      "Memo 6",
+      "memo-6"
+     ],
+     [
+      "Memo 7",
+      "memo-7"
+     ],
+     [
+      "Memo 8",
+      "memo-8"
+     ],
+     [
+      "Memo 9",
+      "memo-9"
+     ],
+     [
+      "Memo 10",
+      "memo-10"
+     ],
+     [
+      "Memo 11",
+      "memo-11"
+     ],
+     [
+      "Memo 12",
+      "memo-12"
+     ],
+     [
+      "Memo 13",
+      "memo-13"
+     ],
+     [
+      "Memo 14",
+      "memo-14"
+     ],
+     [
+      "Extra credit 1",
+      "extra-credit-1"
+     ],
+     [
+      "Extra credit 2",
+      "extra-credit-2"
+     ]
+    ]
+   }
+  ]
  }
 ];
 
@@ -2324,7 +2400,7 @@ document.getElementById("parts").innerHTML = PARTS.map(part => {
       <h2>${esc(part.title)}</h2>
       <p>${esc(part.intro)}</p>
       <div class="part-meta">
-        ${part.chapters.length} chapters<span class="sep">|</span>&asymp; ${hours} hours
+        ${part.chapters.length} chapter${part.chapters.length === 1 ? "" : "s"}${hours ? `<span class="sep">|</span>&asymp; ${hours} hours` : ""}
       </div>
       ${chapters}
     </section>`;
