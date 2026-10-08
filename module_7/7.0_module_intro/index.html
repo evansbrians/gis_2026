@@ -26882,6 +26882,7 @@ margin: 1em 0;
 <ul>
 <li>Place <code>nests.csv</code> in <code>data/raw</code>.</li>
 <li>Place <code>patches.geojson</code> in <code>data/raw/shapefiles</code>. You may overwrite your existing file.</li>
+<li>Place <code>source_script_holiday_joe.R</code> in <code>scripts</code>. The problem set reads its data with it.</li>
 </ul>
 <p>The remaining data for this module were supplied with modules 4 to 6. The lessons also load <code>source_script_module_3.R</code> from <code>scripts</code>, which supplies <code>clean_names()</code>.</p>
 <p>Download <a href="module_7_scripts.zip">module_7_scripts.zip</a>{download} and place the five lesson <span class="term" data-term="Script">scripts</span> in <code>scripts</code>.</p>
@@ -26985,11 +26986,11 @@ Glossary of terms
 <li><strong>Data frame</strong>: A two-dimensional, heterogeneous data object comprised of equal-length vectors (a restrictive type of list under-the-hood).</li>
 <li><strong>Data object</strong>: Containers for values that structure references in an ordered, predictable way.</li>
 <li><strong>Datum</strong>: The model used to represent the Earth’s surface.</li>
-<li><strong>Density surface</strong>: A raster in which each cell holds the number of records per unit of area around it.</li>
+<li><strong>Density surface</strong>: A raster in which each cell contains the number of records per unit of area around it.</li>
 <li><strong>Dimensions</strong>: The arrangement of values in an object; may also refer to the number of values or child objects within a given dimension (i.e., rows or columns)</li>
 <li><strong>Dissolve or Dissolving</strong>: Remove boundaries between features.</li>
 <li><strong>Distance matrix</strong>: For shapefiles, this represents the pairwise distances between each feature, and often the pairwise distances between values of each feature.</li>
-<li><strong>Distance surface</strong>: A raster in which each cell holds the distance to the nearest feature of some kind.</li>
+<li><strong>Distance surface</strong>: A raster in which each cell contains the distance to the nearest feature of some kind.</li>
 <li><strong>Double numeric vector</strong>: An atomic numeric vector where the values are stored as decimal numbers (essentially).</li>
 <li><strong>Easting</strong>: The X coordinate of a projected coordinate reference system, measured in linear units from the system’s origin.</li>
 <li><strong>Environment</strong>: A dimensionless data structure that contains references (names) to data stored in memory.</li>
@@ -28947,7 +28948,7 @@ Functions introduced through the end of this module
 <td style="text-align: center;">terra</td>
 <td style="text-align: center;">patches</td>
 <td style="text-align: left;">7.3_more_raster_tools</td>
-<td style="text-align: left;">Number the connected groups of cells that are not NA, returning a raster in which each group holds its own number.</td>
+<td style="text-align: left;">Number the connected groups of cells that are not NA, returning a raster with a different number for each group.</td>
 </tr>
 <tr class="odd">
 <td style="text-align: center;">terra</td>

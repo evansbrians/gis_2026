@@ -26768,11 +26768,10 @@ margin: 1em 0;
 <section id="data-for-this-lesson" class="level2">
 <h2 class="anchored" data-anchor-id="data-for-this-lesson">Data for this lesson</h2>
 <button class="accordion">
-Please click on the button below to explore the metadata for this lesson!
+Explore the metadata for this lesson
 </button>
 <div class="panel">
-<p>In this lesson, we will explore:</p>
-<p><strong><code>scbi_dem.tif</code></strong>: Digital elevation model (raster) of the Smithsonian Conservation Biology Institute campus and the land around it, subset from a Virginia state elevation model. The file is in EPSG 4269, with cells of about three meters, and holds elevations in meters.</p>
+<p><strong><code>scbi_dem.tif</code></strong>: Digital elevation model (raster) of the Smithsonian Conservation Biology Institute campus and the land around it, subset from a Virginia state elevation model. The file is in EPSG 4269, with cells of about three meters, and contains elevations in meters.</p>
 <p><strong><code>scbi_lc.tif</code></strong>: Classified land cover (raster; 1m resolution), subset to the spatial extent of the Smithsonian Conservation Biology Institute. The data were obtained using the <a href="https://cicgis.org/portal/apps/webappviewer/index.html?id=bdf7ca3e249a40fd9a9d83d6e16100ea&amp;extent=-88.252,35.0981,-62.3462,45.7489" target="_blank">Chesapeake Conservancy tool</a> and are in an unprojected CRS (EPSG 4269).</p>
 <p><strong><code>smsc_campus_scbi.geojson</code></strong>: Shapefile that describes the boundaries of the Smithsonian-Mason-School of Conservation campus. Brian digitized this file by hand (poorly) and the data are in an unprojected CRS (EPSG 4326).</p>
 </div>
@@ -26806,7 +26805,7 @@ Please click on the button below to explore the metadata for this lesson!
 <span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">&quot;scripts/source_script_module_3.R&quot;</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<p>Create a code section called “<code>read and pre-process data</code>”. We read the elevation and land cover rasters and the campus boundary, transform the boundary to the CRS of the rasters, and clip the land cover to the campus. We will also name the elevation layer as we read it: <em>tidyterra</em> gives us <code>rename()</code> for a <code>SpatRaster</code>, so we can call the layer what it holds rather than leave it as the <code>Layer_1</code> that <code>rast()</code> returns:</p>
+<p>Create a code section called “<code>read and pre-process data</code>”. We read the elevation and land cover rasters and the campus boundary, transform the boundary to the CRS of the rasters, and clip the land cover to the campus. We will also name the elevation layer as we read it: <em>tidyterra</em> gives us <code>rename()</code> for a <code>SpatRaster</code>, so we can name the layer for what it represents rather than leave it as the <code>Layer_1</code> that <code>rast()</code> returns:</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>dem <span class="ot">&lt;-</span></span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  terra<span class="sc">::</span><span class="fu">rast</span>(<span class="st">&quot;data/raw/gis_scbi/scbi_dem.tif&quot;</span>) <span class="sc">%&gt;%</span></span>
@@ -26829,6 +26828,7 @@ Please click on the button below to explore the metadata for this lesson!
 <span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>  lc <span class="sc">%&gt;%</span></span>
 <span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>  terra<span class="sc">::</span><span class="fu">crop</span>(campus)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
+<p>In <strong><em>6.4 Rasters and vectors together</em></strong> we named that layer with <code>names(dem) &lt;- &quot;elevation&quot;</code>, on a line of its own after the read. <code>rename()</code> does the same work with the <em>dplyr</em> verb we have used on data frames since module 4, and it belongs to the pipeline that creates the object rather than reaching back into the object after the fact.</p>
 </section>
 <section id="local-operations" class="level2">
 <h2 class="anchored" data-anchor-id="local-operations">Local operations</h2>
@@ -26856,7 +26856,8 @@ min values  : 224.474091,        -85.638996
 max values  : 391.727142,         81.614056</code></pre>
 </div>
 </div>
-<p>We have <code>mutate()</code> for a <code>SpatRaster</code> too, and we use it as we would on a data frame: we write the calculation on the right of the <code>=</code>, it runs for every cell, and we name the new layer on the left. The original layer is kept, so we now hold both.</p>
+<p>We have <code>mutate()</code> for a <code>SpatRaster</code> too, and we use it as we would on a data frame: we write the calculation on the right of the <code>=</code>, it runs for every cell, and we name the new layer on the left. The result contains the original layer and the new layer.</p>
+<p>Module 6 wrote a calculation like this one as bare arithmetic and then named the result with <code>names()</code>, as <strong><em>6.3 Changing the grid: Resolution, extent and projection</em></strong> does with <code>names(campus) &lt;- c(&quot;elevation&quot;, &quot;canopy&quot;)</code>. The arithmetic inside <code>mutate()</code> is that same arithmetic. What <code>mutate()</code> adds is a name given as part of the calculation, and a result that still carries the layer we started from. A layer of a <code>SpatRaster</code> is the raster’s version of a column, and from here on we will build one the way we build a column.</p>
 <p><code>ifel()</code> is the raster form of <code>if_else()</code> from <strong><em>5.4 Categorizing spatial data</em></strong>, and it takes the same three <span class="term">arguments</span>: a condition, a value where the condition holds, and a value where it does not.</p>
 <p>The land cover raster contains a class for each cell. The category table provides the codes for the impervious classes:</p>
 <div class="cell">
@@ -26911,10 +26912,10 @@ max values  : 391.727142,         81.614056</code></pre>
 <div class="now_you">
 <p><i class="fa-solid fa-user-circle fa-2x" aria-label="user-circle"></i> <span style="padding-left: 0.5em;">Check your understanding</span></p>
 <p>Which of these is a local operation?</p>
-<div id="radio_CQYRUOHHJQ" class="webex-radiogroup">
-<label><input type="radio" autocomplete="off" name="radio_CQYRUOHHJQ" value="answer"> <span>Subtracting one raster layer from another</span></label><label><input type="radio" autocomplete="off" name="radio_CQYRUOHHJQ" value> <span>Calculating the mean of every 3 by 3 neighborhood</span></label><label><input type="radio" autocomplete="off" name="radio_CQYRUOHHJQ" value> <span>Calculating the mean elevation of each land cover class</span></label><label><input type="radio" autocomplete="off" name="radio_CQYRUOHHJQ" value> <span>Calculating the mean of a whole layer</span></label>
+<div id="radio_VFOYFTUTFL" class="webex-radiogroup">
+<label><input type="radio" autocomplete="off" name="radio_VFOYFTUTFL" value="answer"> <span>Subtracting one raster layer from another</span></label><label><input type="radio" autocomplete="off" name="radio_VFOYFTUTFL" value> <span>Calculating the mean of every 3 by 3 neighborhood</span></label><label><input type="radio" autocomplete="off" name="radio_VFOYFTUTFL" value> <span>Calculating the mean elevation of each land cover class</span></label><label><input type="radio" autocomplete="off" name="radio_VFOYFTUTFL" value> <span>Calculating the mean of a whole layer</span></label>
 </div>
-<p>True or false: <code>classify()</code> keeps a value that falls outside every interval unless <code>others =</code> says otherwise.</p>
+<p>True or false: A value outside every interval remains unchanged unless <code>others =</code> specifies its replacement.</p>
 <p><select class="webex-select"><option value="blank"></option><option value="answer">TRUE</option><option value>FALSE</option></select></p>
 </div>
 </section>
@@ -26943,7 +26944,7 @@ max value   :          1</code></pre>
 </div>
 </div>
 <p><code>w = 3</code> is a window of three cells by three cells, centered on the cell being calculated. The mean of a layer of zeroes and ones is the proportion of ones, so this raster contains the <strong>proportion of a neighborhood that is impervious</strong>, which is a more useful description of a place than whether a square meter of it happens to be paved.</p>
-<p>The window size is the question, and we want to see the answer at more than one size. Rather than write that calculation out three times, we give <code>map()</code> the widths and let it run the calculation for each of them (see <strong><em>4.4 Iteration with purrr</em></strong>). The names we supply are carried onto the results, and <code>rast()</code> gathers the list into one raster of three layers:</p>
+<p>The window size is the question, and we want to see the answer at more than one size. Rather than write that calculation out three times, we give <code>map()</code> the widths and apply the calculation to each of them (see <strong><em>4.4 Iteration with purrr</em></strong>). The supplied names become the names of the results, and <code>rast()</code> combines the list into one raster of three layers:</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>windows <span class="ot">&lt;-</span></span>
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">list</span>(</span>
@@ -27150,7 +27151,7 @@ elevation 310.1131 36.20399 224.4741 391.7271</code></pre>
 </div>
 </div>
 <p><code>fun = &quot;notNA&quot;</code> counts the cells that contain a value. Cells that contain <code>NA</code> are excluded from the count.</p>
-<p>The two calls are joined on <code>category</code> rather than bound by position. Both return one row per class of the zone raster, in the same <span class="term">order</span>, so a bind would work here. The join keeps the calculation correct if either <span class="term">object</span> is <span class="term" data-term="Filter">filtered</span>, reordered, or built from a different zone raster.</p>
+<p>The two calls are joined on <code>category</code> rather than bound by position. Both return one row per class of the zone raster, in the same <span class="term">order</span>, so a bind would work here. Matching by <code>category</code> remains correct if either <span class="term">object</span> is <span class="term" data-term="Filter">filtered</span>, reordered, or built from a different zone raster.</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Or, using freq() for the counts:</span></span>
 <span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a></span>
@@ -27193,7 +27194,7 @@ Note
 <section id="take-home-points" class="level2">
 <h2 class="anchored" data-anchor-id="take-home-points">Take-home points</h2>
 <ul>
-<li>Map algebra has four kinds, distinguished by how much of the raster each output cell is calculated from: local, focal, zonal and global.</li>
+<li>Map algebra has four kinds, distinguished by how much of the raster each output cell is calculated from: local, focal, zonal, and global.</li>
 <li>Arithmetic on a raster is local, and it retains the layer name of its first operand. Rename the result as part of the calculation.</li>
 <li><code>ifel()</code> is the raster form of <code>if_else()</code>, and it tests the codes of a categorical raster rather than its labels.</li>
 <li>A local operation returns <code>NA</code> wherever any input is <code>NA</code>, so count the values of the result rather than assuming they match the inputs.</li>
@@ -27209,20 +27210,20 @@ Note
 <ol type="1">
 <li>A raster of 10-meter cells is smoothed with a window meant to cover about 100 meters. What should <code>w</code> be?</li>
 </ol>
-<div id="radio_VNGSRODZHX" class="webex-radiogroup">
-<label><input type="radio" autocomplete="off" name="radio_VNGSRODZHX" value="answer"> <span>11</span></label><label><input type="radio" autocomplete="off" name="radio_VNGSRODZHX" value> <span>10</span></label><label><input type="radio" autocomplete="off" name="radio_VNGSRODZHX" value> <span>100</span></label><label><input type="radio" autocomplete="off" name="radio_VNGSRODZHX" value> <span>1000</span></label>
+<div id="radio_OZLPNFHRMR" class="webex-radiogroup">
+<label><input type="radio" autocomplete="off" name="radio_OZLPNFHRMR" value="answer"> <span>11</span></label><label><input type="radio" autocomplete="off" name="radio_OZLPNFHRMR" value> <span>10</span></label><label><input type="radio" autocomplete="off" name="radio_OZLPNFHRMR" value> <span>100</span></label><label><input type="radio" autocomplete="off" name="radio_OZLPNFHRMR" value> <span>1000</span></label>
 </div>
 <ol start="2" type="1">
 <li>Two layers are added and the result has more missing cells than either input. What happened?</li>
 </ol>
-<div id="radio_DTXGYFVREZ" class="webex-radiogroup">
-<label><input type="radio" autocomplete="off" name="radio_DTXGYFVREZ" value="answer"> <span>The inputs are missing in different places, and a local operation returns NA wherever either is NA</span></label><label><input type="radio" autocomplete="off" name="radio_DTXGYFVREZ" value> <span>The addition overflowed in the cells that are now missing</span></label><label><input type="radio" autocomplete="off" name="radio_DTXGYFVREZ" value> <span>The grids do not match and the extra cells were padded</span></label><label><input type="radio" autocomplete="off" name="radio_DTXGYFVREZ" value> <span>global() was called without na.rm = TRUE</span></label>
+<div id="radio_EQKQXGFXDH" class="webex-radiogroup">
+<label><input type="radio" autocomplete="off" name="radio_EQKQXGFXDH" value="answer"> <span>The inputs are missing in different places, and a local operation returns NA wherever either is NA</span></label><label><input type="radio" autocomplete="off" name="radio_EQKQXGFXDH" value> <span>The addition overflowed in the cells that are now missing</span></label><label><input type="radio" autocomplete="off" name="radio_EQKQXGFXDH" value> <span>The grids do not match and the extra cells were padded</span></label><label><input type="radio" autocomplete="off" name="radio_EQKQXGFXDH" value> <span>global() was called without na.rm = TRUE</span></label>
 </div>
 <ol start="3" type="1">
 <li>A raster is summarized in two ways: once with <code>global()</code> and once with <code>zonal()</code> against a raster of one single class. What is the difference between the results?</li>
 </ol>
-<div id="radio_TMNJSQITJW" class="webex-radiogroup">
-<label><input type="radio" autocomplete="off" name="radio_TMNJSQITJW" value="answer"> <span>None in the number, but zonal() returns a table with a column naming the class</span></label><label><input type="radio" autocomplete="off" name="radio_TMNJSQITJW" value> <span>global() ignores NA and zonal() does not</span></label><label><input type="radio" autocomplete="off" name="radio_TMNJSQITJW" value> <span>zonal() returns a raster and global() returns a number</span></label><label><input type="radio" autocomplete="off" name="radio_TMNJSQITJW" value> <span>global() cannot take na.rm = TRUE</span></label>
+<div id="radio_RUHRXILRYX" class="webex-radiogroup">
+<label><input type="radio" autocomplete="off" name="radio_RUHRXILRYX" value="answer"> <span>None in the number, but zonal() returns a table with a column naming the class</span></label><label><input type="radio" autocomplete="off" name="radio_RUHRXILRYX" value> <span>global() ignores NA and zonal() does not</span></label><label><input type="radio" autocomplete="off" name="radio_RUHRXILRYX" value> <span>zonal() returns a raster and global() returns a number</span></label><label><input type="radio" autocomplete="off" name="radio_RUHRXILRYX" value> <span>global() cannot take na.rm = TRUE</span></label>
 </div>
 <ol start="4" type="1">
 <li>Parsons problem: Reorder the lines below to return the proportion of a 15-cell neighborhood classified as forest, from a land-cover raster whose forest class has the code <code>41</code>.</li>

@@ -26775,11 +26775,10 @@ margin: 1em 0;
 <section id="data-for-this-lesson" class="level2">
 <h2 class="anchored" data-anchor-id="data-for-this-lesson">Data for this lesson</h2>
 <button class="accordion">
-Please click on the button below to explore the metadata for this lesson!
+Explore the metadata for this lesson
 </button>
 <div class="panel">
-<p>In this lesson, we will explore:</p>
-<p><strong><code>scbi_dem.tif</code></strong>: Digital elevation model (raster) of the Smithsonian Conservation Biology Institute campus and the land around it, subset from a Virginia state elevation model. The file is in EPSG 4269, with cells of about three meters, and holds elevations in meters.</p>
+<p><strong><code>scbi_dem.tif</code></strong>: Digital elevation model (raster) of the Smithsonian Conservation Biology Institute campus and the land around it, subset from a Virginia state elevation model. The file is in EPSG 4269, with cells of about three meters, and contains elevations in meters.</p>
 </div>
 </section>
 <section id="set-up-your-session" class="level2">
@@ -26916,7 +26915,7 @@ roughness 1.564417e+00  0.000000e+00  11.456818</code></pre>
 <div class="mysecret">
 <p><i class="fa-solid fa-user-secret fa-2x" aria-label="user-secret"></i> <span style="font-size: 1.25em; padding-left: 0.5em;">Never average an aspect!</span></p>
 <p>The mean in the table above is the trap. Aspect is measured in degrees around a circle, and 1 degree and 359 degrees are two degrees apart on the ground and 358 apart in arithmetic. The mean of the two is 180, which is due south, and both slopes face north.</p>
-<p>Every summary that treats aspect as a number on a line is wrong in the same way, and no amount of care with <code>na.rm</code> fixes it. The usual answers:</p>
+<p>Every summary that treats aspect as a number on a line is wrong in the same way, and no amount of care with <code>na.rm</code> fixes it. The usual alternatives are:</p>
 <ul>
 <li>Classify aspect into compass sectors and count them, converting a circular quantity into a categorical variable.</li>
 <li>Transform aspect into linear components. <code>cos(aspect)</code> in radians returns northness, from 1 due north to -1 due south, and <code>sin(aspect)</code> returns eastness.</li>
@@ -27097,7 +27096,7 @@ max value   :  0.998409</code></pre>
 </div>
 </div>
 <p>The row and column dimensions are reversed during the conversion. <code>raster_to_matrix()</code> performs that change in orientation.</p>
-<p><code>zscale</code> is the argument to get right. <em>rayshader</em>’s documentation defines it as <em>“the ratio between the x and y spacing (which are assumed to be equal) and the z axis”</em>, so it is the horizontal cell spacing divided by the vertical unit. The cells of <code>elevation_matrix</code> are about six meters apart and its elevations are in meters, which makes six the true ratio.</p>
+<p>Set <code>zscale</code> from the horizontal cell spacing and the vertical unit. <em>rayshader</em>’s documentation defines it as <em>“the ratio between the x and y spacing (which are assumed to be equal) and the z axis”</em>. The cells of <code>elevation_matrix</code> are about six meters apart and its elevations are in meters, which makes six the true ratio.</p>
 <p>The campus rises 167 meters across about two kilometers, and at its true ratio that landscape renders nearly flat. Cartographers exaggerate the vertical scale to make gentle relief readable, and lowering <code>zscale</code> is how <em>rayshader</em> does it: <code>zscale = 0.4</code> renders this landscape with about fifteen times its real relief. <strong>An exaggerated rendering belongs with a statement of the exaggeration, because a reader cannot recover it from the image.</strong></p>
 <section id="color-from-the-surface" class="level3">
 <h3 class="anchored" data-anchor-id="color-from-the-surface">Color from the surface</h3>
@@ -27117,7 +27116,7 @@ max value   :  0.998409</code></pre>
 </div>
 </div>
 </div>
-<p>Nothing is in shadow. Every cell carries the color its orientation gives it, and the relief we can read comes from that coloring alone. The buildings of the campus and the road along the valley floor are in the elevation model, because it was built from lidar returns off whatever the ground held.</p>
+<p>Nothing is in shadow. Every cell has the color assigned to its orientation, and the relief we can read comes from that coloring alone. The buildings of the campus and the road along the valley floor are in the elevation model, because it was built from lidar returns from everything present at the surface.</p>
 </section>
 <section id="moving-the-light" class="level3">
 <h3 class="anchored" data-anchor-id="moving-the-light">Moving the light</h3>
@@ -27169,7 +27168,7 @@ max value   :  0.998409</code></pre>
 </section>
 <section id="ambient-occlusion" class="level3">
 <h3 class="anchored" data-anchor-id="ambient-occlusion">Ambient occlusion</h3>
-<p><code>ambient_shade()</code> calculates how much of the sky each cell can see. A cell low in a valley sees a narrow strip and darkens; a cell on a ridge sees all of it and stays bright. It traces rays in many directions from every cell rather than toward one light, which makes it the slowest step in the chain:</p>
+<p><code>ambient_shade()</code> calculates the proportion of the sky visible from each cell. Valley cells have a narrow sky view and become darker, while ridge cells have a wider sky view and remain brighter. The calculation traces rays in many directions from every cell rather than toward a single light, which makes it the slowest step in the chain:</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>elevation_matrix <span class="sc">%&gt;%</span></span>
 <span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">sphere_shade</span>(</span>
@@ -27237,7 +27236,7 @@ max value   :  0.998409</code></pre>
 <p>The scene opens in a window that can be rotated and zoomed with the mouse, and the image above is one view of it. <code>render_snapshot()</code> captures the current view and displays it, and a file name given to it writes the image to disk instead.</p>
 <div class="mysecret">
 <p><i class="fa-solid fa-screwdriver-wrench fa-2x" aria-label="screwdriver-wrench"></i> <span style="font-size: 1.25em; padding-left: 0.5em;">Rendering at full resolution</span></p>
-<p>Raising <code>fact</code> in the <code>aggregate()</code> call renders faster and coarser; dropping the call renders the elevation model at its own three-meter cells. <code>ray_shade()</code> and <code>ambient_shade()</code> carry the cost, and <code>ambient_shade()</code> carries most of it.</p>
+<p>Raising <code>fact</code> in the <code>aggregate()</code> call renders faster and coarser. Dropping the call renders the elevation model at its own three-meter cells. Most of the execution time is spent in <code>ray_shade()</code> and <code>ambient_shade()</code>, especially <code>ambient_shade()</code>.</p>
 <p><code>zscale</code> moves with the cell spacing. A matrix of three-meter cells rendered at the exaggeration used here takes <code>zscale = 0.2</code> rather than <code>0.4</code>. The texture and the light position transfer unchanged.</p>
 <p>A scene opened by <code>plot_3d()</code> stays open until <code>rgl::close3d()</code> closes it, and a second <code>plot_3d()</code> draws into the same window.</p>
 </div>
@@ -27269,7 +27268,7 @@ Note
 <h2 class="anchored" data-anchor-id="take-home-points">Take-home points</h2>
 <ul>
 <li><code>terrain()</code> uses a raster’s CRS to calculate distances. Calculate terrain variables from the original elevation model, with elevation values in meters and a known CRS, rather than projecting it first.</li>
-<li><code>terrain()</code> returns slope, aspect, TPI, TRI, roughness and flowdir, one layer per variable named in <code>v =</code>, with <code>unit =</code> setting degrees or radians.</li>
+<li><code>terrain()</code> returns slope, aspect, TPI, TRI, roughness, and flowdir, one layer per variable named in <code>v =</code>, with <code>unit =</code> setting degrees or radians.</li>
 <li>Aspect is circular, so its mean is meaningless. Take <code>cos()</code> of aspect in radians for a northness, or classify it into compass sectors.</li>
 <li><code>shade()</code> builds a hillshade from slope and aspect <strong>in radians</strong>, with <code>angle =</code> for the elevation of the light and <code>direction =</code> for its bearing. A light from the northwest is the convention, and a light from the southeast inverts the relief for most readers.</li>
 <li>Use <code>ggnewscale::new_scale_fill()</code> to overlay a colored elevation layer on a hillshade with a separate fill scale.</li>
@@ -27285,20 +27284,20 @@ Note
 <ol type="1">
 <li>Why does <code>shade()</code> need slope and aspect rather than elevation?</li>
 </ol>
-<div id="radio_VFNNMEUNFH" class="webex-radiogroup">
-<label><input type="radio" autocomplete="off" name="radio_VFNNMEUNFH" value="answer"> <span>The brightness of a surface depends on the angle between it and the light, which slope and aspect describe</span></label><label><input type="radio" autocomplete="off" name="radio_VFNNMEUNFH" value> <span>Elevation is in the wrong units</span></label><label><input type="radio" autocomplete="off" name="radio_VFNNMEUNFH" value> <span>shade() cannot read a single-layer raster</span></label><label><input type="radio" autocomplete="off" name="radio_VFNNMEUNFH" value> <span>It uses elevation as well, supplied through the angle argument</span></label>
+<div id="radio_BPVKEOXWTZ" class="webex-radiogroup">
+<label><input type="radio" autocomplete="off" name="radio_BPVKEOXWTZ" value="answer"> <span>The brightness of a surface depends on the angle between it and the light, which slope and aspect describe</span></label><label><input type="radio" autocomplete="off" name="radio_BPVKEOXWTZ" value> <span>Elevation is in the wrong units</span></label><label><input type="radio" autocomplete="off" name="radio_BPVKEOXWTZ" value> <span>shade() cannot read a single-layer raster</span></label><label><input type="radio" autocomplete="off" name="radio_BPVKEOXWTZ" value> <span>It uses elevation as well, supplied through the angle argument</span></label>
 </div>
 <ol start="2" type="1">
 <li>A colleague reports the mean aspect of a study area as 181 degrees and concludes that it faces south. What is wrong?</li>
 </ol>
-<div id="radio_AZJWNYPUAD" class="webex-radiogroup">
-<label><input type="radio" autocomplete="off" name="radio_AZJWNYPUAD" value="answer"> <span>Aspect is circular, so an arithmetic mean of it means nothing</span></label><label><input type="radio" autocomplete="off" name="radio_AZJWNYPUAD" value> <span>The mean should have been taken in radians</span></label><label><input type="radio" autocomplete="off" name="radio_AZJWNYPUAD" value> <span>Aspect is measured counterclockwise from east, so 181 is north</span></label><label><input type="radio" autocomplete="off" name="radio_AZJWNYPUAD" value> <span>Nothing, provided na.rm was set to TRUE</span></label>
+<div id="radio_ORXEDAZHDZ" class="webex-radiogroup">
+<label><input type="radio" autocomplete="off" name="radio_ORXEDAZHDZ" value="answer"> <span>Aspect is circular, so an arithmetic mean of it means nothing</span></label><label><input type="radio" autocomplete="off" name="radio_ORXEDAZHDZ" value> <span>The mean should have been taken in radians</span></label><label><input type="radio" autocomplete="off" name="radio_ORXEDAZHDZ" value> <span>Aspect is measured counterclockwise from east, so 181 is north</span></label><label><input type="radio" autocomplete="off" name="radio_ORXEDAZHDZ" value> <span>Nothing, provided na.rm was set to TRUE</span></label>
 </div>
 <ol start="3" type="1">
 <li>A raster contains elevation values in meters and has 10-meter cells. What <code>zscale</code> renders it at its true proportions?</li>
 </ol>
-<div id="radio_PNNPMVKPGY" class="webex-radiogroup">
-<label><input type="radio" autocomplete="off" name="radio_PNNPMVKPGY" value="answer"> <span>10</span></label><label><input type="radio" autocomplete="off" name="radio_PNNPMVKPGY" value> <span>1</span></label><label><input type="radio" autocomplete="off" name="radio_PNNPMVKPGY" value> <span>0.1</span></label><label><input type="radio" autocomplete="off" name="radio_PNNPMVKPGY" value> <span>It depends on the range of the elevations</span></label>
+<div id="radio_NPCASANBBG" class="webex-radiogroup">
+<label><input type="radio" autocomplete="off" name="radio_NPCASANBBG" value="answer"> <span>10</span></label><label><input type="radio" autocomplete="off" name="radio_NPCASANBBG" value> <span>1</span></label><label><input type="radio" autocomplete="off" name="radio_NPCASANBBG" value> <span>0.1</span></label><label><input type="radio" autocomplete="off" name="radio_NPCASANBBG" value> <span>It depends on the range of the elevations</span></label>
 </div>
 <ol start="4" type="1">
 <li>Parsons problem: Reorder the lines below to return a hillshade from <code>slope_radians</code> and <code>aspect_radians</code>, with light from the northwest at 45 degrees.</li>

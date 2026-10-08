@@ -31971,7 +31971,7 @@ margin: 1em 0;
 Explore the metadata for this lesson
 </button>
 <div class="panel">
-<p><strong><code>scbi_dem.tif</code></strong>: Digital elevation model (raster) of the Smithsonian Conservation Biology Institute campus and the land around it, subset from a Virginia state elevation model. The file is in EPSG 4269, with cells of about three meters, and holds elevations in meters.</p>
+<p><strong><code>scbi_dem.tif</code></strong>: Digital elevation model (raster) of the Smithsonian Conservation Biology Institute campus and the land around it, subset from a Virginia state elevation model. The file is in EPSG 4269, with cells of about three meters, and contains elevations in meters.</p>
 <p><strong><code>scbi_lc.tif</code></strong>: Classified land cover (raster; 1m resolution), subset to the spatial extent of the Smithsonian Conservation Biology Institute. The data were obtained using the <a href="https://cicgis.org/portal/apps/webappviewer/index.html?id=bdf7ca3e249a40fd9a9d83d6e16100ea&amp;extent=-88.252,35.0981,-62.3462,45.7489" target="_blank">Chesapeake Conservancy tool</a> and are in an unprojected CRS (EPSG 4269).</p>
 <p><strong><code>roads_scbi.geojson</code></strong>: Linestring shapefile of roads within the spatial extent of the Smithsonian Conservation Biology Institute. The data were obtained using the <a href="https://apps.nationalmap.gov/downloader/" target="_blank">National Map download tool</a> and are in an unprojected CRS (EPSG 4326).</p>
 <p><strong><code>nests.csv</code></strong>: Bird nests found and monitored in a nest monitoring study area, provided as a tabular dataset with one row per nest. Locations were recorded with a handheld GPS unit in a geodetic Coordinate Reference System with the datum WGS 84 and EPSG code 4326.</p>
@@ -32193,8 +32193,8 @@ max value   : 391.634613</code></pre>
 <div class="now_you">
 <p><i class="fa-solid fa-user-circle fa-2x" aria-label="user-circle"></i> <span style="padding-left: 0.5em;">Check your understanding</span></p>
 <p>Two tiles overlap, and their values differ in the overlap. Which statement returns a raster in which the overlap contains the values of the second tile?</p>
-<div id="radio_YAMSSBQTZO" class="webex-radiogroup">
-<label><input type="radio" autocomplete="off" name="radio_YAMSSBQTZO" value="answer"> <span>merge(tile_2, tile_1)</span></label><label><input type="radio" autocomplete="off" name="radio_YAMSSBQTZO" value> <span>merge(tile_1, tile_2)</span></label><label><input type="radio" autocomplete="off" name="radio_YAMSSBQTZO" value> <span>mosaic(tile_1, tile_2)</span></label><label><input type="radio" autocomplete="off" name="radio_YAMSSBQTZO" value> <span>mosaic(tile_2, tile_1)</span></label>
+<div id="radio_BMGWHETJEP" class="webex-radiogroup">
+<label><input type="radio" autocomplete="off" name="radio_BMGWHETJEP" value="answer"> <span>merge(tile_2, tile_1)</span></label><label><input type="radio" autocomplete="off" name="radio_BMGWHETJEP" value> <span>merge(tile_1, tile_2)</span></label><label><input type="radio" autocomplete="off" name="radio_BMGWHETJEP" value> <span>mosaic(tile_1, tile_2)</span></label><label><input type="radio" autocomplete="off" name="radio_BMGWHETJEP" value> <span>mosaic(tile_2, tile_1)</span></label>
 </div>
 <p>True or false: <code>mosaic()</code> calculates the mean of overlapping cells by default.</p>
 <p><select class="webex-select"><option value="blank"></option><option value="answer">TRUE</option><option value>FALSE</option></select></p>
@@ -32376,7 +32376,7 @@ First 10 features:
 Layer_1 310.1118</code></pre>
 </div>
 </div>
-<p>The mean of a random sample is close to the mean of the raster and differs from it. <code>na.rm = TRUE</code> matters in <code>global()</code> as it does in <code>mean()</code>, because the projected raster contains <code>NA</code> outside the campus and the mean of a set that includes <code>NA</code> is <code>NaN</code>. Repeating the draw without <code>set.seed()</code> returns a different sample and a different mean each time.</p>
+<p>The mean of a random sample is close to the mean of the raster and differs from it. <code>na.rm = TRUE</code> matters in <code>global()</code> as it does in <code>mean()</code>, because the projected raster contains <code>NA</code> outside the campus and a mean that includes missing values does not return a usable number. Repeating the draw without <code>set.seed()</code> returns a different sample and a different mean each time.</p>
 </div>
 </div>
 </section>
@@ -32418,7 +32418,7 @@ max value   : 798.524231</code></pre>
 </div>
 </div>
 <p>The values are in meters, because the CRS is projected in meters. A cell crossed by a road contains zero, and the value increases away from the roads to a maximum of just under 800 meters in the part of the campus farthest from any road.</p>
-<p>Let’s draw it in <em>tmap</em>, as <strong><em>7.2 Terrain analysis and visualization</em></strong> did with the hillshade, so that the surface can be read against the roads on the basemap:</p>
+<p>Let’s draw it in <em>tmap</em> over a basemap, so that the distance surface can be read against the roads:</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>distance_to_road <span class="sc">%&gt;%</span></span>
 <span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_shape</span>(<span class="at">name =</span> <span class="st">&quot;Distance to a road&quot;</span>) <span class="sc">+</span></span>
@@ -32522,7 +32522,7 @@ layer 29.6505</code></pre>
 </section>
 <section id="identifying-patches" class="level2">
 <h2 class="anchored" data-anchor-id="identifying-patches">Identifying patches</h2>
-<p>A land cover raster records a class in each cell. A question about habitat is usually a question about <strong>patches</strong>, groups of connected cells that share a class, because a bird occupies a patch of forest rather than a cell of it. The number of patches, their sizes, and their arrangement are the measurements of landscape ecology, and each begins with identifying the patches.</p>
+<p>A land cover raster records a class in each cell. A question about habitat is usually a question about <strong>patches</strong>, groups of connected cells that share a class, because a bird occupies a patch of forest rather than a cell of it. Patch number, size, and arrangement are common measurements in landscape ecology, and each begins with identifying the patches.</p>
 <p>We can identify connected cells with <code>patches()</code>. The function treats every cell that is not <code>NA</code> as part of a patch and returns a raster containing a different identifier for each connected group. We will first use <code>ifel()</code> to retain the forest class and set the other classes to <code>NA</code> (see <strong><em>7.1 Map algebra</em></strong>):</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a>forest <span class="ot">&lt;-</span></span>
@@ -32789,7 +32789,7 @@ Glossary
 <div class="panel">
 <ul>
 <li><strong>Code section</strong>: A portion of an R script file that is delineated by a section header.</li>
-<li><strong>Distance surface</strong>: A raster in which each cell holds the distance to the nearest feature of some kind.</li>
+<li><strong>Distance surface</strong>: A raster in which each cell contains the distance to the nearest feature of some kind.</li>
 <li><strong>Global environment</strong>: A workspace that provides a reference point for all user-assigned objects associated with the current session.</li>
 <li><strong>Patch</strong>: A group of connected raster cells that share a class.</li>
 <li><strong>Session history</strong>: All lines of code that have been sent to R since the beginning of a session (or since the session history was last cleared).</li>
@@ -33137,7 +33137,7 @@ Functions
 <tr class="odd">
 <td style="text-align: center;">terra</td>
 <td style="text-align: center;">patches</td>
-<td style="text-align: left;">Number the connected groups of cells that are not NA, returning a raster in which each group holds its own number.</td>
+<td style="text-align: left;">Number the connected groups of cells that are not NA, returning a raster with a different number for each group.</td>
 </tr>
 <tr class="even">
 <td style="text-align: center;">terra</td>
