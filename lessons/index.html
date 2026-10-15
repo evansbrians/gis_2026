@@ -1478,7 +1478,13 @@ const PARTS = [
   "problemSet": {
    "id": "PS5",
    "dir": "problem_set_5",
-   "blurb": "Practice with the geometry toolkit: building and splitting a search track, cutting it to a patch boundary, classifying nests, and mapping dense points."
+   "blurb": "Practice with the geometry toolkit: building and splitting a search track, cutting it to a patch boundary, classifying nests, and mapping dense points.",
+   "hints": {
+    "id": "PS5-H",
+    "dir": "problem_set_5_hints",
+    "qmd": "hints.qmd",
+    "blurb": "How to approach each question of the problem set, with the object that every step should return."
+   }
   },
   "chapters": [
    {
@@ -1800,6 +1806,50 @@ const PARTS = [
       "mapping-the-search"
      ]
     ]
+   },
+   {
+    "id": "PS5-H",
+    "title": "Problem set 5 hints",
+    "slug": "problem_sets/problem_set_5/problem_set_5_hints/",
+    "kind": "Hints",
+    "blurb": "How to approach each question of the problem set, with the object that every step should return.",
+    "mins": 0,
+    "meta": "Hints",
+    "search": "library read_rds tmap_mode",
+    "sections": [
+     [
+      "Question 3: Reading and preprocessing the data",
+      "question-3-reading-and-preprocessing-the-data"
+     ],
+     [
+      "Question 4: Summarizing nest records",
+      "question-4-summarizing-nest-records"
+     ],
+     [
+      "Question 5: Building the search track",
+      "question-5-building-the-search-track"
+     ],
+     [
+      "Question 6: Breaking the track into bursts",
+      "question-6-breaking-the-track-into-bursts"
+     ],
+     [
+      "Question 7: Time inside and outside patches",
+      "question-7-time-inside-and-outside-patches"
+     ],
+     [
+      "Question 8: Search coverage",
+      "question-8-search-coverage"
+     ],
+     [
+      "Question 9: Classifying nests",
+      "question-9-classifying-nests"
+     ],
+     [
+      "Question 10: Mapping",
+      "question-10-mapping"
+     ]
+    ]
    }
   ]
  },
@@ -1813,7 +1863,13 @@ const PARTS = [
   "problemSet": {
    "id": "PS6",
    "dir": "problem_set_6",
-   "blurb": "Practice with the raster toolkit: classifying impervious surface, aligning two grids, and summarizing raster values for each park."
+   "blurb": "Practice with the raster toolkit: classifying impervious surface, aligning two grids, and summarizing raster values for each park.",
+   "hints": {
+    "id": "PS6-H",
+    "dir": "problem_set_6_hints",
+    "qmd": "hints.qmd",
+    "blurb": "How to approach each question of the problem set, with the raster or table that every step should return."
+   }
   },
   "chapters": [
    {
@@ -2041,6 +2097,34 @@ const PARTS = [
      [
       "Raster values for each park",
       "raster-values-for-each-park"
+     ]
+    ]
+   },
+   {
+    "id": "PS6-H",
+    "title": "Problem set 6 hints",
+    "slug": "problem_sets/problem_set_6/problem_set_6_hints/",
+    "kind": "Hints",
+    "blurb": "How to approach each question of the problem set, with the raster or table that every step should return.",
+    "mins": 0,
+    "meta": "Hints",
+    "search": "freq library rast read_rds",
+    "sections": [
+     [
+      "Question 3: Reading and preprocessing the data",
+      "question-3-reading-and-preprocessing-the-data"
+     ],
+     [
+      "Question 4: Classifying impervious surface",
+      "question-4-classifying-impervious-surface"
+     ],
+     [
+      "Question 5: Aligning the grids",
+      "question-5-aligning-the-grids"
+     ],
+     [
+      "Question 6: Raster values for each park",
+      "question-6-raster-values-for-each-park"
      ]
     ]
    }
@@ -2308,6 +2392,82 @@ const PARTS = [
     "mins": 0,
     "meta": "Final exam · due 19 Oct",
     "search": "filter inner_join join_by library select source",
+    "sections": [
+     [
+      "Memo 1",
+      "memo-1"
+     ],
+     [
+      "Memo 2",
+      "memo-2"
+     ],
+     [
+      "Memo 3",
+      "memo-3"
+     ],
+     [
+      "Memo 4",
+      "memo-4"
+     ],
+     [
+      "Memo 5",
+      "memo-5"
+     ],
+     [
+      "Memo 6",
+      "memo-6"
+     ],
+     [
+      "Memo 7",
+      "memo-7"
+     ],
+     [
+      "Memo 8",
+      "memo-8"
+     ],
+     [
+      "Memo 9",
+      "memo-9"
+     ],
+     [
+      "Memo 10",
+      "memo-10"
+     ],
+     [
+      "Memo 11",
+      "memo-11"
+     ],
+     [
+      "Memo 12",
+      "memo-12"
+     ],
+     [
+      "Memo 13",
+      "memo-13"
+     ],
+     [
+      "Memo 14",
+      "memo-14"
+     ],
+     [
+      "Extra credit 1",
+      "extra-credit-1"
+     ],
+     [
+      "Extra credit 2",
+      "extra-credit-2"
+     ]
+    ]
+   },
+   {
+    "id": "FE-H",
+    "title": "Final exam hints",
+    "slug": "problem_sets/final_exam/final_exam_hints/",
+    "kind": "Hints",
+    "blurb": "Where the method behind each memo was taught, linked to the lesson section that teaches it, and the result that a correct answer returns.",
+    "mins": 0,
+    "meta": "Hints",
+    "search": "aes aggregate arrange as.numeric as_tibble bind_rows c case_when cellSize coord_flip count crop distance distinct drop_na extract facet_wrap factor filter focal focalMat geom_bar geom_sf geom_spatraster ggplot if_else ifel is.na join_by labs left_join lengths library list list2env map mask max median mutate n opt_tm_dots patches pivot_wider project pull rast rasterize read_csv rename resample scale_fill_viridis_c scale_fill_whitebox_c select set.seed set_units slice_max spatSample st_area st_as_sf st_buffer st_cast st_distance st_drop_geometry st_filter st_intersection st_intersects st_join st_length st_point st_read st_sfc st_transform st_union str_c sum summarize terrain theme_bw theme_void tm_basemap tm_dots tm_shape tm_view tmap_mode unite vect where.max xyFromCell zonal",
     "sections": [
      [
       "Memo 1",
