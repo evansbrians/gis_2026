@@ -26829,7 +26829,7 @@ Explore the metadata for this lesson
 <span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>   user  system elapsed 
-  1.291   0.044   1.360 </code></pre>
+  1.276   0.059   1.344 </code></pre>
 </div>
 </div>
 <p><code>system.time()</code> returns the time a statement took, and <code>elapsed</code> is the time we experience. Reading the file took about two seconds on my machine, which is long enough to notice and short enough to tolerate. Let’s look at what we read:</p>
@@ -26893,8 +26893,8 @@ Explore the metadata for this lesson
 <div class="now_you">
 <p><i class="fa-solid fa-user-circle fa-2x" aria-label="user-circle"></i> <span style="padding-left: 0.5em;">Check your understanding</span></p>
 <p>A simple features object of 50,000 <span class="term" data-term="Polygon">polygons</span> occupies 400 MB, and its fields occupy 5 MB. Which step reduces it most?</p>
-<div id="radio_ZUQEYIGOEZ" class="webex-radiogroup">
-<label><input type="radio" autocomplete="off" name="radio_ZUQEYIGOEZ" value="answer"> <span>Simplifying or dropping the geometry</span></label><label><input type="radio" autocomplete="off" name="radio_ZUQEYIGOEZ" value> <span>Removing half of the fields</span></label><label><input type="radio" autocomplete="off" name="radio_ZUQEYIGOEZ" value> <span>Converting the fields to factors</span></label><label><input type="radio" autocomplete="off" name="radio_ZUQEYIGOEZ" value> <span>Reading the file with quiet = TRUE</span></label>
+<div id="radio_JXLHFRYOVW" class="webex-radiogroup">
+<label><input type="radio" autocomplete="off" name="radio_JXLHFRYOVW" value="answer"> <span>Simplifying or dropping the geometry</span></label><label><input type="radio" autocomplete="off" name="radio_JXLHFRYOVW" value> <span>Removing half of the fields</span></label><label><input type="radio" autocomplete="off" name="radio_JXLHFRYOVW" value> <span>Converting the fields to factors</span></label><label><input type="radio" autocomplete="off" name="radio_JXLHFRYOVW" value> <span>Reading the file with quiet = TRUE</span></label>
 </div>
 <p>True or false: <code>obj_size()</code> reports the size of an object as it is stored in memory.</p>
 <p><select class="webex-select"><option value="blank"></option><option value="answer">TRUE</option><option value>FALSE</option></select></p>
@@ -26942,8 +26942,8 @@ Explore the metadata for this lesson
 <pre><code># A tibble: 2 × 3
   expression   median mem_alloc
   &lt;bch:expr&gt; &lt;bch:tm&gt; &lt;bch:byt&gt;
-1 geojson       1.25s    23.3MB
-2 geopackage 470.04ms    23.3MB</code></pre>
+1 geojson       1.23s    23.3MB
+2 geopackage 466.27ms    23.3MB</code></pre>
 </div>
 </div>
 <p>The GeoPackage reads in less than half the time. A GeoJSON file is text that has to be parsed from beginning to end, and a GeoPackage stores each feature’s geometry in a form that is read directly. <code>check = FALSE</code> is needed because the two objects differ in ways that do not matter here, such as the name of the geometry column, and the default is to stop when the results differ.</p>
@@ -26983,7 +26983,7 @@ Explore the metadata for this lesson
 <span id="cb21-13"><a href="#cb21-13" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>   user  system elapsed 
-  0.043   0.005   0.050 </code></pre>
+  0.043   0.006   0.050 </code></pre>
 </div>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="fu">nrow</span>(willow_oaks)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
@@ -27011,7 +27011,7 @@ Explore the metadata for this lesson
 <span id="cb27-12"><a href="#cb27-12" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>   user  system elapsed 
-  1.397   0.033   1.433 </code></pre>
+  1.416   0.038   1.457 </code></pre>
 </div>
 </div>
 <p>The query returns the same rows and takes as long as reading the whole file, because a text file has to be parsed from beginning to end before any row can be selected from it. Whether a query saves time depends on the file format, and the conversion to a GeoPackage is what made the first query fast. The GeoJSON file is queried in a different dialect of SQL, which adds the geometry whether or not the statement names it, so the same statement returns a simple features object here and a data frame from the GeoPackage.</p>
@@ -27047,7 +27047,7 @@ Explore the metadata for this lesson
 </div>
 <div class="cell-output cell-output-stdout">
 <pre><code>   user  system elapsed 
-  0.140   0.017   0.162 </code></pre>
+  0.138   0.017   0.155 </code></pre>
 </div>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="fu">nrow</span>(box_trees)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
@@ -27063,7 +27063,7 @@ Explore the metadata for this lesson
 <span id="cb34-5"><a href="#cb34-5" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>   user  system elapsed 
-  0.101   0.002   0.103 </code></pre>
+  0.099   0.002   0.103 </code></pre>
 </div>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="fu">nrow</span>(park_trees)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
@@ -27171,15 +27171,15 @@ Note
 <span id="cb48-6"><a href="#cb48-6" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>   user  system elapsed 
-  0.195   0.007   0.203 </code></pre>
+  0.194   0.006   0.201 </code></pre>
 </div>
 </div>
 <p>Restoring the object from an <span class="term">rds file</span> takes a fraction of the time that reading the GeoJSON file took, and the object is restored with its CRS, its classes, and any processing already applied. My own workflow writes the result of the <code>read and pre-process data</code> section to an rds file whenever that section takes more than a few seconds to run, and the analysis script reads the rds file.</p>
 <div class="now_you">
 <p><i class="fa-solid fa-user-circle fa-2x" aria-label="user-circle"></i> <span style="padding-left: 0.5em;">Check your understanding</span></p>
 <p>A script reads a large GeoJSON file, transforms it, and repairs its geometries, and every run repeats those steps before the analysis begins. What is the fix?</p>
-<div id="radio_IOINIKYEJH" class="webex-radiogroup">
-<label><input type="radio" autocomplete="off" name="radio_IOINIKYEJH" value="answer"> <span>Run the steps once, write the result with write_rds(), and read that file in the analysis script</span></label><label><input type="radio" autocomplete="off" name="radio_IOINIKYEJH" value> <span>Read the file with quiet = TRUE</span></label><label><input type="radio" autocomplete="off" name="radio_IOINIKYEJH" value> <span>Convert the geometries to a GeoPackage after transforming them</span></label><label><input type="radio" autocomplete="off" name="radio_IOINIKYEJH" value> <span>Drop the geometry before transforming it</span></label>
+<div id="radio_HMUUZNILNW" class="webex-radiogroup">
+<label><input type="radio" autocomplete="off" name="radio_HMUUZNILNW" value="answer"> <span>Run the steps once, write the result with write_rds(), and read that file in the analysis script</span></label><label><input type="radio" autocomplete="off" name="radio_HMUUZNILNW" value> <span>Read the file with quiet = TRUE</span></label><label><input type="radio" autocomplete="off" name="radio_HMUUZNILNW" value> <span>Convert the geometries to a GeoPackage after transforming them</span></label><label><input type="radio" autocomplete="off" name="radio_HMUUZNILNW" value> <span>Drop the geometry before transforming it</span></label>
 </div>
 <p>True or false: With a <code>query =</code>, the rows that a GeoJSON file holds outside the query are never parsed.</p>
 <p><select class="webex-select"><option value="blank"></option><option value>TRUE</option><option value="answer">FALSE</option></select></p>
@@ -27234,8 +27234,8 @@ Note
 Memory (GB) 
 ------------------------
 check threshold : 1 (memmin)
-available       : 6.18 (memmax)
-allowed (50%)   : 3.09
+available       : 11.16 (memmax)
+allowed (50%)   : 5.58
 needed (n=1)    : 0.23
 ------------------------
 proc in memory  : TRUE
@@ -27275,16 +27275,16 @@ nr chunks       : 1
 <span id="cb66-7"><a href="#cb66-7" aria-hidden="true" tabindex="-1"></a><span class="fu">gc</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>          used  (Mb) gc trigger  (Mb) limit (Mb) max used  (Mb)
-Ncells 3371801 180.1    6729398 359.4         NA  6729398 359.4
-Vcells 6921361  52.9   18165216 138.6      32768 17714661 135.2</code></pre>
+Ncells 3371825 180.1    6730598 359.5         NA  6730598 359.5
+Vcells 6921445  52.9   18166504 138.6      32768 17714677 135.2</code></pre>
 </div>
 </div>
 <p>Before running the statement, expect a table with a <code>used</code> column, which reports the memory R is using in cells and megabytes. R runs garbage collection on its own when it needs the space, so calling <code>gc()</code> changes when the memory becomes available for reuse rather than whether it does. I call it after removing a large object mainly to see the number fall. The fall here is small, because <em>terra</em> held the values of <code>nlcd_copy</code> rather than R, and <code>gc()</code> counts only what R holds.</p>
 <div class="now_you">
 <p><i class="fa-solid fa-user-circle fa-2x" aria-label="user-circle"></i> <span style="padding-left: 0.5em;">Check your understanding</span></p>
 <p><code>rm(trees)</code> is run. What happens to the memory the object occupied?</p>
-<div id="radio_UGXJWLXQJJ" class="webex-radiogroup">
-<label><input type="radio" autocomplete="off" name="radio_UGXJWLXQJJ" value="answer"> <span>R reclaims it for reuse when garbage collection next runs, which gc() brings forward</span></label><label><input type="radio" autocomplete="off" name="radio_UGXJWLXQJJ" value> <span>It is returned at once</span></label><label><input type="radio" autocomplete="off" name="radio_UGXJWLXQJJ" value> <span>It is returned only when the session ends</span></label><label><input type="radio" autocomplete="off" name="radio_UGXJWLXQJJ" value> <span>It is written to a temporary file</span></label>
+<div id="radio_DZVAGGZGEO" class="webex-radiogroup">
+<label><input type="radio" autocomplete="off" name="radio_DZVAGGZGEO" value="answer"> <span>R reclaims it for reuse when garbage collection next runs, which gc() brings forward</span></label><label><input type="radio" autocomplete="off" name="radio_DZVAGGZGEO" value> <span>It is returned at once</span></label><label><input type="radio" autocomplete="off" name="radio_DZVAGGZGEO" value> <span>It is returned only when the session ends</span></label><label><input type="radio" autocomplete="off" name="radio_DZVAGGZGEO" value> <span>It is written to a temporary file</span></label>
 </div>
 <p>True or false: <code>gc()</code> reports the memory held by the values of a <code>SpatRaster</code>.</p>
 <p><select class="webex-select"><option value="blank"></option><option value>TRUE</option><option value="answer">FALSE</option></select></p>
@@ -27342,20 +27342,20 @@ Note
 <ol type="1">
 <li>A script needs the 2,000 records of one species from a GeoPackage of 2,000,000 points. Which call reads the least?</li>
 </ol>
-<div id="radio_NOIAYGTQVD" class="webex-radiogroup">
-<label><input type="radio" autocomplete="off" name="radio_NOIAYGTQVD" value="answer"> <span>st_read(file, query = “select * from layer where species = &#39;target&#39;”)</span></label><label><input type="radio" autocomplete="off" name="radio_NOIAYGTQVD" value> <span>st_read(file) %&gt;% filter(species == “target”)</span></label><label><input type="radio" autocomplete="off" name="radio_NOIAYGTQVD" value> <span>st_read(file, quiet = TRUE) %&gt;% filter(species == “target”)</span></label><label><input type="radio" autocomplete="off" name="radio_NOIAYGTQVD" value> <span>read_rds(file) %&gt;% filter(species == “target”)</span></label>
+<div id="radio_HFVXBCJBIP" class="webex-radiogroup">
+<label><input type="radio" autocomplete="off" name="radio_HFVXBCJBIP" value="answer"> <span>st_read(file, query = “select * from layer where species = &#39;target&#39;”)</span></label><label><input type="radio" autocomplete="off" name="radio_HFVXBCJBIP" value> <span>st_read(file) %&gt;% filter(species == “target”)</span></label><label><input type="radio" autocomplete="off" name="radio_HFVXBCJBIP" value> <span>st_read(file, quiet = TRUE) %&gt;% filter(species == “target”)</span></label><label><input type="radio" autocomplete="off" name="radio_HFVXBCJBIP" value> <span>read_rds(file) %&gt;% filter(species == “target”)</span></label>
 </div>
 <ol start="2" type="1">
 <li><code>inMemory()</code> returns <code>FALSE</code> for a raster that was read from a file. What does that mean?</li>
 </ol>
-<div id="radio_WPPBXRLGKK" class="webex-radiogroup">
-<label><input type="radio" autocomplete="off" name="radio_WPPBXRLGKK" value="answer"> <span>The values are still in the file and will be read when an operation needs them</span></label><label><input type="radio" autocomplete="off" name="radio_WPPBXRLGKK" value> <span>The raster is empty</span></label><label><input type="radio" autocomplete="off" name="radio_WPPBXRLGKK" value> <span>The raster is too large to use</span></label><label><input type="radio" autocomplete="off" name="radio_WPPBXRLGKK" value> <span>The file could not be found</span></label>
+<div id="radio_DJQNVMQRCD" class="webex-radiogroup">
+<label><input type="radio" autocomplete="off" name="radio_DJQNVMQRCD" value="answer"> <span>The values are still in the file and will be read when an operation needs them</span></label><label><input type="radio" autocomplete="off" name="radio_DJQNVMQRCD" value> <span>The raster is empty</span></label><label><input type="radio" autocomplete="off" name="radio_DJQNVMQRCD" value> <span>The raster is too large to use</span></label><label><input type="radio" autocomplete="off" name="radio_DJQNVMQRCD" value> <span>The file could not be found</span></label>
 </div>
 <ol start="3" type="1">
 <li><code>bench::mark()</code> stops with an error saying that the results are not equal. What is the fix, when the differences do not matter to the comparison?</li>
 </ol>
-<div id="radio_RWLUXUCOVJ" class="webex-radiogroup">
-<label><input type="radio" autocomplete="off" name="radio_RWLUXUCOVJ" value="answer"> <span>Set check = FALSE</span></label><label><input type="radio" autocomplete="off" name="radio_RWLUXUCOVJ" value> <span>Set iterations = 1</span></label><label><input type="radio" autocomplete="off" name="radio_RWLUXUCOVJ" value> <span>Wrap each statement in system.time()</span></label><label><input type="radio" autocomplete="off" name="radio_RWLUXUCOVJ" value> <span>Remove one of the statements</span></label>
+<div id="radio_QCFYFGFMWT" class="webex-radiogroup">
+<label><input type="radio" autocomplete="off" name="radio_QCFYFGFMWT" value="answer"> <span>Set check = FALSE</span></label><label><input type="radio" autocomplete="off" name="radio_QCFYFGFMWT" value> <span>Set iterations = 1</span></label><label><input type="radio" autocomplete="off" name="radio_QCFYFGFMWT" value> <span>Wrap each statement in system.time()</span></label><label><input type="radio" autocomplete="off" name="radio_QCFYFGFMWT" value> <span>Remove one of the statements</span></label>
 </div>
 <ol start="4" type="1">
 <li>Parsons problem: Reorder the lines to read the trees inside a polygon named <code>park</code> from the GeoPackage, given the bounding box of the polygon written as well-known text and named <code>park_box</code>. Place the line that would filter by the box a second time, rather than by the outline, in the trash.</li>
