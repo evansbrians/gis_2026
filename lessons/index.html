@@ -2378,6 +2378,285 @@ const PARTS = [
   ]
  },
  {
+  "n": 8,
+  "kicker": "Module 8",
+  "title": "Spatial patterns and advanced workflows",
+  "introTitle": "Module introduction",
+  "introBlurb": "What Module 8 covers, this week's data, and the required readings.",
+  "intro": "Spatial patterns, and the work that keeps an analysis going. Every lesson in this module is optional. Treat observed locations as a point pattern and compare it with spatial randomness, measure autocorrelation across polygons and raster cells, draw and correct spatial data over aerial imagery, then measure memory and execution time, build an interactive app, and put a project under version control, alone and with collaborators.",
+  "problemSet": null,
+  "chapters": [
+   {
+    "id": "8.0",
+    "title": "Module introduction",
+    "slug": "module_8/8.0_module_intro/",
+    "kind": "Overview",
+    "blurb": "What Module 8 covers, this week's data, and the required readings.",
+    "mins": 10,
+    "meta": "Overview · 10 min",
+    "search": "c cat install.packages source",
+    "sections": [
+     [
+      "Module overview",
+      "module-overview"
+     ],
+     [
+      "Getting started",
+      "getting-started"
+     ],
+     [
+      "About this week's data",
+      "about-this-weeks-data"
+     ],
+     [
+      "Readings and resources",
+      "readings-and-resources"
+     ]
+    ]
+   },
+   {
+    "id": "8.1",
+    "title": "Point-pattern analysis",
+    "slug": "module_8/8.1_point_patterns/",
+    "kind": "Tutorial",
+    "blurb": "Define the events and study window, describe the pattern with intensity and nearest-neighbor distances, and compare the observed nests with random patterns generated in the same area.",
+    "mins": 30,
+    "meta": "Tutorial · 30 min",
+    "search": "aes arrange as.numeric c cat desc distance filter geom_histogram geom_vline ggplot labs length lengths library map_dbl mean median mutate nrow pull read_csv rename select set.seed set_units slice_head source st_area st_as_sf st_distance st_drop_geometry st_filter st_intersects st_nearest_feature st_read st_sample st_transform sum summarize summary theme_bw tibble tm_dots tm_legend tm_polygons tm_shape tmap_mode",
+    "sections": [
+     [
+      "Point patterns",
+      "point-patterns"
+     ],
+     [
+      "Nearest-neighbor distances",
+      "nearest-neighbor-distances"
+     ],
+     [
+      "Comparing the pattern with spatial randomness",
+      "comparing-the-pattern-with-spatial-randomness"
+     ],
+     [
+      "Putting it all together",
+      "putting-it-all-together"
+     ]
+    ]
+   },
+   {
+    "id": "8.3",
+    "title": "Digitizing spatial vector data",
+    "slug": "module_8/8.3_digitizing/",
+    "kind": "Tutorial",
+    "blurb": "Correct a habitat patch whose boundary excludes its own nests, draw new points, lines, and polygons over aerial imagery, restore the fields and CRS that a drawing session does not return, and write the results to files.",
+    "mins": 35,
+    "meta": "Tutorial · 35 min",
+    "search": "add_area_display add_digitizing_toolbar bind_rows c cat editMap filter install.packages library mapview median mutate nrow pluck read_csv row_number select set_units source st_area st_as_sf st_crs st_distance st_filter st_length st_read st_transform st_write write_field_kml",
+    "sections": [
+     [
+      "Identifying boundary errors",
+      "identifying-boundary-errors"
+     ],
+     [
+      "The digitizing workflow",
+      "the-digitizing-workflow"
+     ],
+     [
+      "The reference map",
+      "the-reference-map"
+     ],
+     [
+      "Editing a feature",
+      "editing-a-feature"
+     ],
+     [
+      "Creating new features",
+      "creating-new-features"
+     ],
+     [
+      "Storing what we digitized",
+      "storing-what-we-digitized"
+     ],
+     [
+      "Putting it all together",
+      "putting-it-all-together"
+     ]
+    ]
+   },
+   {
+    "id": "8.4",
+    "title": "Memory and execution time",
+    "slug": "module_8/8.4_memory_and_time/",
+    "kind": "Tutorial",
+    "blurb": "Measure the size of a large point layer and the time it takes to read, read a subset of a GeoPackage with a query and a spatial filter, save a processed object, and determine where a raster's values are stored.",
+    "mins": 40,
+    "meta": "Tutorial · 40 min",
+    "search": "c cat count gc inMemory library mark mem_info ncell nrow obj_size object.size profvis rast read_rds rm select slice_head source sources st_as_sfc st_as_text st_bbox st_buffer st_drop_geometry st_filter st_geometry st_layers st_read st_transform st_union st_write str_c system.time writeRaster write_rds",
+    "sections": [
+     [
+      "Measuring memory",
+      "measuring-memory"
+     ],
+     [
+      "Measuring time",
+      "measuring-time"
+     ],
+     [
+      "Reading less",
+      "reading-less"
+     ],
+     [
+      "Keeping less",
+      "keeping-less"
+     ],
+     [
+      "Raster value storage",
+      "raster-value-storage"
+     ],
+     [
+      "Freeing memory",
+      "freeing-memory"
+     ],
+     [
+      "Putting it all together",
+      "putting-it-all-together"
+     ]
+    ]
+   },
+   {
+    "id": "8.5",
+    "title": "Advanced Shiny applications",
+    "slug": "module_8/8.5_advanced_shiny/",
+    "kind": "Tutorial",
+    "blurb": "Build an app around the nest patterns of 8.1 Point-pattern analysis, with a selectInput() filled from the data, a chain of reactive expressions, an interactive map, a button that draws a random pattern, a table, and a download, then test and deploy it.",
+    "mins": 40,
+    "meta": "Tutorial · 40 min",
+    "search": "actionButton bind_cols c card cat count deployApp downloadButton downloadHandler eventReactive filter function lengths library list mutate nrow page_sidebar print reactive read_csv rename renderTable renderTmap select selectInput setAccountInfo setInputs set_names shinyApp sidebar sliderInput source st_as_sf st_coordinates st_drop_geometry st_filter st_intersects st_make_grid st_read st_sample st_transform str_c tableOutput testServer tm_dots tm_polygons tm_shape tmapOutput tmap_mode write_csv",
+    "sections": [
+     [
+      "App structure",
+      "app-structure"
+     ],
+     [
+      "Data-driven inputs",
+      "data-driven-inputs"
+     ],
+     [
+      "Reactive dependencies",
+      "reactive-dependencies"
+     ],
+     [
+      "Interactive maps",
+      "interactive-maps"
+     ],
+     [
+      "Button-triggered calculations",
+      "button-triggered-calculations"
+     ],
+     [
+      "Tables and downloads",
+      "tables-and-downloads"
+     ],
+     [
+      "Page layout",
+      "page-layout"
+     ],
+     [
+      "Testing the server without clicking",
+      "testing-the-server-without-clicking"
+     ],
+     [
+      "Deploying the app",
+      "deploying-the-app"
+     ],
+     [
+      "Putting it all together",
+      "putting-it-all-together"
+     ]
+    ]
+   },
+   {
+    "id": "8.6",
+    "title": "Version control with Git and GitHub",
+    "slug": "module_8/8.6_version_control/",
+    "kind": "Tutorial",
+    "blurb": "Configure Git, make the course project a repository, commit changes from the RStudio Git pane, connect the project to GitHub with usethis, and decide which files are tracked.",
+    "mins": 35,
+    "meta": "Tutorial · 35 min",
+    "search": "c create_from_github create_github_token git_default_branch_configure git_sitrep git_vaccinate gitcreds_set install.packages library source use_git use_git_config use_git_ignore use_github use_readme_md",
+    "sections": [
+     [
+      "What a repository records",
+      "what-a-repository-records"
+     ],
+     [
+      "Telling Git who you are",
+      "telling-git-who-you-are"
+     ],
+     [
+      "Making the project a repository",
+      "making-the-project-a-repository"
+     ],
+     [
+      "Committing",
+      "committing"
+     ],
+     [
+      "Connecting to GitHub",
+      "connecting-to-github"
+     ],
+     [
+      "Pushing and pulling",
+      "pushing-and-pulling"
+     ],
+     [
+      "Starting from a repository",
+      "starting-from-a-repository"
+     ],
+     [
+      "Putting it all together",
+      "putting-it-all-together"
+     ]
+    ]
+   },
+   {
+    "id": "8.7",
+    "title": "Collaborative Git workflows",
+    "slug": "module_8/8.7_collaborative_git/",
+    "kind": "Tutorial",
+    "blurb": "Start a branch for each task with usethis, propose it with a pull request, record problems as issues, and contribute to a repository you do not own by forking it.",
+    "mins": 40,
+    "meta": "Tutorial · 40 min",
+    "search": "browse_github_issues create_from_github git_sitrep library mean n n_distinct pr_fetch pr_finish pr_init pr_merge_main pr_pause pr_push read_csv source summarize",
+    "sections": [
+     [
+      "Branches",
+      "branches"
+     ],
+     [
+      "Issues",
+      "issues"
+     ],
+     [
+      "Forks",
+      "forks"
+     ],
+     [
+      "Reviewing a pull request",
+      "reviewing-a-pull-request"
+     ],
+     [
+      "Choosing between branches and forks",
+      "choosing-between-branches-and-forks"
+     ],
+     [
+      "Putting it all together",
+      "putting-it-all-together"
+     ]
+    ]
+   }
+  ]
+ },
+ {
   "n": 99,
   "kicker": "Final exam",
   "title": "Final exam",
