@@ -26818,9 +26818,9 @@ Explore the metadata for this lesson
 <span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p><em>lobstr</em> and <em>bench</em> are new to the course. Both are small packages from the tidyverse team: <em>lobstr</em> reports how R stores an object, and <em>bench</em> times code.</p>
-<p>Next, please create a code section called “<code>read and pre-process data</code>”. Let’s read the street trees, which are stored as a GeoJSON file, and time the read with <code>system.time()</code>. The assignment is written inside the call. This is the only place in the course where making an object and naming it share a statement, because we want to time both together:</p>
+<p>Next, please create a code section called “<code>read and pre-process data</code>”. Let’s read the street trees, which are stored as a GeoJSON file, and time the read with <code>bench::system_time()</code>. The assignment is written inside the call. This is the only place in the course where making an object and naming it share a statement, because we want to time both together:</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">system.time</span>(</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>bench<span class="sc">::</span><span class="fu">system_time</span>(</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  trees <span class="ot">&lt;-</span></span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">st_read</span>(</span>
 <span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;data/raw/shapefiles/dc_street_trees.geojson&quot;</span>,</span>
@@ -26828,11 +26828,11 @@ Explore the metadata for this lesson
 <span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>    )</span>
 <span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>   user  system elapsed 
-  1.265   0.040   1.308 </code></pre>
+<pre><code>process    real 
+  1.39s   1.48s </code></pre>
 </div>
 </div>
-<p><code>system.time()</code> returns the time a statement took, and <code>elapsed</code> is the time we experience. Reading the file took about two seconds on my machine, which is long enough to notice and short enough to tolerate. Let’s look at what we read:</p>
+<p><code>bench::system_time()</code> returns the time a statement took: <code>process</code> is the time the processor spent on it, and <code>real</code> is the time we experience. Reading the file took about two seconds on my machine, which is long enough to notice and short enough to tolerate. Let’s look at what we read:</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">nrow</span>(trees)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
@@ -26893,8 +26893,8 @@ Explore the metadata for this lesson
 <div class="now_you">
 <p><i class="fa-solid fa-user-circle fa-2x" aria-label="user-circle"></i> <span style="padding-left: 0.5em;">Check your understanding</span></p>
 <p>A simple features object of 50,000 <span class="term" data-term="Polygon">polygons</span> occupies 400 MB, and its fields occupy 5 MB. Which step reduces it most?</p>
-<div id="radio_VREBEYYLHW" class="webex-radiogroup">
-<label><input type="radio" autocomplete="off" name="radio_VREBEYYLHW" value="answer"> <span>Simplifying or dropping the geometry</span></label><label><input type="radio" autocomplete="off" name="radio_VREBEYYLHW" value> <span>Removing half of the fields</span></label><label><input type="radio" autocomplete="off" name="radio_VREBEYYLHW" value> <span>Converting the fields to factors</span></label><label><input type="radio" autocomplete="off" name="radio_VREBEYYLHW" value> <span>Reading the file with quiet = TRUE</span></label>
+<div id="radio_JFUUSLGWOX" class="webex-radiogroup">
+<label><input type="radio" autocomplete="off" name="radio_JFUUSLGWOX" value="answer"> <span>Simplifying or dropping the geometry</span></label><label><input type="radio" autocomplete="off" name="radio_JFUUSLGWOX" value> <span>Removing half of the fields</span></label><label><input type="radio" autocomplete="off" name="radio_JFUUSLGWOX" value> <span>Converting the fields to factors</span></label><label><input type="radio" autocomplete="off" name="radio_JFUUSLGWOX" value> <span>Reading the file with quiet = TRUE</span></label>
 </div>
 <p>True or false: <code>obj_size()</code> reports the size of an object as it is stored in memory.</p>
 <p><select class="webex-select"><option value="blank"></option><option value="answer">TRUE</option><option value>FALSE</option></select></p>
@@ -26902,7 +26902,7 @@ Explore the metadata for this lesson
 </section>
 <section id="measuring-time" class="level2">
 <h2 class="anchored" data-anchor-id="measuring-time">Measuring time</h2>
-<p><code>system.time()</code> measures one run of one statement, and one run of a step that reads a file depends on what the computer was doing at the moment. <code>bench::mark()</code> runs each of several statements repeatedly and reports the time and the memory each allocated. We supply the following arguments:</p>
+<p><code>bench::system_time()</code> measures one run of one statement, and one run of a step that reads a file depends on what else is running at the moment. <code>bench::mark()</code> runs each of several statements repeatedly and reports the time and the memory each allocated. We supply the following arguments:</p>
 <ul>
 <li>The statements to time, each named</li>
 <li>The number of times to run each (<code>iterations =</code>)</li>
@@ -26942,8 +26942,8 @@ Explore the metadata for this lesson
 <pre><code># A tibble: 2 × 3
   expression   median mem_alloc
   &lt;bch:expr&gt; &lt;bch:tm&gt; &lt;bch:byt&gt;
-1 geojson       1.26s    23.3MB
-2 geopackage 528.11ms    23.3MB</code></pre>
+1 geojson       1.31s    23.3MB
+2 geopackage 637.07ms    23.3MB</code></pre>
 </div>
 </div>
 <p>The GeoPackage reads in less than half the time. A GeoJSON file is text that has to be parsed from beginning to end, and a GeoPackage stores each feature’s geometry in a form that is read directly. <code>check = FALSE</code> is needed because the two objects differ in ways that do not matter here, such as the name of the geometry column, and the default is to stop when the results differ.</p>
@@ -26968,7 +26968,7 @@ Explore the metadata for this lesson
 <h3 class="anchored" data-anchor-id="fewer-rows-and-fields">Fewer rows and fields</h3>
 <p><code>query =</code> accepts a statement in SQL, the language of databases, that names the fields to return and the rows to keep. The layer is named for the file, without its extension. In a GeoPackage the geometry is a column named <code>geom</code>, and it is returned only when the statement names it. A <span class="term">character</span> value inside the statement takes single quotes, because that is how SQL writes a value, and double quotes in SQL mark the name of a column. The statement is long, so we build it from two pieces with <code>str_c()</code> (see <strong><em>1.5 Assignments</em></strong>). Let’s read the willow oaks, with their geometry and two fields:</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu">system.time</span>(</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>bench<span class="sc">::</span><span class="fu">system_time</span>(</span>
 <span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>  willow_oaks <span class="ot">&lt;-</span></span>
 <span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">st_read</span>(</span>
 <span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;data/processed/dc_street_trees.gpkg&quot;</span>,</span>
@@ -26982,8 +26982,8 @@ Explore the metadata for this lesson
 <span id="cb21-12"><a href="#cb21-12" aria-hidden="true" tabindex="-1"></a>    )</span>
 <span id="cb21-13"><a href="#cb21-13" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>   user  system elapsed 
-  0.043   0.006   0.051 </code></pre>
+<pre><code>process    real 
+ 52.7ms  59.9ms </code></pre>
 </div>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="fu">nrow</span>(willow_oaks)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
@@ -26997,7 +26997,7 @@ Explore the metadata for this lesson
 <p>The read took a fraction of the time of the whole file, and the object is a fraction of the size, because the rows that were not willow oaks were never read into R. Leave <code>geom</code> out of the statement and the result is a <span class="term">data frame</span> with no geometry, which is the right call when the question is a count or a sum and the wrong one when the answer is a map.</p>
 <p>Notice what happens when the same query is run against the GeoJSON file:</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="fu">system.time</span>(</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>bench<span class="sc">::</span><span class="fu">system_time</span>(</span>
 <span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">st_read</span>(</span>
 <span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;data/raw/shapefiles/dc_street_trees.geojson&quot;</span>,</span>
 <span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">query =</span></span>
@@ -27010,8 +27010,8 @@ Explore the metadata for this lesson
 <span id="cb27-11"><a href="#cb27-11" aria-hidden="true" tabindex="-1"></a>  )</span>
 <span id="cb27-12"><a href="#cb27-12" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>   user  system elapsed 
-  1.398   0.016   1.417 </code></pre>
+<pre><code>process    real 
+  1.46s   1.49s </code></pre>
 </div>
 </div>
 <p>The query returns the same rows and takes as long as reading the whole file, because a text file has to be parsed from beginning to end before any row can be selected from it. Whether a query saves time depends on the file format, and the conversion to a GeoPackage is what made the first query fast. The GeoJSON file is queried in a different dialect of SQL, which adds the geometry whether or not the statement names it, so the same statement returns a simple features object here and a data frame from the GeoPackage.</p>
@@ -27034,7 +27034,7 @@ Explore the metadata for this lesson
 <span id="cb29-12"><a href="#cb29-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">st_as_sfc</span>() <span class="sc">%&gt;%</span></span>
 <span id="cb29-13"><a href="#cb29-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">st_as_text</span>()</span>
 <span id="cb29-14"><a href="#cb29-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-15"><a href="#cb29-15" aria-hidden="true" tabindex="-1"></a><span class="fu">system.time</span>(</span>
+<span id="cb29-15"><a href="#cb29-15" aria-hidden="true" tabindex="-1"></a>bench<span class="sc">::</span><span class="fu">system_time</span>(</span>
 <span id="cb29-16"><a href="#cb29-16" aria-hidden="true" tabindex="-1"></a>  box_trees <span class="ot">&lt;-</span></span>
 <span id="cb29-17"><a href="#cb29-17" aria-hidden="true" tabindex="-1"></a>    <span class="fu">st_read</span>(</span>
 <span id="cb29-18"><a href="#cb29-18" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;data/processed/dc_street_trees.gpkg&quot;</span>,</span>
@@ -27046,8 +27046,8 @@ Explore the metadata for this lesson
 <pre><code>Re-reading with feature count reset from 27532 to 27527</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
-<pre><code>   user  system elapsed 
-  0.144   0.018   0.167 </code></pre>
+<pre><code>process    real 
+  204ms   251ms </code></pre>
 </div>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="fu">nrow</span>(box_trees)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
@@ -27056,14 +27056,14 @@ Explore the metadata for this lesson
 </div>
 <p>We transformed the park polygon to the CRS of the trees before writing it as text, because the <span class="term">filter</span> is compared with the coordinates as they are stored in the file. <code>st_read()</code> reports that it re-read the file with a corrected count, because the first pass estimates the number of features from the spatial index. Let’s keep the trees that fall inside the outline with <code>st_filter()</code> (see <strong><em>4.1 Spatial filtering: Subsetting features by location</em></strong>):</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="fu">system.time</span>(</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a>bench<span class="sc">::</span><span class="fu">system_time</span>(</span>
 <span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a>  park_trees <span class="ot">&lt;-</span></span>
 <span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a>    box_trees <span class="sc">%&gt;%</span></span>
 <span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">st_filter</span>(park)</span>
 <span id="cb34-5"><a href="#cb34-5" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>   user  system elapsed 
-  0.101   0.002   0.105 </code></pre>
+<pre><code>process    real 
+  105ms   104ms </code></pre>
 </div>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="fu">nrow</span>(park_trees)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
@@ -27166,20 +27166,20 @@ Note
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb48"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a>trees <span class="sc">%&gt;%</span></span>
 <span id="cb48-2"><a href="#cb48-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">write_rds</span>(<span class="st">&quot;data/processed/dc_street_trees.rds&quot;</span>)</span>
 <span id="cb48-3"><a href="#cb48-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb48-4"><a href="#cb48-4" aria-hidden="true" tabindex="-1"></a><span class="fu">system.time</span>(</span>
+<span id="cb48-4"><a href="#cb48-4" aria-hidden="true" tabindex="-1"></a>bench<span class="sc">::</span><span class="fu">system_time</span>(</span>
 <span id="cb48-5"><a href="#cb48-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">read_rds</span>(<span class="st">&quot;data/processed/dc_street_trees.rds&quot;</span>)</span>
 <span id="cb48-6"><a href="#cb48-6" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>   user  system elapsed 
-  0.197   0.006   0.202 </code></pre>
+<pre><code>process    real 
+  206ms   203ms </code></pre>
 </div>
 </div>
 <p>Restoring the object from an <span class="term">rds file</span> takes a fraction of the time that reading the GeoJSON file took, and the object is restored with its CRS, its classes, and any processing already applied. My own workflow writes the result of the <code>read and pre-process data</code> section to an rds file whenever that section takes more than a few seconds to run, and the analysis script reads the rds file.</p>
 <div class="now_you">
 <p><i class="fa-solid fa-user-circle fa-2x" aria-label="user-circle"></i> <span style="padding-left: 0.5em;">Check your understanding</span></p>
 <p>A script reads a large GeoJSON file, transforms it, and repairs its geometries, and every run repeats those steps before the analysis begins. What is the fix?</p>
-<div id="radio_VWEALRHBXV" class="webex-radiogroup">
-<label><input type="radio" autocomplete="off" name="radio_VWEALRHBXV" value="answer"> <span>Run the steps once, write the result with write_rds(), and read that file in the analysis script</span></label><label><input type="radio" autocomplete="off" name="radio_VWEALRHBXV" value> <span>Read the file with quiet = TRUE</span></label><label><input type="radio" autocomplete="off" name="radio_VWEALRHBXV" value> <span>Convert the geometries to a GeoPackage after transforming them</span></label><label><input type="radio" autocomplete="off" name="radio_VWEALRHBXV" value> <span>Drop the geometry before transforming it</span></label>
+<div id="radio_MAAMRRNRKS" class="webex-radiogroup">
+<label><input type="radio" autocomplete="off" name="radio_MAAMRRNRKS" value="answer"> <span>Run the steps once, write the result with write_rds(), and read that file in the analysis script</span></label><label><input type="radio" autocomplete="off" name="radio_MAAMRRNRKS" value> <span>Read the file with quiet = TRUE</span></label><label><input type="radio" autocomplete="off" name="radio_MAAMRRNRKS" value> <span>Convert the geometries to a GeoPackage after transforming them</span></label><label><input type="radio" autocomplete="off" name="radio_MAAMRRNRKS" value> <span>Drop the geometry before transforming it</span></label>
 </div>
 <p>True or false: With a <code>query =</code>, the rows that a GeoJSON file holds outside the query are never parsed.</p>
 <p><select class="webex-select"><option value="blank"></option><option value>TRUE</option><option value="answer">FALSE</option></select></p>
@@ -27234,8 +27234,8 @@ Note
 Memory (GB) 
 ------------------------
 check threshold : 1 (memmin)
-available       : 6.45 (memmax)
-allowed (50%)   : 3.22
+available       : 5.58 (memmax)
+allowed (50%)   : 2.79
 needed (n=1)    : 0.23
 ------------------------
 proc in memory  : TRUE
@@ -27264,7 +27264,7 @@ nr chunks       : 1
 </section>
 <section id="freeing-memory" class="level2">
 <h2 class="anchored" data-anchor-id="freeing-memory">Freeing memory</h2>
-<p>An object remains in memory while a binding still refers to it. <code>rm()</code> removes a binding (see <strong><em>Preliminary Lesson 2: Environment &amp; Functions</em></strong>), and <code>gc()</code> asks R to reclaim memory used by objects that no binding references:</p>
+<p>An object remains in memory while a binding still refers to it. <code>rm()</code> removes a binding (see <strong><em>Preliminary Lesson 2: Environment &amp; Functions</em></strong>), and <code>gc()</code> reclaims the memory of objects that no binding references:</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb66"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb66-1"><a href="#cb66-1" aria-hidden="true" tabindex="-1"></a><span class="fu">rm</span>(</span>
 <span id="cb66-2"><a href="#cb66-2" aria-hidden="true" tabindex="-1"></a>  nlcd_copy,</span>
@@ -27275,16 +27275,16 @@ nr chunks       : 1
 <span id="cb66-7"><a href="#cb66-7" aria-hidden="true" tabindex="-1"></a><span class="fu">gc</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>          used  (Mb) gc trigger  (Mb) limit (Mb) max used  (Mb)
-Ncells 3372607 180.2    5995830 320.3         NA  5995830 320.3
-Vcells 6925295  52.9   18929825 144.5      32768 18618072 142.1</code></pre>
+Ncells 3366318 179.8    5378305 287.3         NA  5378305 287.3
+Vcells 7048548  53.8   18341596 140.0      32768 18222950 139.1</code></pre>
 </div>
 </div>
 <p>Before running the statement, expect a table with a <code>used</code> column, which reports the memory R is using in cells and megabytes. R runs garbage collection on its own when it needs the space, so calling <code>gc()</code> changes when the memory becomes available for reuse rather than whether it does. I call it after removing a large object mainly to see the number fall. The fall here is small, because <em>terra</em> held the values of <code>nlcd_copy</code> rather than R, and <code>gc()</code> counts only what R holds.</p>
 <div class="now_you">
 <p><i class="fa-solid fa-user-circle fa-2x" aria-label="user-circle"></i> <span style="padding-left: 0.5em;">Check your understanding</span></p>
 <p><code>rm(trees)</code> is run. What happens to the memory the object occupied?</p>
-<div id="radio_QCAJICKELO" class="webex-radiogroup">
-<label><input type="radio" autocomplete="off" name="radio_QCAJICKELO" value="answer"> <span>R reclaims it for reuse when garbage collection next runs, which gc() brings forward</span></label><label><input type="radio" autocomplete="off" name="radio_QCAJICKELO" value> <span>It is returned at once</span></label><label><input type="radio" autocomplete="off" name="radio_QCAJICKELO" value> <span>It is returned only when the session ends</span></label><label><input type="radio" autocomplete="off" name="radio_QCAJICKELO" value> <span>It is written to a temporary file</span></label>
+<div id="radio_BNXNMZCKKE" class="webex-radiogroup">
+<label><input type="radio" autocomplete="off" name="radio_BNXNMZCKKE" value="answer"> <span>R reclaims it for reuse when garbage collection next runs, which gc() brings forward</span></label><label><input type="radio" autocomplete="off" name="radio_BNXNMZCKKE" value> <span>It is returned at once</span></label><label><input type="radio" autocomplete="off" name="radio_BNXNMZCKKE" value> <span>It is returned only when the session ends</span></label><label><input type="radio" autocomplete="off" name="radio_BNXNMZCKKE" value> <span>It is written to a temporary file</span></label>
 </div>
 <p>True or false: <code>gc()</code> reports the memory held by the values of a <code>SpatRaster</code>.</p>
 <p><select class="webex-select"><option value="blank"></option><option value>TRUE</option><option value="answer">FALSE</option></select></p>
@@ -27342,20 +27342,20 @@ Note
 <ol type="1">
 <li>A script needs the 2,000 records of one species from a GeoPackage of 2,000,000 points. Which call reads the least?</li>
 </ol>
-<div id="radio_RIOTXZSKCB" class="webex-radiogroup">
-<label><input type="radio" autocomplete="off" name="radio_RIOTXZSKCB" value="answer"> <span>st_read(file, query = “select * from layer where species = &#39;target&#39;”)</span></label><label><input type="radio" autocomplete="off" name="radio_RIOTXZSKCB" value> <span>st_read(file) %&gt;% filter(species == “target”)</span></label><label><input type="radio" autocomplete="off" name="radio_RIOTXZSKCB" value> <span>st_read(file, quiet = TRUE) %&gt;% filter(species == “target”)</span></label><label><input type="radio" autocomplete="off" name="radio_RIOTXZSKCB" value> <span>read_rds(file) %&gt;% filter(species == “target”)</span></label>
+<div id="radio_FIIJJRPFZB" class="webex-radiogroup">
+<label><input type="radio" autocomplete="off" name="radio_FIIJJRPFZB" value="answer"> <span>st_read(file, query = “select * from layer where species = &#39;target&#39;”)</span></label><label><input type="radio" autocomplete="off" name="radio_FIIJJRPFZB" value> <span>st_read(file) %&gt;% filter(species == “target”)</span></label><label><input type="radio" autocomplete="off" name="radio_FIIJJRPFZB" value> <span>st_read(file, quiet = TRUE) %&gt;% filter(species == “target”)</span></label><label><input type="radio" autocomplete="off" name="radio_FIIJJRPFZB" value> <span>read_rds(file) %&gt;% filter(species == “target”)</span></label>
 </div>
 <ol start="2" type="1">
 <li><code>inMemory()</code> returns <code>FALSE</code> for a raster that was read from a file. What does that mean?</li>
 </ol>
-<div id="radio_PMFRKMYCWT" class="webex-radiogroup">
-<label><input type="radio" autocomplete="off" name="radio_PMFRKMYCWT" value="answer"> <span>The values are still in the file and will be read when an operation needs them</span></label><label><input type="radio" autocomplete="off" name="radio_PMFRKMYCWT" value> <span>The raster is empty</span></label><label><input type="radio" autocomplete="off" name="radio_PMFRKMYCWT" value> <span>The raster is too large to use</span></label><label><input type="radio" autocomplete="off" name="radio_PMFRKMYCWT" value> <span>The file could not be found</span></label>
+<div id="radio_ODCVFQOOJG" class="webex-radiogroup">
+<label><input type="radio" autocomplete="off" name="radio_ODCVFQOOJG" value="answer"> <span>The values are still in the file and will be read when an operation needs them</span></label><label><input type="radio" autocomplete="off" name="radio_ODCVFQOOJG" value> <span>The raster is empty</span></label><label><input type="radio" autocomplete="off" name="radio_ODCVFQOOJG" value> <span>The raster is too large to use</span></label><label><input type="radio" autocomplete="off" name="radio_ODCVFQOOJG" value> <span>The file could not be found</span></label>
 </div>
 <ol start="3" type="1">
 <li><code>bench::mark()</code> stops with an error saying that the results are not equal. What is the fix, when the differences do not matter to the comparison?</li>
 </ol>
-<div id="radio_FQRTPYBADX" class="webex-radiogroup">
-<label><input type="radio" autocomplete="off" name="radio_FQRTPYBADX" value="answer"> <span>Set check = FALSE</span></label><label><input type="radio" autocomplete="off" name="radio_FQRTPYBADX" value> <span>Set iterations = 1</span></label><label><input type="radio" autocomplete="off" name="radio_FQRTPYBADX" value> <span>Wrap each statement in system.time()</span></label><label><input type="radio" autocomplete="off" name="radio_FQRTPYBADX" value> <span>Remove one of the statements</span></label>
+<div id="radio_GCZEBEEMAY" class="webex-radiogroup">
+<label><input type="radio" autocomplete="off" name="radio_GCZEBEEMAY" value="answer"> <span>Set check = FALSE</span></label><label><input type="radio" autocomplete="off" name="radio_GCZEBEEMAY" value> <span>Set iterations = 1</span></label><label><input type="radio" autocomplete="off" name="radio_GCZEBEEMAY" value> <span>Wrap each statement in bench::system_time()</span></label><label><input type="radio" autocomplete="off" name="radio_GCZEBEEMAY" value> <span>Remove one of the statements</span></label>
 </div>
 <ol start="4" type="1">
 <li>Parsons problem: Reorder the lines to read the trees inside a polygon named <code>park</code> from the GeoPackage, given the bounding box of the polygon written as well-known text and named <code>park_box</code>. Place the line that would filter by the box a second time, rather than by the outline, in the trash.</li>
@@ -27477,14 +27477,14 @@ Functions
 <td style="text-align: left;">Remove a name from a specified environment (default is the global environment)</td>
 </tr>
 <tr class="even">
-<td style="text-align: center;">base</td>
-<td style="text-align: center;">system.time</td>
-<td style="text-align: left;">Return the time an expression took to run.</td>
-</tr>
-<tr class="odd">
 <td style="text-align: center;">bench</td>
 <td style="text-align: center;">mark</td>
 <td style="text-align: left;">Benchmark an operation (processing time and memory used)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">bench</td>
+<td style="text-align: center;">system_time</td>
+<td style="text-align: left;">Time a single statement (processing time and time elapsed)</td>
 </tr>
 <tr class="even">
 <td style="text-align: center;">dplyr</td>

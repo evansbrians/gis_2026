@@ -32228,8 +32228,8 @@ Explore the metadata for this lesson
 <div class="now_you">
 <p><i class="fa-solid fa-user-circle fa-2x" aria-label="user-circle"></i> <span style="padding-left: 0.5em;">Check your understanding</span></p>
 <p>A polygon has five contiguous neighbors, and <code>st_weights()</code> is called with its defaults. What weight does each neighbor receive?</p>
-<div id="radio_ELBUHCVTXJ" class="webex-radiogroup">
-<label><input type="radio" autocomplete="off" name="radio_ELBUHCVTXJ" value="answer"> <span>0.2, so that the weights sum to one</span></label><label><input type="radio" autocomplete="off" name="radio_ELBUHCVTXJ" value> <span>1, so that each neighbor counts fully</span></label><label><input type="radio" autocomplete="off" name="radio_ELBUHCVTXJ" value> <span>5, the number of neighbors</span></label><label><input type="radio" autocomplete="off" name="radio_ELBUHCVTXJ" value> <span>A weight proportional to the length of the shared boundary</span></label>
+<div id="radio_ISAMQYMCUP" class="webex-radiogroup">
+<label><input type="radio" autocomplete="off" name="radio_ISAMQYMCUP" value="answer"> <span>0.2, so that the weights sum to one</span></label><label><input type="radio" autocomplete="off" name="radio_ISAMQYMCUP" value> <span>1, so that each neighbor counts fully</span></label><label><input type="radio" autocomplete="off" name="radio_ISAMQYMCUP" value> <span>5, the number of neighbors</span></label><label><input type="radio" autocomplete="off" name="radio_ISAMQYMCUP" value> <span>A weight proportional to the length of the shared boundary</span></label>
 </div>
 <p>True or false: The spatial lag of a tract is the mean of the values of its neighbors, when the weights are row-standardized.</p>
 <p><select class="webex-select"><option value="blank"></option><option value="answer">TRUE</option><option value>FALSE</option></select></p>
@@ -32367,7 +32367,7 @@ alternative hypothesis: two.sided</code></pre>
 </section>
 <section id="local-morans-i" class="level2">
 <h2 class="anchored" data-anchor-id="local-morans-i">Local Moran’s I</h2>
-<p>A global statistic says that clusters exist. It does not say where. <strong>Local Moran’s I</strong> is the statistic calculated for each polygon on its own, from the polygon’s value and the values of its neighbors, with a label for whether the polygon’s value and its neighbors’ mean fall above or below their means.</p>
+<p>A global statistic establishes that clusters exist without locating them. <strong>Local Moran’s I</strong> is the statistic calculated for each polygon on its own, from the polygon’s value and the values of its neighbors, with a label for whether the polygon’s value and its neighbors’ mean fall above or below their means.</p>
 <p><code>local_moran()</code> returns a <span class="term">data frame</span> with one row per polygon, and <code>nsim =</code> sets the number of shuffles used to test each one. Let’s calculate it as a column and look at what the column contains:</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">2026</span>)</span>
@@ -32514,7 +32514,7 @@ alternative hypothesis: two.sided</code></pre>
 <span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a>  tracts <span class="sc">%&gt;%</span></span>
 <span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">st_centroid</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<p><code>st_centroid()</code> warns that it <em>assumes attributes are constant over <span class="term" data-term="Geometry">geometries</span></em>, which is the warning <strong><em>5.3 Focus on polygons: Boundaries, attributes, and areas</em></strong> explained: the income of a tract is carried to a point that stands for the whole tract, which is what we intend here.</p>
+<p><code>st_centroid()</code> returns the warning that it <em>assumes attributes are constant over <span class="term" data-term="Geometry">geometries</span></em>, which is the warning <strong><em>5.3 Focus on polygons: Boundaries, attributes, and areas</em></strong> explained: the income of a tract is carried to a point that stands for the whole tract, which is what we intend here.</p>
 <p><code>st_dist_band()</code> returns the neighbors between a lower and an upper distance from each point. Let’s define the bands:</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a>bands <span class="ot">&lt;-</span></span>
