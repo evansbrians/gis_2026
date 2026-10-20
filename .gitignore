@@ -15,6 +15,7 @@ _reorg_to_delete
 _to_delete/
 hr/
 logistics/
+src/
 
 # macOS
 
@@ -37,6 +38,7 @@ logistics/
 
 # Exclude *.html but roll out learning content as it's developed
 
+!dev_scripts/index_template.html
 !modules/module_0/*/index.html
 !modules/module_1/*/index.html
 !logistics/index.html
