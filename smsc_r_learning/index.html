@@ -194,6 +194,7 @@ footer{border-top:1px solid var(--line);background:var(--band);padding:22px 0;fo
       <h1>SMSC research placement: R skills</h1>
       <p>This website provides a self-paced introduction to R for your SMSC research placement. The lessons below are drawn from the preliminary content and first two modules of our course <em>GIS in R: Fundamentals and applications for ecologists</em>. Topics include: how R stores and evaluates objects, how to read and explore data, and how to subset, transform, summarize, reshape, and plot data with the tidyverse. It does not cover GIS content, but we would be happy to add additional content if you are interested!</p>
       <p>Work through the parts in order. Each lesson opens in its own tab and can be completed on its own, but later lessons assume the earlier ones.</p>
+      <p><b>Before you start:</b> download <a href="r_skills_data.zip">r_skills_data.zip</a> and extract it into a new RStudio project. It holds the <code>data</code> folder the lessons read from and the <code>scripts</code> folder with the two problem set files. Lesson 1.2 asks you to download <code>gis_in_r.zip</code> from Canvas: that file is for students taking the course, so use this one instead and follow the rest of 1.2 as written.</p>
       <ol class="topics">
         <li><b>Preliminary content</b> &mdash; installing R and RStudio, and the core vocabulary of the language: environments, functions, values, objects, and indexing</li>
         <li><b>Module 1</b> &mdash; setting up a project, R objects in depth, reading and writing data, and assignment</li>
@@ -395,7 +396,7 @@ const PARTS = [
     "blurb": "The necessary setup steps before anything else — packages, renv, and the habits that make a coding session go well.",
     "mins": 15,
     "meta": "Setup · 15 min",
-    "search": "read_csv source",
+    "search": "read_csv restore source status",
     "sections": [
      [
       "Successful coding sessions",
@@ -486,6 +487,42 @@ const PARTS = [
       "the-pipe-operator"
      ]
     ]
+   },
+   {
+    "id": "PS1",
+    "title": "R foundations",
+    "slug": "problem_sets/problem_set_1/",
+    "kind": "Problem set",
+    "blurb": "Practice with reading and exploring data, assignment, and the course code style.",
+    "mins": 0,
+    "meta": "Problem set",
+    "search": "arrange factor levels library mean typeof",
+    "sections": [
+     [
+      "Grading",
+      "grading"
+     ],
+     [
+      "About the data",
+      "about-the-data"
+     ],
+     [
+      "Getting started",
+      "getting-started"
+     ],
+     [
+      "Exploring your data",
+      "exploring-your-data"
+     ],
+     [
+      "Assignments",
+      "assignments"
+     ],
+     [
+      "Code styling",
+      "code-styling"
+     ]
+    ]
    }
   ]
  },
@@ -510,7 +547,7 @@ const PARTS = [
     "blurb": "Distinguish subsetting from extraction, then choose the right tool for rows, columns, values, and metadata.",
     "mins": 80,
     "meta": "Tutorial · 1 hr 20 min",
-    "search": "arrange c cat class distinct drop_na filter is.na library list2env max names pluck pull read_rds rm select slice slice_head slice_max slice_min slice_tail source year",
+    "search": "arrange c cat class distinct drop_na filter filter_out is.na library list2env max names pluck pull read_rds rm select slice slice_head slice_max slice_min slice_tail source when_any year",
     "sections": [
      [
       "Extraction vs. subsetting",
@@ -737,6 +774,170 @@ const PARTS = [
       "saving-the-tidy-data"
      ]
     ]
+   },
+   {
+    "id": "PS2",
+    "title": "Counting coqui frogs",
+    "slug": "problem_sets/problem_set_2/",
+    "kind": "Problem set",
+    "blurb": "Practice with the whole module 2 toolkit, from subsetting through tidy data and relational tables.",
+    "mins": 0,
+    "meta": "Problem set",
+    "search": "library",
+    "sections": [
+     [
+      "Grading",
+      "grading"
+     ],
+     [
+      "About the data",
+      "about-the-data"
+     ],
+     [
+      "Subsetting and extraction",
+      "subsetting-and-extraction"
+     ],
+     [
+      "Data tidying and mutation",
+      "data-tidying-and-mutation"
+     ],
+     [
+      "Grouped operations and summarizing",
+      "grouped-operations-and-summarizing"
+     ],
+     [
+      "Data visualization",
+      "data-visualization"
+     ],
+     [
+      "Ranked subsetting",
+      "ranked-subsetting"
+     ],
+     [
+      "Tidy data and relational tables",
+      "tidy-data-and-relational-tables"
+     ]
+    ]
+   }
+  ]
+ },
+ {
+  "n": 100,
+  "kicker": "Resources",
+  "title": "Resources",
+  "intro": "Reference pages to return to as you work: the course style guide, how to approach a problem set, working with an AI assistant, and where to go next.",
+  "chapters": [
+   {
+    "id": "R1",
+    "title": "Course style guide",
+    "slug": "resources/course_style_guide/",
+    "kind": "Resource",
+    "blurb": "The code formatting rules for every script in the course, in brief for quick checks and in depth with the reasoning and examples behind each rule.",
+    "mins": 0,
+    "meta": "Resource",
+    "search": "as.numeric c factor function if library list map_dbl mean print source tibble tribble",
+    "sections": [
+     [
+      "Style guide, in brief",
+      "style-guide-in-brief"
+     ],
+     [
+      "Style guide, in-depth",
+      "style-guide-in-depth"
+     ]
+    ]
+   },
+   {
+    "id": "R2",
+    "title": "Solving and submitting problem sets",
+    "slug": "resources/solving_and_submitting_problem_sets/",
+    "kind": "Resource",
+    "blurb": "The three kinds of problem set question, a planning-first workflow for solving them, tips for debugging, and the policy on external coding resources.",
+    "mins": 0,
+    "meta": "Resource",
+    "search": "source",
+    "sections": [
+     [
+      "Recommended workflow",
+      "recommended-workflow"
+     ],
+     [
+      "Other tips and tricks {.compact-section-end}",
+      "other-tips-and-tricks-.compact-section-end"
+     ],
+     [
+      "Submitting your problem set {.mt-0}",
+      "submitting-your-problem-set-.mt-0"
+     ],
+     [
+      "Using external coding resources",
+      "using-external-coding-resources"
+     ]
+    ]
+   },
+   {
+    "id": "R3",
+    "title": "Optional: Working with an AI assistant",
+    "slug": "resources/using_an_ai_assistant/",
+    "kind": "Resource",
+    "blurb": "Use an AI assistant as a thought partner: give it the course rules and your package versions, reword a question, read an error, and check your code against the style guide.",
+    "mins": 0,
+    "meta": "Resource",
+    "search": "as.character c install.packages map_chr source str_c",
+    "sections": [
+     [
+      "Give the assistant the course rules",
+      "give-the-assistant-the-course-rules"
+     ],
+     [
+      "Report your package versions",
+      "report-your-package-versions"
+     ],
+     [
+      "Reword a question",
+      "reword-a-question"
+     ],
+     [
+      "Check the approved function list",
+      "check-the-approved-function-list"
+     ],
+     [
+      "Read an error",
+      "read-an-error"
+     ],
+     [
+      "Check the course style",
+      "check-the-course-style"
+     ],
+     [
+      "Putting it all together",
+      "putting-it-all-together"
+     ]
+    ]
+   },
+   {
+    "id": "R4",
+    "title": "Packages and tools beyond the course",
+    "slug": "resources/packages_and_tools/",
+    "kind": "Resource",
+    "blurb": "A searchable guide to packages for going deeper into the tools we used and for work the course did not cover, organized by application.",
+    "mins": 0,
+    "meta": "Resource",
+    "search": "source",
+    "sections": [
+     [
+      "How to use this page",
+      "how-to-use-this-page"
+     ],
+     [
+      "Find a package",
+      "find-a-package"
+     ],
+     [
+      "Where to look for more",
+      "where-to-look-for-more"
+     ]
+    ]
    }
   ]
  }
@@ -767,7 +968,7 @@ document.getElementById("parts").innerHTML = PARTS.map(part => {
       <h2>${esc(part.title)}</h2>
       <p>${esc(part.intro)}</p>
       <div class="part-meta">
-        ${part.chapters.length} chapters<span class="sep">|</span>&asymp; ${hours} hours
+        ${part.chapters.length} chapter${part.chapters.length === 1 ? "" : "s"}${hours ? `<span class="sep">|</span>&asymp; ${hours} hours` : ""}
       </div>
       ${chapters}
     </section>`;
