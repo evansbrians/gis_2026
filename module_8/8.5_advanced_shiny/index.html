@@ -26893,7 +26893,7 @@ Explore the metadata for this lesson
 <li>The label the reader sees (<code>label =</code>)</li>
 <li>The choices (<code>choices =</code>)</li>
 </ul>
-<p>The choices are a <span class="term">vector</span>, and the <em>shiny</em> documentation states that <em>“if elements of the list are named, then that name — rather than the value — is displayed to the user.”</em> <code>set_names()</code> builds a named vector from two columns (see <strong><em>1.5 Assignments</em></strong>), so the reader sees the patch label and the server receives the patch identifier:</p>
+<p>The choices are a <span class="term">vector</span>. When its elements are named, <code>selectInput()</code> displays the names (rather than the values) to the reader. <code>set_names()</code> builds a named vector from two columns (see <strong><em>1.5 Assignments</em></strong>), so the reader sees the patch label and the server receives the patch identifier:</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">selectInput</span>(</span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">inputId =</span> <span class="st">&quot;patch&quot;</span>,</span>
@@ -26966,8 +26966,8 @@ Explore the metadata for this lesson
 <div class="now_you">
 <p><i class="fa-solid fa-user-circle fa-2x" aria-label="user-circle"></i> <span style="padding-left: 0.5em;">Check your understanding</span></p>
 <p>In the chain above, the reader changes the quadrat width. Which expressions re-run?</p>
-<div id="radio_EJWYDDKHKG" class="webex-radiogroup">
-<label><input type="radio" autocomplete="off" name="radio_EJWYDDKHKG" value="answer"> <span>quadrats() only</span></label><label><input type="radio" autocomplete="off" name="radio_EJWYDDKHKG" value> <span>patch_polygon(), patch_nests(), and quadrats()</span></label><label><input type="radio" autocomplete="off" name="radio_EJWYDDKHKG" value> <span>patch_nests() and quadrats()</span></label><label><input type="radio" autocomplete="off" name="radio_EJWYDDKHKG" value> <span>None, until the button is pressed</span></label>
+<div id="radio_KIWLXKVBGF" class="webex-radiogroup">
+<label><input type="radio" autocomplete="off" name="radio_KIWLXKVBGF" value="answer"> <span>quadrats() only</span></label><label><input type="radio" autocomplete="off" name="radio_KIWLXKVBGF" value> <span>patch_polygon(), patch_nests(), and quadrats()</span></label><label><input type="radio" autocomplete="off" name="radio_KIWLXKVBGF" value> <span>patch_nests() and quadrats()</span></label><label><input type="radio" autocomplete="off" name="radio_KIWLXKVBGF" value> <span>None, until the button is pressed</span></label>
 </div>
 <p>True or false: A <code>selectInput()</code> whose choices are a named vector returns the names to the server.</p>
 <p><select class="webex-select"><option value="blank"></option><option value>TRUE</option><option value="answer">FALSE</option></select></p>
@@ -27001,8 +27001,8 @@ Explore the metadata for this lesson
 <div class="now_you">
 <p><i class="fa-solid fa-user-circle fa-2x" aria-label="user-circle"></i> <span style="padding-left: 0.5em;">Check your understanding</span></p>
 <p>Which pair of functions places a <em>tmap</em> map in an app?</p>
-<div id="radio_GYVSIDFUFK" class="webex-radiogroup">
-<label><input type="radio" autocomplete="off" name="radio_GYVSIDFUFK" value="answer"> <span>tmapOutput() in the interface and renderTmap() in the server</span></label><label><input type="radio" autocomplete="off" name="radio_GYVSIDFUFK" value> <span>plotOutput() in the interface and renderTmap() in the server</span></label><label><input type="radio" autocomplete="off" name="radio_GYVSIDFUFK" value> <span>tmapOutput() in the server and renderTmap() in the interface</span></label><label><input type="radio" autocomplete="off" name="radio_GYVSIDFUFK" value> <span>tm_shape() in the interface and tm_dots() in the server</span></label>
+<div id="radio_RHYPKAREOK" class="webex-radiogroup">
+<label><input type="radio" autocomplete="off" name="radio_RHYPKAREOK" value="answer"> <span>tmapOutput() in the interface and renderTmap() in the server</span></label><label><input type="radio" autocomplete="off" name="radio_RHYPKAREOK" value> <span>plotOutput() in the interface and renderTmap() in the server</span></label><label><input type="radio" autocomplete="off" name="radio_RHYPKAREOK" value> <span>tmapOutput() in the server and renderTmap() in the interface</span></label><label><input type="radio" autocomplete="off" name="radio_RHYPKAREOK" value> <span>tm_shape() in the interface and tm_dots() in the server</span></label>
 </div>
 <p>True or false: <code>renderTmap()</code> draws in view mode regardless of the current <em>tmap</em> mode.</p>
 <p><select class="webex-select"><option value="blank"></option><option value>TRUE</option><option value="answer">FALSE</option></select></p>
@@ -27077,8 +27077,8 @@ Explore the metadata for this lesson
 <div class="now_you">
 <p><i class="fa-solid fa-user-circle fa-2x" aria-label="user-circle"></i> <span style="padding-left: 0.5em;">Check your understanding</span></p>
 <p>An <code>eventReactive()</code> is given <code>list(input$run, input$site)</code> as its event. Which change triggers the calculation?</p>
-<div id="radio_ERPCNLDOQC" class="webex-radiogroup">
-<label><input type="radio" autocomplete="off" name="radio_ERPCNLDOQC" value="answer"> <span>A change to the button or the site</span></label><label><input type="radio" autocomplete="off" name="radio_ERPCNLDOQC" value> <span>A change to any input read inside the calculation</span></label><label><input type="radio" autocomplete="off" name="radio_ERPCNLDOQC" value> <span>A change to the button only</span></label><label><input type="radio" autocomplete="off" name="radio_ERPCNLDOQC" value> <span>A change to the site only</span></label>
+<div id="radio_CITYWZYLYR" class="webex-radiogroup">
+<label><input type="radio" autocomplete="off" name="radio_CITYWZYLYR" value="answer"> <span>A change to the button or the site</span></label><label><input type="radio" autocomplete="off" name="radio_CITYWZYLYR" value> <span>A change to any input read inside the calculation</span></label><label><input type="radio" autocomplete="off" name="radio_CITYWZYLYR" value> <span>A change to the button only</span></label><label><input type="radio" autocomplete="off" name="radio_CITYWZYLYR" value> <span>A change to the site only</span></label>
 </div>
 <p>True or false: An <code>eventReactive()</code> re-runs when a reactive expression it reads changes.</p>
 <p><select class="webex-select"><option value="blank"></option><option value>TRUE</option><option value="answer">FALSE</option></select></p>
@@ -27273,12 +27273,12 @@ Explore the metadata for this lesson
 <div class="now_you">
 <p><i class="fa-solid fa-user-circle fa-2x" aria-label="user-circle"></i> <span style="padding-left: 0.5em;">Check your understanding</span></p>
 <p>In <code>page_sidebar()</code>, where do the controls go?</p>
-<div id="radio_ANPKUXCCNG" class="webex-radiogroup">
-<label><input type="radio" autocomplete="off" name="radio_ANPKUXCCNG" value="answer"> <span>Inside sidebar(), passed to the sidebar argument</span></label><label><input type="radio" autocomplete="off" name="radio_ANPKUXCCNG" value> <span>Inside card(), one card per control</span></label><label><input type="radio" autocomplete="off" name="radio_ANPKUXCCNG" value> <span>As the title argument</span></label><label><input type="radio" autocomplete="off" name="radio_ANPKUXCCNG" value> <span>Inside renderTmap()</span></label>
+<div id="radio_RKHFETXSTT" class="webex-radiogroup">
+<label><input type="radio" autocomplete="off" name="radio_RKHFETXSTT" value="answer"> <span>Inside sidebar(), passed to the sidebar argument</span></label><label><input type="radio" autocomplete="off" name="radio_RKHFETXSTT" value> <span>Inside card(), one card per control</span></label><label><input type="radio" autocomplete="off" name="radio_RKHFETXSTT" value> <span>As the title argument</span></label><label><input type="radio" autocomplete="off" name="radio_RKHFETXSTT" value> <span>Inside renderTmap()</span></label>
 </div>
 <p>What does <code>value_box()</code> hold?</p>
-<div id="radio_VRBBOONJLQ" class="webex-radiogroup">
-<label><input type="radio" autocomplete="off" name="radio_VRBBOONJLQ" value="answer"> <span>One figure, with a label above it</span></label><label><input type="radio" autocomplete="off" name="radio_VRBBOONJLQ" value> <span>A map and its legend</span></label><label><input type="radio" autocomplete="off" name="radio_VRBBOONJLQ" value> <span>The controls of the app</span></label><label><input type="radio" autocomplete="off" name="radio_VRBBOONJLQ" value> <span>A table of results</span></label>
+<div id="radio_EJNIXHQKHT" class="webex-radiogroup">
+<label><input type="radio" autocomplete="off" name="radio_EJNIXHQKHT" value="answer"> <span>One figure, with a label above it</span></label><label><input type="radio" autocomplete="off" name="radio_EJNIXHQKHT" value> <span>A map and its legend</span></label><label><input type="radio" autocomplete="off" name="radio_EJNIXHQKHT" value> <span>The controls of the app</span></label><label><input type="radio" autocomplete="off" name="radio_EJNIXHQKHT" value> <span>A table of results</span></label>
 </div>
 <p>True or false: each value box needs a reactive expression of its own.</p>
 <p><select class="webex-select"><option value="blank"></option><option value>TRUE</option><option value="answer">FALSE</option></select></p>
@@ -27424,115 +27424,161 @@ window.figurePdfs["advanced_shiny"] = "data:application/pdf;base64,JVBERi0xLjcKJ
 <span id="cb26-68"><a href="#cb26-68" aria-hidden="true" tabindex="-1"></a>          <span class="at">label =</span> <span class="st">&quot;Download quadrat counts&quot;</span></span>
 <span id="cb26-69"><a href="#cb26-69" aria-hidden="true" tabindex="-1"></a>        )</span>
 <span id="cb26-70"><a href="#cb26-70" aria-hidden="true" tabindex="-1"></a>      ),</span>
-<span id="cb26-71"><a href="#cb26-71" aria-hidden="true" tabindex="-1"></a>    <span class="fu">card</span>(</span>
-<span id="cb26-72"><a href="#cb26-72" aria-hidden="true" tabindex="-1"></a>      <span class="fu">tmapOutput</span>(<span class="st">&quot;map&quot;</span>)</span>
-<span id="cb26-73"><a href="#cb26-73" aria-hidden="true" tabindex="-1"></a>    ),</span>
-<span id="cb26-74"><a href="#cb26-74" aria-hidden="true" tabindex="-1"></a>    <span class="fu">card</span>(</span>
-<span id="cb26-75"><a href="#cb26-75" aria-hidden="true" tabindex="-1"></a>      <span class="fu">tableOutput</span>(<span class="st">&quot;counts&quot;</span>)</span>
-<span id="cb26-76"><a href="#cb26-76" aria-hidden="true" tabindex="-1"></a>    )</span>
-<span id="cb26-77"><a href="#cb26-77" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb26-78"><a href="#cb26-78" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-79"><a href="#cb26-79" aria-hidden="true" tabindex="-1"></a><span class="co"># server -------------------------------------------------------</span></span>
-<span id="cb26-80"><a href="#cb26-80" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-81"><a href="#cb26-81" aria-hidden="true" tabindex="-1"></a>server <span class="ot">&lt;-</span></span>
-<span id="cb26-82"><a href="#cb26-82" aria-hidden="true" tabindex="-1"></a>  <span class="cf">function</span>(input, output, session) {</span>
-<span id="cb26-83"><a href="#cb26-83" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-84"><a href="#cb26-84" aria-hidden="true" tabindex="-1"></a>    <span class="co"># The patch the reader chose:</span></span>
-<span id="cb26-85"><a href="#cb26-85" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-86"><a href="#cb26-86" aria-hidden="true" tabindex="-1"></a>    patch_polygon <span class="ot">&lt;-</span></span>
-<span id="cb26-87"><a href="#cb26-87" aria-hidden="true" tabindex="-1"></a>      <span class="fu">reactive</span>({</span>
-<span id="cb26-88"><a href="#cb26-88" aria-hidden="true" tabindex="-1"></a>        patches <span class="sc">%&gt;%</span></span>
-<span id="cb26-89"><a href="#cb26-89" aria-hidden="true" tabindex="-1"></a>          <span class="fu">filter</span>(patch_id <span class="sc">==</span> input<span class="sc">$</span>patch)</span>
-<span id="cb26-90"><a href="#cb26-90" aria-hidden="true" tabindex="-1"></a>      })</span>
-<span id="cb26-91"><a href="#cb26-91" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-92"><a href="#cb26-92" aria-hidden="true" tabindex="-1"></a>    <span class="co"># The nests in that patch:</span></span>
-<span id="cb26-93"><a href="#cb26-93" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-94"><a href="#cb26-94" aria-hidden="true" tabindex="-1"></a>    patch_nests <span class="ot">&lt;-</span></span>
-<span id="cb26-95"><a href="#cb26-95" aria-hidden="true" tabindex="-1"></a>      <span class="fu">reactive</span>({</span>
-<span id="cb26-96"><a href="#cb26-96" aria-hidden="true" tabindex="-1"></a>        nests <span class="sc">%&gt;%</span></span>
-<span id="cb26-97"><a href="#cb26-97" aria-hidden="true" tabindex="-1"></a>          <span class="fu">st_filter</span>(<span class="fu">patch_polygon</span>())</span>
-<span id="cb26-98"><a href="#cb26-98" aria-hidden="true" tabindex="-1"></a>      })</span>
-<span id="cb26-99"><a href="#cb26-99" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-100"><a href="#cb26-100" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Quadrats with their nest counts:</span></span>
-<span id="cb26-101"><a href="#cb26-101" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-102"><a href="#cb26-102" aria-hidden="true" tabindex="-1"></a>    quadrats <span class="ot">&lt;-</span></span>
-<span id="cb26-103"><a href="#cb26-103" aria-hidden="true" tabindex="-1"></a>      <span class="fu">reactive</span>({</span>
-<span id="cb26-104"><a href="#cb26-104" aria-hidden="true" tabindex="-1"></a>        <span class="fu">patch_polygon</span>() <span class="sc">%&gt;%</span></span>
-<span id="cb26-105"><a href="#cb26-105" aria-hidden="true" tabindex="-1"></a>          <span class="fu">st_make_grid</span>(<span class="at">cellsize =</span> input<span class="sc">$</span>cellsize) <span class="sc">%&gt;%</span></span>
-<span id="cb26-106"><a href="#cb26-106" aria-hidden="true" tabindex="-1"></a>          <span class="fu">st_as_sf</span>() <span class="sc">%&gt;%</span></span>
-<span id="cb26-107"><a href="#cb26-107" aria-hidden="true" tabindex="-1"></a>          <span class="fu">rename</span>(<span class="at">geometry =</span> x) <span class="sc">%&gt;%</span></span>
-<span id="cb26-108"><a href="#cb26-108" aria-hidden="true" tabindex="-1"></a>          <span class="fu">st_filter</span>(<span class="fu">patch_polygon</span>()) <span class="sc">%&gt;%</span></span>
-<span id="cb26-109"><a href="#cb26-109" aria-hidden="true" tabindex="-1"></a>          <span class="fu">mutate</span>(</span>
-<span id="cb26-110"><a href="#cb26-110" aria-hidden="true" tabindex="-1"></a>            <span class="at">nests =</span></span>
-<span id="cb26-111"><a href="#cb26-111" aria-hidden="true" tabindex="-1"></a>              <span class="fu">st_intersects</span>(geometry, <span class="fu">patch_nests</span>()) <span class="sc">%&gt;%</span></span>
-<span id="cb26-112"><a href="#cb26-112" aria-hidden="true" tabindex="-1"></a>              <span class="fu">lengths</span>()</span>
-<span id="cb26-113"><a href="#cb26-113" aria-hidden="true" tabindex="-1"></a>          )</span>
-<span id="cb26-114"><a href="#cb26-114" aria-hidden="true" tabindex="-1"></a>      })</span>
-<span id="cb26-115"><a href="#cb26-115" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-116"><a href="#cb26-116" aria-hidden="true" tabindex="-1"></a>    <span class="co"># A random pattern, redrawn for a click or a new patch:</span></span>
+<span id="cb26-71"><a href="#cb26-71" aria-hidden="true" tabindex="-1"></a>    <span class="co"># The summary row:</span></span>
+<span id="cb26-72"><a href="#cb26-72" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-73"><a href="#cb26-73" aria-hidden="true" tabindex="-1"></a>    <span class="fu">layout_columns</span>(</span>
+<span id="cb26-74"><a href="#cb26-74" aria-hidden="true" tabindex="-1"></a>      <span class="at">fill =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb26-75"><a href="#cb26-75" aria-hidden="true" tabindex="-1"></a>      <span class="fu">value_box</span>(</span>
+<span id="cb26-76"><a href="#cb26-76" aria-hidden="true" tabindex="-1"></a>        <span class="at">title =</span> <span class="st">&quot;Nests in the patch&quot;</span>,</span>
+<span id="cb26-77"><a href="#cb26-77" aria-hidden="true" tabindex="-1"></a>        <span class="at">value =</span> <span class="fu">textOutput</span>(<span class="st">&quot;n_nests&quot;</span>)</span>
+<span id="cb26-78"><a href="#cb26-78" aria-hidden="true" tabindex="-1"></a>      ),</span>
+<span id="cb26-79"><a href="#cb26-79" aria-hidden="true" tabindex="-1"></a>      <span class="fu">value_box</span>(</span>
+<span id="cb26-80"><a href="#cb26-80" aria-hidden="true" tabindex="-1"></a>        <span class="at">title =</span> <span class="st">&quot;Quadrats&quot;</span>,</span>
+<span id="cb26-81"><a href="#cb26-81" aria-hidden="true" tabindex="-1"></a>        <span class="at">value =</span> <span class="fu">textOutput</span>(<span class="st">&quot;n_quadrats&quot;</span>)</span>
+<span id="cb26-82"><a href="#cb26-82" aria-hidden="true" tabindex="-1"></a>      ),</span>
+<span id="cb26-83"><a href="#cb26-83" aria-hidden="true" tabindex="-1"></a>      <span class="fu">value_box</span>(</span>
+<span id="cb26-84"><a href="#cb26-84" aria-hidden="true" tabindex="-1"></a>        <span class="at">title =</span> <span class="st">&quot;Mean nests per quadrat&quot;</span>,</span>
+<span id="cb26-85"><a href="#cb26-85" aria-hidden="true" tabindex="-1"></a>        <span class="at">value =</span> <span class="fu">textOutput</span>(<span class="st">&quot;mean_count&quot;</span>)</span>
+<span id="cb26-86"><a href="#cb26-86" aria-hidden="true" tabindex="-1"></a>      )</span>
+<span id="cb26-87"><a href="#cb26-87" aria-hidden="true" tabindex="-1"></a>    ),</span>
+<span id="cb26-88"><a href="#cb26-88" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-89"><a href="#cb26-89" aria-hidden="true" tabindex="-1"></a>    <span class="co"># The outputs:</span></span>
+<span id="cb26-90"><a href="#cb26-90" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-91"><a href="#cb26-91" aria-hidden="true" tabindex="-1"></a>    <span class="fu">layout_columns</span>(</span>
+<span id="cb26-92"><a href="#cb26-92" aria-hidden="true" tabindex="-1"></a>      <span class="fu">card</span>(</span>
+<span id="cb26-93"><a href="#cb26-93" aria-hidden="true" tabindex="-1"></a>        <span class="fu">card_header</span>(<span class="st">&quot;Nests and quadrats&quot;</span>),</span>
+<span id="cb26-94"><a href="#cb26-94" aria-hidden="true" tabindex="-1"></a>        <span class="fu">tmapOutput</span>(<span class="st">&quot;map&quot;</span>),</span>
+<span id="cb26-95"><a href="#cb26-95" aria-hidden="true" tabindex="-1"></a>        <span class="at">full_screen =</span> <span class="cn">TRUE</span></span>
+<span id="cb26-96"><a href="#cb26-96" aria-hidden="true" tabindex="-1"></a>      ),</span>
+<span id="cb26-97"><a href="#cb26-97" aria-hidden="true" tabindex="-1"></a>      <span class="fu">card</span>(</span>
+<span id="cb26-98"><a href="#cb26-98" aria-hidden="true" tabindex="-1"></a>        <span class="fu">card_header</span>(<span class="st">&quot;Quadrat counts&quot;</span>),</span>
+<span id="cb26-99"><a href="#cb26-99" aria-hidden="true" tabindex="-1"></a>        <span class="fu">tableOutput</span>(<span class="st">&quot;counts&quot;</span>),</span>
+<span id="cb26-100"><a href="#cb26-100" aria-hidden="true" tabindex="-1"></a>        <span class="at">full_screen =</span> <span class="cn">TRUE</span></span>
+<span id="cb26-101"><a href="#cb26-101" aria-hidden="true" tabindex="-1"></a>      )</span>
+<span id="cb26-102"><a href="#cb26-102" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb26-103"><a href="#cb26-103" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb26-104"><a href="#cb26-104" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-105"><a href="#cb26-105" aria-hidden="true" tabindex="-1"></a><span class="co"># server -------------------------------------------------------</span></span>
+<span id="cb26-106"><a href="#cb26-106" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-107"><a href="#cb26-107" aria-hidden="true" tabindex="-1"></a>server <span class="ot">&lt;-</span></span>
+<span id="cb26-108"><a href="#cb26-108" aria-hidden="true" tabindex="-1"></a>  <span class="cf">function</span>(input, output, session) {</span>
+<span id="cb26-109"><a href="#cb26-109" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-110"><a href="#cb26-110" aria-hidden="true" tabindex="-1"></a>    <span class="co"># The patch the reader chose:</span></span>
+<span id="cb26-111"><a href="#cb26-111" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-112"><a href="#cb26-112" aria-hidden="true" tabindex="-1"></a>    patch_polygon <span class="ot">&lt;-</span></span>
+<span id="cb26-113"><a href="#cb26-113" aria-hidden="true" tabindex="-1"></a>      <span class="fu">reactive</span>({</span>
+<span id="cb26-114"><a href="#cb26-114" aria-hidden="true" tabindex="-1"></a>        patches <span class="sc">%&gt;%</span></span>
+<span id="cb26-115"><a href="#cb26-115" aria-hidden="true" tabindex="-1"></a>          <span class="fu">filter</span>(patch_id <span class="sc">==</span> input<span class="sc">$</span>patch)</span>
+<span id="cb26-116"><a href="#cb26-116" aria-hidden="true" tabindex="-1"></a>      })</span>
 <span id="cb26-117"><a href="#cb26-117" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-118"><a href="#cb26-118" aria-hidden="true" tabindex="-1"></a>    random_nests <span class="ot">&lt;-</span></span>
-<span id="cb26-119"><a href="#cb26-119" aria-hidden="true" tabindex="-1"></a>      <span class="fu">eventReactive</span>(</span>
-<span id="cb26-120"><a href="#cb26-120" aria-hidden="true" tabindex="-1"></a>        <span class="fu">list</span>(</span>
-<span id="cb26-121"><a href="#cb26-121" aria-hidden="true" tabindex="-1"></a>          input<span class="sc">$</span>draw,</span>
-<span id="cb26-122"><a href="#cb26-122" aria-hidden="true" tabindex="-1"></a>          input<span class="sc">$</span>patch</span>
-<span id="cb26-123"><a href="#cb26-123" aria-hidden="true" tabindex="-1"></a>        ),</span>
-<span id="cb26-124"><a href="#cb26-124" aria-hidden="true" tabindex="-1"></a>        {</span>
-<span id="cb26-125"><a href="#cb26-125" aria-hidden="true" tabindex="-1"></a>          <span class="fu">patch_polygon</span>() <span class="sc">%&gt;%</span></span>
-<span id="cb26-126"><a href="#cb26-126" aria-hidden="true" tabindex="-1"></a>            <span class="fu">st_sample</span>(<span class="at">size =</span> <span class="fu">nrow</span>(<span class="fu">patch_nests</span>())) <span class="sc">%&gt;%</span></span>
-<span id="cb26-127"><a href="#cb26-127" aria-hidden="true" tabindex="-1"></a>            <span class="fu">st_as_sf</span>() <span class="sc">%&gt;%</span></span>
-<span id="cb26-128"><a href="#cb26-128" aria-hidden="true" tabindex="-1"></a>            <span class="fu">rename</span>(<span class="at">geometry =</span> x)</span>
-<span id="cb26-129"><a href="#cb26-129" aria-hidden="true" tabindex="-1"></a>        }</span>
-<span id="cb26-130"><a href="#cb26-130" aria-hidden="true" tabindex="-1"></a>      )</span>
-<span id="cb26-131"><a href="#cb26-131" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-132"><a href="#cb26-132" aria-hidden="true" tabindex="-1"></a>    output<span class="sc">$</span>map <span class="ot">&lt;-</span></span>
-<span id="cb26-133"><a href="#cb26-133" aria-hidden="true" tabindex="-1"></a>      <span class="fu">renderTmap</span>({</span>
-<span id="cb26-134"><a href="#cb26-134" aria-hidden="true" tabindex="-1"></a>        <span class="fu">quadrats</span>() <span class="sc">%&gt;%</span></span>
-<span id="cb26-135"><a href="#cb26-135" aria-hidden="true" tabindex="-1"></a>          <span class="fu">tm_shape</span>() <span class="sc">+</span></span>
-<span id="cb26-136"><a href="#cb26-136" aria-hidden="true" tabindex="-1"></a>          <span class="fu">tm_polygons</span>(</span>
-<span id="cb26-137"><a href="#cb26-137" aria-hidden="true" tabindex="-1"></a>            <span class="at">fill =</span> <span class="st">&quot;nests&quot;</span>,</span>
-<span id="cb26-138"><a href="#cb26-138" aria-hidden="true" tabindex="-1"></a>            <span class="at">fill_alpha =</span> <span class="fl">0.6</span></span>
-<span id="cb26-139"><a href="#cb26-139" aria-hidden="true" tabindex="-1"></a>          ) <span class="sc">+</span></span>
-<span id="cb26-140"><a href="#cb26-140" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-141"><a href="#cb26-141" aria-hidden="true" tabindex="-1"></a>          <span class="co"># Add the nests:</span></span>
-<span id="cb26-142"><a href="#cb26-142" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-143"><a href="#cb26-143" aria-hidden="true" tabindex="-1"></a>          <span class="fu">patch_nests</span>() <span class="sc">%&gt;%</span></span>
-<span id="cb26-144"><a href="#cb26-144" aria-hidden="true" tabindex="-1"></a>          <span class="fu">tm_shape</span>() <span class="sc">+</span></span>
-<span id="cb26-145"><a href="#cb26-145" aria-hidden="true" tabindex="-1"></a>          <span class="fu">tm_dots</span>(<span class="at">size =</span> <span class="fl">0.5</span>) <span class="sc">+</span></span>
-<span id="cb26-146"><a href="#cb26-146" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-147"><a href="#cb26-147" aria-hidden="true" tabindex="-1"></a>          <span class="co"># Add the random pattern:</span></span>
-<span id="cb26-148"><a href="#cb26-148" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-149"><a href="#cb26-149" aria-hidden="true" tabindex="-1"></a>          <span class="fu">random_nests</span>() <span class="sc">%&gt;%</span></span>
-<span id="cb26-150"><a href="#cb26-150" aria-hidden="true" tabindex="-1"></a>          <span class="fu">tm_shape</span>() <span class="sc">+</span></span>
-<span id="cb26-151"><a href="#cb26-151" aria-hidden="true" tabindex="-1"></a>          <span class="fu">tm_dots</span>(</span>
-<span id="cb26-152"><a href="#cb26-152" aria-hidden="true" tabindex="-1"></a>            <span class="at">fill =</span> <span class="st">&quot;red&quot;</span>,</span>
-<span id="cb26-153"><a href="#cb26-153" aria-hidden="true" tabindex="-1"></a>            <span class="at">size =</span> <span class="fl">0.5</span></span>
-<span id="cb26-154"><a href="#cb26-154" aria-hidden="true" tabindex="-1"></a>          )</span>
-<span id="cb26-155"><a href="#cb26-155" aria-hidden="true" tabindex="-1"></a>      })</span>
-<span id="cb26-156"><a href="#cb26-156" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-157"><a href="#cb26-157" aria-hidden="true" tabindex="-1"></a>    output<span class="sc">$</span>counts <span class="ot">&lt;-</span></span>
-<span id="cb26-158"><a href="#cb26-158" aria-hidden="true" tabindex="-1"></a>      <span class="fu">renderTable</span>({</span>
-<span id="cb26-159"><a href="#cb26-159" aria-hidden="true" tabindex="-1"></a>        <span class="fu">quadrats</span>() <span class="sc">%&gt;%</span></span>
-<span id="cb26-160"><a href="#cb26-160" aria-hidden="true" tabindex="-1"></a>          <span class="fu">st_drop_geometry</span>() <span class="sc">%&gt;%</span></span>
-<span id="cb26-161"><a href="#cb26-161" aria-hidden="true" tabindex="-1"></a>          <span class="fu">count</span>(nests, <span class="at">name =</span> <span class="st">&quot;quadrats&quot;</span>)</span>
-<span id="cb26-162"><a href="#cb26-162" aria-hidden="true" tabindex="-1"></a>      })</span>
-<span id="cb26-163"><a href="#cb26-163" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-164"><a href="#cb26-164" aria-hidden="true" tabindex="-1"></a>    output<span class="sc">$</span>download <span class="ot">&lt;-</span></span>
-<span id="cb26-165"><a href="#cb26-165" aria-hidden="true" tabindex="-1"></a>      <span class="fu">downloadHandler</span>(</span>
-<span id="cb26-166"><a href="#cb26-166" aria-hidden="true" tabindex="-1"></a>        <span class="at">filename =</span></span>
-<span id="cb26-167"><a href="#cb26-167" aria-hidden="true" tabindex="-1"></a>          <span class="cf">function</span>() {</span>
-<span id="cb26-168"><a href="#cb26-168" aria-hidden="true" tabindex="-1"></a>            <span class="fu">str_c</span>(input<span class="sc">$</span>patch, <span class="st">&quot;_quadrats.csv&quot;</span>)</span>
-<span id="cb26-169"><a href="#cb26-169" aria-hidden="true" tabindex="-1"></a>          },</span>
-<span id="cb26-170"><a href="#cb26-170" aria-hidden="true" tabindex="-1"></a>        <span class="at">content =</span></span>
-<span id="cb26-171"><a href="#cb26-171" aria-hidden="true" tabindex="-1"></a>          <span class="cf">function</span>(file) {</span>
-<span id="cb26-172"><a href="#cb26-172" aria-hidden="true" tabindex="-1"></a>            <span class="fu">quadrats</span>() <span class="sc">%&gt;%</span></span>
-<span id="cb26-173"><a href="#cb26-173" aria-hidden="true" tabindex="-1"></a>              <span class="fu">st_drop_geometry</span>() <span class="sc">%&gt;%</span></span>
-<span id="cb26-174"><a href="#cb26-174" aria-hidden="true" tabindex="-1"></a>              <span class="fu">write_csv</span>(file)</span>
-<span id="cb26-175"><a href="#cb26-175" aria-hidden="true" tabindex="-1"></a>          }</span>
-<span id="cb26-176"><a href="#cb26-176" aria-hidden="true" tabindex="-1"></a>      )</span>
-<span id="cb26-177"><a href="#cb26-177" aria-hidden="true" tabindex="-1"></a>  }</span>
-<span id="cb26-178"><a href="#cb26-178" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-179"><a href="#cb26-179" aria-hidden="true" tabindex="-1"></a><span class="fu">shinyApp</span>(ui, server)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb26-118"><a href="#cb26-118" aria-hidden="true" tabindex="-1"></a>    <span class="co"># The nests in that patch:</span></span>
+<span id="cb26-119"><a href="#cb26-119" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-120"><a href="#cb26-120" aria-hidden="true" tabindex="-1"></a>    patch_nests <span class="ot">&lt;-</span></span>
+<span id="cb26-121"><a href="#cb26-121" aria-hidden="true" tabindex="-1"></a>      <span class="fu">reactive</span>({</span>
+<span id="cb26-122"><a href="#cb26-122" aria-hidden="true" tabindex="-1"></a>        nests <span class="sc">%&gt;%</span></span>
+<span id="cb26-123"><a href="#cb26-123" aria-hidden="true" tabindex="-1"></a>          <span class="fu">st_filter</span>(<span class="fu">patch_polygon</span>())</span>
+<span id="cb26-124"><a href="#cb26-124" aria-hidden="true" tabindex="-1"></a>      })</span>
+<span id="cb26-125"><a href="#cb26-125" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-126"><a href="#cb26-126" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Quadrats with their nest counts:</span></span>
+<span id="cb26-127"><a href="#cb26-127" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-128"><a href="#cb26-128" aria-hidden="true" tabindex="-1"></a>    quadrats <span class="ot">&lt;-</span></span>
+<span id="cb26-129"><a href="#cb26-129" aria-hidden="true" tabindex="-1"></a>      <span class="fu">reactive</span>({</span>
+<span id="cb26-130"><a href="#cb26-130" aria-hidden="true" tabindex="-1"></a>        <span class="fu">patch_polygon</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb26-131"><a href="#cb26-131" aria-hidden="true" tabindex="-1"></a>          <span class="fu">st_make_grid</span>(<span class="at">cellsize =</span> input<span class="sc">$</span>cellsize) <span class="sc">%&gt;%</span></span>
+<span id="cb26-132"><a href="#cb26-132" aria-hidden="true" tabindex="-1"></a>          <span class="fu">st_as_sf</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb26-133"><a href="#cb26-133" aria-hidden="true" tabindex="-1"></a>          <span class="fu">rename</span>(<span class="at">geometry =</span> x) <span class="sc">%&gt;%</span></span>
+<span id="cb26-134"><a href="#cb26-134" aria-hidden="true" tabindex="-1"></a>          <span class="fu">st_filter</span>(<span class="fu">patch_polygon</span>()) <span class="sc">%&gt;%</span></span>
+<span id="cb26-135"><a href="#cb26-135" aria-hidden="true" tabindex="-1"></a>          <span class="fu">mutate</span>(</span>
+<span id="cb26-136"><a href="#cb26-136" aria-hidden="true" tabindex="-1"></a>            <span class="at">nests =</span></span>
+<span id="cb26-137"><a href="#cb26-137" aria-hidden="true" tabindex="-1"></a>              <span class="fu">st_intersects</span>(geometry, <span class="fu">patch_nests</span>()) <span class="sc">%&gt;%</span></span>
+<span id="cb26-138"><a href="#cb26-138" aria-hidden="true" tabindex="-1"></a>              <span class="fu">lengths</span>()</span>
+<span id="cb26-139"><a href="#cb26-139" aria-hidden="true" tabindex="-1"></a>          )</span>
+<span id="cb26-140"><a href="#cb26-140" aria-hidden="true" tabindex="-1"></a>      })</span>
+<span id="cb26-141"><a href="#cb26-141" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-142"><a href="#cb26-142" aria-hidden="true" tabindex="-1"></a>    <span class="co"># A random pattern, redrawn for a click or a new patch:</span></span>
+<span id="cb26-143"><a href="#cb26-143" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-144"><a href="#cb26-144" aria-hidden="true" tabindex="-1"></a>    random_nests <span class="ot">&lt;-</span></span>
+<span id="cb26-145"><a href="#cb26-145" aria-hidden="true" tabindex="-1"></a>      <span class="fu">eventReactive</span>(</span>
+<span id="cb26-146"><a href="#cb26-146" aria-hidden="true" tabindex="-1"></a>        <span class="fu">list</span>(</span>
+<span id="cb26-147"><a href="#cb26-147" aria-hidden="true" tabindex="-1"></a>          input<span class="sc">$</span>draw,</span>
+<span id="cb26-148"><a href="#cb26-148" aria-hidden="true" tabindex="-1"></a>          input<span class="sc">$</span>patch</span>
+<span id="cb26-149"><a href="#cb26-149" aria-hidden="true" tabindex="-1"></a>        ),</span>
+<span id="cb26-150"><a href="#cb26-150" aria-hidden="true" tabindex="-1"></a>        {</span>
+<span id="cb26-151"><a href="#cb26-151" aria-hidden="true" tabindex="-1"></a>          <span class="fu">patch_polygon</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb26-152"><a href="#cb26-152" aria-hidden="true" tabindex="-1"></a>            <span class="fu">st_sample</span>(<span class="at">size =</span> <span class="fu">nrow</span>(<span class="fu">patch_nests</span>())) <span class="sc">%&gt;%</span></span>
+<span id="cb26-153"><a href="#cb26-153" aria-hidden="true" tabindex="-1"></a>            <span class="fu">st_as_sf</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb26-154"><a href="#cb26-154" aria-hidden="true" tabindex="-1"></a>            <span class="fu">rename</span>(<span class="at">geometry =</span> x)</span>
+<span id="cb26-155"><a href="#cb26-155" aria-hidden="true" tabindex="-1"></a>        }</span>
+<span id="cb26-156"><a href="#cb26-156" aria-hidden="true" tabindex="-1"></a>      )</span>
+<span id="cb26-157"><a href="#cb26-157" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-158"><a href="#cb26-158" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Summary figures:</span></span>
+<span id="cb26-159"><a href="#cb26-159" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-160"><a href="#cb26-160" aria-hidden="true" tabindex="-1"></a>    output<span class="sc">$</span>n_nests <span class="ot">&lt;-</span></span>
+<span id="cb26-161"><a href="#cb26-161" aria-hidden="true" tabindex="-1"></a>      <span class="fu">renderText</span>({</span>
+<span id="cb26-162"><a href="#cb26-162" aria-hidden="true" tabindex="-1"></a>        <span class="fu">nrow</span>(<span class="fu">patch_nests</span>())</span>
+<span id="cb26-163"><a href="#cb26-163" aria-hidden="true" tabindex="-1"></a>      })</span>
+<span id="cb26-164"><a href="#cb26-164" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-165"><a href="#cb26-165" aria-hidden="true" tabindex="-1"></a>    output<span class="sc">$</span>n_quadrats <span class="ot">&lt;-</span></span>
+<span id="cb26-166"><a href="#cb26-166" aria-hidden="true" tabindex="-1"></a>      <span class="fu">renderText</span>({</span>
+<span id="cb26-167"><a href="#cb26-167" aria-hidden="true" tabindex="-1"></a>        <span class="fu">nrow</span>(<span class="fu">quadrats</span>())</span>
+<span id="cb26-168"><a href="#cb26-168" aria-hidden="true" tabindex="-1"></a>      })</span>
+<span id="cb26-169"><a href="#cb26-169" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-170"><a href="#cb26-170" aria-hidden="true" tabindex="-1"></a>    output<span class="sc">$</span>mean_count <span class="ot">&lt;-</span></span>
+<span id="cb26-171"><a href="#cb26-171" aria-hidden="true" tabindex="-1"></a>      <span class="fu">renderText</span>({</span>
+<span id="cb26-172"><a href="#cb26-172" aria-hidden="true" tabindex="-1"></a>        <span class="fu">quadrats</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb26-173"><a href="#cb26-173" aria-hidden="true" tabindex="-1"></a>          <span class="fu">pull</span>(nests) <span class="sc">%&gt;%</span></span>
+<span id="cb26-174"><a href="#cb26-174" aria-hidden="true" tabindex="-1"></a>          <span class="fu">mean</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb26-175"><a href="#cb26-175" aria-hidden="true" tabindex="-1"></a>          <span class="fu">round</span>(<span class="dv">2</span>)</span>
+<span id="cb26-176"><a href="#cb26-176" aria-hidden="true" tabindex="-1"></a>      })</span>
+<span id="cb26-177"><a href="#cb26-177" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-178"><a href="#cb26-178" aria-hidden="true" tabindex="-1"></a>    output<span class="sc">$</span>map <span class="ot">&lt;-</span></span>
+<span id="cb26-179"><a href="#cb26-179" aria-hidden="true" tabindex="-1"></a>      <span class="fu">renderTmap</span>({</span>
+<span id="cb26-180"><a href="#cb26-180" aria-hidden="true" tabindex="-1"></a>        <span class="fu">quadrats</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb26-181"><a href="#cb26-181" aria-hidden="true" tabindex="-1"></a>          <span class="fu">tm_shape</span>() <span class="sc">+</span></span>
+<span id="cb26-182"><a href="#cb26-182" aria-hidden="true" tabindex="-1"></a>          <span class="fu">tm_polygons</span>(</span>
+<span id="cb26-183"><a href="#cb26-183" aria-hidden="true" tabindex="-1"></a>            <span class="at">fill =</span> <span class="st">&quot;nests&quot;</span>,</span>
+<span id="cb26-184"><a href="#cb26-184" aria-hidden="true" tabindex="-1"></a>            <span class="at">fill_alpha =</span> <span class="fl">0.6</span></span>
+<span id="cb26-185"><a href="#cb26-185" aria-hidden="true" tabindex="-1"></a>          ) <span class="sc">+</span></span>
+<span id="cb26-186"><a href="#cb26-186" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-187"><a href="#cb26-187" aria-hidden="true" tabindex="-1"></a>          <span class="co"># Add the nests:</span></span>
+<span id="cb26-188"><a href="#cb26-188" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-189"><a href="#cb26-189" aria-hidden="true" tabindex="-1"></a>          <span class="fu">patch_nests</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb26-190"><a href="#cb26-190" aria-hidden="true" tabindex="-1"></a>          <span class="fu">tm_shape</span>() <span class="sc">+</span></span>
+<span id="cb26-191"><a href="#cb26-191" aria-hidden="true" tabindex="-1"></a>          <span class="fu">tm_dots</span>(<span class="at">size =</span> <span class="fl">0.5</span>) <span class="sc">+</span></span>
+<span id="cb26-192"><a href="#cb26-192" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-193"><a href="#cb26-193" aria-hidden="true" tabindex="-1"></a>          <span class="co"># Add the random pattern:</span></span>
+<span id="cb26-194"><a href="#cb26-194" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-195"><a href="#cb26-195" aria-hidden="true" tabindex="-1"></a>          <span class="fu">random_nests</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb26-196"><a href="#cb26-196" aria-hidden="true" tabindex="-1"></a>          <span class="fu">tm_shape</span>() <span class="sc">+</span></span>
+<span id="cb26-197"><a href="#cb26-197" aria-hidden="true" tabindex="-1"></a>          <span class="fu">tm_dots</span>(</span>
+<span id="cb26-198"><a href="#cb26-198" aria-hidden="true" tabindex="-1"></a>            <span class="at">fill =</span> <span class="st">&quot;red&quot;</span>,</span>
+<span id="cb26-199"><a href="#cb26-199" aria-hidden="true" tabindex="-1"></a>            <span class="at">size =</span> <span class="fl">0.5</span></span>
+<span id="cb26-200"><a href="#cb26-200" aria-hidden="true" tabindex="-1"></a>          )</span>
+<span id="cb26-201"><a href="#cb26-201" aria-hidden="true" tabindex="-1"></a>      })</span>
+<span id="cb26-202"><a href="#cb26-202" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-203"><a href="#cb26-203" aria-hidden="true" tabindex="-1"></a>    output<span class="sc">$</span>counts <span class="ot">&lt;-</span></span>
+<span id="cb26-204"><a href="#cb26-204" aria-hidden="true" tabindex="-1"></a>      <span class="fu">renderTable</span>({</span>
+<span id="cb26-205"><a href="#cb26-205" aria-hidden="true" tabindex="-1"></a>        <span class="fu">quadrats</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb26-206"><a href="#cb26-206" aria-hidden="true" tabindex="-1"></a>          <span class="fu">st_drop_geometry</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb26-207"><a href="#cb26-207" aria-hidden="true" tabindex="-1"></a>          <span class="fu">count</span>(nests, <span class="at">name =</span> <span class="st">&quot;quadrats&quot;</span>)</span>
+<span id="cb26-208"><a href="#cb26-208" aria-hidden="true" tabindex="-1"></a>      })</span>
+<span id="cb26-209"><a href="#cb26-209" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-210"><a href="#cb26-210" aria-hidden="true" tabindex="-1"></a>    output<span class="sc">$</span>download <span class="ot">&lt;-</span></span>
+<span id="cb26-211"><a href="#cb26-211" aria-hidden="true" tabindex="-1"></a>      <span class="fu">downloadHandler</span>(</span>
+<span id="cb26-212"><a href="#cb26-212" aria-hidden="true" tabindex="-1"></a>        <span class="at">filename =</span></span>
+<span id="cb26-213"><a href="#cb26-213" aria-hidden="true" tabindex="-1"></a>          <span class="cf">function</span>() {</span>
+<span id="cb26-214"><a href="#cb26-214" aria-hidden="true" tabindex="-1"></a>            <span class="fu">str_c</span>(input<span class="sc">$</span>patch, <span class="st">&quot;_quadrats.csv&quot;</span>)</span>
+<span id="cb26-215"><a href="#cb26-215" aria-hidden="true" tabindex="-1"></a>          },</span>
+<span id="cb26-216"><a href="#cb26-216" aria-hidden="true" tabindex="-1"></a>        <span class="at">content =</span></span>
+<span id="cb26-217"><a href="#cb26-217" aria-hidden="true" tabindex="-1"></a>          <span class="cf">function</span>(file) {</span>
+<span id="cb26-218"><a href="#cb26-218" aria-hidden="true" tabindex="-1"></a>            <span class="fu">quadrats</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb26-219"><a href="#cb26-219" aria-hidden="true" tabindex="-1"></a>              <span class="fu">st_drop_geometry</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb26-220"><a href="#cb26-220" aria-hidden="true" tabindex="-1"></a>              <span class="fu">write_csv</span>(file)</span>
+<span id="cb26-221"><a href="#cb26-221" aria-hidden="true" tabindex="-1"></a>          }</span>
+<span id="cb26-222"><a href="#cb26-222" aria-hidden="true" tabindex="-1"></a>      )</span>
+<span id="cb26-223"><a href="#cb26-223" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb26-224"><a href="#cb26-224" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-225"><a href="#cb26-225" aria-hidden="true" tabindex="-1"></a><span class="fu">shinyApp</span>(ui, server)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="callout callout-style-default callout-note callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -27567,20 +27613,20 @@ Note
 <ol type="1">
 <li>A <code>selectInput()</code> is built with <code>choices = set_names(sites$site_id, sites$site_name)</code>. What is the value of <code>input$site</code> after the reader chooses a site?</li>
 </ol>
-<div id="radio_LNQGHIOEKV" class="webex-radiogroup">
-<label><input type="radio" autocomplete="off" name="radio_LNQGHIOEKV" value="answer"> <span>The site_id of the chosen site</span></label><label><input type="radio" autocomplete="off" name="radio_LNQGHIOEKV" value> <span>The site_name of the chosen site</span></label><label><input type="radio" autocomplete="off" name="radio_LNQGHIOEKV" value> <span>A named vector of one element</span></label><label><input type="radio" autocomplete="off" name="radio_LNQGHIOEKV" value> <span>The row number of the chosen site</span></label>
+<div id="radio_CUHWRKJXQM" class="webex-radiogroup">
+<label><input type="radio" autocomplete="off" name="radio_CUHWRKJXQM" value="answer"> <span>The site_id of the chosen site</span></label><label><input type="radio" autocomplete="off" name="radio_CUHWRKJXQM" value> <span>The site_name of the chosen site</span></label><label><input type="radio" autocomplete="off" name="radio_CUHWRKJXQM" value> <span>A named vector of one element</span></label><label><input type="radio" autocomplete="off" name="radio_CUHWRKJXQM" value> <span>The row number of the chosen site</span></label>
 </div>
 <ol start="2" type="1">
 <li>A calculation inside <code>eventReactive(input$go, { ... })</code> reads <code>input$year</code>. The reader changes the year. What happens?</li>
 </ol>
-<div id="radio_OCRAOPFDKX" class="webex-radiogroup">
-<label><input type="radio" autocomplete="off" name="radio_OCRAOPFDKX" value="answer"> <span>Nothing, until the button is pressed again</span></label><label><input type="radio" autocomplete="off" name="radio_OCRAOPFDKX" value> <span>The calculation re-runs with the new year</span></label><label><input type="radio" autocomplete="off" name="radio_OCRAOPFDKX" value> <span>The calculation re-runs and the button&#39;s count resets</span></label><label><input type="radio" autocomplete="off" name="radio_OCRAOPFDKX" value> <span>An error, because an eventReactive() cannot read other inputs</span></label>
+<div id="radio_OJJVSTDEFB" class="webex-radiogroup">
+<label><input type="radio" autocomplete="off" name="radio_OJJVSTDEFB" value="answer"> <span>Nothing, until the button is pressed again</span></label><label><input type="radio" autocomplete="off" name="radio_OJJVSTDEFB" value> <span>The calculation re-runs with the new year</span></label><label><input type="radio" autocomplete="off" name="radio_OJJVSTDEFB" value> <span>The calculation re-runs and the button&#39;s count resets</span></label><label><input type="radio" autocomplete="off" name="radio_OJJVSTDEFB" value> <span>An error, because an eventReactive() cannot read other inputs</span></label>
 </div>
 <ol start="3" type="1">
 <li>An app runs on your computer and fails on shinyapps.io with a message that a file cannot be found. What is the most likely cause?</li>
 </ol>
-<div id="radio_BHMEDNFWMM" class="webex-radiogroup">
-<label><input type="radio" autocomplete="off" name="radio_BHMEDNFWMM" value="answer"> <span>The app reads a file outside its own folder</span></label><label><input type="radio" autocomplete="off" name="radio_BHMEDNFWMM" value> <span>The server has a different version of R</span></label><label><input type="radio" autocomplete="off" name="radio_BHMEDNFWMM" value> <span>rsconnect was not attached</span></label><label><input type="radio" autocomplete="off" name="radio_BHMEDNFWMM" value> <span>The app uses tmap in view mode</span></label>
+<div id="radio_JLRFZXGONG" class="webex-radiogroup">
+<label><input type="radio" autocomplete="off" name="radio_JLRFZXGONG" value="answer"> <span>The app reads a file outside its own folder</span></label><label><input type="radio" autocomplete="off" name="radio_JLRFZXGONG" value> <span>The server has a different version of R</span></label><label><input type="radio" autocomplete="off" name="radio_JLRFZXGONG" value> <span>rsconnect was not attached</span></label><label><input type="radio" autocomplete="off" name="radio_JLRFZXGONG" value> <span>The app uses tmap in view mode</span></label>
 </div>
 <ol start="4" type="1">
 <li>True or false: <code>testServer()</code> can test the values of an app’s reactive expressions without opening the app in a browser.</li>

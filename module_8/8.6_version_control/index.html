@@ -26847,14 +26847,14 @@ margin: 1em 0;
 <div class="now_you">
 <p><i class="fa-solid fa-user-circle fa-2x" aria-label="user-circle"></i> <span style="padding-left: 0.5em;">Check your understanding</span></p>
 <p><code>use_git_config()</code> is run once. What does it configure?</p>
-<div id="radio_VWOVPLTQAS" class="webex-radiogroup">
-<label><input type="radio" autocomplete="off" name="radio_VWOVPLTQAS" value="answer"> <span>The name and email written into every commit made on this computer</span></label><label><input type="radio" autocomplete="off" name="radio_VWOVPLTQAS" value> <span>The name of the current project&#39;s repository</span></label><label><input type="radio" autocomplete="off" name="radio_VWOVPLTQAS" value> <span>The GitHub account the project will push to</span></label><label><input type="radio" autocomplete="off" name="radio_VWOVPLTQAS" value> <span>The files that are ignored everywhere</span></label>
+<div id="radio_DNVASAQEZJ" class="webex-radiogroup">
+<label><input type="radio" autocomplete="off" name="radio_DNVASAQEZJ" value="answer"> <span>The name and email written into every commit made on this computer</span></label><label><input type="radio" autocomplete="off" name="radio_DNVASAQEZJ" value> <span>The name of the current project&#39;s repository</span></label><label><input type="radio" autocomplete="off" name="radio_DNVASAQEZJ" value> <span>The GitHub account the project will push to</span></label><label><input type="radio" autocomplete="off" name="radio_DNVASAQEZJ" value> <span>The files that are ignored everywhere</span></label>
 </div>
 <p>True or false: A commit records every file in the project folder.</p>
 <p><select class="webex-select"><option value="blank"></option><option value>TRUE</option><option value="answer">FALSE</option></select></p>
 <p>Something about Git is not working. Which function reports the state of the setup?</p>
-<div id="radio_YJOZKZXRIM" class="webex-radiogroup">
-<label><input type="radio" autocomplete="off" name="radio_YJOZKZXRIM" value="answer"> <span>git_sitrep()</span></label><label><input type="radio" autocomplete="off" name="radio_YJOZKZXRIM" value> <span>use_git_config()</span></label><label><input type="radio" autocomplete="off" name="radio_YJOZKZXRIM" value> <span>git_vaccinate()</span></label><label><input type="radio" autocomplete="off" name="radio_YJOZKZXRIM" value> <span>use_git()</span></label>
+<div id="radio_HMZLYERIPI" class="webex-radiogroup">
+<label><input type="radio" autocomplete="off" name="radio_HMZLYERIPI" value="answer"> <span>git_sitrep()</span></label><label><input type="radio" autocomplete="off" name="radio_HMZLYERIPI" value> <span>use_git_config()</span></label><label><input type="radio" autocomplete="off" name="radio_HMZLYERIPI" value> <span>git_vaccinate()</span></label><label><input type="radio" autocomplete="off" name="radio_HMZLYERIPI" value> <span>use_git()</span></label>
 </div>
 </div>
 </section>
@@ -26941,7 +26941,7 @@ v Adding &#39;.Rhistory&#39;, &#39;.RData&#39;, &#39;.httr-oauth&#39;, &#39;.DS_
 <p>A repository on our computer is a history. A repository on GitHub is a history that survives the computer, that a collaborator can pull, and that a reader can browse. Connecting the two takes a credential and one function, and we will set up the credential first.</p>
 <section id="a-personal-access-token" class="level3">
 <h3 class="anchored" data-anchor-id="a-personal-access-token">A personal access token</h3>
-<p>A password is no longer accepted for a push to GitHub, and in its place we use a <strong>personal access token</strong>, which is a long string that stands in for the password and can be revoked without changing it. Let’s create one. <code>create_github_token()</code> opens the GitHub page that generates it, with the permissions the token needs already selected:</p>
+<p>A password is no longer accepted for a push to GitHub, and in its place we use a <strong>personal access token</strong>, which is a long string that stands in for the password and can be revoked without changing your GitHub password. Let’s create one. <code>create_github_token()</code> opens the GitHub page that generates it, with the permissions the token needs already selected:</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">create_github_token</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
@@ -26991,8 +26991,8 @@ v Adding &#39;.Rhistory&#39;, &#39;.RData&#39;, &#39;.httr-oauth&#39;, &#39;.DS_
 <div class="now_you">
 <p><i class="fa-solid fa-user-circle fa-2x" aria-label="user-circle"></i> <span style="padding-left: 0.5em;">Check your understanding</span></p>
 <p>A collaborator pushed a commit this morning, and you made a commit this afternoon without pulling first. What happens when you push?</p>
-<div id="radio_VWXGYBTOGX" class="webex-radiogroup">
-<label><input type="radio" autocomplete="off" name="radio_VWXGYBTOGX" value="answer"> <span>The push is rejected until you pull, which merges the two histories</span></label><label><input type="radio" autocomplete="off" name="radio_VWXGYBTOGX" value> <span>Your commit replaces theirs on GitHub</span></label><label><input type="radio" autocomplete="off" name="radio_VWXGYBTOGX" value> <span>Their commit is deleted from your computer</span></label><label><input type="radio" autocomplete="off" name="radio_VWXGYBTOGX" value> <span>Both commits are pushed and GitHub keeps two copies of the file</span></label>
+<div id="radio_FQKUVKNNBU" class="webex-radiogroup">
+<label><input type="radio" autocomplete="off" name="radio_FQKUVKNNBU" value="answer"> <span>The push is rejected until you pull, which merges the two histories</span></label><label><input type="radio" autocomplete="off" name="radio_FQKUVKNNBU" value> <span>Your commit replaces theirs on GitHub</span></label><label><input type="radio" autocomplete="off" name="radio_FQKUVKNNBU" value> <span>Their commit is deleted from your computer</span></label><label><input type="radio" autocomplete="off" name="radio_FQKUVKNNBU" value> <span>Both commits are pushed and GitHub keeps two copies of the file</span></label>
 </div>
 <p>True or false: A personal access token belongs in the setup section of a script.</p>
 <p><select class="webex-select"><option value="blank"></option><option value>TRUE</option><option value="answer">FALSE</option></select></p>
@@ -27064,20 +27064,20 @@ Note
 <ol type="1">
 <li>A project’s <code>data/raw</code> folder contains a 500 MB raster. What should happen to it before <code>use_git()</code> is run?</li>
 </ol>
-<div id="radio_PYSBUJHDXQ" class="webex-radiogroup">
-<label><input type="radio" autocomplete="off" name="radio_PYSBUJHDXQ" value="answer"> <span>Its folder is added to .gitignore with use_git_ignore(), so that it is never committed</span></label><label><input type="radio" autocomplete="off" name="radio_PYSBUJHDXQ" value> <span>It is committed first, so that collaborators receive it</span></label><label><input type="radio" autocomplete="off" name="radio_PYSBUJHDXQ" value> <span>It is compressed, so that the commit is smaller</span></label><label><input type="radio" autocomplete="off" name="radio_PYSBUJHDXQ" value> <span>Nothing, because use_git() ignores large files</span></label>
+<div id="radio_QWOFOJOIWT" class="webex-radiogroup">
+<label><input type="radio" autocomplete="off" name="radio_QWOFOJOIWT" value="answer"> <span>Its folder is added to .gitignore with use_git_ignore(), so that it is never committed</span></label><label><input type="radio" autocomplete="off" name="radio_QWOFOJOIWT" value> <span>It is committed first, so that collaborators receive it</span></label><label><input type="radio" autocomplete="off" name="radio_QWOFOJOIWT" value> <span>It is compressed, so that the commit is smaller</span></label><label><input type="radio" autocomplete="off" name="radio_QWOFOJOIWT" value> <span>Nothing, because use_git() ignores large files</span></label>
 </div>
 <ol start="2" type="1">
 <li>A project is already a local Git repository and contains several commits, but it has no GitHub remote. Which function creates that repository on GitHub and connects it to the project?</li>
 </ol>
-<div id="radio_EUULOXIQCU" class="webex-radiogroup">
-<label><input type="radio" autocomplete="off" name="radio_EUULOXIQCU" value="answer"> <span>use_github()</span></label><label><input type="radio" autocomplete="off" name="radio_EUULOXIQCU" value> <span>use_git()</span></label><label><input type="radio" autocomplete="off" name="radio_EUULOXIQCU" value> <span>create_from_github()</span></label><label><input type="radio" autocomplete="off" name="radio_EUULOXIQCU" value> <span>gitcreds_set()</span></label>
+<div id="radio_SLNQYUSRFL" class="webex-radiogroup">
+<label><input type="radio" autocomplete="off" name="radio_SLNQYUSRFL" value="answer"> <span>use_github()</span></label><label><input type="radio" autocomplete="off" name="radio_SLNQYUSRFL" value> <span>use_git()</span></label><label><input type="radio" autocomplete="off" name="radio_SLNQYUSRFL" value> <span>create_from_github()</span></label><label><input type="radio" autocomplete="off" name="radio_SLNQYUSRFL" value> <span>gitcreds_set()</span></label>
 </div>
 <ol start="3" type="1">
 <li>The Git pane lists a script with a blue <em>M</em>. What does that mean?</li>
 </ol>
-<div id="radio_DHASBSFLDE" class="webex-radiogroup">
-<label><input type="radio" autocomplete="off" name="radio_DHASBSFLDE" value="answer"> <span>The saved file differs from the last commit</span></label><label><input type="radio" autocomplete="off" name="radio_DHASBSFLDE" value> <span>The file is staged for the next commit</span></label><label><input type="radio" autocomplete="off" name="radio_DHASBSFLDE" value> <span>The file is new and untracked</span></label><label><input type="radio" autocomplete="off" name="radio_DHASBSFLDE" value> <span>The file has a conflict</span></label>
+<div id="radio_UXIMFBIDEN" class="webex-radiogroup">
+<label><input type="radio" autocomplete="off" name="radio_UXIMFBIDEN" value="answer"> <span>The saved file differs from the last commit</span></label><label><input type="radio" autocomplete="off" name="radio_UXIMFBIDEN" value> <span>The file is staged for the next commit</span></label><label><input type="radio" autocomplete="off" name="radio_UXIMFBIDEN" value> <span>The file is new and untracked</span></label><label><input type="radio" autocomplete="off" name="radio_UXIMFBIDEN" value> <span>The file has a conflict</span></label>
 </div>
 <ol start="4" type="1">
 <li>Drag and drop: Which of these belong in a repository’s <code>.gitignore</code>? The <span class="term">order</span> of your answer does not matter.</li>
